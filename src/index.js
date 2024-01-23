@@ -1,41 +1,17 @@
-import dotenv from "dotenv";
-import { httpServer } from "./app.js";
-import connectDB from "./db/index.js";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
-dotenv.config({
-  path: "./.env",
-});
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
-/**
- * Starting from Node.js v14 top-level await is available and it is only available in ES modules.
- * This means you can not use it with common js modules or Node version < 14.
- */
-const majorNodeVersion = +process.env.NODE_VERSION?.split(".")[0] || 0;
-
-const startServer = () => {
-  httpServer.listen(process.env.PORT || 8080, () => {
-    console.info(
-      `📑 Visit the documentation at: http://localhost:${
-        process.env.PORT || 8080
-      }`
-    );
-    console.log("⚙️  Server is running on port: " + process.env.PORT);
-  });
-};
-
-if (majorNodeVersion >= 14) {
-  try {
-    await connectDB();
-    startServer();
-  } catch (err) {
-    console.log("Mongo db connect error: ", err);
-  }
-} else {
-  connectDB()
-    .then(() => {
-      startServer();
-    })
-    .catch((err) => {
-      console.log("Mongo db connect error: ", err);
-    });
-}
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
