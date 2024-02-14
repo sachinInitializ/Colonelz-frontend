@@ -6,6 +6,8 @@ import toast from '@/components/ui/toast'
 import Notification from '@/components/ui/Notification'
 import { useNavigate } from 'react-router-dom'
 import { apiCreateSalesProduct } from '@/services/SalesService'
+import ProductImages from '@/views/sales/ProductForm/ProjectCreateForm'
+import BasicInformationFields from '@/views/sales/ProductForm/BasicInformationFields'
 
 const ProductNew = () => {
     const navigate = useNavigate()
@@ -29,27 +31,30 @@ const ProductNew = () => {
                     type="success"
                     duration={2500}
                 >
-                    Product successfuly added
+                    Project successfuly added
                 </Notification>,
                 {
                     placement: 'top-center',
                 }
             )
-            navigate('/app/sales/product-list')
+            navigate('/app/leads')
         }
     }
 
     const handleDiscard = () => {
-        navigate('/app/sales/product-list')
+        navigate('/app/leads')
     }
 
     return (
         <>
-            <ProductForm
+            {/* <ProductForm
                 type="new"
                 onFormSubmit={handleFormSubmit}
                 onDiscard={handleDiscard}
-            />
+                
+            /> */}
+            <ProductImages/>
+            {/* <BasicInformationFields/> */}
         </>
     )
 }

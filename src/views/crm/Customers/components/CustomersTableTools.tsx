@@ -11,6 +11,7 @@ import CustomerTableSearch from './CustomerTableSearch'
 import CustomerTableFilter from './CustomerTableFilter'
 import cloneDeep from 'lodash/cloneDeep'
 import type { TableQueries } from '@/@types/common'
+import { useNavigate } from 'react-router-dom'
 
 const CustomersTableTools = () => {
     const dispatch = useAppDispatch()
@@ -38,15 +39,9 @@ const CustomersTableTools = () => {
         dispatch(setTableData(data))
         dispatch(getCustomers(data))
     }
-
+const navigate=useNavigate()
     const onClearAll = () => {
-        const newTableData = cloneDeep(tableData)
-        newTableData.query = ''
-        if (inputRef.current) {
-            inputRef.current.value = ''
-        }
-        dispatch(setFilterData({ status: '' }))
-        fetchData(newTableData)
+       navigate('/app/crm/projectform')
     }
 
     return (
@@ -56,11 +51,11 @@ const CustomersTableTools = () => {
                     ref={inputRef}
                     onInputChange={handleInputChange}
                 />
-                <CustomerTableFilter />
+                {/* <CustomerTableFilter /> */}
             </div>
             <div className="mb-4">
-                <Button size="sm" onClick={onClearAll}>
-                    Clear All
+                <Button size="sm" onClick={onClearAll} variant='solid'>
+                    Create Project
                 </Button>
             </div>
         </div>

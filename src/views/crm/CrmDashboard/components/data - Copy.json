@@ -1,0 +1,61 @@
+
+[
+    {
+      "Client Name": "Devashish",
+      "Lead Date": "Jan 11, 2024 ",
+      "Phone": "777-888-9999",
+      "Email ID": "devashish@gmail.com",
+      "Status": "Follow up"
+    },
+    {
+      "Client Name": "Arvind",
+      "Lead Date": "Jan 11, 2024 ",
+      "Phone": "777-222-3333",
+      "Email ID": "Arvind@gmail.com",
+      "Status": "Not interested"
+    },
+    {
+      "Client Name": "Ratnesh",
+      "Lead Date": "Jan 11, 2024 ",
+      "Phone": "777-222-3333",
+      "Email ID": "ratnesh@gmail.com",
+      "Status": "No Response"
+    },
+    {
+        "Client Name": "John Doe",
+        "Lead Date": "Jan 11, 2024",
+        "Phone": "555-1234",
+        "EmailID": "john.doe@example.com",
+        "Status": "interested"
+      },
+      {
+        "Client Name": "Jane Smith",
+        "Lead Date": "Jan 12, 2024",
+        "Phone": "555-5678",
+        "Email ID": "jane.smith@example.com",
+        "Status": "Follow up"
+      },
+      
+      {
+        "Client Name": "Alice Johnson",
+        "Lead Date": "Jan 30, 2024",
+        "Phone": "555-7890",
+        "Email ID": "alice.johnson@example.com",
+        "Status": "Not interested"
+      },
+    {
+      "Client Name": "Devashish",
+      "Lead Date": "Jan 11, 2024 ",
+      "Phone": "777-888-9999",
+      "Email ID": "devashish@gmail.com",
+      "Status": "Follow up"
+    },
+    {
+      "Client Name": "Arvind",
+      "Lead Date": "Jan 11, 2024 ",
+      "Phone": "777-222-3333",
+      "Email ID": "Arvind@gmail.com",
+      "Status": "Not interested"
+    }
+  ]
+  

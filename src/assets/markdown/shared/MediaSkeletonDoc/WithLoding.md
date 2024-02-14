@@ -41,8 +41,8 @@ const WithLoding = () => {
                         shape="circle"
                     />
                     <div>
-                        <h6>Carolyn Perkins</h6>
-                        <p>carolyn.p@elstar.com</p>
+                        <h6> </h6>
+                        <p>carolyn.p@.com</p>
                     </div>
                 </div>
             </Loading>

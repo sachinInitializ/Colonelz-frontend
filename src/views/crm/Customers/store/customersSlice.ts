@@ -43,17 +43,26 @@ type Subscription = {
 }
 
 export type Customer = {
-    id: string
-    name: string
-    email: string
-    img: string
-    role: string
-    lastOnline: number
-    status: string
-    personalInfo: PersonalInfo
-    orderHistory: OrderHistory[]
-    paymentMethod: PaymentMethod[]
-    subscription: Subscription[]
+    id: string;
+  project_name: string;
+  client: Array<string>;
+  project_id: string;
+  project_type: string;
+  description: string;
+  files: Array<string>;
+  mom: Array<string>;
+  leadmanager: string;
+  designers: Array<string>;
+  superviser: string;
+  visualizer: string;
+  project_status: string;
+  project_start_date: string; // Assuming you want the date as a string, adjust as needed
+  timeline_date: string;
+  project_end_date: string;
+  project_budget: string;
+  project_location: string;
+  createdAt: string; // Assuming you want the date as a string, adjust as needed
+  __v: number;
 }
 
 type Statistic = {

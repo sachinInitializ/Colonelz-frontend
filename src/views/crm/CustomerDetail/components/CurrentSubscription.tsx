@@ -23,6 +23,33 @@ const CurrentSubscription = () => {
         setSubscribed(true)
     }, [])
 
+
+    <TBody>
+          {data.map((item) => [
+            <Tr key={item.id}>
+              <Td className="px-4"onClick={() => toggleRow(item.id)}>
+                
+                  {expandedRow === item.mom_id? <HiOutlineChevronDown /> : <HiOutlineChevronRight />}
+              
+              </Td>
+              <Td className="px-4">{item.mom_id}</Td>
+              <Td className="px-4">{item.source}</Td>
+            </Tr>,
+            
+            expandedRow === item.id && (
+            <Tr>
+              <Td>
+              <div key={`details-${item.id}`}>
+                <h1>Meeting date: {item.meetingdate}</h1>
+                <p>fghjkl;lkjhgfdsfghjklkjhgfdfghjk;kjhgfdsdfghjklljhgfddkjhgfddfghjklkjhgfd</p>
+              </div>
+              </Td>
+              </Tr>
+            ),
+          ])}
+          
+        </TBody>
+
     return (
         <div className="mb-8">
             <h6 className="mb-4">Subscription</h6>

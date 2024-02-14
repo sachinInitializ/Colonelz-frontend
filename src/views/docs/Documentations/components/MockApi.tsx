@@ -75,7 +75,7 @@ const MockApi = () => {
                 usersData: [
                     {
                         id: '1',
-                        name: 'Carolyn Perkins',
+                        name: '  ',
                     },
                     {
                         id: '2',

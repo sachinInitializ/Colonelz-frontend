@@ -65,7 +65,7 @@ export default function crmFakeApi(server: Server, apiPrefix: string) {
     server.get(
         `${apiPrefix}/crm/customer-details`,
         (schema, { queryParams }) => {
-            const id = queryParams.id
+            const id = queryParams.lead_id
             const user = schema.db.userDetailData.find(id)
             return user
         }

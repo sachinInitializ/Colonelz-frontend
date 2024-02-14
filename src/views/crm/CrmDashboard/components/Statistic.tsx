@@ -9,6 +9,9 @@ import {
     HiOutlineTrendingUp,
     HiOutlineTrendingDown,
 } from 'react-icons/hi'
+import {FcTodoList} from 'react-icons/fc'
+import {GrInProgress} from 'react-icons/gr'
+import {MdOutlineVerified} from 'react-icons/md'
 import type { Statistic } from '../store'
 
 const GrowShrink = ({ value }: { value: number }) => {
@@ -42,23 +45,23 @@ const GrowShrink = ({ value }: { value: number }) => {
 
 const StatisticIcon = ({ type }: { type?: string }) => {
     switch (type) {
-        case 'newLeads':
+        case 'toDo':
             return (
                 <Avatar
                     size={55}
                     className="bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-100"
-                    icon={<HiUserCircle />}
+                    icon={<FcTodoList />}
                 />
             )
-        case 'emailResponse':
+        case 'inProgress':
             return (
                 <Avatar
                     size={55}
                     className="bg-cyan-100 text-cyan-600 dark:bg-cyan-500/20 dark:text-cyan-100"
-                    icon={<HiMail />}
+                    icon={<GrInProgress />}
                 />
             )
-        case 'proposals':
+        case 'inReview':
             return (
                 <Avatar
                     size={55}
@@ -66,12 +69,12 @@ const StatisticIcon = ({ type }: { type?: string }) => {
                     icon={<HiDocumentText />}
                 />
             )
-        case 'appointment':
+        case 'completed':
             return (
                 <Avatar
                     size={55}
                     className="bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-100"
-                    icon={<HiCalendar />}
+                    icon={<MdOutlineVerified />}
                 />
             )
         default:
@@ -89,10 +92,10 @@ const StatisticCard = ({ data = {} }: { data: Partial<Statistic> }) => {
                         <h3 className="font-bold leading-none">{data.value}</h3>
                         <p className="font-semibold">{data.label}</p>
                     </div>
-                    <p className="flex items-center gap-1">
+                    {/* <p className="flex items-center gap-1">
                         <GrowShrink value={data.growShrink || 0} />
                         <span>this month</span>
-                    </p>
+                    </p> */}
                 </div>
             </div>
         </Card>

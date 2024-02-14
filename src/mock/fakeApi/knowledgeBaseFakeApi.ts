@@ -111,13 +111,13 @@ export default function knowledgeBaseFakeApi(
                     category,
                     authors: [
                         {
-                            name: 'Carolyn Perkins',
+                            name: '  ',
                             img: '/img/avatars/thumb-1.jpg',
                         },
                     ],
                     starred: true,
                     updateTime: '6 months ago',
-                    createdBy: 'Carolyn Perkins',
+                    createdBy: '  ',
                     timeToRead: 2,
                     viewCount: 0,
                     ...rest,

@@ -394,7 +394,7 @@ export const helpCenterArticleListData = [
         category: 'analytic',
         authors: [
             {
-                name: 'Carolyn Perkins',
+                name: '  ',
                 img: '/img/avatars/thumb-1.jpg',
             },
         ],
@@ -484,7 +484,7 @@ export const helpCenterArticleListData = [
         category: 'commission',
         authors: [
             {
-                name: 'Carolyn Perkins',
+                name: '  ',
                 img: '/img/avatars/thumb-1.jpg',
             },
             {

@@ -208,7 +208,7 @@ const Issue = () => {
         const message = commentInput.current?.value
         const comment = {
             type: 'COMMENT',
-            name: 'Carolyn Perkins',
+            name: '  ',
             img: '/img/avatars/thumb-1.jpg',
             time: 'now',
             comment: message,
@@ -282,7 +282,7 @@ const Issue = () => {
                                 ) : (
                                     <div className="prose dark:prose-invert max-w-none">
                                         {ReactHtmlParser(
-                                            data.description || ''
+                                            data.description || '',
                                         )}
                                     </div>
                                 )}
@@ -297,8 +297,8 @@ const Issue = () => {
                                                 item,
                                                 isLastChild(
                                                     data.activity || [],
-                                                    index
-                                                )
+                                                    index,
+                                                ),
                                             )}
                                         </Fragment>
                                     ))}

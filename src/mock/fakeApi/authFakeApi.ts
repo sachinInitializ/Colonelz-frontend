@@ -36,7 +36,7 @@ export default function authFakeApi(server: Server, apiPrefix: string) {
         const emailUsed = schema.db.signInUserData.findBy({ email })
         const newUser = {
             avatar: '/img/avatars/thumb-1.jpg',
-            userName,
+            // userName,
             email,
             authority: ['admin', 'user'],
         }

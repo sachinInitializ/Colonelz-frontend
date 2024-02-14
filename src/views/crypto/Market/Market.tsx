@@ -81,8 +81,7 @@ const Market = () => {
                     <div className="flex lg:items-center justify-between flex-col lg:flex-row gap-4">
                         <TabList>
                             <TabNav value="all">All</TabNav>
-                            <TabNav value="spot">Spot</TabNav>
-                            <TabNav value="futures">Futures</TabNav>
+ 
                         </TabList>
                         <QueryInput
                             ref={inputRef}
@@ -99,7 +98,7 @@ const Market = () => {
                                 }}
                             />
                         </TabContent>
-                        <TabContent value="spot">
+                        {/* <TabContent value="spot">
                             <SpotTable
                                 {...{
                                     data: data as Spot[],
@@ -116,7 +115,7 @@ const Market = () => {
                                     tableData,
                                 }}
                             />
-                        </TabContent>
+                        </TabContent> */}
                     </div>
                 </Tabs>
             </AdaptableCard>

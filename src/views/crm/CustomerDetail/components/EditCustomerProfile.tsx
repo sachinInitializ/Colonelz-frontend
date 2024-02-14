@@ -22,8 +22,10 @@ const DrawerFooter = ({ onSaveClick, onCancel }: DrawerFooterProps) => {
     return (
         <div className="text-right w-full">
             <Button size="sm" className="mr-2" onClick={onCancel}>
+
                 Cancel
             </Button>
+            <Button variant='solid' onClick={() => navigate('/app/crm/project/momform')}>Add MOM</Button>
             <Button size="sm" variant="solid" onClick={onSaveClick}>
                 Save
             </Button>

@@ -19,11 +19,23 @@ type PersonalInfo = {
 }
 
 export type OrderHistory = {
-    id: string
-    item: string
-    status: string
+    mom_id: string
+    meetingdate: string
+    source: string
     amount: number
     date: number
+    
+    momid:string
+}
+export type Notes = {
+    content: string
+    
+}
+export type minutesofMeeting = {
+    id: string
+    mode: string
+    meetingDate:string
+
 }
 
 export type PaymentMethod = {
@@ -42,16 +54,22 @@ export type Subscription = {
     nextPaymentDate: number
     amount: number
 }
-
+type mom={
+   mom_id:string
+}
 export type Customer = {
     id: string
-    name: string
-    email: string
-    img: string
-    role: string
-    lastOnline: number
-    status: string
-    personalInfo: PersonalInfo
+    project_name: string
+    project_id:string
+    project_type:string
+    project_status:string
+    project_start_date:string
+    timeline_date:string
+    project_budget:string
+    description:string
+    notes: Notes
+    mom:[]
+    
 }
 
 type GetCrmCustomerDetailsResponse = Customer & {
@@ -69,7 +87,7 @@ type DeleteCrmCustomerRequest = { id: string }
 
 export type CustomerDetailState = {
     loading: boolean
-    profileData: Partial<Customer>
+    profileData: Customer
     subscriptionData: Subscription[]
     paymentHistoryData: OrderHistory[]
     paymentMethodData: PaymentMethod[]

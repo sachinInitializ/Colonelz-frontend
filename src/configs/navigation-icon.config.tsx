@@ -24,6 +24,11 @@ import {
     HiOutlineVariable,
     HiOutlineCode,
 } from 'react-icons/hi'
+import { MdOutlineDashboard } from "react-icons/md";
+import { LuWarehouse,LuFileStack } from "react-icons/lu";
+import { GoProject } from "react-icons/go";
+import { MdManageAccounts } from "react-icons/md";
+import { CiStopwatch } from "react-icons/ci";
 
 export type NavigationIcons = Record<string, JSX.Element>
 
@@ -31,7 +36,13 @@ const navigationIcon: NavigationIcons = {
     apps: <HiOutlineViewGridAdd />,
     project: <HiOutlineChartSquareBar />,
     crm: <HiOutlineUserGroup />,
-    sales: <HiOutlineTrendingUp />,
+    salesa: <HiOutlineTrendingUp />,
+    dashboard:<MdOutlineDashboard/>,
+    inventory:<LuWarehouse/>,
+    files:<LuFileStack/>,
+    projects:<GoProject/>,
+    lead:<MdManageAccounts/>,
+    mom:<CiStopwatch/>,
     crypto: <HiOutlineCurrencyDollar />,
     knowledgeBase: <HiOutlineBookOpen />,
     account: <HiOutlineUserCircle />,

@@ -44,7 +44,7 @@ export const projectList = [
         status: 'none',
         member: [
             {
-                name: 'Carolyn Perkins',
+                name: '  ',
                 img: '/img/avatars/thumb-1.jpg',
             },
             {
@@ -198,7 +198,7 @@ export const projectList = [
 ]
 
 export const projectDashboardData = {
-    userName: 'Carolyn Perkins',
+    userName: '  ',
     taskCount: 5,
     projectOverviewData: {
         chart: {
@@ -283,7 +283,7 @@ export const projectDashboardData = {
             assignees: [
                 {
                     id: '1',
-                    name: 'Carolyn Perkins',
+                    name: '  ',
                     email: 'eileen_h@hotmail.com',
                     img: '/img/avatars/thumb-1.jpg',
                 },
@@ -302,7 +302,7 @@ export const projectDashboardData = {
             assignees: [
                 {
                     id: '1',
-                    name: 'Carolyn Perkins',
+                    name: '  ',
                     email: 'eileen_h@hotmail.com',
                     img: '/img/avatars/thumb-1.jpg',
                 },
@@ -315,7 +315,7 @@ export const projectDashboardData = {
             assignees: [
                 {
                     id: '1',
-                    name: 'Carolyn Perkins',
+                    name: '  ',
                     email: 'eileen_h@hotmail.com',
                     img: '/img/avatars/thumb-1.jpg',
                 },
@@ -340,7 +340,7 @@ export const projectDashboardData = {
             assignees: [
                 {
                     id: '1',
-                    name: 'Carolyn Perkins',
+                    name: '  ',
                     email: 'eileen_h@hotmail.com',
                     img: '/img/avatars/thumb-1.jpg',
                 },
@@ -359,7 +359,7 @@ export const projectDashboardData = {
             assignees: [
                 {
                     id: '1',
-                    name: 'Carolyn Perkins',
+                    name: '  ',
                     email: 'eileen_h@hotmail.com',
                     img: '/img/avatars/thumb-1.jpg',
                 },
@@ -403,7 +403,7 @@ export const projectDashboardData = {
             dateTime: 1646580000,
             ticket: 'PD-979',
             status: 0,
-            userName: 'Carolyn Perkins',
+            userName: '  ',
             userImg: '',
         },
         {
@@ -458,7 +458,7 @@ const toBeProcessCards = [
         members: [
             {
                 id: '1',
-                name: 'Carolyn Perkins',
+                name: '  ',
                 email: 'eileen_h@hotmail.com',
                 img: '/img/avatars/thumb-1.jpg',
             },
@@ -600,7 +600,7 @@ const processingCards = [
         comments: [
             {
                 id: 'afPugkEmkp',
-                name: 'Carolyn Perkins',
+                name: '  ',
                 src: '/img/avatars/thumb-1.jpg',
                 message: '',
                 date: new Date(y, 5, 16),
@@ -865,7 +865,7 @@ const completedCards = [
 export const issueData = {
     ticketId: '#PD-127',
     title: 'API not working',
-    createdBy: 'Carolyn Perkins',
+    createdBy: '  ',
     underProject: 'Sprint 2',
     description: `<p>Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.</p>
 	<p>Enslave the hooman pounce on unsuspecting person or tuxedo cats always looking dapper yet poop on grasses or growl at dogs in my sleep but love blinks and purr purr purr purr yawn.</p>
@@ -907,13 +907,13 @@ export const issueData = {
         },
         {
             type: 'ASSIGN',
-            name: 'Carolyn Perkins',
+            name: '  ',
             time: '4h ago',
             assignees: ['Frederick Adams', 'Joyce Freeman'],
         },
         {
             type: 'TAG',
-            name: 'Carolyn Perkins',
+            name: '  ',
             time: '4h ago',
             labels: [
                 {
@@ -928,7 +928,7 @@ export const issueData = {
         },
         {
             type: 'COMMENT',
-            name: 'Carolyn Perkins',
+            name: '  ',
             img: '/img/avatars/thumb-1.jpg',
             time: '4h ago',
             comment:

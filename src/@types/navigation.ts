@@ -7,5 +7,5 @@ export interface NavigationTree {
     icon: string
     type: 'title' | 'collapse' | 'item'
     authority: string[]
-    subMenu: NavigationTree[]
+    
 }

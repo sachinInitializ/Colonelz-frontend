@@ -50,7 +50,7 @@ const PageContainer = (props: PageContainerProps) => {
                         <div
                             className={classNames(
                                 contained && 'container mx-auto',
-                                'flex items-center justify-between mb-4'
+                                'flex items-center justify-between mb-4 '
                             )}
                         >
                             <div>

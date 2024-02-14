@@ -30,7 +30,7 @@ const Advance = () => {
                 >
                     <p className="my-1 flex items-center">
                         <span className="font-semibold text-gray-900 dark:text-gray-100">
-                            Carolyn Perkins{' '}
+                              {' '}
                         </span>
                         <span className="mx-2">has change the status to </span>
                         <Badge className="bg-emerald-500" />

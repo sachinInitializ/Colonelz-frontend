@@ -306,7 +306,7 @@ function _DataTable<T>(
                                     <Tr key={row.id}>
                                         {row.getVisibleCells().map((cell) => {
                                             return (
-                                                <Td key={cell.id}>
+                                                <Td key={cell.id} className=' capitalize'>
                                                     {flexRender(
                                                         cell.column.columnDef
                                                             .cell,

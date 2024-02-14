@@ -6,7 +6,7 @@ const Example = () => {
 
 const arr = [
 	{
-		name: 'Carolyn Perkins',
+		name: '  ',
 		email: 'eileen_h@hotmail.com',
 	},
 	{

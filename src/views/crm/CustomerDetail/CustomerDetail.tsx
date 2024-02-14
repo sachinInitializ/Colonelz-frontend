@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import AdaptableCard from '@/components/shared/AdaptableCard'
 import Loading from '@/components/shared/Loading'
 import Container from '@/components/shared/Container'
@@ -12,6 +12,17 @@ import reducer, { getCustomer, useAppDispatch, useAppSelector } from './store'
 import { injectReducer } from '@/store'
 import isEmpty from 'lodash/isEmpty'
 import useQuery from '@/utils/hooks/useQuery'
+import MOM from './components/Mom'
+import { Tabs } from '@/components/ui'
+import TabList from '@/components/ui/Tabs/TabList'
+import TabNav from '@/components/ui/Tabs/TabNav'
+import TabContent from '@/components/ui/Tabs/TabContent'
+import PersonalInfoForm from '../CustomerForm/PersonalInfoForm'
+import { log } from 'console'
+import { useLocation, useParams } from 'react-router-dom'
+import { fetchDetails } from '../services/api'
+import Contract from './components/Contract'
+import AllMom from './components/AllMom'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -21,7 +32,7 @@ const CustomerDetail = () => {
     const query = useQuery()
 
     const data = useAppSelector(
-        (state) => state.crmCustomerDetails.data.profileData
+        (state) => state.crmCustomerDetails
     )
     const loading = useAppSelector(
         (state) => state.crmCustomerDetails.data.loading
@@ -33,42 +44,86 @@ const CustomerDetail = () => {
     }, [])
 
     const fetchData = () => {
-        const id = query.get('id')
+        const id = query.get('lead_id')
         if (id) {
             dispatch(getCustomer({ id }))
         }
     }
 
-    return (
-        <Container className="h-full">
-            <Loading loading={loading}>
-                {!isEmpty(data) && (
-                    <div className="flex flex-col xl:flex-row gap-4">
-                        <div>
-                            <CustomerProfile data={data} />
-                        </div>
-                        <div className="w-full">
-                            <AdaptableCard>
-                                <CurrentSubscription />
-                                <PaymentHistory />
-                                <PaymentMethods />
-                            </AdaptableCard>
-                        </div>
-                    </div>
-                )}
-            </Loading>
-            {!loading && isEmpty(data) && (
-                <div className="h-full flex flex-col items-center justify-center">
-                    <DoubleSidedImage
-                        src="/img/others/img-2.png"
-                        darkModeSrc="/img/others/img-2-dark.png"
-                        alt="No user found!"
-                    />
-                    <h3 className="mt-8">No user found!</h3>
-                </div>
-            )}
-        </Container>
-    )
-}
+    
+  
+    
+    interface QueryParams {
+        id: string;
+        project_id: string;
+        mom:string
+      
+      }
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    
+    // Create an object to store and map the query parameters
+    const allQueryParams: QueryParams = {
+      id: queryParams.get('id') || '',
+      project_id: queryParams.get('project_id') || '',
+      mom: queryParams.get('type') || '',
+      
+
+    };
+    console.log(allQueryParams.mom);
+    
+    const [details, setDetails] = useState<any | null>(null);
+    const[momdata,setmomdata]= useState<any | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getsingle/project/?project_id=${allQueryParams.project_id}&id=${allQueryParams.id}`);
+                const data = await response.json();
+                setDetails(data.data[0]);
+                setmomdata(data.data[0].mom)
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [allQueryParams.id]);
+    console.log(momdata);
+      return (
+        <div>
+        <Tabs defaultValue={allQueryParams.mom}>
+            <TabList>
+                <TabNav value="tab1">Details</TabNav>
+                <TabNav value="tab2">Quotation</TabNav>
+                <TabNav value="mom">MOM</TabNav>
+                <TabNav value="tab4">Contract</TabNav>
+                <TabNav value="tab5">All MOM</TabNav>
+            </TabList>
+            <div className="p-4">
+                <TabContent value="tab1">
+                    <Container>
+                        <CustomerProfile data={details}/>
+                    </Container>
+                </TabContent>
+                <TabContent value="tab2">
+                   <PaymentHistory/>
+                </TabContent>
+                <TabContent value="mom">
+                  <MOM data={momdata} />
+                </TabContent>
+                <TabContent value="tab4">
+                  <Contract/>
+                </TabContent>
+                <TabContent value="tab5">
+                  <AllMom data={momdata}/>
+                </TabContent>
+            </div>
+        </Tabs>
+    </div>
+      );
+ 
+};
+
 
 export default CustomerDetail

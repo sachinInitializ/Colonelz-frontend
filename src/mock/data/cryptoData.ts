@@ -14,21 +14,21 @@ export const portfolioData = {
         series: [
             {
                 name: 'Bitcoin',
-                data: [
+                all: [
                     16375, 18954, 16869, 19569, 17381, 18981, 21403, 18902,
                     20244, 19706,
                 ],
             },
             {
                 name: 'Ethereum',
-                data: [
+                all: [
                     10689, 12646, 11420, 13520, 11655, 13826, 13092, 13805,
                     12560, 13993,
                 ],
             },
             {
                 name: 'Solana',
-                data: [
+                all: [
                     8163, 8921, 8337, 9614, 9063, 9998, 9041, 10224, 9332,
                     10379,
                 ],
@@ -52,7 +52,7 @@ export const portfolioData = {
     recentAcivity: [
         {
             date: 'June 3, 2022',
-            data: [
+            all: [
                 {
                     coinValue: 0.0383522,
                     fiatValue: 1161.5,
@@ -73,7 +73,7 @@ export const portfolioData = {
         },
         {
             date: 'June 2, 2022',
-            data: [
+            all: [
                 {
                     coinValue: 3.1754361,
                     fiatValue: 5779.13,
@@ -342,16 +342,23 @@ export const transactionHistoryData = [
     },
 ]
 
+const responseProject = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
+const jsonProject = await responseProject.json();
+
+
 export const marketData = {
     all: [
         {
-            name: 'Bitcoin',
+            name: 'Devashish',
             symbol: 'BTC',
             price: 29877.3,
             change: -5.06,
             volumn: 35664.61,
             marketCap: 570114.24,
             img: '/img/thumbs/bitcoin.png',
+            total_project: "22",
+            Execution_Phase: "1",
+            Design_Phase: "3",
         },
         {
             name: 'Ethereum',
@@ -751,7 +758,7 @@ export const cryptoDashboardData = {
             series: [
                 {
                     name: 'Porfolio Balance',
-                    data: [
+                    all: [
                         24773.31, 33188.05, 29175.61, 36728.42, 34730.97,
                         43912.42, 40774.19,
                     ],
@@ -771,7 +778,7 @@ export const cryptoDashboardData = {
             series: [
                 {
                     name: 'Porfolio Balance',
-                    data: [
+                    all: [
                         14576.39, 23895.12, 19473.64, 26454.96, 24741.98,
                         33153.32, 30218.32, 37645.11, 35556.15, 38886.34,
                         36135.95, 45966.12,
@@ -797,7 +804,7 @@ export const cryptoDashboardData = {
             series: [
                 {
                     name: 'Porfolio Balance',
-                    data: [
+                    all: [
                         20874.12, 26583.56, 23943.65, 24453.84, 22473.43,
                         29185.37, 27815.48, 36834.69, 32422.11, 35888.32,
                         32112.84, 38764.22,
@@ -823,7 +830,7 @@ export const cryptoDashboardData = {
     recentAcivityData: [
         {
             date: 'June 3, 2022',
-            data: [
+            all: [
                 {
                     coinValue: 0.0383522,
                     fiatValue: 1161.5,
@@ -844,7 +851,7 @@ export const cryptoDashboardData = {
         },
         {
             date: 'June 2, 2022',
-            data: [
+            all: [
                 {
                     coinValue: 3.1754361,
                     fiatValue: 5779.13,

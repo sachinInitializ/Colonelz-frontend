@@ -12,15 +12,21 @@ export type LeadRegion = {
     name: string
     value: number
 }
+export type Customer = {
+    clientName: string
+    status:string
+    leadDate: Date
+    phone:number
+    email:string
+}
 
 export type Lead = {
     id: number
-    name: string
-    avatar: string
-    status: number
-    createdTime: number
-    email: string
-    assignee: string
+    projectName: string
+    phase: string
+    projectType: number
+    clientName: string
+    estimatedCompletion: string
 }
 
 export type Emails = {
@@ -59,6 +65,8 @@ export const getCrmDashboardData = createAsyncThunk(
         return response.data
     }
 )
+console.log(getCrmDashboardData());
+
 
 const initialState: CrmDashboardState = {
     loading: true,

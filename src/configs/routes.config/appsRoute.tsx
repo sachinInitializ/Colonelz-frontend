@@ -38,27 +38,55 @@ const appsRoute: Routes = [
         authority: [ADMIN, USER],
     },
     {
-        key: 'appsCrm.calendar',
-        path: `${APP_PREFIX_PATH}/crm/calendar`,
-        component: lazy(() => import('@/views/crm/Calendar')),
+        key: 'appsCrm.form',
+        path: `${APP_PREFIX_PATH}/crm/project/momform`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/MomForm')),
         authority: [ADMIN, USER],
     },
     {
-        key: 'appsCrm.customers',
-        path: `${APP_PREFIX_PATH}/crm/customers`,
-        component: lazy(() => import('@/views/crm/Customers')),
+        key: 'appsCrm.inventory',
+        path: `${APP_PREFIX_PATH}/crm/Inventory`,
+        component: lazy(() => import('@/views/crm/Projects')),
         authority: [ADMIN, USER],
-        meta: {
-            header: 'Customers',
-        },
     },
+    // {
+    //     key: 'appsCrm.customers',
+    //     path: `${APP_PREFIX_PATH}/crm/projects`,
+    //     component: lazy(() => import('@/views/crm/ProjectList')),
+    //     authority: [ADMIN, USER],
+    //     meta: {
+          
+    //     },
+    // },
     {
         key: 'appsCrm.customerDetails',
         path: `${APP_PREFIX_PATH}/crm/customer-details`,
         component: lazy(() => import('@/views/crm/CustomerDetail')),
         authority: [ADMIN, USER],
         meta: {
-            header: 'Customer Details',
+            header: 'Project Details',
+            headerContainer: true,
+        },
+    },
+    {
+        key: 'appsSales.MOM',
+        path: `${APP_PREFIX_PATH}/crm/MOM`,
+        component: lazy(() => import('@/views/crm/Inventory')),
+        authority: [ADMIN, USER],
+    },
+    {
+        key: 'appsSales.allmom',
+        path: `${APP_PREFIX_PATH}/crm/allmom`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/AllMom')),
+        authority: [ADMIN, USER],
+    },
+    {
+        key: 'appsCrm.customerDetails',
+        path: `${APP_PREFIX_PATH}/crm/lead`,
+        component: lazy(() => import('@/views/crm/LeadsDetails')),
+        authority: [ADMIN, USER],
+        meta: {
+            header: 'Lead Details',
             headerContainer: true,
         },
     },
@@ -66,6 +94,16 @@ const appsRoute: Routes = [
         key: 'appsCrm.mail',
         path: `${APP_PREFIX_PATH}/crm/mail`,
         component: lazy(() => import('@/views/crm/Mail')),
+        authority: [ADMIN, USER],
+        meta: {
+            pageContainerType: 'gutterless',
+            footer: false,
+        },
+    },
+    {
+        key: 'appsCrm.mail',
+        path: `${APP_PREFIX_PATH}/crm/projectfo`,
+        component: lazy(() => import('@/views/crm/CrmDashboard/ProductNew')),
         authority: [ADMIN, USER],
         meta: {
             pageContainerType: 'gutterless',
@@ -83,6 +121,34 @@ const appsRoute: Routes = [
         },
     },
     {
+        key: 'appsSales.productNew',
+        path: `${APP_PREFIX_PATH}/crm/lead-new`,
+        component: lazy(() => import('@/views/crm/CrmDashboard/LeadNew')),
+        authority: [ADMIN, USER],
+        meta: {
+            header: 'Add Lead',
+        },
+    },
+    {
+        key: 'appsSales.productEdit',
+        path: `${APP_PREFIX_PATH}/sales/product-edit/:productId`,
+        component: lazy(() => import('@/views/sales/ProductEdit')),
+        authority: [ADMIN, USER],
+        meta: {
+            header: 'Edit Product',
+        },
+    },
+    {
+        key: 'appsSales.productEdit',
+        path: `${APP_PREFIX_PATH}/crm/lead-edit`,
+        component: lazy(() => import('@/views/sales/ProductEdit')),
+        authority: [ADMIN, USER],
+        meta: {
+            header: 'Edit Product',
+        },
+    },
+
+    {
         key: 'appsSales.dashboard',
         path: `${APP_PREFIX_PATH}/sales/dashboard`,
         component: lazy(() => import('@/views/sales/SalesDashboard')),
@@ -90,8 +156,14 @@ const appsRoute: Routes = [
     },
     {
         key: 'appsSales.productList',
-        path: `${APP_PREFIX_PATH}/sales/product-list`,
-        component: lazy(() => import('@/views/sales/ProductList')),
+        path: `${APP_PREFIX_PATH}/leads`,
+        component: lazy(() => import('@/views/crm/LeadList')),
+        authority: [ADMIN, USER],
+    },
+    {
+        key: 'appsSales.orders-details',
+        path: `${APP_PREFIX_PATH}//sales/orders-details/:orderId`,
+        component: lazy(() => import('@/views/sales/OrderDetails')),
         authority: [ADMIN, USER],
     },
     {
@@ -105,23 +177,41 @@ const appsRoute: Routes = [
     },
     {
         key: 'appsSales.productNew',
-        path: `${APP_PREFIX_PATH}/sales/product-new`,
+        path: `${APP_PREFIX_PATH}/crm/projectform`,
         component: lazy(() => import('@/views/sales/ProductNew')),
         authority: [ADMIN, USER],
         meta: {
-            header: 'Add New Product',
+            header: 'Add Project',
+        },
+    },
+    {
+        key: 'appsSales.productNew',
+        path: `${APP_PREFIX_PATH}/crm/lead-project`,
+        component: lazy(() => import('@/views/crm/ProjectNew')),
+        authority: [ADMIN, USER],
+        meta: {
+            header: 'Add Project',
         },
     },
     {
         key: 'appsSales.orderList',
         path: `${APP_PREFIX_PATH}/sales/order-list`,
-        component: lazy(() => import('@/views/sales/OrderList')),
+        component: lazy(() => import('@/views/crm/Inventory')),
         authority: [ADMIN, USER],
     },
     {
+        key: 'appsCrypto.market',
+        path: `${APP_PREFIX_PATH}/crm/projectslist`,
+        component: lazy(() => import('@/views/crm/Customers')),
+        authority: [ADMIN, USER],
+        meta: {
+            
+        },
+    },
+    {
         key: 'appsSales.orderDetails',
-        path: `${APP_PREFIX_PATH}/sales/order-details/:orderId`,
-        component: lazy(() => import('@/views/sales/OrderDetails')),
+        path: `${APP_PREFIX_PATH}/crm/customer-details?id=8`,
+        component: lazy(() => import('@/views/crm/CustomerDetail')),
         authority: [ADMIN, USER],
     },
     {
@@ -183,7 +273,7 @@ const appsRoute: Routes = [
                 () =>
                     import(
                         '@/views/knowledge-base/ManageArticles/components/PanelHeader'
-                    )
+                    ),
             ),
             headerContainer: true,
         },

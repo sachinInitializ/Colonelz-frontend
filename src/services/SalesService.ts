@@ -34,7 +34,7 @@ export async function apiGetSalesProduct<T, U extends Record<string, unknown>>(
     params: U
 ) {
     return ApiService.fetchData<T>({
-        url: 'https://col-u3yp.onrender.com/v1/api/admin/getall/lead/',
+        url: '/sales/product',
         method: 'get',
         params,
     })

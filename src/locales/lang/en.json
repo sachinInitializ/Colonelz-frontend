@@ -6,30 +6,33 @@
             "dashboard": "Dashboard",
             "projectList": "Project List",
             "scrumBoard": "Scrum Board",
+            "market":"Project",
             "issue": "Issue"
         },
         "appsCrm": {
             "crm": "CRM",
             "dashboard": "Dashboard",
+            "fileManager":"File Manager",
             "calendar": "Calendar",
-            "customers": "Customers",
+            "customers": "Projects",
             "customerDetails": "Customer Details",
             "mail": "Mail"
         },
         "appsSales": {
             "sales": "Sales",
             "dashboard": "Dashboard",
-            "productList": "Product List",
+            "fileManager": "File Manager",
+            "productList": "Lead Management",
             "productEdit": "Product Edit",
             "productNew": "New Product",
-            "orderList": "Order List",
+            "orderList": "MOM",
             "orderDetails": "Order Details"
         },
         "appsCrypto": {
             "crypto": "Crypto",
             "dashboard": "Dashboard",
             "portfolio": "Portfolio",
-            "market": "Market",
+            "market": "Project",
             "wallets": "Wallets"
         },
         "appsknowledgeBase": {

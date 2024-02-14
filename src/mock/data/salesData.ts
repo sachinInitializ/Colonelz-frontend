@@ -1,3 +1,19 @@
+import axios, { AxiosResponse } from 'axios';
+import { useEffect, useState } from 'react';
+import { IoReturnUpBack } from 'react-icons/io5';
+
+interface Lead {
+  id: string;
+  name: string;
+  leadDate: string;
+  phoneNumber: string;
+  email: string;
+  status: string;
+  // Add other properties based on the API response
+}
+
+
+
 export const salesDashboardData = {
     statisticData: {
         revenue: {
@@ -142,457 +158,186 @@ export const salesDashboardData = {
     },
 }
 
-export const productsData = [
-    {
-        id: '12',
-        name: 'Luminaire Giotto Headphones',
-        productCode: 'BIS-012',
-        img: '/img/products/product-1.jpg',
-        imgList: [
-            {
-                id: '12-img-0',
-                name: 'image-1',
-                img: '/img/products/product-1.jpg',
-            },
-            {
-                id: '12-img-1',
-                name: 'image-2',
-                img: '/img/products/product-1-2.jpg',
-            },
-            {
-                id: '12-img-2',
-                name: 'image-3',
-                img: '/img/products/product-1-3.jpg',
-            },
-            {
-                id: '12-img-3',
-                name: 'image-4',
-                img: '/img/products/product-1-4.jpg',
-            },
-        ],
-        category: 'devices',
-        price: 252,
-        stock: 46,
-        status: 0,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Luminaire',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '13',
-        name: 'White Backpack',
-        productCode: 'BIS-013',
-        img: '/img/products/product-2.jpg',
-        imgList: [
-            {
-                id: '13-img-0',
-                name: 'image-1',
-                img: '/img/products/product-2.jpg',
-            },
-            {
-                id: '13-img-1',
-                name: 'image-2',
-                img: '/img/products/product-2-2.jpg',
-            },
-        ],
-        category: 'bags',
-        price: 139,
-        stock: 28,
-        status: 0,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Adidas',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '14',
-        name: 'Black Sneaker',
-        productCode: 'BIS-014',
-        img: '/img/products/product-3.jpg',
-        imgList: [
-            {
-                id: '14-img-0',
-                name: 'image-1',
-                img: '/img/products/product-3.jpg',
-            },
-        ],
-        category: 'shoes',
-        price: 99,
-        stock: 52,
-        status: 0,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Adidas',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '15',
-        name: 'Gray Hoodies',
-        productCode: 'BIS-015',
-        img: '/img/products/product-4.jpg',
-        imgList: [
-            {
-                id: '15-img-0',
-                name: 'image-1',
-                img: '/img/products/product-4.jpg',
-            },
-        ],
-        category: 'cloths',
-        price: 68,
-        stock: 92,
-        status: 0,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Adidas',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '16',
-        name: 'Blue Backpack',
-        productCode: 'BIS-016',
-        img: '/img/products/product-5.jpg',
-        imgList: [
-            {
-                id: '16-img-0',
-                name: 'image-1',
-                img: '/img/products/product-5.jpg',
-            },
-        ],
-        category: 'bags',
-        price: 70,
-        stock: 0,
-        status: 2,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Adidas',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '17',
-        name: 'White Sneaker',
-        productCode: 'BIS-017',
-        img: '/img/products/product-6.jpg',
-        imgList: [
-            {
-                id: '17-img-0',
-                name: 'image-1',
-                img: '/img/products/product-6.jpg',
-            },
-        ],
-        category: 'shoes',
-        price: 29,
-        stock: 18,
-        status: 0,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Adidas',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '18',
-        name: 'Strip Analog Watch',
-        productCode: 'BIS-018',
-        img: '/img/products/product-7.jpg',
-        imgList: [
-            {
-                id: '18-img-0',
-                name: 'image-1',
-                img: '/img/products/product-7.jpg',
-            },
-        ],
-        category: 'watches',
-        price: 389,
-        stock: 7,
-        status: 1,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Adidas',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '19',
-        name: 'Beats Solo Headphone',
-        productCode: 'BIS-019',
-        img: '/img/products/product-8.jpg',
-        imgList: [
-            {
-                id: '19-img-0',
-                name: 'image-1',
-                img: '/img/products/product-8.jpg',
-            },
-        ],
-        category: 'devices',
-        price: 869,
-        stock: 0,
-        status: 2,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Beat',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '20',
-        name: 'Apple Macbook Pro',
-        productCode: 'BIS-020',
-        img: '/img/products/product-9.jpg',
-        imgList: [
-            {
-                id: '20-img-0',
-                name: 'image-1',
-                img: '/img/products/product-9.jpg',
-            },
-        ],
-        category: 'devices',
-        price: 1599,
-        stock: 27,
-        status: 0,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Apple',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '21',
-        name: 'Bronze Analog Watch',
-        productCode: 'BIS-021',
-        img: '/img/products/product-10.jpg',
-        imgList: [
-            {
-                id: '21-img-0',
-                name: 'image-1',
-                img: '/img/products/product-10.jpg',
-            },
-        ],
-        category: 'watches',
-        price: 729,
-        stock: 6,
-        status: 1,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Seiko',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '22',
-        name: 'Apple Watch',
-        productCode: 'BIS-022',
-        img: '/img/products/product-11.jpg',
-        imgList: [
-            {
-                id: '22-img-0',
-                name: 'image-1',
-                img: '/img/products/product-11.jpg',
-            },
-        ],
-        category: 'devices',
-        price: 388,
-        stock: 51,
-        status: 0,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Apple',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-    {
-        id: '23',
-        name: 'Antique Analog Watch',
-        productCode: 'BIS-023',
-        img: '/img/products/product-12.jpg',
-        imgList: [
-            {
-                id: '23-img-0',
-                name: 'image-1',
-                img: '/img/products/product-12.jpg',
-            },
-        ],
-        category: 'watches',
-        price: 599,
-        stock: 30,
-        status: 0,
-        costPerItem: 12,
-        bulkDiscountPrice: 68,
-        taxRate: 6,
-        tags: ['trend', 'unisex'],
-        brand: 'Seiko',
-        vendor: 'WindForce co, Ltd',
-        description:
-            '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-    },
-]
 
-export const ordersData = [
-    {
-        id: '95954',
-        date: 1660132800,
-        customer: 'Ron Vargas',
-        status: 0,
-        paymentMehod: 'visa',
-        paymentIdendifier: '•••• 6165',
-        totalAmount: 168,
-    },
-    {
-        id: '95423',
-        date: 1659132800,
-        customer: 'Carolyn Hanso',
-        status: 0,
-        paymentMehod: 'visa',
-        paymentIdendifier: '•••• 7128',
-        totalAmount: 523,
-    },
-    {
-        id: '92903',
-        date: 1658132800,
-        customer: 'Gabriella May',
-        status: 0,
-        paymentMehod: 'paypal',
-        paymentIdendifier: '••••@gmail.com',
-        totalAmount: 81,
-    },
-    {
-        id: '92627',
-        date: 1657332800,
-        customer: 'Tara Fletcher',
-        status: 0,
-        paymentMehod: 'master',
-        paymentIdendifier: '•••• 0921',
-        totalAmount: 279,
-    },
-    {
-        id: '92509',
-        date: 1656232800,
-        customer: 'Joyce Freeman',
-        status: 1,
-        paymentMehod: 'visa',
-        paymentIdendifier: '•••• 1232',
-        totalAmount: 831,
-    },
-    {
-        id: '91631',
-        date: 1655532800,
-        customer: 'Brittany Hale',
-        status: 0,
-        paymentMehod: 'visa',
-        paymentIdendifier: '•••• 4597',
-        totalAmount: 142,
-    },
-    {
-        id: '90963',
-        date: 1654932800,
-        customer: 'Luke Cook',
-        status: 0,
-        paymentMehod: 'master',
-        paymentIdendifier: '•••• 3881',
-        totalAmount: 232,
-    },
-    {
-        id: '89332',
-        date: 1654132800,
-        customer: 'Eileen Horton',
-        status: 1,
-        paymentMehod: 'paypal',
-        paymentIdendifier: '••••@gmail.com',
-        totalAmount: 597,
-    },
-    {
-        id: '89107',
-        date: 1650132800,
-        customer: 'Frederick Adams',
-        status: 2,
-        paymentMehod: 'visa',
-        paymentIdendifier: '•••• 3356',
-        totalAmount: 72,
-    },
-    {
-        id: '89021',
-        date: 1649832800,
-        customer: 'Lee Wheeler',
-        status: 0,
-        paymentMehod: 'master',
-        paymentIdendifier: '•••• 9564',
-        totalAmount: 110,
-    },
-    {
-        id: '88911',
-        date: 1649432800,
-        customer: 'Gail Barnes',
-        status: 0,
-        paymentMehod: 'visa',
-        paymentIdendifier: '•••• 1357',
-        totalAmount: 59,
-    },
-    {
-        id: '87054',
-        date: 1647932800,
-        customer: 'Ella Robinson',
-        status: 0,
-        paymentMehod: 'visa',
-        paymentIdendifier: '•••• 3561',
-        totalAmount: 238,
-    },
-    {
-        id: '86497',
-        date: 1647632800,
-        customer: 'Lloyd Obrien',
-        status: 2,
-        paymentMehod: 'visa',
-        paymentIdendifier: '•••• 0443',
-        totalAmount: 189,
-    },
-    {
-        id: '86212',
-        date: 1646832800,
-        customer: 'Tara Fletcher',
-        status: 0,
-        paymentMehod: 'paypal',
-        paymentIdendifier: '••••@gmail.com',
-        totalAmount: 672,
-    },
-]
+
+  
+  
+  
+
+
+
+
+const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/');
+const jsonData = await response.json();
+export const productsData=jsonData.data
+
+const responseProject = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
+const jsonProject = await responseProject.json();
+export const projectdata=jsonProject
+       
+// export const productsData=[
+//     {
+//       _id: "65c35bd30bd5c3b0ec1ed5bb",
+//       name: "Devashish Gupta",
+//       lead_id: "833500",
+//       email: "Devashishgupta20102000@gmail.com",
+//       phone: "+916389707199",
+//       location: "delhi",
+//       status: "Follow Up",
+//       source: "Online",
+//       notes: [
+//         {
+//           content: "this is a candidate referred by arvind",
+//           createdBy: "Admin",
+//           _id: "65c35bd30bd5c3b0ec1ed5bc",
+//           createdAt: "2024-02-07T10:30:43.883Z",
+//         },
+//       ],
+//       createdAt: "2024-02-07T10:30:43.883Z",
+//       __v: 0,
+//     },
+//   ];
+
+
+const response1 = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project/mom');
+const jsonData1= await response1.json();
+
+export const ordersData =jsonData1.data
+
+// export const ordersData = [
+//     {
+//         id: '95954',
+//         date: 1660132800,
+//         customer: 'Ron Vargas',
+//         status: 0,
+//         paymentMehod: 'visa',
+//         paymentIdendifier: '•••• 6165',
+//         totalAmount: 168,
+//     },
+//     {
+//         id: '95423',
+//         date: 1659132800,
+//         customer: 'Carolyn Hanso',
+//         status: 0,
+//         paymentMehod: 'visa',
+//         paymentIdendifier: '•••• 7128',
+//         totalAmount: 523,
+//     },
+//     {
+//         id: '92903',
+//         date: 1658132800,
+//         customer: 'Gabriella May',
+//         status: 0,
+//         paymentMehod: 'paypal',
+//         paymentIdendifier: '••••@gmail.com',
+//         totalAmount: 81,
+//     },
+//     {
+//         id: '92627',
+//         date: 1657332800,
+//         customer: 'Tara Fletcher',
+//         status: 0,
+//         paymentMehod: 'master',
+//         paymentIdendifier: '•••• 0921',
+//         totalAmount: 279,
+//     },
+//     {
+//         id: '92509',
+//         date: 1656232800,
+//         customer: 'Joyce Freeman',
+//         status: 1,
+//         paymentMehod: 'visa',
+//         paymentIdendifier: '•••• 1232',
+//         totalAmount: 831,
+//     },
+//     {
+//         id: '91631',
+//         date: 1655532800,
+//         customer: 'Brittany Hale',
+//         status: 0,
+//         paymentMehod: 'visa',
+//         paymentIdendifier: '•••• 4597',
+//         totalAmount: 142,
+//     },
+//     {
+//         id: '90963',
+//         date: 1654932800,
+//         customer: 'Luke Cook',
+//         status: 0,
+//         paymentMehod: 'master',
+//         paymentIdendifier: '•••• 3881',
+//         totalAmount: 232,
+//     },
+//     {
+//         id: '89332',
+//         date: 1654132800,
+//         customer: 'Eileen Horton',
+//         status: 1,
+//         paymentMehod: 'paypal',
+//         paymentIdendifier: '••••@gmail.com',
+//         totalAmount: 597,
+//     },
+//     {
+//         id: '89107',
+//         date: 1650132800,
+//         customer: 'Frederick Adams',
+//         status: 2,
+//         paymentMehod: 'visa',
+//         paymentIdendifier: '•••• 3356',
+//         totalAmount: 72,
+//     },
+//     {
+//         id: '89021',
+//         date: 1649832800,
+//         customer: 'Lee Wheeler',
+//         status: 0,
+//         paymentMehod: 'master',
+//         paymentIdendifier: '•••• 9564',
+//         totalAmount: 110,
+//     },
+//     {
+//         id: '88911',
+//         date: 1649432800,
+//         customer: 'Gail Barnes',
+//         status: 0,
+//         paymentMehod: 'visa',
+//         paymentIdendifier: '•••• 1357',
+//         totalAmount: 59,
+//     },
+//     {
+//         id: '87054',
+//         date: 1647932800,
+//         customer: 'Ella Robinson',
+//         status: 0,
+//         paymentMehod: 'visa',
+//         paymentIdendifier: '•••• 3561',
+//         totalAmount: 238,
+//     },
+//     {
+//         id: '86497',
+//         date: 1647632800,
+//         customer: 'Lloyd Obrien',
+//         status: 2,
+//         paymentMehod: 'visa',
+//         paymentIdendifier: '•••• 0443',
+//         totalAmount: 189,
+//     },
+//     {
+//         id: '86212',
+//         date: 1646832800,
+//         customer: 'Tara Fletcher',
+//         status: 0,
+//         paymentMehod: 'paypal',
+//         paymentIdendifier: '••••@gmail.com',
+//         totalAmount: 672,
+//     },
+// ]
+
+
+
+
+
+
 
 export const orderDetailsData = [
     {

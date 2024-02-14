@@ -52,7 +52,7 @@ export default function salesFakeApi(server: Server, apiPrefix: string) {
         }
     )
 
-    server.get(`${apiPrefix}/sales/product`, (schema, { queryParams }) => {
+    server.get(`https://col-u3yp.onrender.com/v1/api/admin/getall/lead/`, (schema, { queryParams }) => {
         const id = queryParams.id
         const product = schema.db.productsData.find(id)
         return product

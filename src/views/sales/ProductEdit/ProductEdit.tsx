@@ -52,7 +52,7 @@ const ProductEdit = () => {
     }
 
     const handleDiscard = () => {
-        navigate('/app/sales/product-list')
+        navigate('/app/sales/ProductList')
     }
 
     const handleDelete = async (setDialogOpen: OnDeleteCallback) => {
@@ -76,7 +76,7 @@ const ProductEdit = () => {
                 placement: 'top-center',
             }
         )
-        navigate('/app/sales/product-list')
+        navigate('/app/leads')
     }
 
     useEffect(() => {

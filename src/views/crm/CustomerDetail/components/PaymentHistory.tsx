@@ -11,6 +11,8 @@ import {
 import { NumericFormat } from 'react-number-format'
 import { useAppSelector, OrderHistory } from '../store'
 import dayjs from 'dayjs'
+import { Button } from '@/components/ui'
+import { HiPlusCircle } from 'react-icons/hi'
 
 const { Tr, Th, Td, THead, TBody, Sorter } = Table
 
@@ -103,8 +105,16 @@ const PaymentHistory = () => {
     })
 
     return (
-        <div className="mb-8">
-            <h6 className="mb-4">Payment History</h6>
+        <div className="mb-4">
+               <div  className='flex items-center justify-between mb-4'>
+                <div></div>
+                <div className=''>
+            <Button block variant="solid" size="sm" icon={<HiPlusCircle/>}>
+                    Add Quotation
+                </Button>
+                </div>
+          
+                </div>
             <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (

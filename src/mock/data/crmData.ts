@@ -9,31 +9,30 @@ function getDate(dayString: string) {
 
     return dayString.replace('YEAR', year).replace('MONTH', month)
 }
+const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
+const jsonData = await response.json();
+
+
 
 export const crmDashboardData = {
     statisticData: [
+       
         {
-            key: 'newLeads',
-            label: 'New Leads',
-            value: 63,
-            growShrink: 2.6,
-        },
-        {
-            key: 'emailResponse',
-            label: 'Email',
-            value: 25,
+            key: 'inProgress',
+            label: 'Execution',
+            value: jsonData.data.Execution_Phase,
             growShrink: 5.5,
         },
         {
-            key: 'proposals',
-            label: 'Proposals',
-            value: 49,
+            key: 'inReview',
+            label: 'Design',
+            value: jsonData.data.Design_Phase,
             growShrink: -0.7,
         },
         {
-            key: 'appointment',
-            label: 'Appointment',
-            value: 12,
+            key: 'completed',
+            label: 'Completed',
+            value: jsonData.data.completed,
             growShrink: 2.6,
         },
     ],
@@ -66,59 +65,77 @@ export const crmDashboardData = {
     recentLeadsData: [
         {
             id: 1,
-            name: 'Eileen Horton',
-            avatar: '/img/avatars/thumb-1.jpg',
-            status: 0,
-            createdTime: 1623430400,
-            email: 'eileen_h@hotmail.com',
-            assignee: 'Carrie Harris',
+            projectName: "Modern Living Room Renovation",
+            phase: "Design",
+            projectType: 1,
+            clientName: "Emily Miller",
+            estimatedCompletion: "2024-03-20"
         },
         {
             id: 2,
-            name: 'Terrance Moreno',
-            avatar: '/img/avatars/thumb-2.jpg',
-            status: 1,
-            createdTime: 1632393600,
-            email: 'terrance_moreno@infotech.io',
-            assignee: 'Toni Lane',
+            projectName: "Vintage Kitchen Remodeling",
+            phase: "Construction",
+            projectType: 3,
+            clientName: "Daniel Harris",
+            estimatedCompletion: "2024-04-15"
         },
         {
             id: 3,
-            name: 'Ron Vargas',
-            avatar: '/img/avatars/thumb-3.jpg',
-            status: 1,
-            createdTime: 1632393600,
-            email: 'ronnie_vergas@infotech.io',
-            assignee: 'Joanne Mendoza',
+            projectName: "Contemporary Bedroom Makeover",
+            phase: "Decoration",
+            projectType: 3,
+            clientName: "Olivia Robinson",
+            estimatedCompletion: "2024-05-10"
         },
         {
             id: 4,
-            name: 'Luke Cook',
-            avatar: '/img/avatars/thumb-4.jpg',
-            status: 2,
-            createdTime: 1632761600,
-            email: 'cookie_lukie@hotmail.com',
-            assignee: 'Lorraine Carr',
+            projectName: "Eco-Friendly Office Redesign",
+            phase: "Planning",
+            projectType: 1,
+            clientName: "Liam Anderson",
+            estimatedCompletion: "2024-06-22"
         },
         {
             id: 5,
-            name: 'Joyce Freeman',
-            avatar: '/img/avatars/thumb-5.jpg',
-            status: 3,
-            createdTime: 1632416000,
-            email: 'joyce991@infotech.io',
-            assignee: 'Myrtle Mason',
+            projectName: "Chic Bathroom Upgrade",
+            phase: "Finalization",
+            projectType: 3,
+            clientName: "Ava Carter",
+            estimatedCompletion: "2024-07-05"
+        },
+        
+    ],
+    customerData: [
+        {
+            clientName: "Devashish",
+            status: 1,
+            email: "devashish@gmail.com",
+            leadDate: 15433984734,
+            phone: 9777732234
         },
         {
-            id: 6,
-            name: 'Samantha Phillips',
-            avatar: '/img/avatars/thumb-6.jpg',
-            status: 0,
-            createdTime: 1633107200,
-            email: 'samanthaphil@infotech.io',
-            assignee: 'Perry Ward',
+            clientName: "Jennifer",
+            status: 2,
+            email: "jennifer@example.com",
+            leadDate: 16433984734,
+            phone: 9888823456
         },
+        {
+            clientName: "Michael",
+            status: 0,
+            email: "michael@gmail.com",
+            leadDate: 16223984734,
+            phone: 9555543210
+        },
+        {
+            clientName: "Sophie",
+            status: 3,
+            email: "sophie@example.com",
+            leadDate: 16043984734,
+            phone: 9666677888
+        }
     ],
+    
     emailSentData: {
         precent: 73,
         opened: 893,

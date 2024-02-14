@@ -1,243 +1,382 @@
-import Input from '@/components/ui/Input'
-import Button from '@/components/ui/Button'
-import Dialog from '@/components/ui/Dialog'
-import { FormItem, FormContainer } from '@/components/ui/Form'
-import { Field, Form, Formik, FieldProps } from 'formik'
+import { useCallback, useEffect, useState } from 'react'
+import Table from '@/components/ui/Table'
+import Badge from '@/components/ui/Badge'
 import {
-    updatePaymentMethodData,
-    closeEditPaymentMethodDialog,
-    useAppDispatch,
-    useAppSelector,
-} from '../store'
-import cloneDeep from 'lodash/cloneDeep'
-import FormCustomFormatInput from '@/components/shared/FormCustomFormatInput'
-import FormPatternInput from '@/components/shared/FormPatternInput'
-import * as Yup from 'yup'
+    flexRender,
+    getCoreRowModel,
+    getSortedRowModel,
+    useReactTable,
+    createColumnHelper,
 
-type FormModel = {
-    cardHolderName: string
-    ccNumber: string
-    cardExpiry: string
-    code: string
+} from '@tanstack/react-table'
+import { NumericFormat } from 'react-number-format'
+import { useAppSelector, OrderHistory } from '../store'
+import dayjs from 'dayjs'
+import { Button, DatePicker, FormContainer, FormItem, Input, Select, Tooltip, Upload } from '@/components/ui'
+import Dialog from '@/components/ui/Dialog'
+import { HiOutlineEye, HiOutlineTrash, HiPlusCircle } from 'react-icons/hi'
+import { useNavigate } from 'react-router-dom'
+import { Field, Form, Formik } from 'formik'
+import * as Yup from 'yup'
+import type { MouseEvent } from 'react'
+import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
+
+const { Tr, Th, Td, THead, TBody, Sorter } = Table
+
+const statusColor: Record<string, string> = {
+    paid: 'bg-emerald-500',
+    pending: 'bg-amber-400',
+}
+
+const columnHelper = createColumnHelper<OrderHistory>()
+type Order = {
+    id: string
+    date: number
+    customer: string
+    status: number
+    paymentMehod: string
+    paymentIdendifier: string
+    totalAmount: number
+}
+
+const ActionColumn = ({ row }: { row: Order }) => {
+    // const dispatch = useAppDispatch()
+    // const { textTheme } = useThemeClass()
+    const navigate = useNavigate()
+
+    // const onDelete = () => {
+    //     dispatch(setDeleteMode('single'))
+    //     dispatch(setSelectedRow([row.id]))
+    // }
+
+    const onView = useCallback(() => {
+        navigate(`/appy`)
+    }, [navigate, row])
+
+    return (
+        <div className="flex justify-end text-lg">
+            <Tooltip title="View">
+                <span
+                    className={`cursor-pointer p-2 hover:`}
+                    onClick={onView}
+                >
+                    <HiOutlineEye />
+                </span>
+            </Tooltip>
+            {/* <Tooltip title="Delete">
+                <span
+                    className="cursor-pointer p-2 hover:text-red-500"
+                    onClick={onDelete}
+                >
+                    <HiOutlineTrash />
+                </span>
+            </Tooltip> */}
+        </div>
+    )
+}
+
+const columns = [
+    columnHelper.accessor('mom_id', {
+        header: 'MOMId',
+        // cell: (props) => {
+        //     const row = props.row.original
+        //     return (
+        //         <div>
+        //             <span className="cursor-pointer">{row.id}</span>
+        //         </div>
+        //     )
+        // },
+    }),
+    columnHelper.accessor('source', {
+        header: 'Mode Of Meeting',
+    }),
+    // columnHelper.accessor('date', {
+    //     header: 'Date',
+    //     cell: (props) => {
+    //         const row = props.row.original
+    //         return (
+    //             <div className="flex items-center">
+    //                 <Badge className={statusColor[row.status]} />
+    //                 <span className="ml-2 rtl:mr-2 capitalize">
+    //                     {row.status}
+    //                 </span>
+    //             </div>
+    //         )
+    //     },
+    // }),
+    columnHelper.accessor('date', {
+        header: 'Date',
+        cell: (props) => {
+            const row = props.row.original
+            return (
+                <>
+                <div className="flex items-center">
+                    {dayjs.unix(row.date).format('MM/DD/YYYY')}
+             
+                </div>
+                <div>
+                </div>
+                </>
+            )
+        },
+    }),
+    
+    // columnHelper.accessor('amount', {
+    //     header: 'Amount',
+    //     cell: (props) => {
+    //         const row = props.row.original
+    //         return (
+    //             <div className="flex items-center">
+    //                 <NumericFormat
+    //                     displayType="text"
+    //                     value={(Math.round(row.amount * 100) / 100).toFixed(2)}
+    //                     prefix={'$'}
+    //                     thousandSeparator={true}
+    //                 />
+    //             </div>
+    //         )
+    //     },
+    // }),
+]
+
+
+const MOM = ({datas}) => {
+    const data = useAppSelector(
+        (state) => state.crmCustomerDetails.data.paymentHistoryData
+    )
+    
+    
+
+    const [sorting, setSorting] = useState<
+        {
+            id: string
+            desc: boolean
+        }[]
+    >([])
+
+    const table = useReactTable({
+        data,
+        columns,
+        state: {
+            sorting,
+        },
+        onSortingChange: setSorting,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+    })
+
+
+const navigate=useNavigate();
+
+
+const [dialogIsOpen, setIsOpen] = useState(false)
+
+const openDialog = () => {
+    setIsOpen(true)
+}
+
+const onDialogClose = (e: MouseEvent) => {
+    console.log('onDialogClose', e)
+    setIsOpen(false)
+}
+
+const onDialogOk = (e: MouseEvent) => {
+    console.log('onDialogOk', e)
+    setIsOpen(false)
 }
 
 const validationSchema = Yup.object().shape({
-    cardHolderName: Yup.string().required('Card holder name required'),
-    ccNumber: Yup.string()
-        .required('Credit card number required')
-        .matches(
-            /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
-            'Invalid credit card number'
-        ),
-    cardExpiry: Yup.string()
-        .required('Card holder name required')
-        .matches(/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/, 'Invalid Date'),
-    code: Yup.string()
-        .required()
-        .matches(/^[0-9]{3}$/, 'Invalid CVV'),
+    email: Yup.string().email('Invalid email').required('Email Required'),
+    userName: Yup.string()
+        .min(3, 'Too Short!')
+        .max(12, 'Too Long!')
+        .required('User Name Required'),
+    password: Yup.string()
+        .required('Password Required')
+        .min(8, 'Too Short!')
+        .matches(/^[A-Za-z0-9_-]*$/, 'Only Letters & Numbers Allowed'),
+    rememberMe: Yup.bool(),
 })
 
-function limit(val: string, max: string) {
-    if (val.length === 1 && val[0] > max[0]) {
-        val = '0' + val
-    }
 
-    if (val.length === 2) {
-        if (Number(val) === 0) {
-            val = '01'
-        } else if (val > max) {
-            val = max
-        }
-    }
+const colourOptions = [
+    { value: 'online', label: 'Online' },
+    { value: 'atClientPLace', label: 'At Client PLace' },
+    { value: 'onSite', label: 'On Site' },
+    { value: 'inOffice', label: 'In Office' },
+ 
+]
 
-    return val
-}
 
-function cardExpiryFormat(val: string) {
-    const month = limit(val.substring(0, 2), '12')
-    const date = limit(val.substring(2, 4), '31')
+const [inputCount, setInputCount] = useState(0);
+const [inputValues, setInputValues] = useState(Array.from({ length: inputCount }, () => ''));
+const addInput = () => {
+    setInputCount(inputCount + 1);
+    setInputValues([...inputValues, '']);
+  };
 
-    return month + (date.length ? '/' + date : '')
-}
-
-const EditPaymentMethod = () => {
-    const dispatch = useAppDispatch()
-
-    const card = useAppSelector(
-        (state) => state.crmCustomerDetails.data.selectedCard
-    )
-    const data = useAppSelector(
-        (state) => state.crmCustomerDetails.data.paymentMethodData
-    )
-    const dialogOpen = useAppSelector(
-        (state) => state.crmCustomerDetails.data.editPaymentMethodDialog
-    )
-    const selectedCard = useAppSelector(
-        (state) => state.crmCustomerDetails.data.selectedCard
-    )
-
-    const onUpdateCreditCard = (values: FormModel) => {
-        let newData = cloneDeep(data) || []
-        const { cardHolderName, ccNumber, cardExpiry } = values
-
-        const updatedCard = {
-            cardHolderName,
-            last4Number: ccNumber.substr(ccNumber.length - 4),
-            expYear: cardExpiry.substr(cardExpiry.length - 2),
-            expMonth: cardExpiry.substring(0, 2),
-        }
-
-        newData = newData.map((payment) => {
-            if (payment.last4Number === selectedCard.last4Number) {
-                payment = { ...payment, ...updatedCard }
-            }
-            return payment
-        })
-
-        onDialogClose()
-        dispatch(updatePaymentMethodData(newData))
-    }
-    const onDialogClose = () => {
-        dispatch(closeEditPaymentMethodDialog())
-    }
 
     return (
-        <Dialog
-            isOpen={dialogOpen}
-            onClose={onDialogClose}
-            onRequestClose={onDialogClose}
-        >
-            <h4>Edit Credit Card</h4>
-            <div className="mt-6">
-                <Formik
-                    initialValues={{
-                        cardHolderName: card.cardHolderName || '',
-                        ccNumber: '',
-                        cardExpiry:
-                            (card?.expMonth as string) + card.expYear || '',
-                        code: '',
-                    }}
-                    validationSchema={validationSchema}
-                    onSubmit={(values, { setSubmitting }) => {
-                        onUpdateCreditCard(values)
+        <div className="mb-4 relative">
+            <div  className='flex items-center justify-between mb-4'>
+                <div></div>
+                <div>
+            <Button variant="solid" onClick={() => openDialog()}>
+                Add MOM
+            </Button>
+            <Dialog
+                isOpen={dialogIsOpen}
+                onClose={onDialogClose}
+                onRequestClose={onDialogClose}
+                className={`h-[520px]`}
+            >
+                     <div>
+            <Formik
+                initialValues={{
+                    email: '',
+                    userName: '',
+                    password: '',
+                    rememberMe: false,
+                }}
+                validationSchema={validationSchema}
+                onSubmit={(values, { resetForm, setSubmitting }) => {
+                    setTimeout(() => {
+                        alert(JSON.stringify(values, null, 2))
                         setSubmitting(false)
-                    }}
-                >
-                    {({ touched, errors }) => (
-                        <Form>
-                            <FormContainer>
-                                <FormItem
-                                    label="Card holder name"
-                                    invalid={
-                                        errors.cardHolderName &&
-                                        touched.cardHolderName
-                                    }
-                                    errorMessage={errors.cardHolderName}
-                                >
-                                    <Field
-                                        type="text"
-                                        autoComplete="off"
-                                        name="cardHolderName"
-                                        component={Input}
-                                    />
-                                </FormItem>
-                                <FormItem
-                                    label="Credit Card Number"
-                                    invalid={
-                                        errors.ccNumber && touched.ccNumber
-                                    }
-                                    errorMessage={errors.ccNumber}
-                                >
-                                    <Field name="ccNumber">
-                                        {({ field, form }: FieldProps) => {
-                                            return (
-                                                <FormPatternInput
-                                                    form={form}
-                                                    field={field}
-                                                    placeholder="•••• •••• •••• ••••"
-                                                    format="#### #### #### ####"
-                                                    onValueChange={(e) => {
-                                                        form.setFieldValue(
-                                                            field.name,
-                                                            e.value
-                                                        )
-                                                    }}
-                                                />
-                                            )
-                                        }}
-                                    </Field>
-                                </FormItem>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <FormItem
-                                        label="Expiration date"
-                                        invalid={
-                                            errors.cardExpiry &&
-                                            touched.cardExpiry
-                                        }
-                                        errorMessage={errors.cardExpiry}
-                                    >
-                                        <Field name="cardExpiry">
-                                            {({ field, form }: FieldProps) => {
-                                                return (
-                                                    <FormCustomFormatInput
-                                                        form={form}
-                                                        field={field}
-                                                        placeholder="••/••"
-                                                        format={
-                                                            cardExpiryFormat
-                                                        }
-                                                        defaultValue={
-                                                            form.values
-                                                                .cardExpiry
-                                                        }
-                                                        onValueChange={(e) => {
-                                                            form.setFieldValue(
-                                                                field.name,
-                                                                e.value
-                                                            )
-                                                        }}
-                                                    />
-                                                )
-                                            }}
-                                        </Field>
-                                    </FormItem>
-                                    <FormItem
-                                        label="CVV"
-                                        invalid={errors.code && touched.code}
-                                        errorMessage={errors.code}
-                                    >
-                                        <Field name="code">
-                                            {({ field, form }: FieldProps) => {
-                                                return (
-                                                    <FormPatternInput
-                                                        form={form}
-                                                        field={field}
-                                                        placeholder="•••"
-                                                        format="###"
-                                                        onValueChange={(e) => {
-                                                            form.setFieldValue(
-                                                                field.name,
-                                                                e.value
-                                                            )
-                                                        }}
-                                                    />
-                                                )
-                                            }}
-                                        </Field>
-                                    </FormItem>
+                        resetForm()
+                    }, 500)
+                }}
+            >
+                {({ touched, errors, resetForm }) => (
+                    <Form className=' absolute overflow-y-scroll max-h-[88%]'>
+                        <FormContainer className=''>
+                            <div className=''>
+                        <div className=' grid grid-cols-2 xl:grid xl:grid-cols-2 gap-3 mr-4'>
+                            <FormItem
+                                label="Meeting Date"
+                                invalid={errors.email && touched.email}
+                                errorMessage={errors.email}
+                            >
+                               <DateTimepicker placeholder="Pick date & time" />
+                            </FormItem>
+                            <FormItem
+                                label="Mode of Meeting"
+                                invalid={errors.userName && touched.userName}
+                                errorMessage={errors.userName}
+                            >
+                               <Select
+                placeholder="Please Select"
+                options={colourOptions}
+            ></Select>
+                            </FormItem>
+                            </div>
+
+                            <h5>Attendees</h5>
+
+                           
+                            {inputValues.map((value, index) => (
+             <div className=' grid grid-cols-2 xl:grid xl:grid-cols-2 gap-3 mr-4'>
+                            <FormItem
+                                label="Role"
+                                invalid={errors.userName && touched.userName}
+                                errorMessage={errors.userName}
+                            >
+                              <Input placeholder="Role" />
+                            </FormItem>
+                            <FormItem
+                                label="Name"
+                                invalid={errors.userName && touched.userName}
+                                errorMessage={errors.userName}
+                            >
+                              <Input placeholder="Name" />
+                            </FormItem>
+                          
+                            </div>
+        ))}
+<div className=' flex justify-between items-center mb-4 mr-4 gap-2'>
+    <div className=' flex justify-between gap-3'>   <FormItem
+                                label="Role"
+                                invalid={errors.userName && touched.userName}
+                                errorMessage={errors.userName}
+                            >
+                              <Input placeholder="Role" />
+                            </FormItem>
+                            <FormItem
+                                label="Name"
+                                invalid={errors.userName && touched.userName}
+                                errorMessage={errors.userName}
+                            >
+                              <Input placeholder="Name" />
+                            </FormItem></div>
+<Button variant="solid" type="submit" onClick={addInput}>
+                                    +
+                                </Button>
                                 </div>
-                                <FormItem className="mb-0 text-right">
-                                    <Button block variant="solid" type="submit">
-                                        Update
-                                    </Button>
-                                </FormItem>
-                            </FormContainer>
-                        </Form>
-                    )}
-                </Formik>
-            </div>
-        </Dialog>
+
+                                <FormItem
+                                label="Remarks"
+                                invalid={errors.userName && touched.userName}
+                                errorMessage={errors.userName}
+                                className='mr-4'
+                            >
+                              
+                                <Input placeholder="Remarks" textArea />
+                            </FormItem>
+                                <FormItem
+                                label="Document"
+                                invalid={errors.userName && touched.userName}
+                                errorMessage={errors.userName}
+                                className='mr-4'
+                            >
+                              
+                              <Upload />
+                            </FormItem>
+
+
+
+                            <FormItem>
+                                <Button
+                                    type="reset"
+                                    className="ltr:mr-2 rtl:ml-2"
+                                    onClick={() => resetForm()}
+                                >
+                                    Reset
+                                </Button>
+                                <Button variant="solid" type="submit">
+                                    Submit
+                                </Button>
+                            </FormItem>
+                            
+                            </div>
+                        </FormContainer>
+                    </Form>
+                )}
+            </Formik>
+        </div>
+            </Dialog>
+        </div>
+          
+                </div>
+                <Table >
+      <thead>
+        <tr>
+          <th>Organizer</th>
+          <th>Date</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody>
+      {datas.map((data) => (
+        <tr key={data.id}>
+          <td>{data.attendees.organisor || 'N/A'}</td>
+          <td>{data.meetingdate}</td>
+          <td>{data.source}</td>
+        </tr>
+         ))}
+      </tbody>
+    </Table>
+        </div>
     )
 }
 
-export default EditPaymentMethod
+export default MOM

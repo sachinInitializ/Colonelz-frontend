@@ -50,6 +50,8 @@ export default function cryptoFakeApi(server: Server, apiPrefix: string) {
             JSON.parse(requestBody)
 
         let data = schema.db.marketData[0][tab]
+        console.log(data);
+        
         let total = data.length
         const { order, key } = sort
 

@@ -6,7 +6,7 @@ const Example = () => {
 
 const arr = [
 	{
-		name: 'Carolyn Perkins',
+		name: '  ',
 		email: 'eileen_h@hotmail.com',
 	},
 	{
@@ -27,7 +27,7 @@ const data = arr.sort(sortBy('name', false , (a) =>  a.toUpperCase()))
 
 // output: [
 // 	{
-// 		name: 'Carolyn Perkins',
+// 		name: '  ',
 // 		email: 'eileen_h@hotmail.com',
 // 	},
 // 	{
