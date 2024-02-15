@@ -32,12 +32,11 @@ import { HiOutlineEye } from 'react-icons/hi'
   
         return (
             <div className="flex justify-end text-lg">
-                <span
-                    className={`cursor-pointer p-2 hover:${textTheme}`}
-                    onClick={onEdit}
+                <a href={`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`}
+                    
                 >
                     <HiOutlineEye />
-                </span>
+                </a>
                
             </div>
         )

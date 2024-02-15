@@ -2,7 +2,7 @@ import React from 'react'
 
 const Contract = () => {
   return (
-    <div className="max-w-2xl mx-auto mt-8 p-4 bg-white shadow-md rounded-md">
+    <div className=" mx-auto mt-8 p-4 bg-white shadow-md rounded-md">
     <h1 className="text-2xl font-bold mb-4">INTERIOR DESIGN CONSULTANCY & IMPLEMENTATION CONTRACT</h1>
     <p>PROJ XYZ, GURGAON</p>
     <p>Client - PROJ XYZ by Company/Franchise name</p>

@@ -358,7 +358,7 @@ const YourFormComponent: React.FC = () => {
                     </div>
                     <div className=''>
                     <Button type="submit" className='mr-4' variant='solid'>Submit</Button>
-                    <Button type="submit" variant='solid' onClick={clicks}>Discard</Button>
+                    <Button type="submit"  onClick={()=>navigate(-1)}>Discard</Button>
                     </div>
                 </FormContainer>
             </form>

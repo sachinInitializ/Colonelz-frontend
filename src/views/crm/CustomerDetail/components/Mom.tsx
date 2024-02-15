@@ -192,6 +192,7 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
     const onDropdownClick = (e: SyntheticEvent) => {
       console.log('Dropdown Clicked', e)
   }
+   console.log(rowData.mom_id);
    
     return (
        <div>
