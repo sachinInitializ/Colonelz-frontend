@@ -59,7 +59,6 @@ const StatisticCard = (props: StatisticCardProps) => {
                             </h3>
                         </div>
                     </div>
-                    <GrowShrinkTag value={growthRate} suffix="%" />
                 </div>
             </Loading>
         </Card>

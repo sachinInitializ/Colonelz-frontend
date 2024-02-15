@@ -23,8 +23,31 @@ export type Attendees = {
     data: MomData[];
     subrow:ApiResponse[]
   };
-  const response1 = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=COLP-266329');
+
+  const parseQueryString = (queryString: string): Record<string, string> => {
+    const params = new URLSearchParams(queryString);
+    const paramObject: Record<string, string> = {};
+    
+    for (const [key, value] of params.entries()) {
+      paramObject[key] = value;
+    }
+  
+    return paramObject;
+  };
+  
+  // Get the query string from the window location
+  const queryString = window.location.search;
+  
+  // Parse the query string to get an object of query parameters
+ const queryParams = parseQueryString(queryString);
+  
+  // Access the value of a specific query parameter
+ export const projectId = queryParams.project_id;
+  console.log(projectId);
+  
+  const response1 = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${projectId}`);
 const jsonData1= await response1.json();
+console.log(projectId);
 
 export const ordersData =jsonData1.data
   export const momApiResponse: ApiResponse  =jsonData1.data

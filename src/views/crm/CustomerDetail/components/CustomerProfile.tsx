@@ -267,6 +267,7 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                     <CustomerInfoField title="Project Id" value={data?.project_id} />
                     <CustomerInfoField 
                         title="Project Type"
+                        value={data?.project_type}
                     />
 
                     <CustomerInfoField

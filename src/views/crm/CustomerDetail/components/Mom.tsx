@@ -7,14 +7,14 @@ import {
     getExpandedRowModel,
     flexRender,
 } from '@tanstack/react-table'
-import { momApiResponse } from './data'
+import { momApiResponse,projectId } from './data'
 import { HiOutlineChevronRight, HiOutlineChevronDown } from 'react-icons/hi'
 import type { ApiResponse } from './data'
 import type { ColumnDef, Row,ColumnSort } from '@tanstack/react-table'
 import type { ReactElement, SyntheticEvent } from 'react'
 import { log } from 'console'
 import { Button, Dropdown } from '@/components/ui'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 type ReactTableProps<T> = {
     renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
@@ -22,12 +22,16 @@ type ReactTableProps<T> = {
     data:Data[]
 }
 type Data={
-
+     mom:MOM[]
+}
+type MOM={
+    mom_id:string
 }
 
 const { Tr, Th, Td, THead, TBody,Sorter} = Table
 
 function ReactTable({ renderRowSubComponent, getRowCanExpand,data }: ReactTableProps<ApiResponse>) {
+
   
     const columns = useMemo<ColumnDef<ApiResponse>[]>(
         () => [
@@ -97,9 +101,14 @@ function ReactTable({ renderRowSubComponent, getRowCanExpand,data }: ReactTableP
         getExpandedRowModel: getExpandedRowModel(),
     })
  
+const navigate=useNavigate()
+
 
     return (
         <>
+        <div className='flex justify-end mb-4'>
+        <Button className='flex justify-center items-center' size='sm' variant='solid' onClick={()=>navigate(`/app/crm/project/momform?project_id=${projectId}`)}>Add MOM </Button>
+        </div>
             <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (

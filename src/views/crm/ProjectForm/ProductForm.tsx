@@ -19,6 +19,7 @@ interface FormData {
   description: string;
   project_type: string;
   project_name: string;
+  project_status:string
 }
 
 interface CustomerProfileProps {
@@ -70,6 +71,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     description: '',
     project_type: '',
     project_name: '',
+    project_status:'',
   };
 
   const [formData, setFormData] = useState<FormData>(initialFormData);
@@ -80,6 +82,11 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
   const projectTypeOptions = [
     { value: 'commercial', label: 'Commercial' },
     { value: 'residential', label: 'Residential' },
+  ];
+  const projectStatusOptions = [
+    { value: 'execution', label: 'Executing' },
+    { value: 'design', label: 'Designing' },
+    { value: 'completed', label: 'Completed' },
   ];
 
   const handleStatusChange = (selectedOption: ValueType<{ value: string; label: string }>) => {
@@ -136,6 +143,9 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     if (!formData.project_type.trim()) {
       validationErrors.project_type = 'Project Type is required';
     }
+    if (!formData.status.trim()) {
+      validationErrors.status = 'Project Type is required';
+    }
     if (!formData.project_name.trim()) {
       validationErrors.project_name = 'Project Name is required';
     }
@@ -172,7 +182,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
 
   return (
     <div>
-      <div className='flex justify-between items-center'>
+      <div className='flex justify-between items-center max-sm:flex-col mb-6'>
         <h5>Basic Information</h5>
         <Button
           variant='solid'
@@ -189,7 +199,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
         <FormContainer>
          
           
-          <div className='grid grid-cols-3 gap-5 '>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 xl:grid-cols-3 '>
             <FormItem label="Client's Name" className=''>
               <Input name='client_name' value={formData.client_name} onChange={handleInputChange} />
               {errors.client_name && <span className='text-red-500'>{errors.client_name}</span>}
@@ -202,13 +212,13 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
               <Input name='client_contact' value={formData.client_contact} onChange={handleInputChange} />
               {errors.client_contact && <span className='text-red-500'>{errors.client_contact}</span>}
             </FormItem>
+            <FormItem label='Project Name' className=''>
+              <Input name='project_name' value={formData.project_name} onChange={handleInputChange} />
+              {errors.project_name && <span className='text-red-500'>{errors.project_name}</span>}
+            </FormItem>
             <FormItem label='Location' className=''>
               <Input name='location' value={formData.location} onChange={handleInputChange} />
               {errors.location && <span className='text-red-500'>{errors.location}</span>}
-            </FormItem>
-            <FormItem label='Description' className=''>
-              <Input name='description' value={formData.description} onChange={handleInputChange} />
-              {errors.description && <span className='text-red-500'>{errors.description}</span>}
             </FormItem>
             <FormItem label='Project Type' className=''>
             <Select
@@ -227,10 +237,28 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
               />
               {errors.project_type && <span className='text-red-500'>{errors.project_type}</span>}
             </FormItem>
-            <FormItem label='Project Name' className=''>
-              <Input name='project_name' value={formData.project_name} onChange={handleInputChange} />
-              {errors.project_name && <span className='text-red-500'>{errors.project_name}</span>}
+            <FormItem label='Project Status' className=''>
+            <Select
+                options={projectStatusOptions}
+                value={projectStatusOptions.find((option) => option.value === formData.project_status)}
+                onChange={(selectedOption) => {
+                  setFormData({
+                    ...formData,
+                    project_status: selectedOption ? (selectedOption as { value: string; label: string }).value : '',
+                  });
+                  setErrors({
+                    ...errors,
+                    project_status: '',
+                  });
+                }}
+              />
+              {errors.project_status && <span className='text-red-500'>{errors.project_status}</span>}
             </FormItem>
+            <FormItem label='Description' className=''>
+              <Input name='description' value={formData.description} onChange={handleInputChange} textArea />
+              {errors.description && <span className='text-red-500'>{errors.description}</span>}
+            </FormItem>
+           
           </div>
           <Button size='sm' variant='solid' type='submit'>
             Submit

@@ -131,7 +131,7 @@ const LeadForm: React.FC = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 xl:grid-cols-3 sm:grid-cols-2 gap-5">
                 <div>
                     <FormItem label="Name">
                         <Input

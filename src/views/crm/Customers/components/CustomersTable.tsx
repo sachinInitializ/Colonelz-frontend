@@ -86,9 +86,9 @@ const Customers = () => {
                     
                     const cellClassName = classNames({
                       'bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded px-2 py-1 capitalize font-semibold text-xs': projectType === 'commercial',
-                      '': projectType === 'commercial',
+                      '': projectType === 'commercial' || projectType==='Commercial',
                       'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 border-0 rounded capitalize font-semibold text-xs px-2 py-1': projectType === 'residential',
-                      'bg-light-green-600': projectType === 'residential',
+                      'bg-light-green-600': projectType === 'residential' || projectType==='Residential',
                     });
                 
                     return (

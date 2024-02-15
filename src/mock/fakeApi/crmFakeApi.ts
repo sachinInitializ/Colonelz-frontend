@@ -2,6 +2,7 @@ import wildCardSearch from '@/utils/wildCardSearch'
 import sortBy, { Primer } from '@/utils/sortBy'
 import paginate from '@/utils/paginate'
 import type { Server } from 'miragejs'
+import { statisticData } from '../data/usersData'
 
 export default function crmFakeApi(server: Server, apiPrefix: string) {
     server.get(`${apiPrefix}/crm/dashboard`, (schema) => {
@@ -46,17 +47,19 @@ export default function crmFakeApi(server: Server, apiPrefix: string) {
     })
 
     server.get(`${apiPrefix}/crm/customers-statistic`, () => {
+        console.log(statisticData);
+        
         return {
             totalCustomers: {
-                value: 2420,
-                growShrink: 17.2,
+                value: statisticData.total_Project,
+              
             },
             activeCustomers: {
-                value: 1897,
+                value: statisticData.completed,
                 growShrink: 32.7,
             },
             newCustomers: {
-                value: 241,
+                value: statisticData.archive,
                 growShrink: -2.3,
             },
         }

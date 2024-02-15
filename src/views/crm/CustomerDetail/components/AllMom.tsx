@@ -1,4 +1,4 @@
-import { Card } from '@/components/ui';
+import { Button, Card, Dropdown } from '@/components/ui';
 import React, { useEffect, useState } from 'react';
 
 const App: React.FC = () => {
@@ -33,6 +33,8 @@ const App: React.FC = () => {
         return 'Invalid format';
     };
 
+    const Toggle = <Button>Files</Button>
+
     return (
         <div>
             <h3>MOM Data</h3>
@@ -65,7 +67,27 @@ const App: React.FC = () => {
         <p>{getNames(item.attendees.consultant_name)}</p>
         </div>
         </div>
-
+         <div className='my-4  text-left'>
+          <h5 className='mt-2'> Remarks</h5>
+          <p>{item.remark}</p>
+         </div>
+         <div className='my-4  text-left'>
+          <h5 className='mt-2'> Important Notes</h5>
+          <p>{item.imaportant_note}</p>
+         </div>
+         <div className='my-4 text-left'>
+         <Dropdown  renderTitle={Toggle}  >
+                {item.files.map((item) => (
+                    <Dropdown.Item
+                        key={item.key}
+                        eventKey={item.key}
+                      
+                    >
+                        {item.name}
+                    </Dropdown.Item>
+                ))}
+            </Dropdown>
+         </div>
     </Card>
 </div>
 ))}

@@ -1,12 +1,25 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react'
 import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui'
 import CreatableSelect from 'react-select/creatable' // Import CreatableSelect
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 type Option = {
     value: string
     label: string
 }
+interface QueryParams {
+
+    project_id: string;
+
+  
+  }
+const location = useLocation();
+const queryParams = new URLSearchParams(location.search);
+
+// Create an object to store and map the query parameters
+const allQueryParams: QueryParams = {
+  project_id: queryParams.get('project_id') || '',
+};
 
 interface FormData {
     client_name: string[]
@@ -18,7 +31,7 @@ interface FormData {
     remark: string
     imaportant_note: string
     files: File[]
-    project_id: 'COLP-261675'
+    project_id: string
 }
 
 const YourFormComponent: React.FC = () => {
@@ -34,7 +47,7 @@ const YourFormComponent: React.FC = () => {
         remark: '',
         imaportant_note: '',
         files: [],
-        project_id: 'COLP-261675',
+        project_id: allQueryParams.project_id,
     })
     const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
@@ -199,7 +212,7 @@ const YourFormComponent: React.FC = () => {
     return (
         <div>
             <h5>MOM Details</h5>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className='mt-4'>
                 <FormContainer>
                     <div className='grid grid-cols-3 gap-5'>
                     <FormItem label="Client's Name">

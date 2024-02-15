@@ -89,7 +89,7 @@ const CustomerDetail = () => {
 
         fetchData();
     }, [allQueryParams.id]);
-    console.log(momdata);
+    console.log(details);
       return (
         <div>
         <Tabs defaultValue={allQueryParams.mom}>
@@ -110,7 +110,7 @@ const CustomerDetail = () => {
                    <PaymentHistory/>
                 </TabContent>
                 <TabContent value="mom">
-                  <MOM data={momdata} />
+                  <MOM data={details} />
                 </TabContent>
                 <TabContent value="tab4">
                   <Contract/>
