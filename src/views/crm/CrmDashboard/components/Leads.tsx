@@ -145,8 +145,8 @@ const Leads = ({ data = [], className }: LeadsProps) => {
             <Th>Lead Name</Th>
             <Th>Lead Status</Th>
             <Th>Location</Th>
-            <Th>Timeline Date</Th>
-            <Th>Project Type</Th>
+            <Th>Lead Date</Th>
+            <Th>Phone</Th>
             <Th></Th>
           </Tr>
         </THead>

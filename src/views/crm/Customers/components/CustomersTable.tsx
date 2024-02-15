@@ -78,7 +78,7 @@ const Customers = () => {
                
             },
             {
-                header: 'Ptoject Type',
+                header: 'Project Type',
                 accessorKey: 'project_type',
                 cell: (props) => {
                     const row = props.row.original;
@@ -95,6 +95,15 @@ const Customers = () => {
                       <span className={cellClassName}>{row.project_type}</span>
                     );
                   }
+            },
+            {
+                header: 'Client Name',
+                accessorKey: 'client_name',
+                cell: (props) => {
+                    const row = props.row.original;
+                    return <span>{row.client[0].client_name}</span>;
+                },
+               
             },
             {
                 header: 'Status',

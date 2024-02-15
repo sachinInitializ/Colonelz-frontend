@@ -1,15 +1,13 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import ValueType from 'react-select';
-import DatePicker from '@/components/ui/DatePicker/DatePicker';
-import { StickyFooter } from '@/components/shared';
 import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui';
-import { AiOutlineSave } from 'react-icons/ai';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { format } from 'date-fns'
+import DatePicker from '@/components/ui/DatePicker/DatePicker';
 
 interface FormData {
   lead_id: string | null;
   status: string;
-  date: Date | null;
   content: string;
   createdBy: string;
   client_name: string;
@@ -19,7 +17,10 @@ interface FormData {
   description: string;
   project_type: string;
   project_name: string;
-  project_status:string
+  project_status:string;
+  timeline_date:Date;
+  project_budget:string;
+  project_start_date:Date;
 }
 
 interface CustomerProfileProps {
@@ -61,7 +62,6 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
   const initialFormData: FormData = {
     lead_id: allQueryParams.id,
     status: '',
-    date: null,
     content: '',
     createdBy: 'Client',
     client_name: allQueryParams.name,
@@ -71,7 +71,10 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     description: '',
     project_type: '',
     project_name: '',
-    project_status:'',
+    project_status:'df',
+    project_start_date: new Date(),
+    timeline_date: new Date(),
+    project_budget:'',
   };
 
   const [formData, setFormData] = useState<FormData>(initialFormData);
@@ -101,13 +104,16 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     });
   };
 
-  const handleDateChange = (date: Date | null) => {
-    setFormData({ ...formData, date });
+  const handleDateChange = (date: Date | null, fieldName: string) => {
+    setFormData({
+        ...formData,
+        [fieldName]: date ? format(date, 'MM-dd-yyyy') : null,
+    })
     setErrors({
-      ...errors,
-      date: '',
-    });
-  };
+        ...errors,
+        date: '',
+    })
+}
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -143,9 +149,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     if (!formData.project_type.trim()) {
       validationErrors.project_type = 'Project Type is required';
     }
-    if (!formData.status.trim()) {
-      validationErrors.status = 'Project Type is required';
-    }
+  
     if (!formData.project_name.trim()) {
       validationErrors.project_name = 'Project Name is required';
     }
@@ -220,6 +224,10 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
               <Input name='location' value={formData.location} onChange={handleInputChange} />
               {errors.location && <span className='text-red-500'>{errors.location}</span>}
             </FormItem>
+            <FormItem label='Project Budget' className=''>
+              <Input name='project_budget' value={formData.project_budget} onChange={handleInputChange} />
+              {errors.project_budget && <span className='text-red-500'>{errors.project_budget}</span>}
+            </FormItem>
             <FormItem label='Project Type' className=''>
             <Select
                 options={projectTypeOptions}
@@ -254,9 +262,48 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
               />
               {errors.project_status && <span className='text-red-500'>{errors.project_status}</span>}
             </FormItem>
+
+            <FormItem label="Project Start Date">
+                    <DatePicker
+                        size="sm"
+                        selected={
+                            formData.project_start_date
+                                ? new Date(formData.project_start_date)
+                                : null
+                        }
+                        onChange={(date) =>
+                            handleDateChange(date, 'project_start_date')
+                        }
+                        dateFormat="MM/dd/yyyy"
+                    />
+                    {errors.project_start_date && (
+                        <span className="text-red-500">
+                            {errors.project_start_date}
+                        </span>
+                    )}
+                </FormItem>
+                <FormItem label="Timeline Date">
+                    <DatePicker
+                        size="sm"
+                        selected={
+                            formData.timeline_date
+                                ? new Date(formData.timeline_date)
+                                : null
+                        }
+                        onChange={(date) =>
+                            handleDateChange(date, 'timeline_date')
+                        }
+                        dateFormat="MM/dd/yyyy"
+                    />
+                    {errors.timeline_date && (
+                        <span className="text-red-500">
+                            {errors.timeline_date}
+                        </span>
+                    )}
+                </FormItem>
+       
             <FormItem label='Description' className=''>
               <Input name='description' value={formData.description} onChange={handleInputChange} textArea />
-              {errors.description && <span className='text-red-500'>{errors.description}</span>}
             </FormItem>
            
           </div>
