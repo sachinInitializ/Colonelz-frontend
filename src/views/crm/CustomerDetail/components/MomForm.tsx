@@ -7,25 +7,13 @@ type Option = {
     value: string
     label: string
 }
-interface QueryParams {
 
-    project_id: string;
-
-  
-  }
-const location = useLocation();
-const queryParams = new URLSearchParams(location.search);
-
-// Create an object to store and map the query parameters
-const allQueryParams: QueryParams = {
-  project_id: queryParams.get('project_id') || '',
-};
 
 interface FormData {
-    client_name: string[]
-    organisor: string[]
-    architect: string[]
-    consultant_name: string[]
+    client_name: string
+    organisor: string
+    architect: string
+    consultant_name: string
     meetingDate: string
     source: string
     remark: string
@@ -36,12 +24,25 @@ interface FormData {
 
 const YourFormComponent: React.FC = () => {
     const navigate = useNavigate()
+    interface QueryParams {
+
+        project_id: string;
+    
+      
+      }
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    
+    // Create an object to store and map the query parameters
+    const allQueryParams: QueryParams = {
+      project_id: queryParams.get('project_id') || '',
+    };
 
     const [formData, setFormData] = useState<FormData>({
-        client_name: [],
-        organisor: [],
-        architect: [],
-        consultant_name: [],
+        client_name:'' ,
+        organisor: '',
+        architect:'' ,
+        consultant_name: '',
         meetingDate: '',
         source: '',
         remark: '',
@@ -166,6 +167,18 @@ const YourFormComponent: React.FC = () => {
             return
         }
 
+        const formatNames = (names: string | string[]) => {
+            if (typeof names === 'string') {
+                return names; // Return the single name as is
+            } else if (names.length === 1) {
+                return names[0];
+            } else {
+                const firstNames = names.slice(0, -1).join(', '); // Join all but the last name with ','
+                const lastName = names[names.length - 1]; // Get the last name
+                return `${firstNames} & ${lastName}`; // Combine with ' & '
+            }
+        };
+
         try {
             const formDataToSend = new FormData()
             formDataToSend.append('meetingdate', formData.meetingDate)
@@ -173,18 +186,12 @@ const YourFormComponent: React.FC = () => {
             formDataToSend.append('source', formData.source)
             formDataToSend.append('remark', formData.remark)
             formDataToSend.append('imaportant_note', formData.imaportant_note)
-            formData.client_name.forEach((client) =>
-                formDataToSend.append('client_name', client),
-            )
-            formData.organisor.forEach((organisor) =>
-                formDataToSend.append('organisor', organisor),
-            )
-            formData.architect.forEach((architect) =>
-                formDataToSend.append('architect', architect),
-            )
-            formData.consultant_name.forEach((consultant) =>
-                formDataToSend.append('consultant_name', consultant),
-            )
+         
+            formDataToSend.append('client_name', formatNames(formData.client_name));
+            formDataToSend.append('organisor', formatNames(formData.organisor));
+            formDataToSend.append('architect', formatNames(formData.architect));
+            formDataToSend.append('consultant_name', formatNames(formData.consultant_name));
+
             formData.files.forEach((file) =>
                 formDataToSend.append('files', file),
             )
@@ -199,7 +206,9 @@ const YourFormComponent: React.FC = () => {
 
             if (response.ok) {
                 alert('MOM created successfully')
-                navigate(-1) // Redirect to home page or any other page after successful creation
+                window.location.reload();
+                navigate(-1)
+                // Redirect to home page or any other page after successful creation
             } else {
                 alert('Failed to create MOM')
             }
@@ -207,6 +216,10 @@ const YourFormComponent: React.FC = () => {
             console.error('Error:', error)
             alert('An error occurred')
         }
+    }
+    const clicks=()=>{
+      
+      window.location.reload();
     }
 
     return (
@@ -345,7 +358,7 @@ const YourFormComponent: React.FC = () => {
                     </div>
                     <div className=''>
                     <Button type="submit" className='mr-4' variant='solid'>Submit</Button>
-                    <Button type="submit" variant='solid' onClick={()=>navigate(-1)}>Discard</Button>
+                    <Button type="submit" variant='solid' onClick={clicks}>Discard</Button>
                     </div>
                 </FormContainer>
             </form>

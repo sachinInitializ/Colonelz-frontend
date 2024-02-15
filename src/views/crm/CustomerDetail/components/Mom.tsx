@@ -193,6 +193,7 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
       console.log('Dropdown Clicked', e)
   }
     // State to manage the selected file
+   
     return (
        <div>
         <div className='flex justify-between items-center'>
@@ -214,18 +215,14 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
            <h5 className=' mt-3'>Important Note</h5>
            <p>{rowData.imaportant_note}</p>
         </div>
-        <div>
-        <Dropdown  renderTitle={Toggle} onClick={onDropdownClick} >
+        <div className='grid grid-cols-10 '>
+       
                 {files.map((item) => (
-                    <Dropdown.Item
-                        key={item.key}
-                        eventKey={item.key}
-                      
-                    >
-                        {item.name}
-                    </Dropdown.Item>
+                  <div className=''>
+                   <a href={item} target='_blank'> <Button variant='solid'>file</Button></a>
+                   </div>
                 ))}
-            </Dropdown>
+            
         </div>
        </div>
     )

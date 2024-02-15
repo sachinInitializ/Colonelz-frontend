@@ -1,12 +1,31 @@
 import { Button, Card, Dropdown } from '@/components/ui';
 import React, { useEffect, useState } from 'react';
+import { projectId } from './data';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const App: React.FC = () => {
     const [momData, setMomData] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
+    interface QueryParams {
+        id: string;
+        project_id: string;
+        mom:string
+      
+      }
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    
+    // Create an object to store and map the query parameters
+    const allQueryParams: QueryParams = {
+      id: queryParams.get('id') || '',
+      project_id: queryParams.get('project_id') || '',
+      mom: queryParams.get('type') || '',
+      
+
+    };
 
     useEffect(() => {
-        fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=COLP-266329')
+        fetch(`https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${allQueryParams.project_id}`)
             .then(response => response.json())
             .then(data => setMomData(data.data))
             .catch(error => console.error('Error fetching data:', error));
@@ -34,7 +53,7 @@ const App: React.FC = () => {
     };
 
     const Toggle = <Button>Files</Button>
-
+const navigate=useNavigate()
     return (
         <div>
             <h3>MOM Data</h3>
@@ -75,18 +94,12 @@ const App: React.FC = () => {
           <h5 className='mt-2'> Important Notes</h5>
           <p>{item.imaportant_note}</p>
          </div>
-         <div className='my-4 text-left'>
-         <Dropdown  renderTitle={Toggle}  >
+         <div className='my-4 text-left grid grid-cols-8 gap-3'>
+        
                 {item.files.map((item) => (
-                    <Dropdown.Item
-                        key={item.key}
-                        eventKey={item.key}
-                      
-                    >
-                        {item.name}
-                    </Dropdown.Item>
+                    <a href={item} target='_blank'><Button variant='solid'>File</Button></a>
                 ))}
-            </Dropdown>
+           
          </div>
     </Card>
 </div>
