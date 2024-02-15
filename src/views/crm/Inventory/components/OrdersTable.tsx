@@ -225,7 +225,7 @@ const OrdersTable = () => {
                 cell: (props) => {
                     const row = props.row.original
                     return (
-                        <span>{row.mom[0].attendees.client_name[0]}</span>
+                        <span>{row.mom[0].attendees.client_name}</span>
                     )
                 },
             },

@@ -130,7 +130,6 @@ const appsNavigationConfig: NavigationTree[] = [
                     // },
                     {
                         key: 'appsCrm.inventory',
-                        path: `${APP_PREFIX_PATH}/crm/inventory`,
                         title: 'Inventory',
                         translateKey: 'nav.appsCrm.inventory',
                         icon: 'inventory',

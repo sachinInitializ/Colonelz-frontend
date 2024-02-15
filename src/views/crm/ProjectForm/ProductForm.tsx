@@ -4,6 +4,7 @@ import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns'
 import DatePicker from '@/components/ui/DatePicker/DatePicker';
+import { StickyFooter } from '@/components/shared';
 
 interface FormData {
   lead_id: string | null;
@@ -307,9 +308,27 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
             </FormItem>
            
           </div>
-          <Button size='sm' variant='solid' type='submit'>
-            Submit
-          </Button>
+          <StickyFooter
+                className="-mx-8 px-8 flex items-center justify-between py-4"
+                stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+            >
+                <div className="md:flex items-center">
+                    <Button
+                        size="sm"
+                        className="ltr:mr-3 rtl:ml-3"
+                        type="button"
+                        onClick={() => {
+                            navigate(-1)
+                            // window.location.reload()
+                        }}
+                    >
+                        Discard
+                    </Button>
+                    <Button size="sm" variant="solid" type="submit">
+                        Submit
+                    </Button>
+                </div>
+            </StickyFooter>
         </FormContainer>
       </form>
     </div>

@@ -235,17 +235,28 @@ const LeadForm: React.FC = () => {
                         />
                     </FormItem>
                 </div>
-                <StickyFooter
-                    className="-mx-8 px-8 flex items-center justify-between py-4"
-                    stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-                >
-                    <div className="md:flex items-center">
-                        <Button size="sm" variant="solid" type="submit">
-                            Submit
-                        </Button>
-                    </div>
-                </StickyFooter>
             </div>
+            <StickyFooter
+                className="-mx-8 px-8 flex items-center justify-between py-4"
+                stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+            >
+                <div className="md:flex items-center">
+                    <Button
+                        size="sm"
+                        className="ltr:mr-3 rtl:ml-3"
+                        type="button"
+                        onClick={() => {
+                            navigate(-1)
+                            // window.location.reload()
+                        }}
+                    >
+                        Discard
+                    </Button>
+                    <Button size="sm" variant="solid" type="submit">
+                        Submit
+                    </Button>
+                </div>
+            </StickyFooter>
         </form>
     )
 }
