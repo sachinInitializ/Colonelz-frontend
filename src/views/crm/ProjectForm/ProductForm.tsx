@@ -319,7 +319,6 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
                         type="button"
                         onClick={() => {
                             navigate(-1)
-                            // window.location.reload()
                         }}
                     >
                         Discard

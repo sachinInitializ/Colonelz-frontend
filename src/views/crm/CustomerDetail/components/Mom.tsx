@@ -192,14 +192,17 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
     const onDropdownClick = (e: SyntheticEvent) => {
       console.log('Dropdown Clicked', e)
   }
-    // State to manage the selected file
    
     return (
        <div>
         <div className='flex justify-between items-center'>
         <h6>Date: {rowData.meetingdate}</h6>
-        <h6>Mode Of Meeting: {rowData.source}</h6>
+        <div className='grid grid-cols-2 gap-2'>
+            <Button variant='solid' size='sm'>View MOM</Button>
+            <Button variant='solid' size='sm'>Share MOM</Button>
         </div>
+        </div>
+        <h6 className=' capitalize'>Mode Of Meeting: {rowData.source}</h6>
         <div className='mt-4'>
            <h5 className=' mt-3'>Meeting attendees</h5>
            <p>Client Name: {rowData.attendees.client_name}</p>
@@ -219,10 +222,9 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
        
                 {files.map((item) => (
                   <div className=''>
-                   <a href={item} target='_blank'> <Button variant='solid'>file</Button></a>
+                   <a href={item} target='_blank'> <Button variant='solid' className=' capitalize'>file</Button></a>
                    </div>
                 ))}
-            
         </div>
        </div>
     )
