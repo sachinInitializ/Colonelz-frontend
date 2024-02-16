@@ -1,68 +1,113 @@
-import { Button, Card, Dropdown } from '@/components/ui';
+import { Button, Card, Dropdown, Input } from '@/components/ui';
 import React, { useEffect, useState } from 'react';
 import { projectId } from './data';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const App: React.FC = () => {
-    const [momData, setMomData] = useState<any[]>([]);
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    interface QueryParams {
-        id: string;
-        project_id: string;
-        mom:string
-      
-      }
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    
-    // Create an object to store and map the query parameters
-    const allQueryParams: QueryParams = {
-      id: queryParams.get('id') || '',
-      project_id: queryParams.get('project_id') || '',
-      mom: queryParams.get('type') || '',
-      
+  const [momData, setMomData] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [highlightedText, setHighlightedText] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>('');
 
-    };
+  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setSearchInput(event.target.value);
+  };
 
-    useEffect(() => {
-        fetch(`https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${allQueryParams.project_id}`)
-            .then(response => response.json())
-            .then(data => setMomData(data.data))
-            .catch(error => console.error('Error fetching data:', error));
-    }, []);
+  const handleSearchButtonClick = () => {
+    setHighlightedText(searchInput);
+  };
 
-    const filteredMomData = momData.filter(item => {
-        const searchIn = (str: string) => str.toLowerCase().includes(searchTerm.toLowerCase());
+  interface QueryParams {
+    id: string;
+    project_id: string;
+    mom: string;
+  }
 
-        return (
-            searchIn(item.mom_id) ||
-            searchIn(item.meetingdate) ||
-            searchIn(item.source) ||
-            (item.attendees.client_name && searchIn(item.attendees.client_name.join(', '))) ||
-            searchIn(item.remark)
-        );
-    });
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
 
-    const getNames = (names: string[] | string) => {
-        if (Array.isArray(names)) {
-            return names.join(', ');
-        } else if (typeof names === 'string') {
-            return names;
-        }
-        return 'Invalid format';
-    };
+  // Create an object to store and map the query parameters
+  const allQueryParams: QueryParams = {
+    id: queryParams.get('id') || '',
+    project_id: queryParams.get('project_id') || '',
+    mom: queryParams.get('type') || '',
+  };
 
-    const Toggle = <Button>Files</Button>
-const navigate=useNavigate()
+  useEffect(() => {
+    fetch(`https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${allQueryParams.project_id}`)
+      .then(response => response.json())
+      .then(data => setMomData(data.data))
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
+
+  const filteredMomData = momData.filter(item => {
+    const searchIn = (str: string) =>
+      str.toLowerCase().includes(searchTerm.toLowerCase());
+
     return (
-        <div>
-            <h3>MOM Data</h3>
-          
+      searchIn(item.mom_id) ||
+      searchIn(item.meetingdate) ||
+      searchIn(item.source) ||
+      (Array.isArray(item.attendees.client_name) && searchIn(item.attendees.client_name.join(', '))) || // Check if it's an array before joining
+      searchIn(item.remark) ||
+      searchIn(item.imaportant_note) || // Search important notes too
+      Object.entries(item.attendees).some(([key, value]) => searchIn(value)) // Search all attendee attributes
+    );
+  });
+
+  const highlightText = (text: string): JSX.Element => {
+    if (!highlightedText.trim()) {
+      return <>{text}</>;
+    }
+
+    const regex = new RegExp(`(${highlightedText})`, 'gi');
+    const parts = text.split(regex);
+
+    return (
+      <>
+        {parts.map((part, index) =>
+          regex.test(part) ? (
+            <span key={index} className="bg-yellow-200 bg-opacity-50 rounded-md">
+              {part}
+            </span>
+          ) : (
+            <span key={index}>{part}</span>
+          )
+        )}
+      </>
+    );
+  };
+
+  const getNames = (names: string[] | string) => {
+    if (Array.isArray(names)) {
+      return names.join(', ');
+    } else if (typeof names === 'string') {
+      return names;
+    }
+    return 'Invalid format';
+  };
+
+  const Toggle = <Button>Files</Button>;
+  const navigate = useNavigate();
+
+  return (
+    <div className=''>
+        <div className='flex justify-between '>
+      <h3>MOM Data</h3>
+      <Input
+        type="text"
+        placeholder="Search..."
+        value={searchInput}
+        onChange={handleSearchInputChange}
+        className=' w-1/5'
+      />
+      </div>
             <ul>
             {filteredMomData.map((item: any) => (
     <div className='my-4'>
     <Card
-        header={<span>Date: {item.meetingdate}</span>}
+      header={<span>Date: {highlightText(item.meetingdate)}</span>}
         headerClass="font-semibold text-lg text-indigo-600"
         bodyClass="text-center"
       

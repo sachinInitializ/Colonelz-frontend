@@ -20,12 +20,15 @@ import {
     apiGetNotificationCount,
 } from '@/services/CommonService'
 import { Link } from 'react-router-dom'
+import { userDetailData } from '@/mock/data/usersData'
 import isLastChild from '@/utils/isLastChild'
 import useTwColorByName from '@/utils/hooks/useTwColorByName'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import { useAppSelector } from '@/store'
 import useResponsive from '@/utils/hooks/useResponsive'
 import acronym from '@/utils/acronym'
+console.log(userDetailData);
+
 
 type NotificationList = {
     id: string
@@ -118,6 +121,10 @@ const NotificationToggle = ({
 }
 
 const _Notification = ({ className }: { className?: string }) => {
+    const [projectTimelines, setProjectTimelines] = useState<{
+        [projectId: string]: Date;
+      }>({});
+      
     const [notificationList, setNotificationList] = useState<
         NotificationList[]
     >([])
@@ -132,14 +139,23 @@ const _Notification = ({ className }: { className?: string }) => {
     const direction = useAppSelector((state) => state.theme.direction)
 
     const getNotificationCount = useCallback(async () => {
-        const resp = await apiGetNotificationCount()
+        const resp = await apiGetNotificationCount();
         if (resp.data.count > 0) {
-            setNoResult(false)
-            setUnreadNotification(true)
+          setNoResult(false);
+          setUnreadNotification(true);
         } else {
-            setNoResult(true)
+          setNoResult(true);
         }
-    }, [setUnreadNotification])
+      
+        // Fetch project timelines and store them in the state
+        const projects = userDetailData;
+        const timelines = (projects ?? []).reduce((acc, project) => {
+            acc[project.project_id] = new Date(project.timeline_date);
+            return acc;
+          }, {});
+        setProjectTimelines(timelines);
+      }, [setUnreadNotification]);
+      
 
     useEffect(() => {
         getNotificationCount()
@@ -183,6 +199,29 @@ const _Notification = ({ className }: { className?: string }) => {
         [notificationList]
     )
 
+
+    const isTimelineNotification = (item) => {
+        const projectTimeline = projectTimelines[item.target];
+        if (projectTimeline) {
+            const currentDate = new Date();
+            const timeDifference = projectTimeline.getTime() - currentDate.getTime();
+            const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    
+            if (daysLeft <= 1) {
+                if (daysLeft === 1) {
+                    return '1 day left for this project';
+                } else if (daysLeft === 0) {
+                    return 'Project deadline has reached';
+                } else if (daysLeft < 0) {
+                    return 'Project delayed beyond timeline';
+                }
+            }
+        }
+    
+        return null;
+    };
+    
+
     return (
         <Dropdown
             renderTitle={
@@ -211,38 +250,42 @@ const _Notification = ({ className }: { className?: string }) => {
             </Dropdown.Item>
             <div className={classNames('overflow-y-auto', notificationHeight)}>
                 <ScrollBar direction={direction}>
-                    {notificationList.length > 0 &&
-                        notificationList.map((item, index) => (
-                            <div
-                                key={item.id}
-                                className={`relative flex px-4 py-4 cursor-pointer hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-black dark:hover:bg-opacity-20  ${
-                                    !isLastChild(notificationList, index)
-                                        ? 'border-b border-gray-200 dark:border-gray-600'
-                                        : ''
-                                }`}
-                                onClick={() => onMarkAsRead(item.id)}
-                            >
-                               
-                                <div className="ltr:ml-3 rtl:mr-3">
-                                    <div>
-                                        {item.target && (
-                                            <span className="font-semibold heading-text">
-                                                {item.target}{' '}
-                                            </span>
-                                        )}
-                                        <span>{item.description}</span>
-                                    </div>
-                                    <span className="text-xs">{item.date}</span>
-                                </div>
-                                <Badge
-                                    className="absolute top-4 ltr:right-4 rtl:left-4 mt-1.5"
-                                    innerClass={`${
-                                        item.readed ? 'bg-gray-300' : bgTheme
-                                    } `}
-                                />
-                            </div>
-                        ))}
-                    {loading && (
+               
+                {notificationList.length > 0 &&
+  notificationList.map((item, index) => (
+    <div
+      key={item.id}
+      className={`relative flex px-4 py-4 cursor-pointer hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-black dark:hover:bg-opacity-20  ${
+        !isLastChild(notificationList, index)
+          ? 'border-b border-gray-200 dark:border-gray-600'
+          : ''
+      }`}
+      onClick={() => onMarkAsRead(item.id)}
+    >
+      <div className="ltr:ml-3 rtl:mr-3">
+        <div>
+          {item.target && (
+            <span className="font-semibold heading-text">
+              {item.target}{' '}
+            </span>
+          )}
+          <span>{item.description}</span>
+          <span className="text-xs">{isTimelineNotification(item)}</span>
+          <span className="text-xs">
+            {item.date}
+          </span>
+        </div>
+        <span className="text-xs">{item.date}</span>
+      </div>
+      <Badge
+        className="absolute top-4 ltr:right-4 rtl:left-4 mt-1.5"
+        innerClass={`${
+          item.readed ? 'bg-gray-300' : bgTheme
+        } `}
+      />
+    </div>
+  ))}
+         {loading && (
                         <div
                             className={classNames(
                                 'flex items-center justify-center',

@@ -5,8 +5,6 @@ import DataTable from '@/components/shared/DataTable'
 import {
     getCustomers,
     setTableData,
-    setSelectedCustomer,
-    setDrawerOpen,
     useAppDispatch,
     useAppSelector,
     Customer,
@@ -24,12 +22,7 @@ import { HiOutlineEye } from 'react-icons/hi'
     
         const onEdit = () => {
     navigate(`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
-
-    
-   
         }
-
-  
         return (
             <div className="flex justify-end text-lg">
                 <a href={`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`}

@@ -92,10 +92,8 @@ const CustomerProfileAction = ({
     id?: string
     data?: Partial<Customer>
 }) => {
-    const dispatch = useAppDispatch()
     const [dialogOpen, setDialogOpen] = useState(false)
     const [editedData, setEditedData] = useState<Partial<Customer>>({})
-    const navigate = useNavigate()
 
     const onDialogClose = () => {
         setDialogOpen(false)

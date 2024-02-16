@@ -12,6 +12,12 @@ const options = [
     { value: 'Not Interested', label: 'Not Interested' },
     { value: 'NO Response', label: 'NO Response' },
 ]
+const optionsSource = [
+    { value: 'At Office', label: 'At Office' },
+    { value: 'At Site', label: 'At Site' },
+    { value: 'At Client place', label: 'At Client Place' },
+    { value: 'Other', label: 'Other' },
+]
 
 interface FormData {
     name: string
@@ -214,12 +220,17 @@ const LeadForm: React.FC = () => {
                     <span className=" text-red-600">{errors.date}</span>
                 </div>
                 <div>
-                    <FormItem label="Source">
-                        <Input
-                            type="text"
-                            value={formData.source}
-                            onChange={(e) =>
-                                handleInputChange('source', e.target.value)
+                <FormItem label="Source">
+                        <Select
+                            options={optionsSource}
+                            value={optionsSource.find(
+                                (option) => option.value === formData.source,
+                            )}
+                            onChange={(selectedOption) =>
+                                handleInputChange(
+                                    'source',
+                                    selectedOption.value,
+                                )
                             }
                         />
                     </FormItem>
