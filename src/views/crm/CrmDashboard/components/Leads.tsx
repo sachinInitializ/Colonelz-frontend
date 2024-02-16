@@ -99,7 +99,7 @@ const Leads = ({ data = [], className }: LeadsProps) => {
     })
 
     const onNavigate = () => {
-        navigate('/app/leadsus')
+        navigate('/app/leads')
     }
 
     interface client{
