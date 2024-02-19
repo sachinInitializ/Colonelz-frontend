@@ -28,14 +28,14 @@ const TabbedContent: React.FC<TabbedContentProps> = ({ data }) => {
 
             <>
             <TabList className=' ' key={quotation.type} style={{ scrollbarWidth: "none" }}>
-              <TabNav value={quotation.type} icon={<HiOutlineHome />}>
+              <TabNav value={quotation.type} >
                 {quotation.type}
               </TabNav>
             </TabList>
             </>
           ))}
           </div>
-          <Button className=' justify-end' variant='solid' onClick={()=>navigate(`/app/crm/project/quotation-form?project_id=${projectId}`)}>Add Quotaiotn</Button>
+      
         </div>
         {data.data.main_quotation.map((quotation) => (
           <TabContent key={quotation.type} value={quotation.type}>
@@ -70,10 +70,14 @@ const YourMainComponent: React.FC = () => {
       fetchData();
     }
   }, [location.search]);
-
+  const searchParams = new URLSearchParams(location.search);
+  const projectId = searchParams.get('project_id');
+const navigate=useNavigate()
   return (
     <div className=''>
-      <TabbedContent data={mainQuotationData} />
+      <div className='flex justify-end'>
+          <Button className=' justify-end' variant='solid' onClick={()=>navigate(`/app/crm/project/quotation-form?project_id=${projectId}`)}>Add Quotaiotn</Button>
+          </div> <TabbedContent data={mainQuotationData} />
     </div>
   );
 };
