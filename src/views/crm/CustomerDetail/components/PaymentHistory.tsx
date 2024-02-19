@@ -1,183 +1,81 @@
-import { useState } from 'react'
-import Table from '@/components/ui/Table'
-import Badge from '@/components/ui/Badge'
-import {
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    useReactTable,
-    createColumnHelper,
-} from '@tanstack/react-table'
-import { NumericFormat } from 'react-number-format'
-import { useAppSelector, OrderHistory } from '../store'
-import dayjs from 'dayjs'
-import { Button } from '@/components/ui'
-import { HiPlusCircle } from 'react-icons/hi'
+import React, { useEffect, useState } from 'react';
+import { HiOutlineHome } from 'react-icons/hi';
+import { MainQuotationItem, MainQuotationData } from './quoteTypeData'; // Replace with your actual library
+import Filtering from './Quoation';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Button, Tabs } from '@/components/ui';
+import TabList from '@/components/ui/Tabs/TabList';
+import TabNav from '@/components/ui/Tabs/TabNav';
+import TabContent from '@/components/ui/Tabs/TabContent';
 
-const { Tr, Th, Td, THead, TBody, Sorter } = Table
-
-const statusColor: Record<string, string> = {
-    paid: 'bg-emerald-500',
-    pending: 'bg-amber-400',
+interface TabbedContentProps {
+  data: MainQuotationData | null;
 }
 
-const columnHelper = createColumnHelper<OrderHistory>()
-
-const columns = [
-    columnHelper.accessor('id', {
-        header: 'Reference',
-        cell: (props) => {
-            const row = props.row.original
-            return (
-                <div>
-                    <span className="cursor-pointer">{row.id}</span>
-                </div>
-            )
-        },
-    }),
-    columnHelper.accessor('item', {
-        header: 'Product',
-    }),
-    columnHelper.accessor('status', {
-        header: 'Status',
-        cell: (props) => {
-            const row = props.row.original
-            return (
-                <div className="flex items-center">
-                    <Badge className={statusColor[row.status]} />
-                    <span className="ml-2 rtl:mr-2 capitalize">
-                        {row.status}
-                    </span>
-                </div>
-            )
-        },
-    }),
-    columnHelper.accessor('date', {
-        header: 'Date',
-        cell: (props) => {
-            const row = props.row.original
-            return (
-                <div className="flex items-center">
-                    {dayjs.unix(row.date).format('MM/DD/YYYY')}
-                </div>
-            )
-        },
-    }),
-    columnHelper.accessor('amount', {
-        header: 'Amount',
-        cell: (props) => {
-            const row = props.row.original
-            return (
-                <div className="flex items-center">
-                    <NumericFormat
-                        displayType="text"
-                        value={(Math.round(row.amount * 100) / 100).toFixed(2)}
-                        prefix={'$'}
-                        thousandSeparator={true}
-                    />
-                </div>
-            )
-        },
-    }),
-]
-
-const PaymentHistory = () => {
-    const data = useAppSelector(
-        (state) => state.crmCustomerDetails.data.paymentHistoryData
-    )
-
-    const [sorting, setSorting] = useState<
-        {
-            id: string
-            desc: boolean
-        }[]
-    >([])
-
-    const table = useReactTable({
-        data,
-        columns,
-        state: {
-            sorting,
-        },
-        onSortingChange: setSorting,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-    })
-
+const TabbedContent: React.FC<TabbedContentProps> = ({ data }) => {
+    if (!data || !data.data || !data.data.main_quotation) {
+      return null; // Return early if data or its nested properties are falsy
+    }
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const projectId = searchParams.get('project_id');
+  const navigate=useNavigate()
     return (
-        <div className="mb-4">
-               <div  className='flex items-center justify-between mb-4'>
-                <div></div>
-                <div className=''>
-            <Button block variant="solid" size="sm" icon={<HiPlusCircle/>}>
-                    Add Quotation
-                </Button>
-                </div>
-          
-                </div>
-            <Table>
-                <THead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <Th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                    >
-                                        {header.isPlaceholder ? null : (
-                                            <div
-                                                {...{
-                                                    className:
-                                                        header.column.getCanSort()
-                                                            ? 'cursor-pointer select-none'
-                                                            : '',
-                                                    onClick:
-                                                        header.column.getToggleSortingHandler(),
-                                                }}
-                                            >
-                                                {flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext()
-                                                )}
-                                                {
-                                                    <Sorter
-                                                        sort={header.column.getIsSorted()}
-                                                    />
-                                                }
-                                            </div>
-                                        )}
-                                    </Th>
-                                )
-                            })}
-                        </Tr>
-                    ))}
-                </THead>
-                <TBody>
-                    {table
-                        .getRowModel()
-                        .rows.slice(0, 10)
-                        .map((row) => {
-                            return (
-                                <Tr key={row.id}>
-                                    {row.getVisibleCells().map((cell) => {
-                                        return (
-                                            <Td key={cell.id}>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </Td>
-                                        )
-                                    })}
-                                </Tr>
-                            )
-                        })}
-                </TBody>
-            </Table>
-        </div>
-    )
-}
+      <Tabs>
+        <div className='flex flex-row justify-between'>
+            <div className='flex flex-row '>
+          {data.data.main_quotation.map((quotation) => (
 
-export default PaymentHistory
+            <>
+            <TabList className=' ' key={quotation.type} style={{ scrollbarWidth: "none" }}>
+              <TabNav value={quotation.type} icon={<HiOutlineHome />}>
+                {quotation.type}
+              </TabNav>
+            </TabList>
+            </>
+          ))}
+          </div>
+          <Button className=' justify-end' variant='solid' onClick={()=>navigate(`/app/crm/project/quotation-form?project_id=${projectId}`)}>Add Quotaiotn</Button>
+        </div>
+        {data.data.main_quotation.map((quotation) => (
+          <TabContent key={quotation.type} value={quotation.type}>
+            <div className="p-4">
+              <Filtering quotation_type={quotation.type} quotation_id={quotation.qutation_id} project_id={projectId} />
+            </div>
+          </TabContent>
+        ))}
+      </Tabs>
+    );
+  };
+
+const YourMainComponent: React.FC = () => {
+  const location = useLocation();
+  const [mainQuotationData, setMainQuotationData] = useState<MainQuotationData | null>(null);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const projectId = searchParams.get('project_id');
+
+    if (projectId) {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/get/quotation/?project_id=${projectId}`);
+          const data = await response.json();
+          setMainQuotationData(data);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [location.search]);
+
+  return (
+    <div className=''>
+      <TabbedContent data={mainQuotationData} />
+    </div>
+  );
+};
+
+export default YourMainComponent;

@@ -91,6 +91,16 @@ const appsRoute: Routes = [
         },
     },
     {
+        key: 'appsCrm.quotationform',
+        path: `${APP_PREFIX_PATH}/crm/project/quotation-form`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/QuotationForm')),
+        authority: [ADMIN, USER],
+        meta: {
+            header: 'Quotation',
+            headerContainer: true,
+        },
+    },
+    {
         key: 'appsCrm.mail',
         path: `${APP_PREFIX_PATH}/crm/mail`,
         component: lazy(() => import('@/views/crm/Mail')),

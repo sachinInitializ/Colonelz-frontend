@@ -49,10 +49,6 @@ const CustomerDetail = () => {
             dispatch(getCustomer({ id }))
         }
     }
-
-    
-  
-    
     interface QueryParams {
         id: string;
         project_id: string;

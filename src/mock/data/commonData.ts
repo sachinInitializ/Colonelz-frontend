@@ -58,6 +58,13 @@ export const searchQueryPoolData = [
         categoryTitle: 'Apps',
     },
     {
+        title: 'Quoation Form',
+        url: '/app/crm/project/quotation-form',
+        icon: 'crm',
+        category: 'CRM',
+        categoryTitle: 'Apps',
+    },
+    {
         title: 'CRM MOM',
         url: '/app/crm/allmom',
         icon: 'crm',

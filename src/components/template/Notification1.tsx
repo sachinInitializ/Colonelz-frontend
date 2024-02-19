@@ -12,7 +12,7 @@ const Notification1 = () => {
   const projects = userDetailData; // Assuming userDetailData contains your project data
 
   const handleClick = () => {
-    setShowNotification(!showNotification);
+    setShowNotification(true);
   };
 
   const renderNotifications = () => {
@@ -29,20 +29,21 @@ const Notification1 = () => {
 
       if (timeDiff === 1) {
         return (
-          <>
+          < div style={{scrollbarWidth:"none"}} className=' text-sm'>
           <Dropdown.Item key={project._id} onClick={handleClick} className=''>
-            <p>{`1 day left for project "${project.project_name}"`}</p>
+            <p className=' text-sm'>{`1 day left for project "${project.project_name}"`}</p>
           </Dropdown.Item>
-          <hr />
-          </>
+          <hr className='my-2' />
+          </div>
         );
       } else if (currentDate >= timelineDate) {
         return (
-          <>
+          <div>
           <Dropdown.Item key={project._id} className='text-wrap'>
-            <p>{`Project "${project.project_name}" delayed. Extend timeline.`}</p>
+            <p className=' text-sm'>{`Project "${project.project_name}" delayed. Extend timeline.`}</p>
           </Dropdown.Item>
-          </>
+          <hr className='my-2'/>
+          </div>
         );
       }
       return null;
@@ -59,13 +60,14 @@ const Notification1 = () => {
         menuClass="p-0 w-[200px] min-w-[250px] md:min-w-[300px] max-h-80 overflow-y-auto" // Set max height and enable vertical scrolling
         placement={larger.md ? 'bottom-end' : 'bottom-center'}
         onClick={handleClick}
+        style={{scrollbarWidth:"none"}}
       >
         <Dropdown.Item variant="header">
           <div className="border-b border-gray-200 dark:border-gray-600 px-4 py-2 flex items-center justify-between">
             <h6>Notifications</h6>
           </div>
         </Dropdown.Item>
-        <div className='ltr:ml-3 rtl:mr-3'>
+        <div className='ltr:ml-3 rtl:mr-3 text-sm' style={{scrollbarWidth:"none"}}>
           {showNotification && renderNotifications()}
         </div>
         <Dropdown.Item variant="header">
