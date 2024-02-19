@@ -213,7 +213,7 @@ const LeadForm: React.FC = () => {
                                 formData.date ? new Date(formData.date) : null
                             }
                             onChange={(date) =>
-                                handleInputChange('date', date.toString())
+                                handleInputChange('date', date?.toISOString())
                             }
                         />
                     </FormItem>

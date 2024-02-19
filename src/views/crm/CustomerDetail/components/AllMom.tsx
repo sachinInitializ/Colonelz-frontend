@@ -56,20 +56,20 @@ const App: React.FC = () => {
     );
   });
 
-  const highlightText = (text: string): JSX.Element => {
+  const highlightText = (text: string, isDate: boolean = false): JSX.Element => {
     if (!highlightedText.trim()) {
       return <>{text}</>;
     }
-
+  
     const regex = new RegExp(`(${highlightedText})`, 'gi');
     const parts = text.split(regex);
-
+  
     return (
       <>
         {parts.map((part, index) =>
           regex.test(part) ? (
             <span key={index} className="bg-yellow-200 bg-opacity-50 rounded-md">
-              {part}
+              {isDate && regex.test(part) ? new Date(part).toLocaleDateString('en-GB') : part}
             </span>
           ) : (
             <span key={index}>{part}</span>
@@ -78,7 +78,7 @@ const App: React.FC = () => {
       </>
     );
   };
-
+  
   const getNames = (names: string[] | string) => {
     if (Array.isArray(names)) {
       return names.join(', ');
@@ -90,6 +90,7 @@ const App: React.FC = () => {
 
   const Toggle = <Button>Files</Button>;
   const navigate = useNavigate();
+  
 
   return (
     <div className=''>
@@ -107,7 +108,7 @@ const App: React.FC = () => {
             {filteredMomData.map((item: any) => (
     <div className='my-4'>
     <Card
-      header={<span>Date: {highlightText(item.meetingdate)}</span>}
+      header={<span>Date: {new Date(item.meetingdate).toISOString().split('T')[0]}</span>}
         headerClass="font-semibold text-lg text-indigo-600"
         bodyClass="text-center"
       

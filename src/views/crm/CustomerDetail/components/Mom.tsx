@@ -79,6 +79,16 @@ function ReactTable({ renderRowSubComponent, getRowCanExpand,data }: ReactTableP
             {
                 header: 'Meeting Date',
                 accessorKey: 'meetingdate',
+                cell:(props)=>{
+                    const row = props.row.original;
+                    const originalDate = new Date(row.meetingdate);
+              
+                    // Formatting the date in dd-mm-yyyy format
+                    const formattedDate = `${originalDate.getDate().toString().padStart(2, '0')}-${
+                      (originalDate.getMonth() + 1).toString().padStart(2, '0')}-${originalDate.getFullYear()}`;
+              
+                    return <div>{formattedDate}</div>;
+                }
             },
             {
                 header: 'Source',

@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react'
-import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui'
+import { Button, DatePicker, FormContainer, FormItem, Input, Select } from '@/components/ui'
 import CreatableSelect from 'react-select/creatable' // Import CreatableSelect
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -91,8 +91,8 @@ const YourFormComponent: React.FC = () => {
         })
     }
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
+    const handleInputChange = (name: keyof FormData, value: string) => {
+       
         setFormData({ ...formData, [name]: value })
         setErrors({
             ...errors,
@@ -108,6 +108,13 @@ const YourFormComponent: React.FC = () => {
             files: '',
         })
     }
+
+    const optionsSource = [
+        { value: 'At Office', label: 'At Office' },
+        { value: 'At Site', label: 'At Site' },
+        { value: 'At Client place', label: 'At Client Place' },
+        { value: 'Other', label: 'Other' },
+    ]
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
@@ -295,36 +302,37 @@ const YourFormComponent: React.FC = () => {
                         )}
                     </FormItem>
                     {/* Add similar FormItem and Select components for other fields */}
-                    <FormItem label="Meeting Date">
-                        <Input
-                            type="date"
-                            name="meetingDate"
-                            value={formData.meetingDate}
-                            onChange={handleInputChange}
+                    <FormItem label="Date">
+                        <DatePicker
+                            selected={
+                                formData.meetingDate ? new Date(formData.meetingDate) : null
+                            }
+                            onChange={(date) =>
+                                handleInputChange('meetingDate', date.toISOString())
+                            }
                         />
-                        {errors.meetingDate && (
-                            <span className="text-red-500">
-                                {errors.meetingDate}
-                            </span>
-                        )}
                     </FormItem>
                     <FormItem label="Source">
-                        <Input
-                            name="source"
-                            value={formData.source}
-                            onChange={handleInputChange}
+                        <Select
+                            options={optionsSource}
+                            value={optionsSource.find(
+                                (option) => option.value === formData.source,
+                            )}
+                            onChange={(selectedOption) =>
+                                handleInputChange(
+                                    'source',
+                                    selectedOption.value,
+                                )
+                            }
                         />
-                        {errors.source && (
-                            <span className="text-red-500">
-                                {errors.source}
-                            </span>
-                        )}
                     </FormItem>
                     <FormItem label="Remark">
                         <Input
                             name="remark"
                             value={formData.remark}
-                            onChange={handleInputChange}
+                            onChange={(e) =>
+                                handleInputChange('remark', e.target.value)
+                            }
                         />
                         {errors.remark && (
                             <span className="text-red-500">
@@ -336,7 +344,9 @@ const YourFormComponent: React.FC = () => {
                         <Input
                             name="imaportant_note"
                             value={formData.imaportant_note}
-                            onChange={handleInputChange}
+                            onChange={(e) =>
+                                handleInputChange('imaportant_note', e.target.value)
+                            }
                         />
                         {errors.imaportant_note && (
                             <span className="text-red-500">
