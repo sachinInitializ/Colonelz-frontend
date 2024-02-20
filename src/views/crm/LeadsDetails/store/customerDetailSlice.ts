@@ -64,8 +64,12 @@ export type Customer = {
     status:string
     source:string
     notes: string[]
+    files:File[]
 }
-export 
+type File={
+    date:string
+    files:Array<string>
+    }
 
 type GetCrmCustomerDetailsResponse = Customer & {
     orderHistory?: OrderHistory[]

@@ -7,6 +7,7 @@ import { Button, Tabs } from '@/components/ui';
 import TabList from '@/components/ui/Tabs/TabList';
 import TabNav from '@/components/ui/Tabs/TabNav';
 import TabContent from '@/components/ui/Tabs/TabContent';
+import FinalEstimate from './FinalEstimate';
 
 interface TabbedContentProps {
   data: MainQuotationData | null;
@@ -21,22 +22,27 @@ const TabbedContent: React.FC<TabbedContentProps> = ({ data }) => {
     const projectId = searchParams.get('project_id');
   const navigate=useNavigate()
     return (
-      <Tabs>
+      <Tabs defaultValue='Final Estimate' className=''>
+      
         <div className='flex flex-row justify-between'>
             <div className='flex flex-row '>
-          {data.data.main_quotation.map((quotation) => (
 
             <>
-            <TabList className=' ' key={quotation.type} style={{ scrollbarWidth: "none" }}>
-              <TabNav value={quotation.type} >
+            <TabList className=' ' style={{ scrollbarWidth: "none" }} >
+        <TabNav value='Final Estimate'>Final Estimate</TabNav>
+          {data.data.main_quotation.map((quotation) => (
+              <TabNav value={quotation.type} className=' capitalize' >
                 {quotation.type}
               </TabNav>
+            ))}
             </TabList>
             </>
-          ))}
           </div>
       
         </div>
+        <TabContent value='Final Estimate'>
+           <FinalEstimate/>
+        </TabContent>
         {data.data.main_quotation.map((quotation) => (
           <TabContent key={quotation.type} value={quotation.type}>
             <div className="p-4">

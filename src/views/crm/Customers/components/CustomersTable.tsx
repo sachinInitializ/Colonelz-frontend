@@ -24,12 +24,10 @@ import { HiOutlineEye } from 'react-icons/hi'
     navigate(`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
         }
         return (
-            <div className="flex justify-end text-lg">
-                <a href={`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`}
-                    
-                >
+            <div className="flex justify-end text-lg" onClick={onEdit}>
+             
                     <HiOutlineEye />
-                </a>
+            
                
             </div>
         )

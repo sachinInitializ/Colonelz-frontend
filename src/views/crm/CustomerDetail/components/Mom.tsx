@@ -1,5 +1,5 @@
 
-import { useMemo, Fragment, useState } from 'react'
+import { useMemo, Fragment, useState, useEffect } from 'react'
 import Table from '@/components/ui/Table'
 import {
     useReactTable,
@@ -14,7 +14,7 @@ import type { ColumnDef, Row,ColumnSort } from '@tanstack/react-table'
 import type { ReactElement, SyntheticEvent } from 'react'
 import { log } from 'console'
 import { Button, Dropdown } from '@/components/ui'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 type ReactTableProps<T> = {
     renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
@@ -98,9 +98,40 @@ function ReactTable({ renderRowSubComponent, getRowCanExpand,data }: ReactTableP
         ],
         []
     )
+
+    const location = useLocation();
+  
+    const [leadData,setLeadData]=useState<ApiResponse | null>(null)
+    useEffect(() => {
+      const searchParams = new URLSearchParams(location.search);
+      const projectId = searchParams.get('project_id');
+      if (projectId) {
+        const fetchData = async () => {
+          try {
+            const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${projectId}`);
+            const data = await response.json();
+            setLeadData(data.data)
+            console.log(leadData);
+            
+            
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+  
+        fetchData();
+      }
+    }, [location.search]);
+    
+
+
+
+
+      
+    
     const [sorting, setSorting] = useState<ColumnSort[]>([])
     const table = useReactTable({
-        data: momApiResponse,
+        data: leadData || [],
         columns,
         state: {
           sorting,
@@ -199,10 +230,8 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
     ? rowData.attendees.client_name
     : [rowData.attendees.client_name];
     const files = Array.isArray(rowData.files) ? rowData.files : [];
-    const onDropdownClick = (e: SyntheticEvent) => {
-      console.log('Dropdown Clicked', e)
-  }
-   console.log(rowData.mom_id);
+  
+
    
     return (
        <div>

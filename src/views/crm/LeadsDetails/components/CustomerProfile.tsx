@@ -16,7 +16,7 @@ import {
     Customer,
 } from '../store'
 import EditCustomerProfile from './EditCustomerProfile'
-import { Dialog } from '@/components/ui'
+import { Dialog, Dropdown } from '@/components/ui'
 import * as Yup from 'yup';
 import { useFormik } from 'formik'
 import axios from 'axios'
@@ -136,8 +136,13 @@ interface CustomerProfilePropss {
     notes?: Note[]; // Make notes optional
     createdAt: string;
     __v: number;
+    files:File[]
     // Add other properties as needed
   };
+}
+interface File{
+date:string
+files:Array<string>
 }
 interface Note {
   _id: string;
@@ -271,7 +276,7 @@ const statusOptions = [
 ];
 
 
-
+const Toggle = <Button>Files</Button>
     
     return (
         <div className=' flex flex-col gap-3'>
@@ -310,6 +315,19 @@ const statusOptions = [
                         value={data?.source}
                       
                     />
+                     <Dropdown renderTitle={Toggle}>
+                      {data?.files?.map((file)=>{
+                        
+                        return(<div key={file}>{file.files.map((item)=>{
+
+                           return(<div key={item}><a href={item} target='_blank'><Dropdown.Item eventKey="a">File</Dropdown.Item></a></div>)
+                        })}</div>)
+                      })}
+                
+                <Dropdown.Item eventKey="b">Item B</Dropdown.Item>
+                <Dropdown.Item eventKey="c">Item C</Dropdown.Item>
+                <Dropdown.Item eventKey="d">Item D</Dropdown.Item>
+            </Dropdown>
                      <Dialog
                 isOpen={dialogIsOpen}
                 onClose={onDialogClose}
