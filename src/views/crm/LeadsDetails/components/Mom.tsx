@@ -7,6 +7,7 @@ import { Button, Card, Dialog, FormContainer, FormItem, Input, Select } from '@/
 import { AiOutlineSave } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import type { MouseEvent } from 'react'
+import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker';
 
 interface FormData {
   lead_id: string | null;
@@ -79,7 +80,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
   const statusOptions = [
     { value: 'noresponse', label: 'No Response' },
     { value: 'notInterested', label: 'Not Interested' },
-    { value: 'interested', label: 'No Response' },
+    { value: 'followUp', label: 'Follow Up' },
     { value: 'interested', label: 'Interested' },
     // Add other status options as needed
   ];
@@ -207,8 +208,8 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
 
           <FormItem>
             Date:
-            <DatePicker
-              size='sm'
+            <DateTimepicker
+              size='md'
               selected={formData.date}
               onChange={handleDateChange}
               dateFormat="MM/dd/yyyy"
@@ -257,7 +258,7 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
           <div key={note._id} className='mb-4 mr-4'>
             <Card>
               <div className='flex flex-row justify-between items-center mb-4 '>
-                <CustomerInfoField title="Date" value={note.date} />
+                <CustomerInfoField title="Date" value={new Date(note.date).toISOString().split('T')[0]} />
                 <CustomerInfoField title="Status" value={note.status} />
               </div>
               <CustomerInfoField title="Description" value={note.content} />
