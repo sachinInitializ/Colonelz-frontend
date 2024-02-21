@@ -15,8 +15,11 @@ export interface ApiResponse {
   code: number;
   data: {
     main_quotation: Quotation[];
-    total_price: number;
+    total_price:number
+    gst:number
+    total_price_with_gst:number
   };
+ 
 }
 
 

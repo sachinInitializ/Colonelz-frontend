@@ -4,10 +4,11 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import Select from 'react-select'
 import DatePicker from '@/components/ui/DatePicker/DatePicker'
-import { Button, FormItem, Input } from '@/components/ui'
+import { Button, FormItem, Input, Upload } from '@/components/ui'
 import { format } from 'date-fns'
 import { useNavigate } from 'react-router-dom'
-import { StickyFooter } from '@/components/shared'
+import { RichTextEditor, StickyFooter } from '@/components/shared'
+import { HiOutlineCloudUpload } from 'react-icons/hi'
 
 interface FormData {
     project_name: string
@@ -58,25 +59,58 @@ const FileUploadForm: React.FC = () => {
 
     const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
-        setFormData({
-            ...formData,
-            [name]: value,
-        })
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+    
+        // Check if it's the description field
+        if (name === 'description') {
+            setFormData({
+                ...formData,
+                description: value,
+            });
+        } else {
+            // For other input fields
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
+
+    
         setErrors({
             ...errors,
             [name]: '',
-        })
-    }
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || [])
-        setFormData({ ...formData, files })
+        });
+    };
+    
+    const handleRichTextChange = (value: string,) => {
+        setFormData({
+            ...formData,
+            description: value,
+        });
+    
+        // You can perform additional actions if needed
+        // For example, updating errors or other state based on rich text changes
+    };
+    
+// ...
+
+const handleFileChange = (files: FileList | null) => {
+    if (files) {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            files: Array.from(files),
+        }));
         setErrors({
             ...errors,
             files: '',
-        })
+        });
     }
+};
+
+// ...
+
+    
 
     const handleDateChange = (date: Date | null, fieldName: string) => {
         setFormData({
@@ -121,39 +155,15 @@ const FileUploadForm: React.FC = () => {
             validationErrors.client_contact =
                 'Valid 10-digit contact number without spaces'
         }
-        if (!formData.project_location.trim()) {
-            validationErrors.location = 'Location is required'
-        }
-        if (!formData.description.trim()) {
-            validationErrors.description = 'Description is required'
-        }
+       
+       
         if (!formData.project_type.trim()) {
             validationErrors.project_type = 'Project Type is required'
         }
         if (!formData.project_name.trim()) {
             validationErrors.project_name = ' Name is required'
         }
-        if (!formData.leadmanager.trim()) {
-            validationErrors.leadmanager = ' Name is required'
-        }
-        if (!formData.junior_designer.trim()) {
-            validationErrors.junior_designer = ' Name is required'
-        }
-        if (!formData.supervisor.trim()) {
-            validationErrors.supervisor = ' Name is required'
-        }
-        if (!formData.visualizer.trim()) {
-            validationErrors.visualizer = ' Name is required'
-        }
-        if (!formData.senior_designer.trim()) {
-            validationErrors.senior_designer = ' Name is required'
-        }
-        if (!formData.project_budget.trim()) {
-            validationErrors.project_budget = ' Budget is required'
-        }
-        if (!formData.project_location.trim()) {
-            validationErrors.project_location = ' Location is required'
-        }
+       
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors)
@@ -241,7 +251,7 @@ const FileUploadForm: React.FC = () => {
                         name="client_email"
                         value={formData.client_email}
                         onChange={handleInputChange}
-                        required
+                        
                     />
                     {errors.client_email && (
                         <span className="text-red-500">
@@ -305,11 +315,7 @@ const FileUploadForm: React.FC = () => {
                         onChange={handleInputChange}
                         required
                     />
-                    {errors.leadmanager && (
-                        <span className="text-red-500">
-                            {errors.leadmanager}
-                        </span>
-                    )}
+                   
                 </FormItem>
                 <FormItem label="Junior Designer">
                     <Input
@@ -321,11 +327,7 @@ const FileUploadForm: React.FC = () => {
                         onChange={handleInputChange}
                         required
                     />
-                    {errors.junior_designer && (
-                        <span className="text-red-500">
-                            {errors.junior_designer}
-                        </span>
-                    )}
+                   
                 </FormItem>
                 <FormItem label="Supervisor">
                     <Input
@@ -337,11 +339,7 @@ const FileUploadForm: React.FC = () => {
                         onChange={handleInputChange}
                         required
                     />
-                    {errors.supervisor && (
-                        <span className="text-red-500">
-                            {errors.supervisor}
-                        </span>
-                    )}
+                   
                 </FormItem>
                 <FormItem label="Visualizer">
                     <Input
@@ -353,11 +351,7 @@ const FileUploadForm: React.FC = () => {
                         onChange={handleInputChange}
                         required
                     />
-                    {errors.visualizer && (
-                        <span className="text-red-500">
-                            {errors.visualizer}
-                        </span>
-                    )}
+                   
                 </FormItem>
                 <FormItem label="Senior Designer">
                     <Input
@@ -369,11 +363,6 @@ const FileUploadForm: React.FC = () => {
                         onChange={handleInputChange}
                         required
                     />
-                    {errors.senior_designer && (
-                        <span className="text-red-500">
-                            {errors.senior_designer}
-                        </span>
-                    )}
                 </FormItem>
                 <FormItem label="Project Status">
                     <Select
@@ -401,11 +390,7 @@ const FileUploadForm: React.FC = () => {
                         }}
                         required
                     />
-                    {errors.project_status && (
-                        <span className="text-red-500">
-                            {errors.project_status}
-                        </span>
-                    )}
+                    
                 </FormItem>
                 <FormItem label="Project Start Date">
                     <DatePicker
@@ -439,11 +424,7 @@ const FileUploadForm: React.FC = () => {
                         }
                         dateFormat="MM/dd/yyyy"
                     />
-                    {errors.timeline_date && (
-                        <span className="text-red-500">
-                            {errors.timeline_date}
-                        </span>
-                    )}
+                  
                 </FormItem>
                 <FormItem label="Project Budget">
                     <Input
@@ -455,11 +436,6 @@ const FileUploadForm: React.FC = () => {
                         onChange={handleInputChange}
                         required
                     />
-                    {errors.project_budget && (
-                        <span className="text-red-500">
-                            {errors.project_budget}
-                        </span>
-                    )}
                 </FormItem>
                 <FormItem label="Project Location">
                     <Input
@@ -471,38 +447,25 @@ const FileUploadForm: React.FC = () => {
                         onChange={handleInputChange}
                         required
                     />
-                    {errors.project_location && (
-                        <span className="text-red-500">
-                            {errors.project_location}
-                        </span>
-                    )}
+                  
                 </FormItem>
                 <FormItem label="Description">
-                    <Input
-                        size="sm"
-                        type="text"
-                        id="description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                        required
-                    />
-                    {errors.project_location && (
-                        <span className="text-red-500">
-                            {errors.project_location}
-                        </span>
-                    )}
+                <RichTextEditor
+    value={formData.description}
+    id="description"
+    name="description"
+    onChange={handleRichTextChange}
+/>
                 </FormItem>
 
                 <div>
-                    <label htmlFor="files">Files:</label>
-                    <input
-                        type="file"
-                        id="files"
-                        name="files"
-                        multiple
-                        onChange={handleFileChange}
-                    />
+                  <FormItem label='Files'>
+                  <Upload onChange={(files) => handleFileChange(files)}>
+    <Button variant="solid" icon={<HiOutlineCloudUpload />} type='button' >
+        Upload your file
+    </Button>
+</Upload>
+                  </FormItem>
                 </div>
             </div>
             <StickyFooter

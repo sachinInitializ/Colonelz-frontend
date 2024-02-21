@@ -1,7 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react'
-import { Button, DatePicker, FormContainer, FormItem, Input, Select } from '@/components/ui'
+import { Button, DatePicker, FormContainer, FormItem, Input, Select, Upload } from '@/components/ui'
 import CreatableSelect from 'react-select/creatable' // Import CreatableSelect
 import { useLocation, useNavigate } from 'react-router-dom'
+import { HiOutlineCloudUpload } from 'react-icons/hi'
 
 type Option = {
     value: string
@@ -100,14 +101,18 @@ const YourFormComponent: React.FC = () => {
         })
     }
 
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || [])
-        setFormData({ ...formData, files })
-        setErrors({
-            ...errors,
-            files: '',
-        })
-    }
+    const handleFileChange = (files: FileList | null) => {
+        if (files) {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                files: Array.from(files),
+            }));
+            setErrors({
+                ...errors,
+                files: '',
+            });
+        }
+    };
 
     const optionsSource = [
         { value: 'At Office', label: 'At Office' },
@@ -154,14 +159,6 @@ const YourFormComponent: React.FC = () => {
         }
 
         // Validate remark
-        if (!formData.remark) {
-            validationErrors.remark = 'Remark is required'
-        }
-
-        // Validate imaportant_note
-        if (!formData.imaportant_note) {
-            validationErrors.imaportant_note = 'Important Note is required'
-        }
 
         // Validate files
         if (formData.files.length === 0) {
@@ -325,6 +322,11 @@ const YourFormComponent: React.FC = () => {
                                 )
                             }
                         />
+                          {errors.source && (
+                            <span className="text-red-500">
+                                {errors.source}
+                            </span>
+                        )}
                     </FormItem>
                     <FormItem label="Remark">
                         <Input
@@ -334,11 +336,7 @@ const YourFormComponent: React.FC = () => {
                                 handleInputChange('remark', e.target.value)
                             }
                         />
-                        {errors.remark && (
-                            <span className="text-red-500">
-                                {errors.remark}
-                            </span>
-                        )}
+                       
                     </FormItem>
                     <FormItem label="Important Note">
                         <Input
@@ -348,22 +346,14 @@ const YourFormComponent: React.FC = () => {
                                 handleInputChange('imaportant_note', e.target.value)
                             }
                         />
-                        {errors.imaportant_note && (
-                            <span className="text-red-500">
-                                {errors.imaportant_note}
-                            </span>
-                        )}
+                       
                     </FormItem>
                     <FormItem label="File">
-                        <Input
-                            type="file"
-                            name="files"
-                            onChange={handleFileChange}
-                            multiple
-                        />
-                        {errors.files && (
-                            <span className="text-red-500">{errors.files}</span>
-                        )}
+                    <Upload onChange={(files) => handleFileChange(files)}>
+    <Button variant="solid" icon={<HiOutlineCloudUpload />} type='button' >
+        Upload your file
+    </Button>
+</Upload>
                     </FormItem>
                     </div>
                     <div className=''>

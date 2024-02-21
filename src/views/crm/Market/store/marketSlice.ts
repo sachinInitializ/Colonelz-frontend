@@ -10,7 +10,7 @@ export type AllMarket = {
     volumn: number
     marketCap: number
     img: string
-    totatl_project:String
+    total_project:String
     Execution_Phase: string
     Design_Phase: string
 }

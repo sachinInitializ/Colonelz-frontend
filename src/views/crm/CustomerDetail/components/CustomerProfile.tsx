@@ -68,7 +68,14 @@ const CustomerInfoField = ({
                     {value}
                 </p>
             </div>
-        )
+        );
+    } else if (title === 'Description') {
+        return (
+            <div>
+                <span>{title}</span>
+                <div dangerouslySetInnerHTML={{ __html: value || '' }} className='text-gray-700 dark:text-gray-200 font-semibold' />
+            </div>
+        );
     } else {
         return (
             <div>
@@ -80,9 +87,10 @@ const CustomerInfoField = ({
                     className="text-gray-700 dark:text-gray-200 font-semibold"
                 />
             </div>
-        )
+        );
     }
-}
+};
+
 
 
 const CustomerProfileAction = ({
@@ -286,7 +294,7 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                     />
                     <CustomerInfoField
                         title="Description"
-                        value={data?.description}
+                     value={data?.description}
                     />
                 </div>
             </div>

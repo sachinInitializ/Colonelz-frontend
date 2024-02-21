@@ -17,6 +17,7 @@ import { rankItem } from '@tanstack/match-sorter-utils'
 import { ApiResponse, Quotation} from './finalData'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
+import { useLocation } from 'react-router-dom'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -80,18 +81,23 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 const FinalEstimate = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
+    const location = useLocation();
 
     const [quotationData, setQuotationData] = useState<Quotation[]>([]);
+    const [price,setprice]=useState<ApiResponse>()
 const [loading, setLoading] = useState(true);
+const searchParams = new URLSearchParams(location.search);
+const projectId = searchParams.get('project_id');
 
 useEffect(() => {
   const fetchData = async () => {
     try {
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/get/quotation/?project_id=COLP-865017');
+      const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/get/quotation/?project_id=${projectId}`);
       const data: ApiResponse = await response.json();
       if (data.status && data.data && data.data.main_quotation) {
         setQuotationData(data.data.main_quotation);
-        console.log(quotationData);
+        setprice(data)
+        console.log(data);
         
       }
     } catch (error) {
@@ -103,6 +109,7 @@ useEffect(() => {
 
   fetchData();
 }, []);
+
 
     const columns = useMemo<ColumnDef<ApiResponse>[]>(
         () => [
@@ -205,6 +212,11 @@ useEffect(() => {
                     })}
                 </TBody>
             </Table>
+
+
+            <div className='flex justify-end '><div><h6>Total: {price?.data.total_price}</h6>
+            <h6>Taxes@18%: {price?.data.gst}</h6>
+            <h6>Gross Total: {price?.data.total_price_with_gst}</h6></div></div>
         </>
     )
 }

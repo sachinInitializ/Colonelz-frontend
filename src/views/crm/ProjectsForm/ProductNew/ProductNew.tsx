@@ -1,13 +1,12 @@
 import ProductForm, {
     FormModel,
     SetSubmitting,
-} from '@/views/sales/ProductForm'
+} from '@/views/crm/ProjectsForm/ProductForm'
 import toast from '@/components/ui/toast'
 import Notification from '@/components/ui/Notification'
 import { useNavigate } from 'react-router-dom'
 import { apiCreateSalesProduct } from '@/services/SalesService'
-import ProductImages from '@/views/sales/ProductForm/ProjectCreateForm'
-import BasicInformationFields from '@/views/sales/ProductForm/BasicInformationFields'
+import ProductImages from '@/views/crm/ProjectsForm/ProductForm/ProjectCreateForm'
 
 const ProductNew = () => {
     const navigate = useNavigate()

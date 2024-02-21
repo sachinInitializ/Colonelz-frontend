@@ -188,7 +188,7 @@ const appsRoute: Routes = [
     {
         key: 'appsSales.productNew',
         path: `${APP_PREFIX_PATH}/crm/projectform`,
-        component: lazy(() => import('@/views/sales/ProductNew')),
+        component: lazy(() => import('@/views/crm/ProjectsForm/ProductNew')),
         authority: [ADMIN, USER],
         meta: {
             header: 'Add Project',

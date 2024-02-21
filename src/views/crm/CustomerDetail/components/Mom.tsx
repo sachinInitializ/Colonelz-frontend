@@ -236,7 +236,7 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
     return (
        <div>
         <div className='flex justify-between items-center'>
-        <h6>Date: {rowData.meetingdate}</h6>
+        <h6>Date: {new Date(rowData.meetingdate).toISOString}</h6>
         <div className='grid grid-cols-2 gap-2'>
             <Button variant='solid' size='sm'>View MOM</Button>
             <Button variant='solid' size='sm'>Share MOM</Button>

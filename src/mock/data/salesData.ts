@@ -160,13 +160,6 @@ export const salesDashboardData = {
 
 
 
-  
-  
-  
-
-
-
-
 const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/');
 const jsonData = await response.json();
 export const productsData=jsonData.data

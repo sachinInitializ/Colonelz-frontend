@@ -48,16 +48,15 @@ const MyForm: React.FC = () => {
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-
-    if (files) {
-      setFormData((prevData) => ({
-        ...prevData,
-        files: Array.from(files),
-      }));
-    }
-  };
+    const handleFileChange = (files: FileList | null) => {
+        if (files) {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                files: Array.from(files),
+            }));
+          
+        }
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,10 +83,13 @@ const MyForm: React.FC = () => {
       });
 
       if (response.ok) {
-        console.log('Form data submitted successfully!');
-      } else {
-        console.error('Error submitting form data:', response.statusText);
-      }
+        alert('Quotation created successfully')
+        window.location.reload();
+        navigate(-1)
+        // Redirect to home page or any other page after successful creation
+    } else {
+        alert('Failed to create Quotation')
+    }
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
@@ -108,11 +110,13 @@ return (
         return (
           <>
             <div className="">
-              <Upload onChange={handleFileChange} >
-                <Button variant="solid" icon={<HiOutlineCloudUpload/>}>
-                  Upload your file
-                </Button>
-              </Upload>
+              <FormItem label='Files'>
+              <Upload onChange={(files) => handleFileChange(files)}>
+    <Button variant="solid" icon={<HiOutlineCloudUpload />} type='button' >
+        Upload your file
+    </Button>
+</Upload>
+              </FormItem>
             </div>
           </>
         );

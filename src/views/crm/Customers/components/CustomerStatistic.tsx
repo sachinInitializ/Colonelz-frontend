@@ -98,14 +98,15 @@ const CustomerStatistic = () => {
                 growthRate={statisticData?.activeCustomers?.growShrink}
                 loading={loading}
             />
-            {/* <StatisticCard
+
+            <StatisticCard
                 icon={<HiOutlineUserAdd />}
                 avatarClass="!bg-emerald-500"
                 label="New Customers"
                 value={statisticData?.newCustomers?.value}
                 growthRate={statisticData?.newCustomers?.growShrink}
                 loading={loading}
-            /> */}
+            />
         </div>
     )
 }

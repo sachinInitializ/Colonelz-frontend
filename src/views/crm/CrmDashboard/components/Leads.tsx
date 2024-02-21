@@ -160,7 +160,7 @@ const Leads = ({ data = [], className }: LeadsProps) => {
               <Td  >
                {item.phone}
               </Td>
-              <Td className={`cursor-pointer p-2 hover:${textTheme}`}><HiOutlineEye onClick={()=>navigate(`/app/crm/lead/?id=${item.lead_id}`)} /></Td>
+              <Td className={`cursor-pointer p-2 hover:${textTheme} text-lg`}><HiOutlineEye onClick={()=>navigate(`/app/crm/lead/?id=${item.lead_id}`)} /></Td>
             </Tr>
           ))}
         </TBody>

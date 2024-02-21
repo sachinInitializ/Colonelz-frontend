@@ -47,7 +47,7 @@ export default function crmFakeApi(server: Server, apiPrefix: string) {
     })
 
     server.get(`${apiPrefix}/crm/customers-statistic`, () => {
-        console.log(statisticData);
+       
         
         return {
             totalCustomers: {
@@ -55,7 +55,7 @@ export default function crmFakeApi(server: Server, apiPrefix: string) {
               
             },
             activeCustomers: {
-                value: statisticData.completed,
+                value: statisticData.active_Project,
                 growShrink: 32.7,
             },
             newCustomers: {
