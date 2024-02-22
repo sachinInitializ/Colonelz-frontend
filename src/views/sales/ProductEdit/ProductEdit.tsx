@@ -13,11 +13,7 @@ import reducer, {
 import { injectReducer } from '@/store'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import ProductForm, {
-    FormModel,
-    SetSubmitting,
-    OnDeleteCallback,
-} from '@/views/sales/ProductForm'
+
 import isEmpty from 'lodash/isEmpty'
 
 injectReducer('salesProductEdit', reducer)
@@ -40,8 +36,8 @@ const ProductEdit = () => {
     }
 
     const handleFormSubmit = async (
-        values: FormModel,
-        setSubmitting: SetSubmitting
+       
+        setSubmitting: 
     ) => {
         setSubmitting(true)
         const success = await updateProduct(values)
@@ -55,7 +51,7 @@ const ProductEdit = () => {
         navigate('/app/sales/ProductList')
     }
 
-    const handleDelete = async (setDialogOpen: OnDeleteCallback) => {
+    const handleDelete = async () => {
         setDialogOpen(false)
         const success = await deleteProduct({ id: productData.id })
         if (success) {
