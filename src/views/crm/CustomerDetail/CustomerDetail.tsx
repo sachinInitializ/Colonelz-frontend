@@ -24,6 +24,7 @@ import { fetchDetails } from '../services/api'
 import Contract from './components/Contract'
 import AllMom from './components/AllMom'
 import App from './components/excel'
+import Filtering from './components/Quoation'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -104,7 +105,7 @@ const CustomerDetail = () => {
                     </Container>
                 </TabContent>
                 <TabContent value="tab2">
-                   <App/>
+                   <PaymentHistory/>
                 </TabContent>
                 <TabContent value="mom">
                   <MOM data={details} />

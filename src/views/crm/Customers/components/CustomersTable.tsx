@@ -233,16 +233,16 @@ const Filtering = () => {
     const handleStatusChange = (label: string) => {
         console.log('Clicked on Statistic Card with label:', label);
     
-        let status = '';
+        let status: string | string[] = '';
     
         switch (label) {
             case 'Total Projects':
                 // Filter for all projects
-                status = '';
+                status = [ 'executing','designing','completed'];
                 break;
             case 'Active Projects':
                 // Filter for active projects
-                status = 'designing' || 'executing'; // Adjust the status according to your data
+                status = [ 'executing','designing']; // Adjust the status according to your data
                 break;
             case 'Completed Projects':
                 // Filter for completed projects
@@ -255,7 +255,19 @@ const Filtering = () => {
             }
             console.log('Selected Status:', status);
 
-            setSelectedStatus(status);
+            if (Array.isArray(status)) {
+                // For array, filter projects whose status is in the array
+                const filteredData = userDetailData.projects.filter((project) =>
+                    status.includes(project.project_status)
+                );
+                setData(filteredData);
+            } else {
+                // For string, filter projects with the specific status
+                const filteredData = userDetailData.projects.filter(
+                    (project) => project.project_status === status
+                );
+                setData(filteredData);
+            }
         };
 
     return (
@@ -335,7 +347,7 @@ const Filtering = () => {
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (
-                            <Tr key={row.id}>
+                            <Tr key={row.id} className=' capitalize'>
                                 {row.getVisibleCells().map((cell) => {
                                     return (
                                         <Td key={cell.id}>

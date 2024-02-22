@@ -15,7 +15,7 @@ interface FormData {
     project_type: string
     description: string
     leadmanager: string
-    junior_designer: string
+    designer: string
     supervisor: string
     visualizer: string
     role: string
@@ -39,7 +39,7 @@ const FileUploadForm: React.FC = () => {
         project_type: '',
         description: '',
         leadmanager: '',
-        junior_designer: '',
+        designer: '',
         supervisor: '',
         visualizer: '',
         role: '',
@@ -317,30 +317,19 @@ const handleFileChange = (files: FileList | null) => {
                     />
                    
                 </FormItem>
-                <FormItem label="Junior Designer">
+                <FormItem label=" Designer">
                     <Input
                         size="sm"
                         type="text"
-                        id="junior_designer"
-                        name="junior_designer"
-                        value={formData.junior_designer}
+                        id="designer"
+                        name="designer"
+                        value={formData.designer}
                         onChange={handleInputChange}
                         required
                     />
                    
                 </FormItem>
-                <FormItem label="Supervisor">
-                    <Input
-                        size="sm"
-                        type="text"
-                        id="supervisor"
-                        name="supervisor"
-                        value={formData.supervisor}
-                        onChange={handleInputChange}
-                        required
-                    />
-                   
-                </FormItem>
+                
                 <FormItem label="Visualizer">
                     <Input
                         size="sm"
@@ -353,17 +342,7 @@ const handleFileChange = (files: FileList | null) => {
                     />
                    
                 </FormItem>
-                <FormItem label="Senior Designer">
-                    <Input
-                        size="sm"
-                        type="text"
-                        id="senior_designer"
-                        name="senior_designer"
-                        value={formData.senior_designer}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </FormItem>
+              
                 <FormItem label="Project Status">
                     <Select
                         options={projectStatusOptions}
