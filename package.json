@@ -30,7 +30,9 @@
     "d3-scale": "^4.0.2",
     "date-fns": "^3.3.1",
     "dayjs": "^1.11.7",
+    "file-saver": "^2.0.5",
     "formik": "^2.4.5",
+    "formulajs": "^1.0.8",
     "framer-motion": "^10.8.5",
     "history": "^5.3.0",
     "html-react-parser": "^3.0.15",
@@ -41,6 +43,7 @@
     "react-apexcharts": "^1.4.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-custom-scrollbars-2": "^4.5.0",
+    "react-data-grid": "^7.0.0-beta.42",
     "react-dom": "^18.2.0",
     "react-highlight-words": "^0.20.0",
     "react-i18next": "^12.2.0",
@@ -61,6 +64,7 @@
     "react-tooltip": "^5.11.1",
     "redux-persist": "^6.0.0",
     "twin.macro": "^3.4.0",
+    "xlsx": "^0.18.5",
     "yup": "^1.1.1"
   },
   "devDependencies": {

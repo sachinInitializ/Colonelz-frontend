@@ -59,6 +59,7 @@ type mom={
 }
 export type Customer = {
     id: string
+    designer:string
     project_name: string
     project_id:string
     project_type:string

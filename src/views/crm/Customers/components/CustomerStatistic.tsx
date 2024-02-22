@@ -20,12 +20,18 @@ type StatisticCardProps = {
     value?: number
     growthRate?: number
     loading: boolean
+    onClick?: () => void;
 }
 
-const StatisticCard = (props: StatisticCardProps) => {
-    const { icon, avatarClass, label, value, growthRate, loading } = props
-
-    const avatarSize = 55
+export const StatisticCard: React.FC<{
+    icon: React.ReactElement;
+    avatarClass: string;
+    label: string;
+    value: any;
+    loading: boolean;
+    onClick?: () => void;
+}> = ({ icon, avatarClass, label, value, loading, onClick }) => {
+    const avatarSize = 55;
 
     return (
         <Card bordered>
@@ -41,7 +47,11 @@ const StatisticCard = (props: StatisticCardProps) => {
                     />
                 }
             >
-                <div className="flex justify-between items-center">
+                <div
+                    className="flex justify-between items-center"
+                    onClick={onClick} // Attach the onClick event to the wrapping div
+                    style={{ cursor: onClick ? 'pointer' : 'default' }} // Set cursor style based on onClick presence
+                >
                     <div className="flex items-center gap-4">
                         <Avatar
                             className={avatarClass}
@@ -62,8 +72,9 @@ const StatisticCard = (props: StatisticCardProps) => {
                 </div>
             </Loading>
         </Card>
-    )
-}
+    );
+};
+
 
 const CustomerStatistic = () => {
     const dispatch = useAppDispatch()
@@ -102,7 +113,7 @@ const CustomerStatistic = () => {
             <StatisticCard
                 icon={<HiOutlineUserAdd />}
                 avatarClass="!bg-emerald-500"
-                label="New Customers"
+                label="Completed Projects"
                 value={statisticData?.newCustomers?.value}
                 growthRate={statisticData?.newCustomers?.growShrink}
                 loading={loading}

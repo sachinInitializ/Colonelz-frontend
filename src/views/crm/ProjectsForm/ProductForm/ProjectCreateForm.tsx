@@ -129,8 +129,8 @@ const handleFileChange = (files: FileList | null) => {
     ]
     const projectStatusOptions = [
         { value: 'completed', label: 'Completed' },
-        { value: 'execution', label: 'Executing' },
-        { value: 'design', label: 'Designing' },
+        { value: 'executing', label: 'Executing' },
+        { value: 'designing', label: 'Designing' },
     ]
 
     const handleSubmit = async (e: React.FormEvent) => {

@@ -10,9 +10,8 @@ injectReducer('crmCustomers', reducer)
 const Customers = () => {
     return (
         <>
-            <CustomerStatistic />
+           
             <AdaptableCard className="h-full" bodyClass="h-full">
-                <CustomersTableTools />
                 <CustomersTable />
             </AdaptableCard>
         </>

@@ -80,12 +80,9 @@ const CustomerInfoField = ({
         return (
             <div>
                 <span>{title}</span>
-                <input
-                    type="text"
-                    value={value}
-                    onChange={(e) => onChange && onChange(e.target.value)}
-                    className="text-gray-700 dark:text-gray-200 font-semibold"
-                />
+                <p className="text-gray-700 dark:text-gray-200 font-semibold">
+                    {value}
+                </p>
             </div>
         );
     }
@@ -97,6 +94,7 @@ interface ProjectUpdateData {
     timeline_date: string;
     project_budget: string;
     project_status: string;
+    designer:string
   }
   const ProjectUpdate: React.FC = (data) => {
     const location=useLocation()
@@ -107,6 +105,7 @@ interface ProjectUpdateData {
       timeline_date: new Date(data.data.timeline_date).toISOString().split('T')[0],
       project_budget: data.data.project_budget,
       project_status: data.data.project_status,
+      designer:data.data.designer
     });
   
    console.log(data);
@@ -169,6 +168,15 @@ interface ProjectUpdateData {
               type="text"
               name="project_budget"
               value={formData.project_budget}
+              onChange={handleInputChange}
+            />
+          </FormItem>
+          <FormItem label='Project Incharnge'>
+            
+            <Input
+              type="text"
+              name="designer"
+              value={formData.designer}
               onChange={handleInputChange}
             />
           </FormItem>
@@ -248,12 +256,16 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                         value={formatDate(data?.project_start_date)}
                     />
                     <CustomerInfoField
-                        title="Timeline"
+                        title="Project End Date"
                         value={formatDate(data?.timeline_date)}
                     />
                     <CustomerInfoField
                         title="Project Budget"
                         value={data?.project_budget}
+                    />
+                    <CustomerInfoField
+                        title="Project Incharge"
+                        value={data?.designer}
                     />
                     <CustomerInfoField
                         title="Description"

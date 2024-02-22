@@ -23,6 +23,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { fetchDetails } from '../services/api'
 import Contract from './components/Contract'
 import AllMom from './components/AllMom'
+import App from './components/excel'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -103,7 +104,7 @@ const CustomerDetail = () => {
                     </Container>
                 </TabContent>
                 <TabContent value="tab2">
-                   <PaymentHistory/>
+                   <App/>
                 </TabContent>
                 <TabContent value="mom">
                   <MOM data={details} />
