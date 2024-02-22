@@ -324,9 +324,7 @@ const Toggle = <Button>Files</Button>
                         })}</div>)
                       })}
                 
-                <Dropdown.Item eventKey="b">Item B</Dropdown.Item>
-                <Dropdown.Item eventKey="c">Item C</Dropdown.Item>
-                <Dropdown.Item eventKey="d">Item D</Dropdown.Item>
+           
             </Dropdown>
                      <Dialog
                 isOpen={dialogIsOpen}

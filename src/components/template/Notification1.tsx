@@ -44,15 +44,16 @@ console.log(parsedDateTime);
     const formattedDateTime: string = parsedDateTime.toLocaleString('en-IN', options);
 
     const timeDiff = Math.ceil((parsedDateTime - currentDate) / (1000 * 60 * 60 * 24));
-
-    if (timeDiff === -1) {
+    console.log(formattedDateTime);
+    
+    if (timeDiff === 1) {
       return (
         <div key={lead.id}>
-          <p className=' px-5 py-3'>{`1 day remaining to follow up for lead ${lead.name} updated on ${lead.updated_date}`}</p>
+          <p className=' px-5 py-3'>{`1 day remaining to follow up for lead ${lead.name} updated on ${formattedDateTime}`}</p>
           <hr className='my-2' />
         </div>
       );
-    } else if (timeDiff === -2) {
+    } else if (timeDiff === 0) {
       return (
         <div key={lead.id}>
           <p className='px-5 py-3'>{`Today is the day to follow up for lead ${lead.name} updated on ${formattedDateTime}`}</p>
