@@ -123,12 +123,7 @@ function ReactTable({ renderRowSubComponent, getRowCanExpand,data }: ReactTableP
       }
     }, [location.search]);
     
-
-
-
-
-      
-    
+ 
     const [sorting, setSorting] = useState<ColumnSort[]>([])
     const table = useReactTable({
         data: leadData || [],
@@ -236,7 +231,7 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
     return (
        <div>
         <div className='flex justify-between items-center'>
-        <h6>Date: {new Date(rowData.meetingdate).toISOString}</h6>
+        <h6>Date: {new Date(rowData.meetingdate).toISOString().split('T')[0]}</h6>
         <div className='grid grid-cols-2 gap-2'>
             <Button variant='solid' size='sm'>View MOM</Button>
             <Button variant='solid' size='sm'>Share MOM</Button>
