@@ -28,6 +28,7 @@ const renderLeadsNotifications = () => {
   return leads.map((lead) => {
     const currentDate = new Date();
     const parsedDateTime: Date = new Date(lead.updated_date);
+console.log(parsedDateTime);
 
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
@@ -44,14 +45,14 @@ const renderLeadsNotifications = () => {
 
     const timeDiff = Math.ceil((parsedDateTime - currentDate) / (1000 * 60 * 60 * 24));
 
-    if (timeDiff === 1) {
+    if (timeDiff === -1) {
       return (
         <div key={lead.id}>
-          <p className=' px-5 py-3'>{`1 day remaining to follow up for lead ${lead.name} updated on ${formattedDateTime}`}</p>
+          <p className=' px-5 py-3'>{`1 day remaining to follow up for lead ${lead.name} updated on ${lead.updated_date}`}</p>
           <hr className='my-2' />
         </div>
       );
-    } else if (timeDiff === 0) {
+    } else if (timeDiff === -2) {
       return (
         <div key={lead.id}>
           <p className='px-5 py-3'>{`Today is the day to follow up for lead ${lead.name} updated on ${formattedDateTime}`}</p>
@@ -119,8 +120,8 @@ const renderLeadsNotifications = () => {
         </Dropdown.Item>
         <div className='ltr: rtl: text-sm overflow-y-auto' style={{scrollbarWidth:"none"}}>
           <div className=' overflow-y-auto h-[250px] pb-8' style={{scrollbarWidth:"none"}}>
-          {showNotification && renderNotifications()}
           {showNotification && renderLeadsNotifications()}
+          {showNotification && renderNotifications()}
           </div>
         </div>
         <Dropdown.Item variant="header">

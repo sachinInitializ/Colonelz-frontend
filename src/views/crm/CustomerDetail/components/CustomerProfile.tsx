@@ -12,7 +12,7 @@ import {
     FaPinterestP,
 } from 'react-icons/fa'
 import { HiPencilAlt, HiOutlineTrash } from 'react-icons/hi'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
     deleteCustomer,
     openEditCustomerDetailDialog,
@@ -20,7 +20,7 @@ import {
     Customer,
 } from '../store'
 import EditCustomerProfile from './EditCustomerProfile'
-import { DatePicker, FormItem, Input } from '@/components/ui'
+import { DatePicker, Dialog, FormItem, Input } from '@/components/ui'
 import axios from 'axios'
 
 type CustomerInfoFieldProps = {
@@ -92,168 +92,123 @@ const CustomerInfoField = ({
 };
 
 
-
-const CustomerProfileAction = ({
-    id,
-    data,
-}: {
-    id?: string
-    data?: Partial<Customer>
-}) => {
-    const [dialogOpen, setDialogOpen] = useState(false)
-    const [editedData, setEditedData] = useState<Partial<Customer>>({})
-
-    const onDialogClose = () => {
-        setDialogOpen(false)
-    }
-
-    const onDialogOpen = () => {
-        setEditedData(data || {})
-        setDialogOpen(true)
-    }
-
-    const onEdit = async () => {
-        try {
-            const response = await fetch(
-                'https://col-u3yp.onrender.com/v1/api/admin/update/project/',
-                {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(editedData),
-                },
-            )
-            console.log(response)
-            if (response.ok) {
-               setDialogOpen(false)
-               toast.push(
-                   <Notification title={'Update Success'} type="success">
-                       Data successfully updated
-                   </Notification>,
-               )
-               // Reload the page after successfully updating the data
-               window.location.reload()
-            } else {
-                // Handle error
-                throw new Error('Failed to update project data')
-            }
-        } catch (error) {
-            console.error('Error updating project data:', error)
-            // Show error notification
-            toast.push(
-                <Notification title={'Error'} type="error">
-                    Failed to update project data
-                </Notification>,
-            )
-        } finally {
-            // Close the dialog
-            setDialogOpen(false)
-        }
-    }
-
-    const handleChange = (key: string, value: string) => {
-        setEditedData({
-            ...editedData,
-            [key]: value,
-        })
-    }
-
-    const API_URL = 'https://your-api-url.com';
-    
-    interface ProjectData {
-        project_id:string | undefined;
-        project_status: string | undefined;
-        description: string | undefined;
-        timeline_date: Date ;
-        project_budget: string | undefined;
-      }
-      
-
-
-
-const [projectData, setProjectData] = useState<ProjectData>({
-    project_id: data?.project_id,
-    project_status: data?.project_status,
-    description: data?.description,
-    timeline_date: new Date(`${data?.timeline_date}`),
-    project_budget: data?.project_budget,
-  });
-
-  const handleUpdate = async () => {
-    try {
-      // Make a PUT request to update the project data
-     
-      const response = await axios.put(`https://col-u3yp.onrender.com/v1/api/admin/update/project/`, projectData);
-      console.log('Update successful', response.data);
-    } catch (error) {
-      console.error('Update failed', error);
-    }
+interface ProjectUpdateData {
+    project_id: string | null;
+    timeline_date: string;
+    project_budget: string;
+    project_status: string;
+  }
+  const ProjectUpdate: React.FC = (data) => {
+    const location=useLocation()
+    const searchParams = new URLSearchParams(location.search);
+    const projectId = searchParams.get('project_id');
+    const [formData, setFormData] = useState<ProjectUpdateData>({
+      project_id: projectId,
+      timeline_date: new Date(data.data.timeline_date).toISOString().split('T')[0],
+      project_budget: data.data.project_budget,
+      project_status: data.data.project_status,
+    });
+  
+   console.log(data);
+   
+  
+    const handleInputChange = (
+      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+      });
+    };
+  console.log(data);
+  const handleDateChange = (date: Date) => {
+    setFormData({
+      ...formData,
+      timeline_date: date.toISOString().split('T')[0], // Convert date to string
+    });
   };
-
-
-    return (
-        <>
-            <Button
-                block
-                icon={<HiPencilAlt />}
-                variant="solid"
-                onClick={onDialogOpen}
-            >
-                Edit
-            </Button>
-            <ConfirmDialog
-                isOpen={dialogOpen}
-                title="Update project"
-                confirmButtonColor="green-600"
-                onClose={onDialogClose}
-                onRequestClose={onDialogClose}
-                onCancel={onDialogClose}
-                onConfirm={onEdit}
-            >
-               <div>
-    
-      <form>
-        <div className=' grid grid-cols-2 gap-4'>
-        <FormItem label='Project Status'>
-        <Input
-          type="text"
-          value={projectData.project_status}
-          onChange={(e) => setProjectData({ ...projectData, project_status: e.target.value })}
-        />
-        </FormItem>
-        <FormItem label='Budget'>
-        <Input
-          type="text"
-          value={projectData.project_budget}
-          onChange={(e) => setProjectData({ ...projectData, project_budget: e.target.value })}
-        />
-        </FormItem>
-        <FormItem label='DescripTion'>
-        <Input
-          type="text"
-          value={projectData.description}
-          onChange={(e) => setProjectData({ ...projectData, description: e.target.value })}
-        />
-        </FormItem>
-        <FormItem label='Timeline Date'>
-        <DatePicker
-          selected={projectData.timeline_date}
-          onChange={(date: Date) => setProjectData({ ...projectData, timeline_date: date })}
-        />
-        </FormItem>
-        </div>
-        {/* Add other input fields for project_status, timeline_date, project_budget, etc. */}
+  
+    const handleUpdate = async () => {
+        try {
+          alert('Updated successfully')
+          const response = await axios.put(
+              'https://col-u3yp.onrender.com/v1/api/admin/update/project/',
+              formData
+              );
+              window.location.reload();
+        console.log("hello");
         
-      </form>
-    </div>
-            </ConfirmDialog>
-            <EditCustomerProfile />
-        </>
-    )
-}
+  
+        // Assuming you want to show a success message or perform other actions after the update
+        // You can add your logic here
+      } catch (error) {
+        console.error('Update failed', error);
+  
+        // Assuming you want to show an error message or perform other actions on update failure
+        // You can add your logic here
+      }
+    };
+  
+    return (
+      <div>
+        <h1>Update Project</h1>
+        <form>
+         
+        
+          
+        <FormItem label="Timeline Date">
+          <DatePicker
+            selected={new Date(formData.timeline_date)}
+            onChange={handleDateChange}
+          />
+        </FormItem>
+          <br />
+          <FormItem label='Project Buget'>
+            
+            <Input
+              type="text"
+              name="project_budget"
+              value={formData.project_budget}
+              onChange={handleInputChange}
+            />
+          </FormItem>
+          <br />
+          <FormItem>
+            Project Status:
+            <Input
+              type="text"
+              name="project_status"
+              value={formData.project_status}
+              onChange={handleInputChange}
+            />
+          </FormItem>
+          <br />
+          <button type="button" onClick={handleUpdate}>
+            Update Project
+          </button>
+        </form>
+      </div>
+    );
+  };
+  
+
 
 const CustomerProfile = ({ data }: CustomerProfileProps) => {
+    const [dialogIsOpen, setIsOpen] = useState(false)
+
+    const openDialog = () => {
+        setIsOpen(true)
+    }
+
+    const onDialogClose = (e: MouseEvent) => {
+        console.log('onDialogClose', e)
+        setIsOpen(false)
+    }
+
+    const onDialogOk = (e: MouseEvent) => {
+        console.log('onDialogOk', e)
+        setIsOpen(false)
+    }
     return (
         <Card>
             <div className="flex flex-col xl:justify-between h-full 2xl:min-w-[360px] mx-auto">
@@ -262,13 +217,21 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                         <h4 className="font-bold capitalize">{data?.project_name}</h4>
                     </div>
                     <div className="mt-4 flex flex-col xl:flex-row gap-2">
-                        <CustomerProfileAction id={data?.id} data={data} />
+                    <Button variant="solid" onClick={() => openDialog()}>
+                Edit
+            </Button>
                     </div>
                 </div>
                 
                    
                    
-
+                <Dialog
+                isOpen={dialogIsOpen}
+                onClose={onDialogClose}
+                onRequestClose={onDialogClose}
+            >
+         <ProjectUpdate data={data}/>
+            </Dialog>
                 <div className="grid grid-cols-3 sm:grid-cols-3 max-sm:grid-cols-1 max-sm:grid xl:grid-cols-4 gap-y-7 gap-x-5 mt-8 capitalize">
                     <CustomerInfoField title="Project Id" value={data?.project_id} />
                     <CustomerInfoField 
