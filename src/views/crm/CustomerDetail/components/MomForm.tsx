@@ -1,5 +1,13 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react'
-import { Button, DatePicker, FormContainer, FormItem, Input, Select, Upload } from '@/components/ui'
+import {
+    Button,
+    DatePicker,
+    FormContainer,
+    FormItem,
+    Input,
+    Select,
+    Upload,
+} from '@/components/ui'
 import CreatableSelect from 'react-select/creatable' // Import CreatableSelect
 import { useLocation, useNavigate } from 'react-router-dom'
 import { HiOutlineCloudUpload } from 'react-icons/hi'
@@ -9,16 +17,14 @@ type Option = {
     label: string
 }
 
-
 interface FormData {
     client_name: string
     organisor: string
-    architect: string
-    consultant_name: string
+    designer: string
+    attendees: string
     meetingDate: string
-    source: string
+    location: string
     remark: string
-    imaportant_note: string
     files: File[]
     project_id: string
 }
@@ -26,28 +32,24 @@ interface FormData {
 const YourFormComponent: React.FC = () => {
     const navigate = useNavigate()
     interface QueryParams {
+        project_id: string
+    }
+    const location = useLocation()
+    const queryParams = new URLSearchParams(location.search)
 
-        project_id: string;
-    
-      
-      }
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    
     // Create an object to store and map the query parameters
     const allQueryParams: QueryParams = {
-      project_id: queryParams.get('project_id') || '',
-    };
+        project_id: queryParams.get('project_id') || '',
+    }
 
     const [formData, setFormData] = useState<FormData>({
-        client_name:'' ,
+        client_name: '',
         organisor: '',
-        architect:'' ,
-        consultant_name: '',
+        designer: '',
+        attendees: '',
         meetingDate: '',
-        source: '',
+        location: '',
         remark: '',
-        imaportant_note: '',
         files: [],
         project_id: allQueryParams.project_id,
     })
@@ -93,7 +95,6 @@ const YourFormComponent: React.FC = () => {
     }
 
     const handleInputChange = (name: keyof FormData, value: string) => {
-       
         setFormData({ ...formData, [name]: value })
         setErrors({
             ...errors,
@@ -106,13 +107,13 @@ const YourFormComponent: React.FC = () => {
             setFormData((prevFormData) => ({
                 ...prevFormData,
                 files: Array.from(files),
-            }));
+            }))
             setErrors({
                 ...errors,
                 files: '',
-            });
+            })
         }
-    };
+    }
 
     const optionsSource = [
         { value: 'At Office', label: 'At Office' },
@@ -139,14 +140,11 @@ const YourFormComponent: React.FC = () => {
         }
 
         // Validate architect
-        if (formData.architect.length === 0) {
-            validationErrors.architect = "Architect's Name is required"
+        if (formData.designer.length === 0) {
+            validationErrors.designer = "Designer's Name is required"
         }
 
         // Validate consultant_name
-        if (formData.consultant_name.length === 0) {
-            validationErrors.consultant_name = "Consultant's Name is required"
-        }
 
         // Validate meetingDate
         if (!formData.meetingDate) {
@@ -154,16 +152,11 @@ const YourFormComponent: React.FC = () => {
         }
 
         // Validate source
-        if (!formData.source) {
-            validationErrors.source = 'Source is required'
+        if (!formData.location) {
+            validationErrors.location = 'Location is required'
         }
 
         // Validate remark
-
-        // Validate files
-        if (formData.files.length === 0) {
-            validationErrors.files = 'File is required'
-        }
 
         // Set errors if any
         if (Object.keys(validationErrors).length > 0) {
@@ -173,28 +166,29 @@ const YourFormComponent: React.FC = () => {
 
         const formatNames = (names: string | string[]) => {
             if (typeof names === 'string') {
-                return names; // Return the single name as is
+                return names // Return the single name as is
             } else if (names.length === 1) {
-                return names[0];
+                return names[0]
             } else {
-                const firstNames = names.slice(0, -1).join(', '); // Join all but the last name with ','
-                const lastName = names[names.length - 1]; // Get the last name
-                return `${firstNames} & ${lastName}`; // Combine with ' & '
+                const firstNames = names.slice(0, -1).join(', ') // Join all but the last name with ','
+                const lastName = names[names.length - 1] // Get the last name
+                return `${firstNames} & ${lastName}` // Combine with ' & '
             }
-        };
+        }
 
         try {
             const formDataToSend = new FormData()
             formDataToSend.append('meetingdate', formData.meetingDate)
             formDataToSend.append('project_id', formData.project_id)
-            formDataToSend.append('source', formData.source)
+            formDataToSend.append('location', formData.location)
             formDataToSend.append('remark', formData.remark)
-            formDataToSend.append('imaportant_note', formData.imaportant_note)
-         
-            formDataToSend.append('client_name', formatNames(formData.client_name));
-            formDataToSend.append('organisor', formatNames(formData.organisor));
-            formDataToSend.append('architect', formatNames(formData.architect));
-            formDataToSend.append('consultant_name', formatNames(formData.consultant_name));
+            formDataToSend.append(
+                'client_name',
+                formatNames(formData.client_name),
+            )
+            formDataToSend.append('organisor', formatNames(formData.organisor))
+            formDataToSend.append('designer', formatNames(formData.designer))
+            formDataToSend.append('attendees', formatNames(formData.attendees))
 
             formData.files.forEach((file) =>
                 formDataToSend.append('files', file),
@@ -210,7 +204,7 @@ const YourFormComponent: React.FC = () => {
 
             if (response.ok) {
                 alert('MOM created successfully')
-                window.location.reload();
+                window.location.reload()
                 navigate(-1)
                 // Redirect to home page or any other page after successful creation
             } else {
@@ -221,144 +215,155 @@ const YourFormComponent: React.FC = () => {
             alert('An error occurred')
         }
     }
-    const clicks=()=>{
-      
-      window.location.reload();
+    const clicks = () => {
+        window.location.reload()
     }
 
     return (
         <div>
             <h5>MOM Details</h5>
-            <form onSubmit={handleSubmit} className='mt-4'>
+            <form onSubmit={handleSubmit} className="mt-4">
                 <FormContainer>
-                    <div className='grid grid-cols-3 gap-5'>
-                    <FormItem label="Client's Name">
-                        {/* Use CreatableSelect to allow selecting or creating a new client name */}
-                        <CreatableSelect
-                            isMulti
-                            options={clientOptions}
-                            onChange={(selectedOption) =>
-                                handleSelectChange(
-                                    selectedOption,
-                                    'client_name',
-                                )
-                            }
-                        />
-                        {errors.client_name && (
-                            <span className="text-red-500">
-                                {errors.client_name}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="Organisor's Name">
-                        {/* Use CreatableSelect to allow selecting or creating a new client name */}
-                        <CreatableSelect
-                            isMulti
-                            options={organisorOptions}
-                            onChange={(selectedOption) =>
-                                handleSelectChange(selectedOption, 'organisor')
-                            }
-                        />
-                        {errors.organisor && (
-                            <span className="text-red-500">
-                                {errors.organisor}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="Architect's Name">
-                        {/* Use CreatableSelect to allow selecting or creating a new client name */}
-                        <CreatableSelect
-                            isMulti
-                            options={architectOptions}
-                            onChange={(selectedOption) =>
-                                handleSelectChange(selectedOption, 'architect')
-                            }
-                        />
-                        {errors.architect && (
-                            <span className="text-red-500">
-                                {errors.architect}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="Consultant's  Name">
-                        {/* Use CreatableSelect to allow selecting or creating a new client name */}
-                        <CreatableSelect
-                            isMulti
-                            options={consultant_nameOptions}
-                            onChange={(selectedOption) =>
-                                handleSelectChange(
-                                    selectedOption,
-                                    'consultant_name',
-                                )
-                            }
-                        />
-                        {errors.consultant_name && (
-                            <span className="text-red-500">
-                                {errors.consultant_name}
-                            </span>
-                        )}
-                    </FormItem>
-                    {/* Add similar FormItem and Select components for other fields */}
-                    <FormItem label="Date">
-                        <DatePicker
-                            selected={
-                                formData.meetingDate ? new Date(formData.meetingDate) : null
-                            }
-                            onChange={(date) =>
-                                handleInputChange('meetingDate', date.toISOString())
-                            }
-                        />
-                    </FormItem>
-                    <FormItem label="Source">
-                        <Select
-                            options={optionsSource}
-                            value={optionsSource.find(
-                                (option) => option.value === formData.source,
+                    <div className="grid grid-cols-3 gap-5">
+                        <FormItem label="Client's Name">
+                            {/* Use CreatableSelect to allow selecting or creating a new client name */}
+                            <CreatableSelect
+                                isMulti
+                                options={clientOptions}
+                                onChange={(selectedOption) =>
+                                    handleSelectChange(
+                                        selectedOption,
+                                        'client_name',
+                                    )
+                                }
+                            />
+                            {errors.client_name && (
+                                <span className="text-red-500">
+                                    {errors.client_name}
+                                </span>
                             )}
-                            onChange={(selectedOption) =>
-                                handleInputChange(
-                                    'source',
-                                    selectedOption.value,
-                                )
-                            }
-                        />
-                          {errors.source && (
-                            <span className="text-red-500">
-                                {errors.source}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="Remark">
-                        <Input
-                            name="remark"
-                            value={formData.remark}
-                            onChange={(e) =>
-                                handleInputChange('remark', e.target.value)
-                            }
-                        />
-                       
-                    </FormItem>
-                    <FormItem label="Important Note">
-                        <Input
-                            name="imaportant_note"
-                            value={formData.imaportant_note}
-                            onChange={(e) =>
-                                handleInputChange('imaportant_note', e.target.value)
-                            }
-                        />
-                       
-                    </FormItem>
-                    <FormItem label="File">
-                    <Upload onChange={(files) => handleFileChange(files)}>
-    <Button variant="solid" icon={<HiOutlineCloudUpload />} type='button' >
-        Upload your file
-    </Button>
-</Upload>
-                    </FormItem>
+                        </FormItem>
+                        <FormItem label="Organised By">
+                            {/* Use CreatableSelect to allow selecting or creating a new client name */}
+                            <CreatableSelect
+                                isMulti
+                                options={organisorOptions}
+                                onChange={(selectedOption) =>
+                                    handleSelectChange(
+                                        selectedOption,
+                                        'organisor',
+                                    )
+                                }
+                            />
+                            {errors.organisor && (
+                                <span className="text-red-500">
+                                    {errors.organisor}
+                                </span>
+                            )}
+                        </FormItem>
+                        <FormItem label="Designer's Name">
+                            {/* Use CreatableSelect to allow selecting or creating a new client name */}
+                            <CreatableSelect
+                                isMulti
+                                options={architectOptions}
+                                onChange={(selectedOption) =>
+                                    handleSelectChange(
+                                        selectedOption,
+                                        'designer',
+                                    )
+                                }
+                            />
+                            {errors.architect && (
+                                <span className="text-red-500">
+                                    {errors.designer}
+                                </span>
+                            )}
+                        </FormItem>
+                        <FormItem label="Attendees">
+                            {/* Use CreatableSelect to allow selecting or creating a new client name */}
+                            <CreatableSelect
+                                isMulti
+                                options={consultant_nameOptions}
+                                onChange={(selectedOption) =>
+                                    handleSelectChange(
+                                        selectedOption,
+                                        'attendees',
+                                    )
+                                }
+                            />
+                            {errors.consultant_name && (
+                                <span className="text-red-500">
+                                    {errors.attendees}
+                                </span>
+                            )}
+                        </FormItem>
+                        {/* Add similar FormItem and Select components for other fields */}
+                        <FormItem label="Date">
+                            <DatePicker
+                                selected={
+                                    formData.meetingDate
+                                        ? new Date(formData.meetingDate)
+                                        : null
+                                }
+                                onChange={(date) =>
+                                    handleInputChange(
+                                        'meetingDate',
+                                        date.toISOString(),
+                                    )
+                                }
+                            />
+                        </FormItem>
+                        <FormItem label="Location">
+                            <Select
+                                options={optionsSource}
+                                value={optionsSource.find(
+                                    (option) =>
+                                        option.value === formData.location,
+                                )}
+                                onChange={(selectedOption) =>
+                                    handleInputChange(
+                                        'location',
+                                        selectedOption.value,
+                                    )
+                                }
+                            />
+                            {errors.source && (
+                                <span className="text-red-500">
+                                    {errors.location}
+                                </span>
+                            )}
+                        </FormItem>
+                        <FormItem label="Remark">
+                            <Input
+                                name="remark"
+                                value={formData.remark}
+                                onChange={(e) =>
+                                    handleInputChange('remark', e.target.value)
+                                }
+                            />
+                        </FormItem>
+
+                        <FormItem label="File">
+                            <Upload
+                                onChange={(files) => handleFileChange(files)}
+                            >
+                                <Button
+                                    variant="solid"
+                                    icon={<HiOutlineCloudUpload />}
+                                    type="button"
+                                >
+                                    Upload your file
+                                </Button>
+                            </Upload>
+                        </FormItem>
                     </div>
-                    <div className=''>
-                    <Button type="submit" className='mr-4' variant='solid'>Submit</Button>
-                    <Button type="submit"  onClick={()=>navigate(-1)}>Discard</Button>
+                    <div className="">
+                        <Button type="submit" className="mr-4" variant="solid">
+                            Submit
+                        </Button>
+                        <Button type="submit" onClick={() => navigate(-1)}>
+                            Discard
+                        </Button>
                     </div>
                 </FormContainer>
             </form>

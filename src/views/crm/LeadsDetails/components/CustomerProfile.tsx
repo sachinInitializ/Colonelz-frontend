@@ -161,10 +161,10 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
     const [datas, setData] = useState<InitialData | null>(null);
 
     const leadStatus = [
-        { value: 'followUp', label: 'Follow Up' },
-        { value: 'interested', label: 'Interested' },
-        { value: 'notInterested', label: 'Not Interested' },
-        { value: 'noResponse', label: 'No Response' },
+        { value: 'FollowUp', label: 'Follow Up' },
+        { value: 'Interested', label: 'Interested' },
+        { value: 'Not Interested', label: 'Not Interested' },
+        { value: 'No Response', label: 'No Response' },
     ]
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [showErrorMessage, setShowErrorMessage] = useState(false);
