@@ -151,7 +151,7 @@ interface ProjectUpdateData {
   
     return (
       <div>
-        <h1>Update Project</h1>
+       
         <form>
          
         
@@ -183,9 +183,9 @@ interface ProjectUpdateData {
             />
           </FormItem>
           <br />
-          <button type="button" onClick={handleUpdate}>
+          <Button type="button" onClick={handleUpdate} variant='solid'>
             Update Project
-          </button>
+          </Button>
         </form>
       </div>
     );
