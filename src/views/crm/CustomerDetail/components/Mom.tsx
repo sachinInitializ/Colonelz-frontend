@@ -244,27 +244,27 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
         ? rowData.attendees.client_name
         : [rowData.attendees.client_name]
     const files = Array.isArray(rowData.files) ? rowData.files : []
-        const handleShareMOM = async () => {
-            try {
-                const response = await fetch(
-                    `http://localhost:8000/v1/api/admin/send/momdata?project_id=${projectId}&mom_id=${rowData.mom_id}`,
-                    {
-                        method: 'GET',
-                    },
-                )
+    const handleShareMOM = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:8000/v1/api/admin/send/momdata?project_id=${projectId}&mom_id=${rowData.mom_id}`,
+                {
+                    method: 'GET',
+                },
+            )
 
-                if (response.ok) {
-                    alert('MOM shared successfully!')
-                } else {
-                    alert('Failed to share MOM. Please try again later.')
-                }
-            } catch (error) {
-                console.error('Error sharing MOM:', error)
-                alert(
-                    'An error occurred while sharing MOM. Please try again later.',
-                )
+            if (response.ok) {
+                alert('MOM shared successfully!')
+            } else {
+                alert('Failed to share MOM. Please try again later.')
             }
+        } catch (error) {
+            console.error('Error sharing MOM:', error)
+            alert(
+                'An error occurred while sharing MOM. Please try again later.',
+            )
         }
+    }
 
     return (
         <div>
@@ -290,19 +290,16 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
             <h6 className=" capitalize">Mode Of Meeting: {rowData.source}</h6>
             <div className="mt-4">
                 <h5 className=" mt-3">Meeting attendees</h5>
-                <p>Client Name: {rowData.attendees.client_name}</p>
-                <p>Oraganisor: {rowData.attendees.organisor}</p>
-                <p>Architect: {rowData.attendees.architect}</p>
-                <p>Consultant Name: {rowData.attendees.consultant_name}</p>
+                <p>Client's Name: {rowData.attendees.client_name}</p>
+                <p>Oraganised By: {rowData.attendees.organisor}</p>
+                <p>Designer: {rowData.attendees.architect}</p>
+                <p>attendees: {rowData.attendees.consultant_name}</p>
             </div>
             <div className="mt-4">
                 <h5 className=" mt-3">Remarks</h5>
                 <p>{rowData.remark}</p>
             </div>
-            <div className="mt-4 mb-4">
-                <h5 className=" mt-3">Important Note</h5>
-                <p>{rowData.imaportant_note}</p>
-            </div>
+
             <div className="grid grid-cols-10 ">
                 {files.map((item) => (
                     <div className="">
