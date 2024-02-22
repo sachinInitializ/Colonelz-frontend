@@ -139,24 +139,8 @@ const appsRoute: Routes = [
             header: 'Add Lead',
         },
     },
-    {
-        key: 'appsSales.productEdit',
-        path: `${APP_PREFIX_PATH}/sales/product-edit/:productId`,
-        component: lazy(() => import('@/views/sales/ProductEdit')),
-        authority: [ADMIN, USER],
-        meta: {
-            header: 'Edit Product',
-        },
-    },
-    {
-        key: 'appsSales.productEdit',
-        path: `${APP_PREFIX_PATH}/crm/lead-edit`,
-        component: lazy(() => import('@/views/sales/ProductEdit')),
-        authority: [ADMIN, USER],
-        meta: {
-            header: 'Edit Product',
-        },
-    },
+
+
 
     {
         key: 'appsSales.dashboard',
@@ -176,15 +160,7 @@ const appsRoute: Routes = [
         component: lazy(() => import('@/views/sales/OrderDetails')),
         authority: [ADMIN, USER],
     },
-    {
-        key: 'appsSales.productEdit',
-        path: `${APP_PREFIX_PATH}/sales/product-edit/:productId`,
-        component: lazy(() => import('@/views/sales/ProductEdit')),
-        authority: [ADMIN, USER],
-        meta: {
-            header: 'Edit Product',
-        },
-    },
+   
     {
         key: 'appsSales.productNew',
         path: `${APP_PREFIX_PATH}/crm/projectform`,
