@@ -292,8 +292,8 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
                 <h5 className=" mt-3">Meeting attendees</h5>
                 <p>Client's Name: {rowData.attendees.client_name}</p>
                 <p>Oraganised By: {rowData.attendees.organisor}</p>
-                <p>Designer: {rowData.attendees.architect}</p>
-                <p>attendees: {rowData.attendees.consultant_name}</p>
+                <p>Designer: {rowData.attendees.designer}</p>
+                <p>attendees: {rowData.attendees.attendees}</p>
             </div>
             <div className="mt-4">
                 <h5 className=" mt-3">Remarks</h5>
@@ -306,7 +306,7 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
                         <a href={item} target="_blank">
                             {' '}
                             <Button variant="solid" className=" capitalize">
-                                file
+                                File
                             </Button>
                         </a>
                     </div>
