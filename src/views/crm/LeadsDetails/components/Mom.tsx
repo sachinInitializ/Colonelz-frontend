@@ -253,7 +253,7 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
                 width={1000}
                 height={490}
             >
-              <div style={{ maxHeight: '400px', overflowY: 'auto', marginRight:"2%", marginLeft:"1%"  }} className='scrollbar-hide  whitespace-nowrap'>
+              <div style={{ maxHeight: '400px', overflowY: 'auto', marginRight:"2%", marginLeft:"1%", scrollbarWidth:'none'  }} className='scrollbar-hide  whitespace-nowrap'>
         {data?.notes?.map((note) => (
           <div key={note._id} className='mb-4 mr-4'>
             <Card>

@@ -93,67 +93,83 @@ const App: React.FC = () => {
   
 
   return (
-    <div className=''>
-        <div className='flex justify-between '>
-      <h3>MOM Data</h3>
-      <Input
-        type="text"
-        placeholder="Search..."
-        value={searchInput}
-        onChange={handleSearchInputChange}
-        className=' w-1/5'
-      />
+      <div className="">
+          <div className="flex justify-between ">
+              <h3>MOM Data</h3>
+              <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchInput}
+                  onChange={handleSearchInputChange}
+                  className=" w-1/5"
+              />
+          </div>
+          <ul>
+              {filteredMomData.map((item: any) => (
+                  <div className="my-4">
+                      <Card
+                          header={
+                              <div className="flex items-center justify-between">
+                                  <span>
+                                      Date:{' '}
+                                      {
+                                          new Date(item.meetingdate)
+                                              .toISOString()
+                                              .split('T')[0]
+                                      }
+                                  </span>
+                                  <a
+                                      href={`http://localhost:8000/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${item.mom_id}`}
+                                  >
+                                      <Button size="sm" variant="solid">
+                                          View MOM
+                                      </Button>
+                                  </a>
+                              </div>
+                          }
+                          headerClass="font-semibold text-lg text-indigo-600"
+                          bodyClass="text-center"
+                      >
+                          <div className=" text-left">
+                              <h5>Attendees</h5>
+                              <div className=" flex items-center gap-2">
+                                  <h6>Client Name: </h6>
+                                  <p>{getNames(item.attendees.client_name)}</p>
+                              </div>
+                              <div className=" flex items-center gap-2">
+                                  <h6>Organised By: </h6>
+                                  <p>{getNames(item.attendees.organisor)}</p>
+                              </div>
+                              <div className=" flex items-center gap-2">
+                                  <h6>Designer: </h6>
+                                  <p>{getNames(item.attendees.designer)}</p>
+                              </div>
+                              <div className=" flex items-center gap-2">
+                                  <h6>Attendees: </h6>
+                                  <p>{getNames(item.attendees.attendees)}</p>
+                              </div>
+                          </div>
+                          <div className="my-4  text-left">
+                              <h5 className="mt-2"> Remarks</h5>
+                              <p>{item.remark}</p>
+                          </div>
+                          <div className="my-4  text-left">
+                              <h5 className="mt-2"> Important Notes</h5>
+                              <p>{item.imaportant_note}</p>
+                          </div>
+                          <div className="my-4 text-left grid grid-cols-8 gap-3">
+                              {item.files.map((item) => (
+                                  <a href={item} target="_blank">
+                                      <Button variant="solid">File</Button>
+                                  </a>
+                              ))}
+                          </div>
+                      </Card>
+                  </div>
+              ))}
+          </ul>
       </div>
-            <ul>
-            {filteredMomData.map((item: any) => (
-    <div className='my-4'>
-    <Card
-      header={<span>Date: {new Date(item.meetingdate).toISOString().split('T')[0]}</span>}
-        headerClass="font-semibold text-lg text-indigo-600"
-        bodyClass="text-center"
-      
-    >
-        <div className=' text-left'>
-        <h5 >Attendees</h5>
-        <div className=' flex items-center gap-2'>
-        <h6>Client Name: </h6>
-        <p>{getNames(item.attendees.client_name)}</p>
-        </div>
-        <div className=' flex items-center gap-2'>
-        <h6>Organisor: </h6>
-        <p>{getNames(item.attendees.organisor)}</p>
-        </div>
-        <div className=' flex items-center gap-2'>
-        <h6>Architect: </h6>
-        <p>{getNames(item.attendees.architect)}</p>
-        </div>
-        <div className=' flex items-center gap-2'>
-        <h6>Consultant: </h6>
-        <p>{getNames(item.attendees.consultant_name)}</p>
-        </div>
-        </div>
-         <div className='my-4  text-left'>
-          <h5 className='mt-2'> Remarks</h5>
-          <p>{item.remark}</p>
-         </div>
-         <div className='my-4  text-left'>
-          <h5 className='mt-2'> Important Notes</h5>
-          <p>{item.imaportant_note}</p>
-         </div>
-         <div className='my-4 text-left grid grid-cols-8 gap-3'>
-        
-                {item.files.map((item) => (
-                    <a href={item} target='_blank'><Button variant='solid'>File</Button></a>
-                ))}
-           
-         </div>
-    </Card>
-</div>
-))}
-
-            </ul>
-        </div>
-    );
+  )
 };
 
 export default App;
