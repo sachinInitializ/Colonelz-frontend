@@ -77,7 +77,7 @@ const MyForm: React.FC = () => {
 
     // Make API call (replace with your actual API endpoint)
     try {
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/create/quotation', {
+      const response = await fetch('http://35.200.251.213/v1/api/admin/create/quotation', {
         method: 'POST',
         body: formDataToSend,
       });
@@ -96,7 +96,7 @@ const MyForm: React.FC = () => {
   };
 const navigate=useNavigate()
 return (
-  <form onSubmit={handleSubmit} className='grid grid-cols-1 xl:grid-cols-3 gap-4'>
+  <form onSubmit={handleSubmit} className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
     {/* Render input fields for each form field excluding project_id */}
     {Object.entries(formData).map(([key, value]) => {
       if (key === 'project_id') {

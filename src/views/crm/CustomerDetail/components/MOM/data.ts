@@ -1,14 +1,14 @@
 export type Attendees = {
   client_name: string[] | null;
   organisor: string[];
-  architect: string[];
-  consultant_name: string[];
+  designer: string[];
+  attendees: string[];
 };
 
 export type MomData = {
   mom_id: string;
   meetingdate: string;
-  source: string;
+  location: string;
   attendees: Attendees;
   remark: string;
   imaportant_note: string;
@@ -45,9 +45,11 @@ const queryParams = parseQueryString(queryString);
 export const projectId = queryParams.project_id;
 console.log(projectId);
 
-const response1 = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${projectId}`);
+const response1 = await fetch(`http://35.200.251.213/v1/api/admin/getall/mom/?project_id=${projectId}`);
 const jsonData1= await response1.json();
 console.log(projectId);
 
 export const ordersData =jsonData1.data
+console.log(ordersData);
+
 export const momApiResponse: ApiResponse  =jsonData1.data

@@ -1,30 +1,18 @@
 import { useEffect, useState } from 'react'
-import AdaptableCard from '@/components/shared/AdaptableCard'
-import Loading from '@/components/shared/Loading'
 import Container from '@/components/shared/Container'
-import DoubleSidedImage from '@/components/shared/DoubleSidedImage'
 import CustomerProfile from './components/CustomerProfile'
-import PaymentHistory from './components/PaymentHistory'
-import CurrentSubscription from './components/CurrentSubscription'
-import PaymentMethods from './components/PaymentMethods'
+import PaymentHistory from './components/Quotation'
 import reducer, { getCustomer, useAppDispatch, useAppSelector } from './store'
-
 import { injectReducer } from '@/store'
-import isEmpty from 'lodash/isEmpty'
 import useQuery from '@/utils/hooks/useQuery'
-import MOM from './components/Mom'
+import MOM from './components/MOM/Mom'
 import { Tabs } from '@/components/ui'
 import TabList from '@/components/ui/Tabs/TabList'
 import TabNav from '@/components/ui/Tabs/TabNav'
 import TabContent from '@/components/ui/Tabs/TabContent'
-import PersonalInfoForm from '../CustomerForm/PersonalInfoForm'
-import { log } from 'console'
-import { useLocation, useParams } from 'react-router-dom'
-import { fetchDetails } from '../services/api'
+import { useLocation } from 'react-router-dom'
 import Contract from './components/Contract'
-import AllMom from './components/AllMom'
-import App from './components/excel'
-import Filtering from './components/Quoation'
+import AllMom from './components/MOM/AllMom'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -33,12 +21,7 @@ const CustomerDetail = () => {
 
     const query = useQuery()
 
-    const data = useAppSelector(
-        (state) => state.crmCustomerDetails
-    )
-    const loading = useAppSelector(
-        (state) => state.crmCustomerDetails.data.loading
-    )
+
 
     useEffect(() => {
         fetchData()
@@ -76,7 +59,7 @@ const CustomerDetail = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getsingle/project/?project_id=${allQueryParams.project_id}&id=${allQueryParams.id}`);
+                const response = await fetch(`http://35.200.251.213/v1/api/admin/getsingle/project/?project_id=${allQueryParams.project_id}&id=${allQueryParams.id}`);
                 const data = await response.json();
                 setDetails(data.data[0]);
                 setmomdata(data.data[0].mom)

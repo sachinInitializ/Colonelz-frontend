@@ -18,7 +18,6 @@ import {
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import { useNavigate } from 'react-router-dom'
 import cloneDeep from 'lodash/cloneDeep'
-import dayjs from 'dayjs'
 import type {
     DataTableResetHandle,
     OnSortParam,
@@ -40,7 +39,7 @@ type Order = {
 }
 type MOM={
     meetingdate:string
-    source:string
+    location:string
     attendees:Attendees
 }
 type Attendees={
@@ -116,7 +115,6 @@ const OrderColumn = ({ row }: { row: Order }) => {
     return (
         <span
             className={`cursor-pointer select-none font-semibold hover:${textTheme}`}
-            
         >
         </span>
     )
@@ -231,12 +229,12 @@ const OrdersTable = () => {
             },
        
             {
-                header: 'Meeting Mode',
-                accessorKey: 'meetingSource',
+                header: 'Location',
+                accessorKey: 'location',
                 cell: (props) => {
                     const row = props.row.original
                     return (
-                        <span>{row.mom[0].source}</span>
+                        <span>{row.mom[0].location}</span>
                     )
                 },
             },
@@ -312,7 +310,6 @@ const OrdersTable = () => {
     return (
         <DataTable
             ref={tableRef}
-           
             columns={columns}
             data={data}
             loading={loading}

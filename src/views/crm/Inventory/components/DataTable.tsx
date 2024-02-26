@@ -54,8 +54,8 @@ const ProjectTable: React.FC<Props> = ({ data }) => {
             <th className="border border-gray-300 py-2 px-4" onClick={() => toggleSortOrder('meetingdate')}>
               Meeting Date
             </th>
-            <th className="border border-gray-300 py-2 px-4" onClick={() => toggleSortOrder('source')}>
-              Source
+            <th className="border border-gray-300 py-2 px-4" onClick={() => toggleSortOrder('location')}>
+              Location
             </th>
           </tr>
         </thead>

@@ -184,7 +184,7 @@ const handleFileChange = (files: FileList | null) => {
             })
             
             const response = await fetch(
-                'https://col-u3yp.onrender.com/v1/api/admin/create/project/',
+                'http://35.200.251.213/v1/api/admin/create/project/',
                 {
                     method:'POST',
                     body:formDataToSend
@@ -390,7 +390,7 @@ const handleFileChange = (files: FileList | null) => {
                         </span>
                     )}
                 </FormItem>
-                <FormItem label="Timeline Date">
+                <FormItem label="Project End Date">
                     <DatePicker
                         size="sm"
                         selected={

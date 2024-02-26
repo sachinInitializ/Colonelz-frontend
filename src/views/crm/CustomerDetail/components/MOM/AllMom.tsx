@@ -1,7 +1,7 @@
-import { Button, Card, Dropdown, Input } from '@/components/ui';
+import { Button, Card, Input } from '@/components/ui';
 import React, { useEffect, useState } from 'react';
 import { projectId } from './data';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const App: React.FC = () => {
   const [momData, setMomData] = useState<any[]>([]);
@@ -87,11 +87,6 @@ const App: React.FC = () => {
     }
     return 'Invalid format';
   };
-
-  const Toggle = <Button>Files</Button>;
-  const navigate = useNavigate();
-  
-
   return (
       <div className="">
           <div className="flex justify-between ">
@@ -106,7 +101,7 @@ const App: React.FC = () => {
           </div>
           <ul>
               {filteredMomData.map((item: any) => (
-                  <div className="my-4">
+                  <div  key={item}>
                       <Card
                           header={
                               <div className="flex items-center justify-between">

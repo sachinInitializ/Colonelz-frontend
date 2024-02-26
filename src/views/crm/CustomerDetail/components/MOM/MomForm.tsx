@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react'
+import React, { useState, FormEvent } from 'react'
 import {
     Button,
     DatePicker,
@@ -41,13 +41,12 @@ const YourFormComponent: React.FC = () => {
     const allQueryParams: QueryParams = {
         project_id: queryParams.get('project_id') || '',
     }
-
     const [formData, setFormData] = useState<FormData>({
         client_name: '',
         organisor: '',
         designer: '',
         attendees: '',
-        meetingDate: '',
+        meetingDate: new Date().toISOString(),
         location: '',
         remark: '',
         files: [],
@@ -124,34 +123,19 @@ const YourFormComponent: React.FC = () => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-
-        // Validate the form data
-        // Validate the form data
         const validationErrors: { [key: string]: string } = {}
-
-        // Validate client_name
         if (formData.client_name.length === 0) {
             validationErrors.client_name = "Client's Name is required"
         }
-
-        // Validate organisor
         if (formData.organisor.length === 0) {
             validationErrors.organisor = "Organisor's Name is required"
         }
-
-        // Validate architect
         if (formData.designer.length === 0) {
             validationErrors.designer = "Designer's Name is required"
         }
-
-        // Validate consultant_name
-
-        // Validate meetingDate
         if (!formData.meetingDate) {
             validationErrors.meetingDate = 'Meeting Date is required'
         }
-
-        // Validate source
         if (!formData.location) {
             validationErrors.location = 'Location is required'
         }
@@ -195,7 +179,7 @@ const YourFormComponent: React.FC = () => {
             )
 
             const response = await fetch(
-                'https://col-u3yp.onrender.com/v1/api/admin/create/mom/',
+                'http://35.200.251.213/v1/api/admin/create/mom/',
                 {
                     method: 'POST',
                     body: formDataToSend,
@@ -214,9 +198,6 @@ const YourFormComponent: React.FC = () => {
             console.error('Error:', error)
             alert('An error occurred')
         }
-    }
-    const clicks = () => {
-        window.location.reload()
     }
 
     return (
@@ -273,7 +254,7 @@ const YourFormComponent: React.FC = () => {
                                     )
                                 }
                             />
-                            {errors.architect && (
+                            {errors.designer && (
                                 <span className="text-red-500">
                                     {errors.designer}
                                 </span>
@@ -312,6 +293,11 @@ const YourFormComponent: React.FC = () => {
                                     )
                                 }
                             />
+                              {errors.meetingDate && (
+                                <span className="text-red-500">
+                                    {errors.meetingDate}
+                                </span>
+                            )}
                         </FormItem>
                         <FormItem label="Location">
                             <Select
@@ -327,7 +313,7 @@ const YourFormComponent: React.FC = () => {
                                     )
                                 }
                             />
-                            {errors.source && (
+                            {errors.location && (
                                 <span className="text-red-500">
                                     {errors.location}
                                 </span>
