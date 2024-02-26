@@ -36,11 +36,22 @@ const appsRoute: Routes = [
         path: `${APP_PREFIX_PATH}/crm/dashboard`,
         component: lazy(() => import('@/views/crm/CrmDashboard')),
         authority: [ADMIN, USER],
+      
+    },
+    {
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager`,
+        component: lazy(() => import('@/views/crm/FileManager')),
+        authority: [ADMIN, USER],
+        meta: {
+            header: 'File Manager',
+            headerContainer: true,
+        },
     },
     {
         key: 'appsCrm.form',
         path: `${APP_PREFIX_PATH}/crm/project/momform`,
-        component: lazy(() => import('@/views/crm/CustomerDetail/components/MomForm')),
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/MOM/MomForm')),
         authority: [ADMIN, USER],
     },
     {
@@ -77,7 +88,7 @@ const appsRoute: Routes = [
     {
         key: 'appsSales.allmom',
         path: `${APP_PREFIX_PATH}/crm/allmom`,
-        component: lazy(() => import('@/views/crm/CustomerDetail/components/AllMom')),
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/MOM/AllMom')),
         authority: [ADMIN, USER],
     },
     {

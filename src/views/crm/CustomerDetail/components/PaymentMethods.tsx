@@ -1,7 +1,7 @@
 import Button from '@/components/ui/Button'
 import Tag from '@/components/ui/Tag'
 import EditPaymentMethod from './EditPaymentMethod'
-import DeletePaymentMethod from './MomForm'
+import DeletePaymentMethod from './MOM/MomForm'
 import {
     openDeletePaymentMethodDialog,
     openEditPaymentMethodDialog,

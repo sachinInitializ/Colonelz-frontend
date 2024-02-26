@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { userDetailData } from '@/mock/data/usersData';
 import { HiOutlineBell } from 'react-icons/hi';
 import Dropdown from '@/components/ui/Dropdown';
-import { Tooltip } from 'react-tooltip';
 import { productsData } from '@/mock/data/salesData';
 
 import useResponsive from '@/utils/hooks/useResponsive';
-import { ScrollBar } from '../ui';
 
 const Notification1 = () => {
   const [showNotification, setShowNotification] = useState(false);
@@ -40,7 +38,6 @@ console.log(parsedDateTime);
     
     };
 
-    const currentDateTime: string = currentDate.toLocaleDateString('en-IN', options);
     const formattedDateTime: string = parsedDateTime.toLocaleString('en-IN', options);
 
     const timeDiff = Math.ceil((parsedDateTime - currentDate) / (1000 * 60 * 60 * 24));

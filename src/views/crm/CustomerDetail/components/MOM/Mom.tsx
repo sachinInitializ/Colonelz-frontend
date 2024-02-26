@@ -6,14 +6,13 @@ import {
     getExpandedRowModel,
     flexRender,
 } from '@tanstack/react-table'
-import { momApiResponse, projectId } from './data'
+import {  projectId } from './data'
 import { HiOutlineChevronRight, HiOutlineChevronDown } from 'react-icons/hi'
-import type { ApiResponse } from './data'
+import type { ApiResponse, MomData } from './data'
 import type { ColumnDef, Row, ColumnSort } from '@tanstack/react-table'
-import type { ReactElement, SyntheticEvent } from 'react'
-import { log } from 'console'
-import { Button, Dropdown } from '@/components/ui'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import type { ReactElement } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui'
 
 type ReactTableProps<T> = {
     renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
@@ -27,14 +26,14 @@ type MOM = {
     mom_id: string
 }
 
-const { Tr, Th, Td, THead, TBody, Sorter } = Table
+const { Tr, Th, Td, THead, TBody } = Table
 
 function ReactTable({
     renderRowSubComponent,
     getRowCanExpand,
-    data,
+    
 }: ReactTableProps<ApiResponse>) {
-    const columns = useMemo<ColumnDef<ApiResponse>[]>(
+    const columns = useMemo<ColumnDef<MomData>[]>(
         () => [
             {
                 // Make an expander cell
@@ -98,8 +97,8 @@ function ReactTable({
                 },
             },
             {
-                header: 'Source',
-                accessorKey: 'source',
+                header: 'Location',
+                accessorKey: 'location',
             },
         ],
         [],
@@ -237,12 +236,8 @@ function ReactTable({
     )
 }
 
-const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
+const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
     const rowData = row.original
-    const Toggle = <Button>Files</Button>
-    const clientNames = Array.isArray(rowData?.attendees?.client_name)
-        ? rowData.attendees.client_name
-        : [rowData.attendees.client_name]
     const files = Array.isArray(rowData.files) ? rowData.files : []
     const handleShareMOM = async () => {
         try {
@@ -276,7 +271,7 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
                 <div className="grid grid-cols-2 gap-2">
                     <a
                         href={`http://localhost:8000/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`}
-                        target="_blank"
+                        target="_blank" rel="noreferrer"
                     >
                         <Button variant="solid" size="sm">
                             View MOM
@@ -287,7 +282,7 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
                     </Button>
                 </div>
             </div>
-            <h6 className=" capitalize">Mode Of Meeting: {rowData.source}</h6>
+            <h6 className=" capitalize">Location: {rowData.location}</h6>
             <div className="mt-4">
                 <h5 className=" mt-3">Meeting attendees</h5>
                 <p>Client's Name: {rowData.attendees.client_name}</p>
@@ -302,9 +297,8 @@ const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
 
             <div className="grid grid-cols-10 ">
                 {files.map((item) => (
-                    <div className="">
-                        <a href={item} target="_blank">
-                            {' '}
+                    <div  key={item}>
+                        <a href={item} target="_blank"  rel="noreferrer">
                             <Button variant="solid" className=" capitalize">
                                 File
                             </Button>

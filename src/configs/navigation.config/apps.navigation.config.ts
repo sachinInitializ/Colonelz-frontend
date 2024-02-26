@@ -89,7 +89,7 @@ const appsNavigationConfig: NavigationTree[] = [
                     },
                     {
                         key: 'appsCrm.fileManager',
-                       
+                        path: `${APP_PREFIX_PATH}/crm/fileManager`,
                         title: 'File Manager',
                         translateKey: 'nav.appsCrm.fileManager',
                         icon: 'files',

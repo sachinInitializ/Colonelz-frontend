@@ -161,7 +161,7 @@ const Filtering = () => {
               
             },
             {
-                header: 'Timeline',
+                header: 'Project End Date',
                 accessorKey: 'timeline_date',
                 cell: (props) => {
                     const row = props.row.original;

@@ -162,7 +162,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
 
     try {
       // Assuming you have an API endpoint for creating projects
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/create/lead/project', {
+      const response = await fetch('http://35.200.251.213/v1/api/admin/create/lead/project', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

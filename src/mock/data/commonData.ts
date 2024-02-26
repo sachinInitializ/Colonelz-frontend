@@ -51,6 +51,13 @@ export const searchQueryPoolData = [
         categoryTitle: 'Apps',
     },
     {
+        title: 'File Manager',
+        url: '/app/crm/fileManager',
+        icon: 'crm',
+        category: 'CRM',
+        categoryTitle: 'Apps',
+    },
+    {
         title: 'CRM Dashboard',
         url: '/app/crm/project/momform',
         icon: 'crm',
