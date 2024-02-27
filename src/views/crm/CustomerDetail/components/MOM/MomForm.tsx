@@ -33,6 +33,7 @@ const YourFormComponent: React.FC = () => {
     const navigate = useNavigate()
     interface QueryParams {
         project_id: string
+        client_name:string
     }
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
@@ -40,6 +41,7 @@ const YourFormComponent: React.FC = () => {
     // Create an object to store and map the query parameters
     const allQueryParams: QueryParams = {
         project_id: queryParams.get('project_id') || '',
+        client_name:queryParams.get('client_name') || ''
     }
     const [formData, setFormData] = useState<FormData>({
         client_name: '',
@@ -56,7 +58,7 @@ const YourFormComponent: React.FC = () => {
 
     // Options for the client select input
     const clientOptions: Option[] = [
-        { value: 'Abhishek Singh', label: 'Abhishek Singh' },
+        { value: allQueryParams.client_name, label: allQueryParams.client_name },
         // Add more client options if needed
     ]
     const organisorOptions: Option[] = [

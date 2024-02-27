@@ -37,7 +37,7 @@ const App: React.FC = () => {
   useEffect(() => {
     fetch(`https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${allQueryParams.project_id}`)
       .then(response => response.json())
-      .then(data => setMomData(data.data))
+      .then(data => setMomData(data.data.mom_data))
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 

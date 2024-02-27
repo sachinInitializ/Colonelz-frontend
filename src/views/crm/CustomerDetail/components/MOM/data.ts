@@ -14,13 +14,16 @@ export type MomData = {
   imaportant_note: string;
   files: any[]; // Add a proper type for files if needed
 };
-
+export type Data={
+  client_name:string;
+  momdata:MomData[]
+}
 export type ApiResponse = {
   message: string;
   status: boolean;
   errorMessage: string;
   code: number;
-  data: MomData[];
+  data:Data;
   subrow:ApiResponse[]
 };
 

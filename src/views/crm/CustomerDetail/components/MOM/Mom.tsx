@@ -17,9 +17,10 @@ import { Button } from '@/components/ui'
 type ReactTableProps<T> = {
     renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
     getRowCanExpand: (row: Row<T>) => boolean
-    data: Data[]
+    data: Data
 }
 type Data = {
+    client_name:string,
     mom: MOM[]
 }
 type MOM = {
@@ -107,6 +108,7 @@ function ReactTable({
     const location = useLocation()
 
     const [leadData, setLeadData] = useState<ApiResponse | null>(null)
+    const [client,setClient]= useState<Data | null>(null)
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search)
         const projectId = searchParams.get('project_id')
@@ -117,7 +119,8 @@ function ReactTable({
                         `https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${projectId}`,
                     )
                     const data = await response.json()
-                    setLeadData(data.data)
+                    setLeadData(data.data.mom_data)
+                    setClient(data.data)
                 } catch (error) {
                     console.error('Error fetching data:', error)
                 }
@@ -151,7 +154,7 @@ function ReactTable({
                     variant="solid"
                     onClick={() =>
                         navigate(
-                            `/app/crm/project/momform?project_id=${projectId}`,
+                            `/app/crm/project/momform?project_id=${projectId}&client_name=${client?.client_name}`
                         )
                     }
                 >
