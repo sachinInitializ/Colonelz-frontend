@@ -151,7 +151,7 @@ function ReactTable({
                     variant="solid"
                     onClick={() =>
                         navigate(
-                            `/app/crm/project/momform?project_id=${projectId}&client_name=${leadData?.data.map((item)=>{item.attendees.client_name})}`,
+                            `/app/crm/project/momform?project_id=${projectId}`,
                         )
                     }
                 >
