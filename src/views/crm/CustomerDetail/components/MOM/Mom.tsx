@@ -118,7 +118,6 @@ function ReactTable({
                     )
                     const data = await response.json()
                     setLeadData(data.data)
-                    console.log(leadData)
                 } catch (error) {
                     console.error('Error fetching data:', error)
                 }
@@ -152,7 +151,7 @@ function ReactTable({
                     variant="solid"
                     onClick={() =>
                         navigate(
-                            `/app/crm/project/momform?project_id=${projectId}`,
+                            `/app/crm/project/momform?project_id=${projectId}&client_name=${leadData?.data.map((item)=>{item.attendees.client_name})}`,
                         )
                     }
                 >

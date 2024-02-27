@@ -105,7 +105,7 @@ const Filtering = () => {
         const { textTheme } = useThemeClass()
         const onEdit = () => {
     
-            navigate(`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
+            navigate(`/app/crm/customer-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
         }
         return (
             <div className="flex justify-end text-lg">

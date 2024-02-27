@@ -46,7 +46,7 @@ const YourFormComponent: React.FC = () => {
         organisor: '',
         designer: '',
         attendees: '',
-        meetingDate: new Date().toISOString(),
+        meetingDate:'',
         location: '',
         remark: '',
         files: [],
