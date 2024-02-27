@@ -45,7 +45,7 @@ const queryParams = parseQueryString(queryString);
 export const projectId = queryParams.project_id;
 console.log(projectId);
 
-const response1 = await fetch(`https://col-u3yp.onrender.comv1/api/admin/getall/mom/?project_id=${projectId}`);
+const response1 = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${projectId}`);
 const jsonData1= await response1.json();
 console.log(projectId);
 

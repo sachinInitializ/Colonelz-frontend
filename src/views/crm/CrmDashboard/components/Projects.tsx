@@ -115,7 +115,7 @@ const Project = ({ data = [], className }: LeadsProps) => {
 
     useEffect(() => {
       // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
-      fetch('https://col-u3yp.onrender.comv1/api/admin/getall/project/?id=65c32e19e0f36d8e1f30955c')
+      fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project/?id=65c32e19e0f36d8e1f30955c')
         .then((response) => response.json())
         .then((data: ApiResponse1) => setApiData(data.data.projects.slice(0,5)))
         .catch((error) => console.error('Error fetching data:', error));

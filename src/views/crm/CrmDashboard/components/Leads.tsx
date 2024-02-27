@@ -122,7 +122,7 @@ const Leads = ({ data = [], className }: LeadsProps) => {
 
     useEffect(() => {
       // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
-      fetch('https://col-u3yp.onrender.comv1/api/admin/getall/lead/')
+      fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/')
         .then((response) => response.json())
         .then((data: ApiResponse) => setApiData(data.data.slice(0,5)))
         .catch((error) => console.error('Error fetching data:', error));

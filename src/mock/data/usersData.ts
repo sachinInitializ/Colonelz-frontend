@@ -93,7 +93,7 @@ export const usersData = [
     },
 ]
 
-const response = await fetch('https://col-u3yp.onrender.comv1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
+const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
 const jsonData = await response.json();
 export const statisticData=jsonData.data
 export const userDetailData=jsonData.data

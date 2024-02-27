@@ -24,7 +24,7 @@ const CrmDashboard = () => {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch('https://col-u3yp.onrender.comv1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c'); // Replace with your API endpoint
+          const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c'); // Replace with your API endpoint
   
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);

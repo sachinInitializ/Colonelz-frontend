@@ -194,7 +194,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                 // }, 400)
 
                 const response = await axios.put(
-                    'https://col-u3yp.onrender.comv1/api/admin/update/lead/',
+                    'https://col-u3yp.onrender.com/v1/api/admin/update/lead/',
                     values,
                 )
                 window.location.reload()

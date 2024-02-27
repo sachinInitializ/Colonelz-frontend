@@ -131,7 +131,7 @@ interface ProjectUpdateData {
         try {
           alert('Updated successfully')
           const response = await axios.put(
-              'https://col-u3yp.onrender.comv1/api/admin/update/project/',
+              'https://col-u3yp.onrender.com/v1/api/admin/update/project/',
               formData
               );
               window.location.reload();

@@ -184,7 +184,7 @@ const handleFileChange = (files: FileList | null) => {
             })
             
             const response = await fetch(
-                'https://col-u3yp.onrender.comv1/api/admin/create/project/',
+                'https://col-u3yp.onrender.com/v1/api/admin/create/project/',
                 {
                     method:'POST',
                     body:formDataToSend

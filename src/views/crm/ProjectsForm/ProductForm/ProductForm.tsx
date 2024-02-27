@@ -191,7 +191,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
 
           
                 const response = await axios.post(
-                    'https://col-u3yp.onrender.comv1/api/admin/create/project/',
+                    'https://col-u3yp.onrender.com/v1/api/admin/create/project/',
                     formData,
                     {
                         headers: {
