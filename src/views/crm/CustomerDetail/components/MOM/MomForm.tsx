@@ -33,7 +33,7 @@ const YourFormComponent: React.FC = () => {
     const navigate = useNavigate()
     interface QueryParams {
         project_id: string
-        client_name:string
+        client_name: string
     }
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
@@ -41,14 +41,14 @@ const YourFormComponent: React.FC = () => {
     // Create an object to store and map the query parameters
     const allQueryParams: QueryParams = {
         project_id: queryParams.get('project_id') || '',
-        client_name:queryParams.get('client_name') || ''
+        client_name: queryParams.get('client_name') || '',
     }
     const [formData, setFormData] = useState<FormData>({
         client_name: '',
         organisor: '',
         designer: '',
         attendees: '',
-        meetingDate:'',
+        meetingDate: '',
         location: '',
         remark: '',
         files: [],
@@ -58,19 +58,22 @@ const YourFormComponent: React.FC = () => {
 
     // Options for the client select input
     const clientOptions: Option[] = [
-        { value: allQueryParams.client_name, label: allQueryParams.client_name },
+        {
+            value: allQueryParams.client_name,
+            label: allQueryParams.client_name,
+        },
         // Add more client options if needed
     ]
     const organisorOptions: Option[] = [
-        { value: 'Honey Singh', label: 'Honey Singh' },
+        {},
         // Add more client options if needed
     ]
     const architectOptions: Option[] = [
-        { value: 'Sahid Kapur', label: 'Sahid Kapur' },
+        {},
         // Add more client options if needed
     ]
     const consultant_nameOptions: Option[] = [
-        { value: 'Abhishek Singh', label: 'Abhishek Singh' },
+        {},
         // Add more client options if needed
     ]
 
@@ -295,7 +298,7 @@ const YourFormComponent: React.FC = () => {
                                     )
                                 }
                             />
-                              {errors.meetingDate && (
+                            {errors.meetingDate && (
                                 <span className="text-red-500">
                                     {errors.meetingDate}
                                 </span>

@@ -1,130 +1,155 @@
-import React, { useState } from 'react';
-import { userDetailData } from '@/mock/data/usersData';
-import { HiOutlineBell } from 'react-icons/hi';
+import React, { useState, useEffect } from 'react';
+import { HiOutlineBell, HiOutlineMailOpen } from 'react-icons/hi';
 import Dropdown from '@/components/ui/Dropdown';
-import { productsData } from '@/mock/data/salesData';
-
 import useResponsive from '@/utils/hooks/useResponsive';
+import { Avatar, Badge, Button, Tooltip } from '../ui';
+
+
+
+// ... (imports)
 
 const Notification1 = () => {
   const [showNotification, setShowNotification] = useState(false);
+  const [notificationData, setNotificationData] = useState([]);
 
-  const projects = userDetailData; // Assuming userDetailData contains your project data
-  const leads=productsData;
- 
- 
-  
-  const handleClick = () => {
-    setShowNotification(true);
-  };
-
-const renderLeadsNotifications = () => {
-  if (!leads || !Array.isArray(leads)) {
-    return null;
-  }
-
-  return leads.map((lead) => {
-    const currentDate = new Date();
-    const parsedDateTime: Date = new Date(lead.updated_date);
-console.log(parsedDateTime);
-
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-    
-    };
-
-    const formattedDateTime: string = parsedDateTime.toLocaleString('en-IN', options);
-
-    const timeDiff = Math.ceil((parsedDateTime - currentDate) / (1000 * 60 * 60 * 24));
-    console.log(formattedDateTime);
-    
-    if (timeDiff === 1) {
-      return (
-        <div key={lead.id}>
-          <p className=' px-5 py-3'>{`1 day remaining to follow up for lead ${lead.name} updated on ${formattedDateTime}`}</p>
-          <hr className='my-2' />
-        </div>
-      );
-    } else if (timeDiff === 0) {
-      return (
-        <div key={lead.id}>
-          <p className='px-5 py-3'>{`Today is the day to follow up for lead ${lead.name} updated on ${formattedDateTime}`}</p>
-          <hr className='my-2' />
-        </div>
-      );
-    }
-
-    return null;
-  });
-};
-
-
-  const renderNotifications = () => {
-    if (!projects || !Array.isArray(projects)) {
-      return null; // Return early if projects is not defined or not an array
-    }
-
-    return projects.map((project) => {
-      const currentDate = new Date();
-      const timelineDate = new Date(project.timeline_date);
-      
-    
-      
-      // Calculate time difference in days
-      const timeDiff = Math.ceil((timelineDate - currentDate) / (1000 * 60 * 60 * 24));
-
-
-      if (timeDiff === 1) {
-        return (
-          < div style={{scrollbarWidth:"none"}} className=' text-sm' key={project._id}>
-            <p className=' text-sm px-5 py-3'>{`1 day left for project "${project.project_name}"`}</p>
-          
-          <hr className='my-2' />
-          </div>
-        );
-      } else if (currentDate >= timelineDate && timeDiff>=-500) {
-        return (
-          <div key={project._id}>
-            <p className=' text-sm px-5 py-3'>{`Project "${project.project_name}" delayed. Extend timeline.`}</p>
-          <hr className='my-2 w-full'/>
-          </div>
-        );
+  const fetchData = async () => {
+    try {
+      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/get/notification'); // Replace with your API endpoint
+      const data = await response.json();
+      if (data.status) {
+        setNotificationData(data.data);
+      } else {
+        // Handle error if needed
+        console.error('Error fetching notification data');
       }
-      return null;
-    });
+    } catch (error) {
+      // Handle error if needed
+      console.error('Error fetching notification data', error);
+    }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []); // Fetch data when the component mounts
 
   const { larger } = useResponsive();
+
+  const handleUpdate = async (notification) => {
+    try {
+      const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/update/notification`, {
+        method: 'PUT', // or 'PUT' depending on your API
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'One',
+          notification_id:notification._id
+        }),
+      });
+
+      const data = await response.json();
+      if (data.status) {
+        // Update the notification status locally to mark it as read
+        setNotificationData((prevData) =>
+          prevData.map((item) =>
+            item._id === notification._id ? { ...item, status: true } : item
+          )
+        );
+      } else {
+        // Handle error if needed
+        console.error('Error updating notification status');
+      }
+    } catch (error) {
+      // Handle error if needed
+      console.error('Error updating notification status', error);
+    }
+  };
+
+  const unreadNotifications = notificationData.filter(notification => !notification.status);
+
+ const handleUpdateAll = async () => {
+    try {
+      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/update/notification', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'All',
+        }),
+      });
+
+      const data = await response.json();
+      if (data.status) {
+        // Update the status of all notifications locally to mark them as read
+        setNotificationData((prevData) =>
+          prevData.map((item) => ({ ...item, status: true }))
+        );
+        // Provide feedback to the user (you can customize this part)
+       
+      } else {
+        // Handle error if needed
+        console.error('Error updating all notifications status');
+      }
+    } catch (error) {
+      // Handle error if needed
+      console.error('Error updating all notifications status', error);
+    }
+  };
 
   return (
     <div>
       <Dropdown
-        title={<HiOutlineBell className='text-xl' />}
+        title={
+          <>
+            <Badge className="mr-4 text-2xl rounded-md" content={unreadNotifications.length}>
+              <HiOutlineBell />
+            </Badge>
+          </>
+        }
         className="mr-2"
-        menuClass="p-0 w-[200px] min-w-[250px] md:min-w-[350px] max-h-80 " // Set max height and enable vertical scrolling
+        menuClass="p-0 w-[200px] min-w-[250px] md:min-w-[350px] max-h-85 "
         placement={larger.md ? 'bottom-end' : 'bottom-center'}
-        onClick={handleClick}
-        style={{scrollbarWidth:"none"}}
+        style={{ scrollbarWidth: 'none' }}
+        onClick={() => setShowNotification(true)}
       >
         <Dropdown.Item variant="header">
           <div className="border-b border-gray-200 dark:border-gray-600 px-6 py-4 flex items-center justify-between mb-4 ">
             <h6>Notifications</h6>
+            <Tooltip title="Mark all as read">
+              <Button
+                variant="plain"
+                shape="circle"
+                size="sm"
+                icon={<HiOutlineMailOpen className="text-xl" />}
+                onClick={handleUpdateAll}
+              />
+            </Tooltip>
           </div>
         </Dropdown.Item>
-        <div className='ltr: rtl: text-sm overflow-y-auto' style={{scrollbarWidth:"none"}}>
-          <div className=' overflow-y-auto h-[250px] pb-8' style={{scrollbarWidth:"none"}}>
-          {showNotification && renderLeadsNotifications()}
-          {showNotification && renderNotifications()}
+        <div className="ltr: rtl: text-sm overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+          <div className="overflow-y-auto h-[250px] pb-8" style={{ scrollbarWidth: 'none' }}>
+            {notificationData.slice().reverse().map((notification) => (
+              <div
+                key={notification._id}
+                className={`px-6 py-3 border-b border-gray-200 ${notification.status ? 'read' : 'unread'}`}
+                onClick={() => handleUpdate(notification)}
+              >
+                {/* Customize the notification item based on your data structure */}
+                <p
+                  style={{
+                    color: notification.status ? 'gray' : 'black',
+                    fontWeight: notification.status ? 'normal' : 'bold',
+                  }}
+                >
+                  {notification.message}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
         <Dropdown.Item variant="header">
-          <div className="flex justify-center  px-4 py-2">
-          </div>
+          <div className="flex justify-center px-4 py-2"></div>
         </Dropdown.Item>
       </Dropdown>
       <div></div>

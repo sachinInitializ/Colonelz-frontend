@@ -147,7 +147,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
       if (response.ok) {
         // Update successful, show success alert
         alert('Update successful');
-        navigate(-1);
+          window.location.reload()
       } else {
         // Update failed, show error alert
         alert('Update failed');
@@ -258,7 +258,7 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
           <div key={note._id} className='mb-4 mr-4'>
             <Card>
               <div className='flex flex-row justify-between items-center mb-4 '>
-                <CustomerInfoField title="Date" value={new Date(note.date).toISOString().split('T')[0]} />
+                <CustomerInfoField title="Date" value={note.date}/>
                 <CustomerInfoField title="Status" value={note.status} />
               </div>
               <CustomerInfoField title="Description" value={note.content} />
