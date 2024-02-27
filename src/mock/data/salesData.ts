@@ -160,11 +160,11 @@ export const salesDashboardData = {
 
 
 
-const response = await fetch('http://35.200.251.213/v1/api/admin/getall/lead/');
+const response = await fetch('https://col-u3yp.onrender.comv1/api/admin/getall/lead/');
 const jsonData = await response.json();
 export const productsData=jsonData.data
 
-const responseProject = await fetch('http://35.200.251.213/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
+const responseProject = await fetch('https://col-u3yp.onrender.comv1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
 const jsonProject = await responseProject.json();
 export const projectdata=jsonProject
        
@@ -192,7 +192,7 @@ export const projectdata=jsonProject
 //   ];
 
 
-const response1 = await fetch('http://35.200.251.213/v1/api/admin/getall/project/mom');
+const response1 = await fetch('https://col-u3yp.onrender.comv1/api/admin/getall/project/mom');
 const jsonData1= await response1.json();
 
 export const ordersData =jsonData1.data

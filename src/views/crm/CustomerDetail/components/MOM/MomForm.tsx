@@ -179,7 +179,7 @@ const YourFormComponent: React.FC = () => {
             )
 
             const response = await fetch(
-                'http://35.200.251.213/v1/api/admin/create/mom/',
+                'https://col-u3yp.onrender.comv1/api/admin/create/mom/',
                 {
                     method: 'POST',
                     body: formDataToSend,

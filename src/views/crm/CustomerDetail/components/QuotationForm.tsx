@@ -77,7 +77,7 @@ const MyForm: React.FC = () => {
 
     // Make API call (replace with your actual API endpoint)
     try {
-      const response = await fetch('http://35.200.251.213/v1/api/admin/create/quotation', {
+      const response = await fetch('https://col-u3yp.onrender.comv1/api/admin/create/quotation', {
         method: 'POST',
         body: formDataToSend,
       });

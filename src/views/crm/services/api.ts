@@ -13,7 +13,7 @@ interface UserData {
   // Add other properties as needed
 }
 
-const apiBaseUrl = 'http://35.200.251.213/v1/api/admin'; // Replace 'YOUR_API_BASE_URL' with the actual base URL of your API
+const apiBaseUrl = 'https://col-u3yp.onrender.comv1/api/admin'; // Replace 'YOUR_API_BASE_URL' with the actual base URL of your API
 
 // export const fetchData = async (): Promise<UserData[]> => {
 //   try {

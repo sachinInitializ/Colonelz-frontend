@@ -136,7 +136,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
 
     try {
       // Assuming you have an API endpoint for updating leads
-      const response = await fetch('http://35.200.251.213/v1/api/admin/update/lead/', {
+      const response = await fetch('https://col-u3yp.onrender.comv1/api/admin/update/lead/', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -107,7 +107,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
       });
   
       const response = await axios.post(
-        'http://35.200.251.213/v1/api/admin/create/project/',
+        'https://col-u3yp.onrender.comv1/api/admin/create/project/',
         formDataToSend,
         {
           headers: {

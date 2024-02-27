@@ -55,7 +55,7 @@ const CustomerDetail = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://35.200.251.213/v1/api/admin/getsingle/lead/?lead_id=${myParam}`);
+                const response = await fetch(`https://col-u3yp.onrender.comv1/api/admin/getsingle/lead/?lead_id=${myParam}`);
                 const data = await response.json();
                 setDetails(data);
             } catch (error) {
