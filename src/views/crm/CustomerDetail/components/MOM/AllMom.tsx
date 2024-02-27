@@ -39,7 +39,7 @@ const App: React.FC = () => {
       .then(response => response.json())
       .then(data => setMomData(data.data.mom_data))
       .catch(error => console.error('Error fetching data:', error));
-  });
+  }, []);
 
   const filteredMomData = momData.filter(item => {
     const searchIn = (str: string) =>
