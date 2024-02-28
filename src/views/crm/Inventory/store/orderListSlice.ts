@@ -10,6 +10,40 @@ import {
 } from '@/services/SalesService'
 import type { TableQueries } from '@/@types/common'
 
+
+export type MomAttendees = {
+    client_name: string;
+    organisor: string;
+    designer: string;
+    attendees: string;
+  };
+  
+  export type MomFile = string;
+  export const SLICE_NAME = 'momData'
+  export type MomData = {
+    mom_id: string;
+    meetingdate: string; // You may want to use Date export type based on your needs
+    location: string;
+    attendees: MomAttendees;
+    remark: string;
+    files: MomFile[];
+  };
+  
+  export type ProjectMom = {
+    project_id: string;
+    project_name: string;
+    mom: MomData[];
+  };
+  
+  export type ApiResponse = {
+    message: string;
+    status: boolean;
+    errorMessage: string;
+    code: number;
+    data: ProjectMom[];
+  };
+  
+
 type Order = {
     project_id?: string
     project_name?: string
@@ -46,7 +80,6 @@ export type SalesOrderListState = {
     selectedRow: string
 }
 
-export const SLICE_NAME = 'salesOrderList'
 
 export const getOrders = createAsyncThunk(
     SLICE_NAME + '/getOrders',

@@ -213,13 +213,13 @@ const handleFileChange = (files: FileList | null) => {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-6 sm:grid-cols-2">
                 <FormItem label="Client Name">
                     <Input
+                        required
                         size="sm"
                         type="text"
                         id="client_name"
                         name="client_name"
                         value={formData.client_name}
                         onChange={handleInputChange}
-                        required
                     />
                     {errors.client_name && (
                         <span className="text-red-500">
@@ -229,13 +229,13 @@ const handleFileChange = (files: FileList | null) => {
                 </FormItem>
                 <FormItem label="Client Contact">
                     <Input
+                        required
                         size="sm"
                         type="text"
                         id="client_contact"
                         name="client_contact"
                         value={formData.client_contact}
                         onChange={handleInputChange}
-                        required
                     />
                     {errors.client_contact && (
                         <span className="text-red-500">

@@ -2,19 +2,13 @@ import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Table from '@/components/ui/Table'
 import Tag from '@/components/ui/Tag'
-import Avatar from '@/components/ui/Avatar'
 import {
-    useReactTable,
-    getCoreRowModel,
-    flexRender,
     createColumnHelper,
 } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import type { Customer } from '../store'
-import { log } from 'console'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import { HiOutlineEye } from 'react-icons/hi'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 
@@ -74,18 +68,7 @@ const columnHelper = createColumnHelper<Customer>()
 const Project = ({ data = [], className }: LeadsProps) => {
     const [datas, setData] = useState([]);
     const { textTheme } = useThemeClass()
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('your-api-endpoint-here');
-                setData(response.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-    
-        fetchData();
-    }, []);
+  
     const navigate = useNavigate()
 
  
@@ -156,7 +139,7 @@ const Project = ({ data = [], className }: LeadsProps) => {
                     : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100  border-0 rounded capitalize font-semibold text-xs px-2 py-1'
                 }>{item.project_type}</span>
               </Td>
-              <Td className={`cursor-pointer p-2 hover:${textTheme} text-lg`}><HiOutlineEye onClick={()=>navigate(`/app/crm/customer-details?project_id=${item.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}/></Td>
+              <Td className={`cursor-pointer p-2 hover:${textTheme} text-lg`}><HiOutlineEye onClick={()=>navigate(`/app/crm/project-details?project_id=${item.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}/></Td>
             </Tr>
           ))}
         </TBody>

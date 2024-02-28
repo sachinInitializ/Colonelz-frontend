@@ -16,7 +16,7 @@ import {
 } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import { userDetailData } from '@/mock/data/usersData'
-import { useAppSelector, type Customer } from '../store'
+import { useAppSelector, type Project } from '../store'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
 import { HiOutlineEye, HiOutlineUserAdd, HiOutlineUserGroup, HiOutlineUsers } from 'react-icons/hi'
@@ -62,11 +62,11 @@ function DebouncedInput({
                 <Input
                     {...props}
                     value={value}
-                    onChange={(e) => setValue(e.target.value)}
                     size='sm'
+                    onChange={(e) => setValue(e.target.value)}
                 />
             </div>
-            <Button onClick={()=>navigate('/app/crm/projectform')} size='sm' variant='solid'>Create Project</Button>
+            <Button size='sm' variant='solid' onClick={()=>navigate('/app/crm/projectform')}>Create Project</Button>
         </div>
     )
 }
@@ -98,14 +98,14 @@ const totalData=userDetailData.projects.length
 
 const Filtering = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [selectedStatus, setSelectedStatus] = useState<string>('');
+    const [selectedStatus] = useState<string>('');
     const [globalFilter, setGlobalFilter] = useState('')
-    const ActionColumn = ({ row }: { row: Customer }) => {
+    const ActionColumn = ({ row }: { row: Project }) => {
         const navigate = useNavigate()
         const { textTheme } = useThemeClass()
         const onEdit = () => {
     
-            navigate(`/app/crm/customer-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
+            navigate(`/app/crm/project-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
         }
         return (
             <div className="flex justify-end text-lg">
@@ -119,7 +119,7 @@ const Filtering = () => {
         )
     }
 
-    const columns = useMemo<ColumnDef<Customer>[]>(
+    const columns = useMemo<ColumnDef<Project>[]>(
         () => [
             {
                 header: 'Project Name',
@@ -165,9 +165,16 @@ const Filtering = () => {
                 accessorKey: 'timeline_date',
                 cell: (props) => {
                     const row = props.row.original;
-                    const date = new Date(row.timeline_date);
-                    const formattedDate = date.toISOString().split('T')[0];
-                    return formattedDate;
+                    const dateObject = new Date(row.timeline_date);
+
+                    // Assuming 'en-IN' for IST (you may need to adjust for specific IST formatting)
+                    const istFormattedDate = dateObject.toLocaleDateString('en-IN', {
+                      timeZone: 'Asia/Kolkata',
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                    });
+                    return istFormattedDate
                 },
                 
             },
@@ -185,6 +192,8 @@ const Filtering = () => {
     )
 
     const [data,setData] = useState(() => userDetailData.projects)
+
+
 
     const table = useReactTable({
         data,
@@ -214,7 +223,7 @@ const Filtering = () => {
         // Update the table data based on the selected project status
         const filteredData =
             selectedStatus !== ''
-                ? userDetailData.projects.filter((project) => project.project_status === selectedStatus)
+                ? userDetailData.projects.filter((project:Project) => project.project_status === selectedStatus)
                 : userDetailData.projects;
 
         setData(filteredData);
@@ -257,14 +266,14 @@ const Filtering = () => {
 
             if (Array.isArray(status)) {
                 // For array, filter projects whose status is in the array
-                const filteredData = userDetailData.projects.filter((project) =>
+                const filteredData = userDetailData.projects.filter((project:Project) =>
                     status.includes(project.project_status)
                 );
                 setData(filteredData);
             } else {
                 // For string, filter projects with the specific status
                 const filteredData = userDetailData.projects.filter(
-                    (project) => project.project_status === status
+                    (project:Project) => project.project_status === status
                 );
                 setData(filteredData);
             }

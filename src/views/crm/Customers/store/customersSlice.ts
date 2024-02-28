@@ -6,46 +6,18 @@ import {
 } from '@/services/CrmService'
 import type { TableQueries } from '@/@types/common'
 
-type PersonalInfo = {
-    location: string
-    title: string
-    birthday: string
-    phoneNumber: string
-    facebook: string
-    twitter: string
-    pinterest: string
-    linkedIn: string
-}
 
-type OrderHistory = {
-    id: string
-    item: string
-    status: string
-    amount: number
-    date: number
-}
 
-type PaymentMethod = {
-    cardHolderName: string
-    cardType: string
-    expMonth: string
-    expYear: string
-    last4Number: string
-    primary: boolean
-}
 
-type Subscription = {
-    plan: string
-    status: string
-    billing: string
-    nextPaymentDate: number
-    amount: number
-}
 
-export type Customer = {
+
+export type Client={
+    client_name:string
+}
+export type Project = {
     id: string;
   project_name: string;
-  client: Array<string>;
+  client: Client[];
   project_id: string;
   project_type: string;
   description: string;
@@ -81,7 +53,7 @@ type Filter = {
 }
 
 type GetCrmCustomersResponse = {
-    data: Customer[]
+    data: Project[]
     total: number
 }
 
@@ -90,12 +62,12 @@ type GetCrmCustomersStatisticResponse = CustomerStatistic
 export type CustomersState = {
     loading: boolean
     statisticLoading: boolean
-    customerList: Customer[]
+    customerList: Project[]
     statisticData: Partial<CustomerStatistic>
     tableData: TableQueries
     filterData: Filter
     drawerOpen: boolean
-    selectedCustomer: Partial<Customer>
+    selectedCustomer: Partial<Project>
 }
 
 export const SLICE_NAME = 'crmCustomers'
@@ -122,7 +94,7 @@ export const getCustomers = createAsyncThunk(
 
 export const putCustomer = createAsyncThunk(
     'crmCustomers/data/putCustomer',
-    async (data: Customer) => {
+    async (data: Project) => {
         const response = await apPutCrmCustomer(data)
         return response.data
     }

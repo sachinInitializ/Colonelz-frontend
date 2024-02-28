@@ -1,12 +1,5 @@
 import { useState, useCallback } from 'react'
-import Card from '@/components/ui/Card'
-import Avatar from '@/components/ui/Avatar'
-import Button from '@/components/ui/Button'
-import Tag from '@/components/ui/Tag'
-import { HiFire } from 'react-icons/hi'
-import { NumericFormat } from 'react-number-format'
 import { useAppSelector } from '../store'
-import dayjs from 'dayjs'
 
 const CurrentSubscription = () => {
     const [subscribed, setSubscribed] = useState(true)

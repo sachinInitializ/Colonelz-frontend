@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import Card from '@/components/ui/Card'
-import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
 import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
@@ -15,7 +14,6 @@ import {
     useAppDispatch,
     Customer,
 } from '../store'
-import EditCustomerProfile from './EditCustomerProfile'
 import { Dialog, Dropdown } from '@/components/ui'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
@@ -53,70 +51,7 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
     )
 }
 
-const CustomerProfileAction = ({ id }: { id?: string }) => {
-    const dispatch = useAppDispatch()
-    const [dialogOpen, setDialogOpen] = useState(false)
 
-    const navigate = useNavigate()
-
-    const onDialogClose = () => {
-        setDialogOpen(false)
-    }
-
-    const onDialogOpen = () => {
-        setDialogOpen(true)
-    }
-
-    const onDelete = () => {
-        setDialogOpen(false)
-        if (id) {
-            dispatch(deleteCustomer({ id }))
-        }
-        navigate('/app/crm/customers')
-        toast.push(
-            <Notification title={'Successfuly Deleted'} type="success">
-                Customer successfuly deleted
-            </Notification>,
-        )
-    }
-
-    const onEdit = () => {
-        dispatch(openEditCustomerDetailDialog())
-    }
-
-    return (
-        <>
-            <Button block icon={<HiOutlineTrash />} onClick={onDialogOpen}>
-                Delete
-            </Button>
-            <Button
-                block
-                icon={<HiPencilAlt />}
-                variant="solid"
-                onClick={onEdit}
-            >
-                Edit
-            </Button>
-            <ConfirmDialog
-                isOpen={dialogOpen}
-                type="danger"
-                title="Delete customer"
-                confirmButtonColor="red-600"
-                onClose={onDialogClose}
-                onRequestClose={onDialogClose}
-                onCancel={onDialogClose}
-                onConfirm={onDelete}
-            >
-                <p>
-                    Are you sure you want to delete this customer? All record
-                    related to this customer will be deleted as well. This
-                    action cannot be undone.
-                </p>
-            </ConfirmDialog>
-            <EditCustomerProfile />
-        </>
-    )
-}
 interface CustomerProfilePropss {
     data: {
         // Define the structure of the data object here
@@ -149,14 +84,7 @@ interface Note {
 }
 
 const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
-    const [datas, setData] = useState<InitialData | null>(null)
 
-    const leadStatus = [
-        { value: 'FollowUp', label: 'Follow Up' },
-        { value: 'Interested', label: 'Interested' },
-        { value: 'Not Interested', label: 'Not Interested' },
-        { value: 'No Response', label: 'No Response' },
-    ]
     const [showSuccessMessage, setShowSuccessMessage] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     // const urlParams = new URLSearchParams(window.location.search);
@@ -166,72 +94,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
     const queryParams = new URLSearchParams(location.search)
     const myParam = queryParams.get('id') || ''
 
-    const validationSchema = Yup.object({
-        status: Yup.string().required('Status is required'),
-        date: Yup.date().required('Date is required for Follow Up'),
-
-        content: Yup.string().required("Today's Update is required"),
-    })
-
-    const formik = useFormik({
-        initialValues: {
-            lead_id: myParam,
-            status: '',
-            date: '',
-            content: '',
-            createdBy: 'Devashish',
-        },
-        validationSchema: validationSchema,
-        onSubmit: async (values, formikHelpers) => {
-            try {
-                // Make a POST request to your API endpoint
-                // setShowSuccessMessage(true);
-                formikHelpers.resetForm()
-                //   setTimeout(() => {
-                //     alert(JSON.stringify(values, null, 2))
-                //     formikHelpers.setSubmitting(false);
-
-                // }, 400)
-
-                const response = await axios.put(
-                    'https://col-u3yp.onrender.com/v1/api/admin/update/lead/',
-                    values,
-                )
-                window.location.reload()
-
-                // console.log("API Response:", response.data); // Log the response data to the console
-
-                // You can further handle the response data as needed
-            } catch (error) {
-                console.error('Error submitting form:', error)
-                setShowErrorMessage(true)
-            }
-        },
-    })
-
-    const exampleDate: Date = new Date()
-    const formattedDateTimeString: string = dayjs(exampleDate).format(
-        'MM/DD/YYYY HH:mm:ss',
-    )
-
-    const ITEM_HEIGHT = 48
-    const ITEM_PADDING_TOP = 8
-    const MenuProps = {
-        PaperProps: {
-            style: {
-                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                width: 250,
-            },
-        },
-    }
-
-    // view Last Update
-
     const [dialogIsOpen, setIsOpen] = useState(false)
-
-    const openDialog = () => {
-        setIsOpen(true)
-    }
 
     const onDialogClose = (e: MouseEvent) => {
         console.log('onDialogClose', e)
@@ -245,18 +108,6 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
 
     const navigate = useNavigate()
 
-    type Option = {
-        value: string
-        label: string
-    }
-
-    const statusOptions = [
-        { value: '', label: 'Select Status' },
-        { value: 'followUp', label: 'Follow Up' },
-        { value: 'notInterested', label: 'Not Interested' },
-        { value: 'noResponse', label: 'No Response' },
-        { value: 'interested', label: 'Interested' },
-    ]
 
     const Toggle = <Button>Files</Button>
 
@@ -306,6 +157,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                                                     <a
                                                         href={item}
                                                         target="_blank"
+                                                        rel='noreferrer'
                                                     >
                                                         <Dropdown.Item eventKey="a">
                                                             File
@@ -320,10 +172,10 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                         </Dropdown>
                         <Dialog
                             isOpen={dialogIsOpen}
-                            onClose={onDialogClose}
-                            onRequestClose={onDialogClose}
                             width={1000}
                             height={490}
+                            onClose={onDialogClose}
+                            onRequestClose={onDialogClose}
                         >
                             <div
                                 style={{

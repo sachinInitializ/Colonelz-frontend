@@ -5,33 +5,6 @@ import type { Routes } from '@/@types/routes'
 
 const appsRoute: Routes = [
     {
-        key: 'appsProject.dashboard',
-        path: `${APP_PREFIX_PATH}/project/dashboard`,
-        component: lazy(() => import('@/views/project/ProjectDashboard')),
-        authority: [ADMIN, USER],
-    },
-    {
-        key: 'appsProject.projectList',
-        path: `${APP_PREFIX_PATH}/project/project-list`,
-        component: lazy(() => import('@/views/project/ProjectList')),
-        authority: [ADMIN, USER],
-    },
-    {
-        key: 'appsProject.scrumBoard',
-        path: `${APP_PREFIX_PATH}/project/scrum-board`,
-        component: lazy(() => import('@/views/project/ScrumBoard')),
-        authority: [ADMIN, USER],
-        meta: {
-            pageContainerType: 'gutterless',
-        },
-    },
-    {
-        key: 'appsProject.issue',
-        path: `${APP_PREFIX_PATH}/project/issue`,
-        component: lazy(() => import('@/views/project/Issue')),
-        authority: [ADMIN, USER],
-    },
-    {
         key: 'appsCrm.dashboard',
         path: `${APP_PREFIX_PATH}/crm/dashboard`,
         component: lazy(() => import('@/views/crm/CrmDashboard')),
@@ -49,10 +22,22 @@ const appsRoute: Routes = [
         },
     },
     {
-        key: 'appsCrm.form',
-        path: `${APP_PREFIX_PATH}/crm/project/momform`,
-        component: lazy(() => import('@/views/crm/CustomerDetail/components/MOM/MomForm')),
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager/leads`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Lead/index')),
         authority: [ADMIN, USER],
+        meta: {
+         
+        },
+    },
+    {
+        key: 'appsCrm.project',
+        path: `${APP_PREFIX_PATH}/crm/projectslist`,
+        component: lazy(() => import('@/views/crm/Customers')),
+        authority: [ADMIN, USER],
+        meta: {
+            
+        },
     },
     {
         key: 'appsCrm.inventory',
@@ -60,6 +45,13 @@ const appsRoute: Routes = [
         component: lazy(() => import('@/views/crm/Projects')),
         authority: [ADMIN, USER],
     },
+    {
+        key: 'appsCrm.form',
+        path: `${APP_PREFIX_PATH}/crm/project/momform`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/MOM/MomForm')),
+        authority: [ADMIN, USER],
+    },
+   
     // {
     //     key: 'appsCrm.customers',
     //     path: `${APP_PREFIX_PATH}/crm/projects`,
@@ -71,7 +63,7 @@ const appsRoute: Routes = [
     // },
     {
         key: 'appsCrm.customerDetails',
-        path: `${APP_PREFIX_PATH}/crm/customer-details`,
+        path: `${APP_PREFIX_PATH}/crm/project-details`,
         component: lazy(() => import('@/views/crm/CustomerDetail')),
         authority: [ADMIN, USER],
         meta: {
@@ -80,7 +72,7 @@ const appsRoute: Routes = [
         },
     },
     {
-        key: 'appsSales.MOM',
+        key: 'appsCrm.mom',
         path: `${APP_PREFIX_PATH}/crm/MOM`,
         component: lazy(() => import('@/views/crm/Inventory')),
         authority: [ADMIN, USER],
@@ -196,18 +188,10 @@ const appsRoute: Routes = [
         component: lazy(() => import('@/views/crm/Inventory')),
         authority: [ADMIN, USER],
     },
-    {
-        key: 'appsCrypto.market',
-        path: `${APP_PREFIX_PATH}/crm/projectslist`,
-        component: lazy(() => import('@/views/crm/Customers')),
-        authority: [ADMIN, USER],
-        meta: {
-            
-        },
-    },
+    
     {
         key: 'appsSales.orderDetails',
-        path: `${APP_PREFIX_PATH}/crm/customer-details?id=8`,
+        path: `${APP_PREFIX_PATH}/crm/project-details?id=8`,
         component: lazy(() => import('@/views/crm/CustomerDetail')),
         authority: [ADMIN, USER],
     },

@@ -24,10 +24,9 @@ import {
     HiOutlineVariable,
     HiOutlineCode,
 } from 'react-icons/hi'
-import { MdOutlineDashboard } from "react-icons/md";
+import { MdOutlineDashboard,MdManageAccounts } from "react-icons/md";
 import { LuWarehouse,LuFileStack } from "react-icons/lu";
 import { GoProject } from "react-icons/go";
-import { MdManageAccounts } from "react-icons/md";
 import { CiStopwatch } from "react-icons/ci";
 
 export type NavigationIcons = Record<string, JSX.Element>

@@ -4,6 +4,7 @@ import AdaptableCard from '@/components/shared/AdaptableCard'
 import OrdersTable from './components/OrdersTable'
 import OrdersTableTools from './components/OrdersTableTools'
 import OrderDeleteConfirmation from './components/OrderDeleteConfirmation'
+import Filtering from './components/DataTable'
 
 injectReducer('salesOrderList', reducer)
 
@@ -14,7 +15,7 @@ const OrderList = () => {
                 <h3 className="mb-4 lg:mb-0">Minutes Of Meeting</h3>
                 <OrdersTableTools />
             </div>
-            <OrdersTable />
+            <Filtering />
             <OrderDeleteConfirmation />
         </AdaptableCard>
     )

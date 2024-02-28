@@ -139,7 +139,7 @@ const ActionColumn = ({ row }: { row: Order }) => {
             <Tooltip title="View">
                 <span
                     className={`cursor-pointer p-2 hover:${textTheme}`}
-                    onClick={()=> navigate(`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=mom`)}
+                    onClick={()=> navigate(`/app/crm/proejct-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=mom`)}
                 >
                     <HiOutlineEye />
                 </span>

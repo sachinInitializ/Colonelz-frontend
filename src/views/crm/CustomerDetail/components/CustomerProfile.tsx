@@ -1,27 +1,12 @@
-import { useEffect, useState } from 'react'
+import {  useState } from 'react'
 import Card from '@/components/ui/Card'
-import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
-import Notification from '@/components/ui/Notification'
-import toast from '@/components/ui/toast'
-import ConfirmDialog from '@/components/shared/ConfirmDialog'
+import { useLocation } from 'react-router-dom'
 import {
-    FaFacebookF,
-    FaTwitter,
-    FaLinkedinIn,
-    FaPinterestP,
-} from 'react-icons/fa'
-import { HiPencilAlt, HiOutlineTrash } from 'react-icons/hi'
-import { useLocation, useNavigate } from 'react-router-dom'
-import {
-    deleteCustomer,
-    openEditCustomerDetailDialog,
-    useAppDispatch,
     Customer,
 } from '../store'
-import EditCustomerProfile from './EditCustomerProfile'
-import { DatePicker, Dialog, FormItem, Input } from '@/components/ui'
-import axios from 'axios'
+import { DatePicker, Dialog, FormItem, Input, Select } from '@/components/ui'
+
 
 type CustomerInfoFieldProps = {
     title?: string
@@ -40,25 +25,12 @@ const formatDate = (dateString: string | undefined) => {
     const date = new Date(dateString)
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' }
 
-  const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
-    return (
-      <div>
-        <span>{title}</span>
-        <p className="text-gray-700 dark:text-gray-200 font-semibold capitalize">
-          {title === 'Project Start Date' || title === 'Timeline' ? formatDate(value) : value}
-        </p>
-      </div>
-    )
-  }
-
-
     return new Intl.DateTimeFormat('en-GB', options).format(date)
 }
 
 const CustomerInfoField = ({
     title,
     value,
-    onChange,
 }: CustomerInfoFieldProps) => {
     if (title === 'Project Id' || title === 'Project Type' || title === 'Project Start Date') {
         return (
@@ -96,7 +68,7 @@ interface ProjectUpdateData {
     project_status: string;
     designer:string
   }
-  const ProjectUpdate: React.FC = (data) => {
+  const ProjectUpdate: React.FC = (data:any) => {
     const location=useLocation()
     const searchParams = new URLSearchParams(location.search);
     const projectId = searchParams.get('project_id');
@@ -108,7 +80,7 @@ interface ProjectUpdateData {
       designer:data.data.designer
     });
   
-   console.log(data);
+ 
    
   
     const handleInputChange = (
@@ -119,42 +91,52 @@ interface ProjectUpdateData {
         [e.target.name]: e.target.value,
       });
     };
-  console.log(data);
-  const handleDateChange = (date: Date) => {
-    setFormData({
-      ...formData,
-      timeline_date: date.toISOString().split('T')[0], // Convert date to string
-    });
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      setFormData({
+        ...formData,
+        timeline_date: date.toISOString().split('T')[0],
+      });
+    }
   };
   
-    const handleUpdate = async () => {
-        try {
-          alert('Updated successfully')
-          const response = await axios.put(
-              'https://col-u3yp.onrender.com/v1/api/admin/update/project/',
-              formData
-              );
-              window.location.reload();
-        console.log("hello");
-        
   
-        // Assuming you want to show a success message or perform other actions after the update
-        // You can add your logic here
-      } catch (error) {
-        console.error('Update failed', error);
+  const handleUpdate = async () => {
+    try {
+      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/update/project/', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+         
+          ...formData,
+        }),
+      });
   
-        // Assuming you want to show an error message or perform other actions on update failure
-        // You can add your logic here
+      const data = await response.json();
+      if (data.status) {
+        alert("Success")
+        window.location.reload()
+      } else {
+        alert('Error updating project status');
       }
-    };
+    } catch (error) {
+      alert('Error updating project status');
+    }
+  };
+  
+
+
+    const projectStatusOptions = [
+      { value: 'completed', label: 'Completed' },
+      { value: 'executing', label: 'Executing' },
+      { value: 'designing', label: 'Designing' },
+  ]
   
     return (
       <div>
-       
         <form>
-         
-        
-          
         <FormItem label="Timeline Date">
           <DatePicker
             selected={new Date(formData.timeline_date)}
@@ -183,12 +165,28 @@ interface ProjectUpdateData {
           <br />
           <FormItem>
             Project Status:
-            <Input
-              type="text"
-              name="project_status"
-              value={formData.project_status}
-              onChange={handleInputChange}
-            />
+            <Select 
+                        options={projectStatusOptions}
+                        value={projectStatusOptions.find(
+                            (option) =>
+                                option.value === formData.project_status,
+                        )}
+                        onChange={(selectedOption) => {
+                            setFormData({
+                                ...formData,
+                                project_status: selectedOption
+                                    ? (
+                                          selectedOption as {
+                                              value: string
+                                              label: string
+                                          }
+                                      ).value
+                                    : '',
+                            })
+                           
+                           
+                          }}
+                    />
           </FormItem>
           <br />
           <Button type="button" onClick={handleUpdate} variant='solid'>
@@ -209,12 +207,6 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
     }
 
     const onDialogClose = (e: MouseEvent) => {
-        console.log('onDialogClose', e)
-        setIsOpen(false)
-    }
-
-    const onDialogOk = (e: MouseEvent) => {
-        console.log('onDialogOk', e)
         setIsOpen(false)
     }
     return (

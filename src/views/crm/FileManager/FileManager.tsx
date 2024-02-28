@@ -10,6 +10,7 @@ import Projects from './Components/Projects';
 import Template from './Components/Template';
 
 const FileManager = () => {
+  
   return (
     <div>
     <Tabs defaultValue="tab1">
@@ -29,7 +30,7 @@ const FileManager = () => {
                <Leads/>
             </TabContent>
             <TabContent value="tab2">
-               <Projects/>
+               <Projects />
             </TabContent>
             <TabContent value="tab3">
                 <Template/>

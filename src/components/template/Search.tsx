@@ -102,7 +102,7 @@ const ListItem = (props: {
     )
 }
 
-const _Search = ({ className }: { className?: string }) => {
+const _Search = () => {
     const [searchDialogOpen, setSearchDialogOpen] = useState(false)
     const [searchResult, setSearchResult] =
         useState<SearchResult[]>(recommendedSearch)
@@ -113,10 +113,6 @@ const _Search = ({ className }: { className?: string }) => {
     const handleReset = () => {
         setNoResult(false)
         setSearchResult(recommendedSearch)
-    }
-
-    const handleSearchOpen = () => {
-        setSearchDialogOpen(true)
     }
 
     const handleSearchClose = () => {
@@ -167,12 +163,7 @@ const _Search = ({ className }: { className?: string }) => {
 
     return (
         <>
-            <div
-                className={classNames(className, 'text-2xl')}
-                onClick={handleSearchOpen}
-            >
-                <HiOutlineSearch />
-            </div>
+          
             <Dialog
                 contentClassName="p-0"
                 isOpen={searchDialogOpen}

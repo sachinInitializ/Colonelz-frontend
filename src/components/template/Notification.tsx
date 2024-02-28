@@ -1,336 +1,165 @@
-import { useEffect, useState, useCallback } from 'react'
-import classNames from 'classnames'
-import withHeaderItem from '@/utils/hoc/withHeaderItem'
-import Avatar from '@/components/ui/Avatar'
-import Dropdown from '@/components/ui/Dropdown'
-import ScrollBar from '@/components/ui/ScrollBar'
-import Spinner from '@/components/ui/Spinner'
-import Badge from '@/components/ui/Badge'
-import Button from '@/components/ui/Button'
-import Tooltip from '@/components/ui/Tooltip'
-import {
-    HiOutlineBell,
-    HiOutlineCalendar,
-    HiOutlineClipboardCheck,
-    HiOutlineBan,
-    HiOutlineMailOpen,
-} from 'react-icons/hi'
-import {
-    apiGetNotificationList,
-    apiGetNotificationCount,
-} from '@/services/CommonService'
-import { Link } from 'react-router-dom'
-import { userDetailData } from '@/mock/data/usersData'
-import isLastChild from '@/utils/isLastChild'
-import useTwColorByName from '@/utils/hooks/useTwColorByName'
-import useThemeClass from '@/utils/hooks/useThemeClass'
-import { useAppSelector } from '@/store'
-import useResponsive from '@/utils/hooks/useResponsive'
-import acronym from '@/utils/acronym'
-console.log(userDetailData);
+import React, { useState, useEffect } from 'react';
+import { HiOutlineBell, HiOutlineMailOpen } from 'react-icons/hi';
+import Dropdown from '@/components/ui/Dropdown';
+import useResponsive from '@/utils/hooks/useResponsive';
+import {  Badge, Button, Tooltip } from '../ui';
 
 
-type NotificationList = {
-    id: string
-    target: string
-    description: string
-    date: string
-    image: string
-    type: number
-    location: string
-    locationLabel: string
-    status: string
-    readed: boolean
+interface Notification {
+  _id: string;
+  status: boolean;
+  message: string; // Adjust this based on your actual data structure
+  // Add other properties if needed
+}
+interface DropdownProps {
+  title: React.ReactNode;
 }
 
-const notificationHeight = 'h-72'
-const imagePath = '/img/avatars/'
+const Notification1 = () => {
+  const [notificationData, setNotificationData] = useState<Notification[]>([]);
 
-const GeneratedAvatar = ({ target }: { target: string }) => {
-    const color = useTwColorByName()
-    return (
-        <Avatar shape="circle" className={`${color(target)}`}>
-            {acronym(target)}
-        </Avatar>
-    )
-}
-
-const notificationTypeAvatar = (data: {
-    type: number
-    target: string
-    image: string
-    status: string
-}) => {
-    const { type, target, image, status } = data
-    switch (type) {
-        case 0:
-            if (image) {
-                return <Avatar shape="circle" src={`${imagePath}${image}`} />
-            } else {
-                return <GeneratedAvatar target={target} />
-            }
-        case 1:
-            return (
-                <Avatar
-                    shape="circle"
-                    className="bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100"
-                    icon={<HiOutlineCalendar />}
-                />
-            )
-        case 2:
-            return (
-                <Avatar
-                    shape="circle"
-                    className={
-                        status === 'succeed'
-                            ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100'
-                            : 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-100'
-                    }
-                    icon={
-                        status === 'succeed' ? (
-                            <HiOutlineClipboardCheck />
-                        ) : (
-                            <HiOutlineBan />
-                        )
-                    }
-                />
-            )
-        default:
-            return <Avatar />
+  const fetchData = async () => {
+    try {
+      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/get/notification'); // Replace with your API endpoint
+      const data = await response.json();
+      if (data.status) {
+        setNotificationData(data.data);
+      } else {
+        // Handle error if needed
+        console.error('Error fetching notification data');
+      }
+    } catch (error) {
+      // Handle error if needed
+      console.error('Error fetching notification data', error);
     }
-}
+  };
 
-const NotificationToggle = ({
-    className,
-    dot,
-}: {
-    className?: string
-    dot: boolean
-}) => {
-    return (
-        <div className={classNames('text-2xl', className)}>
-            {dot ? (
-                <Badge badgeStyle={{ top: '3px', right: '6px' }}>
-                    <HiOutlineBell />
-                </Badge>
-            ) : (
-                <HiOutlineBell />
-            )}
-        </div>
-    )
-}
+  useEffect(() => {
+    fetchData();
+  }, []); // Fetch data when the component mounts
 
-const _Notification = ({ className }: { className?: string }) => {
-    const [projectTimelines, setProjectTimelines] = useState<{
-        [projectId: string]: Date;
-      }>({});
-      
-    const [notificationList, setNotificationList] = useState<
-        NotificationList[]
-    >([])
-    const [unreadNotification, setUnreadNotification] = useState(false)
-    const [noResult, setNoResult] = useState(false)
-    const [loading, setLoading] = useState(false)
+  const { larger } = useResponsive();
 
-    const { bgTheme } = useThemeClass()
-
-    const { larger } = useResponsive()
-
-    const direction = useAppSelector((state) => state.theme.direction)
-
-    const getNotificationCount = useCallback(async () => {
-        const resp = await apiGetNotificationCount();
-        if (resp.data.count > 0) {
-          setNoResult(false);
-          setUnreadNotification(true);
-        } else {
-          setNoResult(true);
-        }
-      
-        // Fetch project timelines and store them in the state
-        const projects = userDetailData;
-        const timelines = (projects ?? []).reduce((acc, project) => {
-            acc[project.project_id] = new Date(project.timeline_date);
-            return acc;
-          }, {});
-        setProjectTimelines(timelines);
-      }, [setUnreadNotification]);
-      
-
-    useEffect(() => {
-        getNotificationCount()
-    }, [getNotificationCount])
-
-    const onNotificationOpen = useCallback(async () => {
-        if (notificationList.length === 0) {
-            setLoading(true)
-            const resp = await apiGetNotificationList()
-            setLoading(false)
-            setNotificationList(resp.data)
-        }
-    }, [notificationList, setLoading])
-
-    const onMarkAllAsRead = useCallback(() => {
-        const list = notificationList.map((item: NotificationList) => {
-            if (!item.readed) {
-                item.readed = true
-            }
-            return item
-        })
-        setNotificationList(list)
-        setUnreadNotification(false)
-    }, [notificationList])
-
-    const onMarkAsRead = useCallback(
-        (id: string) => {
-            const list = notificationList.map((item) => {
-                if (item.id === id) {
-                    item.readed = true
-                }
-                return item
-            })
-            setNotificationList(list)
-            const hasUnread = notificationList.some((item) => !item.readed)
-
-            if (!hasUnread) {
-                setUnreadNotification(false)
-            }
+  const handleUpdate = async (notification:Notification) => {
+    try {
+      const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/update/notification`, {
+        method: 'PUT', // or 'PUT' depending on your API
+        headers: {
+          'Content-Type': 'application/json',
         },
-        [notificationList]
-    )
+        body: JSON.stringify({
+          type: 'One',
+          notification_id:notification._id
+        }),
+      });
 
+      const data = await response.json();
+      if (data.status) {
+        // Update the notification status locally to mark it as read
+        setNotificationData((prevData) =>
+          prevData.map((item) =>
+            item._id === notification._id ? { ...item, status: true } : item
+          )
+        );
+      } else {
+        // Handle error if needed
+        console.error('Error updating notification status');
+      }
+    } catch (error) {
+      // Handle error if needed
+      console.error('Error updating notification status', error);
+    }
+  };
 
-    const isTimelineNotification = (item) => {
-        const projectTimeline = projectTimelines[item.target];
-        if (projectTimeline) {
-            const currentDate = new Date();
-            const timeDifference = projectTimeline.getTime() - currentDate.getTime();
-            const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-    
-            if (daysLeft <= 1) {
-                if (daysLeft === 1) {
-                    return '1 day left for this project';
-                } else if (daysLeft === 0) {
-                    return 'Project deadline has reached';
-                } else if (daysLeft < 0) {
-                    return 'Project delayed beyond timeline';
-                }
-            }
+  const unreadNotifications = notificationData.filter(notification => !notification.status);
+
+ const handleUpdateAll = async () => {
+    try {
+      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/update/notification', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'All',
+        }),
+      });
+
+      const data = await response.json();
+      if (data.status) {
+        // Update the status of all notifications locally to mark them as read
+        setNotificationData((prevData) =>
+          prevData.map((item) => ({ ...item, status: true }))
+        );
+        // Provide feedback to the user (you can customize this part)
+       
+      } else {
+        // Handle error if needed
+        console.error('Error updating all notifications status');
+      }
+    } catch (error) {
+      // Handle error if needed
+      console.error('Error updating all notifications status', error);
+    }
+  };
+
+  return (
+    <div>
+      <Dropdown
+        title={
+          <>
+            <Badge className="mr-4 text-2xl rounded-md" content={unreadNotifications.length}>
+              <HiOutlineBell />
+            </Badge>
+          </>
         }
-    
-        return null;
-    };
-    
-
-    return (
-        <Dropdown
-            renderTitle={
-                <NotificationToggle
-                    dot={unreadNotification}
-                    className={className}
-                />
-            }
-            menuClass="p-0 min-w-[280px] md:min-w-[340px]"
-            placement={larger.md ? 'bottom-end' : 'bottom-center'}
-            onOpen={onNotificationOpen}
-        >
-            <Dropdown.Item variant="header">
-                <div className="border-b border-gray-200 dark:border-gray-600 px-4 py-2 flex items-center justify-between">
-                    <h6>Notifications</h6>
-                    <Tooltip title="Mark all as read">
-                        <Button
-                            variant="plain"
-                            shape="circle"
-                            size="sm"
-                            icon={<HiOutlineMailOpen className="text-xl" />}
-                            onClick={onMarkAllAsRead}
-                        />
-                    </Tooltip>
-                </div>
-            </Dropdown.Item>
-            <div className={classNames('overflow-y-auto', notificationHeight)}>
-                <ScrollBar direction={direction}>
-               
-                {notificationList.length > 0 &&
-  notificationList.map((item, index) => (
-    <div
-      key={item.id}
-      className={`relative flex px-4 py-4 cursor-pointer hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-black dark:hover:bg-opacity-20  ${
-        !isLastChild(notificationList, index)
-          ? 'border-b border-gray-200 dark:border-gray-600'
-          : ''
-      }`}
-      onClick={() => onMarkAsRead(item.id)}
-    >
-      <div className="ltr:ml-3 rtl:mr-3">
-        <div>
-          {item.target && (
-            <span className="font-semibold heading-text">
-              {item.target}{' '}
-            </span>
-          )}
-          <span>{item.description}</span>
-          <span className="text-xs">{isTimelineNotification(item)}</span>
-          <span className="text-xs">
-            {item.date}
-          </span>
+        className="mr-2"
+        menuClass="p-0 w-[200px] min-w-[250px] md:min-w-[350px] max-h-85 "
+        placement={larger.md ? 'bottom-end' : 'bottom-center'}
+        style={{ scrollbarWidth: 'none' }}
+      >
+        <Dropdown.Item variant="header">
+          <div className="border-b border-gray-200 dark:border-gray-600 px-6 py-4 flex items-center justify-between mb-4 ">
+            <h6>Notifications</h6>
+            <Tooltip title="Mark all as read">
+              <Button
+                variant="plain"
+                shape="circle"
+                size="sm"
+                icon={<HiOutlineMailOpen className="text-xl" />}
+                onClick={handleUpdateAll}
+              />
+            </Tooltip>
+          </div>
+        </Dropdown.Item>
+        <div className="ltr: rtl: text-sm overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+          <div className="overflow-y-auto h-[250px] pb-8" style={{ scrollbarWidth: 'none' }}>
+            {notificationData.slice().reverse().map((notification) => (
+              <div
+                key={notification._id}
+                className={`px-6 py-3 border-b border-gray-200 ${notification.status ? 'read' : 'unread'}`}
+                onClick={() => handleUpdate(notification)}
+              >
+                {/* Customize the notification item based on your data structure */}
+                <p
+                  style={{
+                    color: notification.status ? 'gray' : 'black',
+                    fontWeight: notification.status ? 'normal' : 'bold',
+                  }}
+                >
+                  {notification.message}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-        <span className="text-xs">{item.date}</span>
-      </div>
-      <Badge
-        className="absolute top-4 ltr:right-4 rtl:left-4 mt-1.5"
-        innerClass={`${
-          item.readed ? 'bg-gray-300' : bgTheme
-        } `}
-      />
+        <Dropdown.Item variant="header">
+          <div className="flex justify-center px-4 py-2"></div>
+        </Dropdown.Item>
+      </Dropdown>
+      <div></div>
     </div>
-  ))}
-         {loading && (
-                        <div
-                            className={classNames(
-                                'flex items-center justify-center',
-                                notificationHeight
-                            )}
-                        >
-                            <Spinner size={40} />
-                        </div>
-                    )}
-                    {noResult && (
-                        <div
-                            className={classNames(
-                                'flex items-center justify-center',
-                                notificationHeight
-                            )}
-                        >
-                            <div className="text-center">
-                                <img
-                                    className="mx-auto mb-2 max-w-[150px]"
-                                    src="/img/others/no-notification.png"
-                                    alt="no-notification"
-                                />
-                                <h6 className="font-semibold">
-                                    No notifications!
-                                </h6>
-                                <p className="mt-1">Please Try again later</p>
-                            </div>
-                        </div>
-                    )}
-                </ScrollBar>
-            </div>
-            <Dropdown.Item variant="header">
-                <div className="flex justify-center border-t border-gray-200 dark:border-gray-600 px-4 py-2">
-                    <Link
-                        to="/app/account/activity-log"
-                        className="font-semibold cursor-pointer p-2 px-3 text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white"
-                    >
-                       
-                    </Link>
-                </div>
-            </Dropdown.Item>
-        </Dropdown>
-    )
-}
+  );
+};
 
-const Notification = withHeaderItem(_Notification)
-
-export default Notification
+export default Notification1;

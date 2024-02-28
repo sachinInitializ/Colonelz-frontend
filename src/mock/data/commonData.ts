@@ -108,7 +108,7 @@ export const searchQueryPoolData = [
     },
     {
         title: 'Customer Details',
-        url: '/app/crm/customer-details?id=8',
+        url: '/app/crm/project-details?id=8',
         icon: 'crm',
         category: 'CRM',
         categoryTitle: 'Apps',
