@@ -219,7 +219,7 @@ const OrdersTable = () => {
             },
             {
                 header: 'Client Name',
-                accessorKey: 'customer',
+                accessorKey: 'client_name',
                 cell: (props) => {
                     const row = props.row.original
                     return (

@@ -147,7 +147,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                             title="Source"
                             value={data?.source}
                         />
-                        <Dropdown renderTitle={Toggle}>
+                        {/* <Dropdown renderTitle={Toggle}>
                             {data?.files?.map((file) => {
                                 return (
                                     <div key={file}>
@@ -169,7 +169,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                                     </div>
                                 )
                             })}
-                        </Dropdown>
+                        </Dropdown> */}
                         <Dialog
                             isOpen={dialogIsOpen}
                             width={1000}
