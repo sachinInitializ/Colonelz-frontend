@@ -104,7 +104,7 @@ const Filtering = () => {
         const navigate = useNavigate()
         const { textTheme } = useThemeClass()
         const onEdit = () => {
-            navigate(`/app/crm/project-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
+            navigate(`/app/crm/project-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=mom`)
         }
         return (
             <div className="flex justify-end text-lg">
@@ -126,27 +126,46 @@ const Filtering = () => {
                
             },
             {
-                header: 'Project Type',
-                accessorKey: 'project_type',
-                
-            },
-            {
                 header: 'Client Name',
                 accessorKey: 'client_name',
+                cell: (props) => {
+                  const row = props.row.original
+                  
+                  return (
+                      <span>{row.mom[0].attendees.client_name}</span>
+                  )
+              },
                
                
             },
             {
-                header: 'Status',
-                accessorKey: 'project_status',
-                
+                header: 'Location',
+                accessorKey: 'location',
+                cell: (props) => {
+                  const row = props.row.original
+                  
+                  return (
+                      <span>{row.mom[0].location}</span>
+                  )
+              },
               
             },
             {
-                header: 'Project End Date',
-                accessorKey: 'timeline_date',
-              
-                
+                header: 'Meeting Date',
+                accessorKey: 'meetingdate', 
+                cell: (props) => {
+                  const row = props.row.original
+                  const dateObject = new Date(row.mom[0].meetingdate);
+              const istFormattedDate = dateObject.toLocaleDateString('en-IN', {
+  timeZone: 'Asia/Kolkata',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+                  return (
+                      <span>{istFormattedDate}</span>
+                  )
+              },
             },
             {
                 

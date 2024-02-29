@@ -198,7 +198,7 @@ const OrdersTable = () => {
         () => [
           
             {
-                header: 'Project Name',
+                header: 'Project',
                 accessorKey: 'project_name',
                 cell: (props) => {
                     const row = props.row.original
@@ -209,7 +209,7 @@ const OrdersTable = () => {
             },
             {
                 header: 'Date',
-                accessorKey: 'date',
+                accessorKey: 'meetingdate',
                 cell: (props) => {
                     const row = props.row.original;
                     const date = new Date(row.mom[0].meetingdate);
@@ -218,7 +218,7 @@ const OrdersTable = () => {
                 },
             },
             {
-                header: 'Client Name',
+                header: 'Client ',
                 accessorKey: 'client_name',
                 cell: (props) => {
                     const row = props.row.original

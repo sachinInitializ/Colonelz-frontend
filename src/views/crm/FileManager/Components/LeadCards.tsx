@@ -9,7 +9,7 @@ interface CardsProps {
   const Cards: React.FC<CardsProps> = ({ data }) => {
   const navigate=useNavigate();
   return (
-    <div><Card className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/lead?lead_id=${data.lead_id}`)}>
+    <div><Card className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/leads?lead_id=${data.lead_id}`)}>
        <p>Lead Id: {data.lead_id}</p>
        <p>Lead Name: {data.lead_Name}</p>
         </Card></div>

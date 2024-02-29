@@ -31,6 +31,51 @@ const appsRoute: Routes = [
         },
     },
     {
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager/leads/folder`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Lead/Folders/index')),
+        authority: [ADMIN, USER],
+        meta: {
+         
+        },
+    },
+    {
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager/leads/upload`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Lead/Folders/index')),
+        authority: [ADMIN, USER],
+        meta: {
+         
+        },
+    },
+    {
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager/project`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Project/index')),
+        authority: [ADMIN, USER],
+        meta: {
+         
+        },
+    },
+    {
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager/project/folder`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Project/Folders/index')),
+        authority: [ADMIN, USER],
+        meta: {
+         
+        },
+    },
+    {
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager/project/upload`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Project/Folders/index')),
+        authority: [ADMIN, USER],
+        meta: {
+         
+        },
+    },
+    {
         key: 'appsCrm.project',
         path: `${APP_PREFIX_PATH}/crm/projectslist`,
         component: lazy(() => import('@/views/crm/Customers')),
