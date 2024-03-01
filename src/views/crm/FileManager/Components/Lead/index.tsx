@@ -27,7 +27,7 @@ const Index = () => {
     <div>
       <div className=' mb-5 flex justify-between'>
     <h3 className=''>Folder</h3>
-    <Button variant='solid' size='sm'>Upload</Button>
+    <Button variant='solid' size='sm' onClick={()=>navigate("/app/crm/fileManager/leads/upload")}>Upload</Button>
     </div>
     <div className='grid grid-cols-4 gap-3'>
         {leadData.map((item)=>(

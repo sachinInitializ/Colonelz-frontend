@@ -20,20 +20,22 @@ export type MomAttendees = {
   
   export type MomFile = string;
   export const SLICE_NAME = 'momData'
-  export type MomData = {
-    mom_id: string;
-    meetingdate: string; // You may want to use Date export type based on your needs
-    location: string;
-    attendees: MomAttendees;
-    remark: string;
-    files: MomFile[];
-  };
-  
-  export type ProjectMom = {
+  export interface ProjectMomItem {
     project_id: string;
     project_name: string;
-    mom: MomData[];
-  };
+    mom_id: string;
+    client_name: string;
+    location: string;
+    meetingDate: string;
+  }
+  
+  export interface ProjectMomApiResponse {
+    message: string;
+    status: boolean;
+    errorMessage: string;
+    code: number;
+    data: ProjectMomItem[];
+  }
   
   export type ApiResponse = {
     message: string;

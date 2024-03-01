@@ -15,16 +15,14 @@ import {
     flexRender,
 } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import { userDetailData } from '@/mock/data/usersData'
-import { useAppSelector, type ProjectMom } from '../store'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
-import { HiOutlineEye, HiOutlineUserAdd, HiOutlineUserGroup, HiOutlineUsers } from 'react-icons/hi'
+import { HiOutlineEye } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import useThemeClass from '@/utils/hooks/useThemeClass'
-import classNames from 'classnames'
 import { Button, Select } from '@/components/ui'
 import { ordersData } from '@/mock/data/salesData'
+import { ProjectMomItem } from '../store'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -98,9 +96,8 @@ const totalData=ordersData.length
 
 const Filtering = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [selectedStatus] = useState<string>('');
     const [globalFilter, setGlobalFilter] = useState('')
-    const ActionColumn = ({ row }: { row: ProjectMom }) => {
+    const ActionColumn = ({ row }: { row: ProjectMomItem }) => {
         const navigate = useNavigate()
         const { textTheme } = useThemeClass()
         const onEdit = () => {
@@ -118,7 +115,7 @@ const Filtering = () => {
         )
     }
 
-    const columns = useMemo<ColumnDef<ProjectMom>[]>(
+    const columns = useMemo<ColumnDef<ProjectMomItem>[]>(
         () => [
             {
                 header: 'Project Name',
@@ -132,7 +129,7 @@ const Filtering = () => {
                   const row = props.row.original
                   
                   return (
-                      <span>{row.mom[0].attendees.client_name}</span>
+                      <span>{row.client_name}</span>
                   )
               },
                
@@ -145,7 +142,7 @@ const Filtering = () => {
                   const row = props.row.original
                   
                   return (
-                      <span>{row.mom[0].location}</span>
+                      <span>{row.location}</span>
                   )
               },
               
@@ -155,13 +152,13 @@ const Filtering = () => {
                 accessorKey: 'meetingdate', 
                 cell: (props) => {
                   const row = props.row.original
-                  const dateObject = new Date(row.mom[0].meetingdate);
+                  const dateObject = new Date(row.meetingDate);
               const istFormattedDate = dateObject.toLocaleDateString('en-IN', {
-  timeZone: 'Asia/Kolkata',
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
+                timeZone: 'Asia/Kolkata',
+                 year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                            });
                   return (
                       <span>{istFormattedDate}</span>
                   )

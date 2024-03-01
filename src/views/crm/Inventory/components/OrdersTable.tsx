@@ -212,7 +212,7 @@ const OrdersTable = () => {
                 accessorKey: 'meetingdate',
                 cell: (props) => {
                     const row = props.row.original;
-                    const date = new Date(row.mom[0].meetingdate);
+                    const date = new Date(row.meetingdate);
                     const formattedDate = date.toISOString().split('T')[0];
                     return formattedDate;
                 },

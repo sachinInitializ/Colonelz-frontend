@@ -200,8 +200,8 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
             Status:
             <Select
               value={selectedStatus}
-              onChange={handleStatusChange}
               options={statusOptions}
+              onChange={handleStatusChange}
             />
             {errors.status && <span className="text-red-500">{errors.status}</span>}
           </FormItem>
@@ -248,10 +248,10 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
 
     <Dialog
                 isOpen={dialogIsOpen}
-                onClose={onDialogClose}
-                onRequestClose={onDialogClose}
                 width={1000}
                 height={490}
+                onClose={onDialogClose}
+                onRequestClose={onDialogClose}
             >
               <div style={{ maxHeight: '400px', overflowY: 'auto', marginRight:"2%", marginLeft:"1%", scrollbarWidth:'none'  }} className='scrollbar-hide  whitespace-nowrap'>
         {data?.notes?.map((note) => (
