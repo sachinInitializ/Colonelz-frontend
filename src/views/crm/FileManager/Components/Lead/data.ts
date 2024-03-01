@@ -1,6 +1,7 @@
 export interface FileItem {
     fileUrl: string;
     fileId: string;
+    fileName:string
   }
   
   export interface FolderItem {

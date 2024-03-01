@@ -49,7 +49,7 @@ const Index = () => {
     <div className='grid grid-cols-4 gap-3'>
         {projectData.map((item)=>(
            <Card key={item.folder_name} className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project/folder?project_id=${projectId}&folder_name=${item.folder_name}`)}>
-            <p>{item.folder_name}</p>
+            <p className=' capitalize'>{item.folder_name}</p>
            </Card>
         ))}
     </div>
