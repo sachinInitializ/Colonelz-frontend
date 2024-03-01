@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FolderItem,fetchLeadData} from './data';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Card, Dialog } from '@/components/ui';
+import type { MouseEvent } from 'react'
 import YourFormComponent from './LeadForm';
 
 
@@ -54,7 +55,7 @@ const Index = () => {
                 onRequestClose={onDialogClose}
                 
             >
-              <YourFormComponent/> 
+              <YourFormComponent /> 
             </Dialog>
     </div>
   )

@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchLeadData } from '../data';
-import { Button, Segment } from '@/components/ui';
-import { HiCheckCircle } from 'react-icons/hi';
-import classNames from 'classnames';
+import { Button, Checkbox, Segment } from '@/components/ui';
+import { StickyFooter } from '@/components/shared';
+import { GiFiles } from 'react-icons/gi';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
-  const [active,setactive]=useState<boolean>(false);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const leadId = queryParams.get('lead_id');
   const folderName = queryParams.get('folder_name');
+  const navigate=useNavigate()
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -37,7 +37,7 @@ const Index = () => {
       ? selectedFiles.filter((id) => id !== fileId)
       : [...selectedFiles, fileId];
     setSelectedFiles(updatedSelectedFiles);
-    setactive(true)
+
   };
 
   const handleShareFiles = async () => {
@@ -95,56 +95,60 @@ const Index = () => {
   return (
     <div>
       <h3 className='mb-5'>Files</h3>
-      <Segment selectionType="multiple" className='grid grid-cols-3 gap-4'>
-        {leadData.map((file) => (
-          <Segment.Item
-            key={file.fileId}
-            value={file.fileId}
-          >
-            {({ active, value, onSegmentItemClick, disabled }) => {
-              return (
-                <div
-                  className={classNames(
-                    'flex',
-                    'ring-1',
-                    'justify-between',
-                    'border',
-                    'rounded-md ',
-                    'border-gray-300',
-                    'py-5 px-4',
-                    'cursor-pointer',
-                    'select-none',
-                    'w-100',
-                    'md:w-[260px]',
-                    active
-                      ? 'ring-cyan-500 border-cyan-500'
-                      : 'ring-transparent',
-                    disabled
-                      ? 'opacity-50 cursor-not-allowed'
-                      : 'hover:ring-cyan-500 hover:border-cyan-500'
+      <Segment selectionType="multiple" className='grid grid-cols-4 gap-4'>
+        {leadData.map((file) => {
+          if (!file || typeof file.fileName !== 'string') {
+            return null; // Skip rendering if the file or fileName is undefined or not a string
+          }
+  
+          const fileExtension = file.fileName.split('.').pop().toLowerCase();
+  
+          return (
+            <a href={file.fileUrl} target='_blank' rel='noreferrer' key={file.fileId}>
+              <Segment.Item
+                key={file.fileId}
+                value={file.fileId}
+                className='min-h-[200px] max-h-[250px] flex justify-between'
+              >
+                <Checkbox
+                  checked={selectedFiles.includes(file.fileId)}
+                  onChange={() => handleFileSelect(file.fileId)}
+                />
+                <div className='flex items-center flex-col justify-center'>
+                  {['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension) ? (
+                    <img src={file.fileUrl} alt={file.fileName} className='h-auto w-auto max-h-[140px]' />
+                  ) : (
+                    // Render a file icon based on file type (you can replace this with your file icon)
+                    <span  ><GiFiles className=' text-8xl'/></span>
                   )}
-                  onClick={() => {
-                    handleFileSelect(file.fileId);
-                    onSegmentItemClick();
-                  }}
-                >
-                  <div>
-                    <h6>{file.fileName}</h6>
-                    <p>hello</p>
-                  </div>
-                  {active && (
-                    <HiCheckCircle className="text-cyan-500 text-xl" />
-                  )}
+                  <p className=' text-left'>{file.fileName}</p>
                 </div>
-              );
-            }}
-          </Segment.Item>
-        ))}
+              </Segment.Item>
+            </a>
+          );
+        })}
       </Segment>
-      <Button onClick={handleShareFiles}>Share Selected Files</Button>
-
+      <StickyFooter
+        className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
+        stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+      >
+        <div className="md:flex items-center">
+          <Button
+            size="sm"
+            className="ltr:mr-3 rtl:ml-3"
+            type="button"
+            onClick={() => {
+            navigate(-1)
+            }}
+          >
+            Back
+          </Button>
+          <Button size="sm" variant="solid" type="submit" onClick={handleShareFiles}>
+            Share
+          </Button>
+        </div>
+      </StickyFooter>
       {/* Toast container */}
-      
     </div>
   );
 };

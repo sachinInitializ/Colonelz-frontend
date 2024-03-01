@@ -1,10 +1,11 @@
 import { Button, FormItem, Upload } from '@/components/ui';
 import React, { useState } from 'react';
 import { HiOutlineCloudUpload } from 'react-icons/hi';
+import { useLocation } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
 
 interface FormData {
-  lead_id: string;
+  lead_id: string | null;
   folder_name: string;
   files: File[];
 }
@@ -15,8 +16,11 @@ type Option = {
 };
 
 const YourFormComponent: React.FC = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const leadId = queryParams.get('lead_id');
   const [formData, setFormData] = useState<FormData>({
-    lead_id: '781941',
+    lead_id: leadId,
     folder_name: '',
     files: [],
   });
@@ -51,37 +55,39 @@ const YourFormComponent: React.FC = () => {
     }
 }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    // Create FormData object
-    const postData = new FormData();
+  // Create FormData object
+  const postData = new FormData();
 
-    // Append data to FormData
+  // Append data to FormData
+  if (formData.lead_id !== null) {
     postData.append('lead_id', formData.lead_id);
-    postData.append('folder_name', formData.folder_name);
+  }
+  postData.append('folder_name', formData.folder_name);
 
-    // Append files to FormData
-    formData.files.forEach((file) =>
-    postData.append('files', file),
-)
+  // Append files to FormData
+  formData.files.forEach((file) => {
+    postData.append('files', file);
+  });
 
-    // Use postData to make a POST request to your API
-    try {
-      const response = await fetch(
-        'https://col-u3yp.onrender.com/v1/api/admin/fileupload/',
-        {
-          method: 'POST',
-          body: postData,
-        },
-      );
+  // Use postData to make a POST request to your API
+  try {
+    const response = await fetch(
+      'https://col-u3yp.onrender.com/v1/api/admin/fileupload/',
+      {
+        method: 'POST',
+        body: postData,
+      },
+    );
 
-      // Handle the response as needed
-      console.log('Response:', response);
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    }
-  };
+    // Handle the response as needed
+    console.log('Response:', response);
+  } catch (error) {
+    console.error('Error submitting form:', error);
+  }
+};
 
   const clientOptions: Option[] = [
     {
@@ -92,7 +98,7 @@ const YourFormComponent: React.FC = () => {
   ];
 
   return (
-    <form onSubmit={handleSubmit} className=' overflow-y-auto max-h-[400px]' style={{scrollbarWidth:'none'}}>
+    <form  className=' overflow-y-auto max-h-[400px]' style={{scrollbarWidth:'none'}} onSubmit={handleSubmit}>
      <h3 className='mb-5'>Project File Upload</h3>
       <div className='mb-5'>
         <CreatableSelect
