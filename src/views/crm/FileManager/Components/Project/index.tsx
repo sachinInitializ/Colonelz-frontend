@@ -57,7 +57,6 @@ const Index = () => {
                 isOpen={dialogIsOpen}
                 onClose={onDialogClose}
                 onRequestClose={onDialogClose}
-                
             >
               <YourFormComponent/> 
             </Dialog>

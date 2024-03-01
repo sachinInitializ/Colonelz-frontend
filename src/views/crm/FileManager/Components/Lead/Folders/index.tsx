@@ -95,7 +95,7 @@ const Index = () => {
   return (
     <div>
       <h3 className='mb-5'>Files</h3>
-      <Segment selectionType="multiple" className='grid grid-cols-4 gap-4'>
+      <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2 gap-4'>
         {leadData.map((file) => {
           if (!file || typeof file.fileName !== 'string') {
             return null; // Skip rendering if the file or fileName is undefined or not a string

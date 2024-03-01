@@ -4,7 +4,7 @@ import React from 'react'
 const Template = () => {
   return (
     <div className='grid grid-cols-3 gap-4'>
-      <a href="https://myawsbucket12346780987.s3.ap-south-1.amazonaws.com/response.pdf" target='_blank'>
+      <a href="https://myawsbucket12346780987.s3.ap-south-1.amazonaws.com/response.pdf" target='_blank' rel='noreferrer'>
       <Card>Commercial</Card>
       </a>
 
