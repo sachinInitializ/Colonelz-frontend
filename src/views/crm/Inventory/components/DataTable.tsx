@@ -64,7 +64,7 @@ function DebouncedInput({
                     onChange={(e) => setValue(e.target.value)}
                 />
             </div>
-            <Button size='sm' variant='solid' onClick={()=>navigate('/app/crm/projectform')}>Create Project</Button>
+          
         </div>
     )
 }
