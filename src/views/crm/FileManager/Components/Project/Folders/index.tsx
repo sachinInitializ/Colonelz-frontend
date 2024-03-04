@@ -1,18 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchProjectData } from '../data';
-import { Button, Checkbox, Segment } from '@/components/ui';
+import { Button, Checkbox, Dialog, Notification, Segment, toast } from '@/components/ui';
 import { GiFiles } from 'react-icons/gi';
 import { StickyFooter } from '@/components/shared';
+import CreatableSelect from 'react-select/creatable';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  const [subject, setSubject] = useState('');
+  const [body, setBody] = useState('');
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const leadId = queryParams.get('project_id');
   const folderName = queryParams.get('folder_name'); // Assuming folder_name is in the query params
   const navigate=useNavigate()
+
+  const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSubject(e.target.value);
+  };
+
+  const handleBodyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBody(e.target.value);
+  };
+
+  const [dialogIsOpen, setIsOpen] = useState(false)
+
+  const openDialog = () => {
+      setIsOpen(true)
+  }
+
+  const onDialogClose = () => {
+      setIsOpen(false)
+  }
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -33,6 +55,7 @@ const Index = () => {
     fetchDataAndLog();
   }, [leadId, folderName]);
   console.log(leadData);
+
   const handleFileSelect = (fileId: string) => {
     const updatedSelectedFiles = selectedFiles.includes(fileId)
       ? selectedFiles.filter((id) => id !== fileId)
@@ -41,63 +64,75 @@ const Index = () => {
 
   };
   const handleShareFiles = async () => {
-    // Check if there are selected files before attempting to share
+
     if (selectedFiles.length === 0) {
       console.warn('No files selected for sharing.');
       return;
     }
   
-    // Implement your POST API call here with the selectedFiles data
     const postData = {
       file_id: selectedFiles,
       lead_id: '',
       project_id: leadId,
-      email: ['amaurya@initializ.io', 'dgupta@initializ.io'],
-      subject: 'Testing',
-      body: 'Testing 123',
+      email: selectedEmails,
+      subject: subject,
+      body: body,
     };
-  
+
+      function closeAfter2000ms() {
+      toast.push(
+          <Notification closable type="success" duration={2000}>
+              Successfully Shared
+          </Notification>
+      )
+  }
+
     try {
       const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/share/file', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Add any other headers if needed
         },
         body: JSON.stringify(postData),
       });
   
       if (!response.ok) {
         console.error('Error sharing files:', response.statusText);
-        // Handle error, show error message, etc.
         return;
       }
   
-      // Assuming the API response contains success information
       const responseData = await response.json();
   
-      // Show success toast or handle success in your application
       console.log('Files shared successfully:', responseData);
   
-      // Clear selected files after sharing
       setSelectedFiles([]);
-  
-      // Reset active state of segment items
+      setSelectedEmails([]);
+      setSubject('')
+      setBody('')
+      onDialogClose()
+      closeAfter2000ms()
       const updatedLeadData = leadData.map((file) => ({ ...file, active: false }));
       setLeadData(updatedLeadData);
     } catch (error) {
       console.error('Error sharing files:', error);
-      // Handle error, show error message, etc.
     }
   };
 
+
+
   return (
     <div>
+        <div className='flex justify-between'>
       <h3 className='mb-5'>Files</h3>
+      <Button
+       variant='solid'
+       onClick={() => openDialog()}
+      >Share</Button>
+      </div>
       <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2 gap-4'>
         {leadData.map((file) => {
           if (!file || typeof file.fileName !== 'string') {
-            return null; // Skip rendering if the file or fileName is undefined or not a string
+            return null;
           }
   
           const fileExtension = file.fileName.split('.').pop().toLowerCase();
@@ -117,7 +152,6 @@ const Index = () => {
                   {['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension) ? (
                     <img src={file.fileUrl} alt={file.fileName} className='h-auto w-auto max-h-[140px]' />
                   ) : (
-                    // Render a file icon based on file type (you can replace this with your file icon)
                     <span  ><GiFiles className=' text-8xl'/></span>
                   )}
                   <p className=' text-left'>{file.fileName}</p>
@@ -147,7 +181,59 @@ const Index = () => {
           </Button>
         </div>
       </StickyFooter>
-      {/* Toast container */}
+      <Dialog
+                isOpen={dialogIsOpen}
+                style={{}}
+                className='max-h-[300px]'
+                onClose={onDialogClose} 
+                onRequestClose={onDialogClose}
+
+            >
+              <h3 className='mb-5'>Share Files</h3>
+
+          <CreatableSelect
+          
+    isMulti
+    value={selectedEmails.map((email) => ({ label: email, value: email }))}
+    
+    placeholder="Add email addresses..."
+    onChange={(newValues) => {
+      const emails = newValues ? newValues.map((option) => option.value) : [];
+      setSelectedEmails(emails);
+    }}
+    onCreateOption={(inputValue) => {
+      const newEmails = [...selectedEmails, inputValue];
+      setSelectedEmails(newEmails);
+    }}
+  />
+
+<div className='mt-4'>
+          <label className='block text-sm font-medium text-gray-700'>Subject</label>
+          <input
+            type='text'
+            className='mt-1 p-2 w-full border rounded-md'
+            value={subject}
+            placeholder='Enter subject...'
+            onChange={handleSubjectChange}
+          />
+        </div>
+
+        <div className='mt-4'>
+          <label className='block text-sm font-medium text-gray-700'>Body</label>
+          <textarea
+            className='mt-1 p-2 w-full border rounded-md'
+            value={body}
+            placeholder='Enter body...'
+            onChange={handleBodyChange}
+          />
+        </div>
+  
+         <div className='flex justify-end'>
+         <Button size="sm" variant="solid" type="submit" className='mt-5 ' onClick={handleShareFiles} >
+            Share
+          </Button>
+          </div>
+            </Dialog>
     </div>
   );
 };
