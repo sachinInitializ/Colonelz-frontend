@@ -4,6 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Card, Dialog } from '@/components/ui';
 import type { MouseEvent } from 'react'
 import YourFormComponent from './LeadForm';
+import { FaFolder, FaRegFolder } from 'react-icons/fa';
+import { useTheme } from '@emotion/react';
 
 
 const Index = () => {
@@ -36,16 +38,20 @@ const Index = () => {
          console.log('onDialogClose', e)
          setIsOpen(false)
      }
+     const theme=useTheme
   return (
     <div>
       <div className=' mb-5 flex justify-between'>
     <h3 className=''>Folder</h3>
     <Button variant='solid' size='sm' onClick={() => openDialog()}>Upload</Button>
     </div>
-    <div className='grid grid-cols-4 gap-3'>
+    <div className='grid xl:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-3'>
         {leadData.map((item)=>(
            <Card key={item.folder_name} className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/leads/folder?lead_id=${leadId}&folder_name=${item.folder_name}`)}>
-            <p className=' capitalize'>{item.folder_name}</p>
+             <div className='flex '>
+              <div className={` text-xl mr-3 text-yellow-500`}><FaFolder /></div>
+            <p className=' capitalize text-wrap'>{item.folder_name}</p>
+            </div>
            </Card>
         ))}
     </div>
@@ -55,7 +61,7 @@ const Index = () => {
                 onRequestClose={onDialogClose}
                 
             >
-              <YourFormComponent /> 
+              <YourFormComponent data={leadData}/> 
             </Dialog>
     </div>
   )

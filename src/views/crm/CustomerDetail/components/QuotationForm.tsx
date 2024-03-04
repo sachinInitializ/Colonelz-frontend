@@ -18,12 +18,15 @@ interface FormData {
   client_notes: string;
   type: string;
   files: File[];
+  calculatedOfferPrice: number | null;
+  calculatedTotalPrice: number | null;
 }
 
 const MyForm: React.FC = () => {
-  const location=useLocation()
+  const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const projectId = searchParams.get('project_id');
+
   const [formData, setFormData] = useState<FormData>({
     project_id: projectId,
     item: '',
@@ -38,6 +41,8 @@ const MyForm: React.FC = () => {
     client_notes: '',
     type: '',
     files: [],
+    calculatedOfferPrice: null,
+    calculatedTotalPrice: null,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -46,36 +51,73 @@ const MyForm: React.FC = () => {
       ...prevData,
       [name]: value,
     }));
+
+    // Recalculate offer price and total price when rate, discount, or quantity changes
+    if (name === 'rate' || name === 'discount' || name === 'quantity') {
+      calculateOfferPrice();
+      calculateTotalPrice();
+    }
   };
 
-    const handleFileChange = (files: FileList | null) => {
-        if (files) {
-            setFormData((prevFormData) => ({
-                ...prevFormData,
-                files: Array.from(files),
-            }));
-          
-        }
-    };
+  const handleFileChange = (files: FileList | null) => {
+    if (files) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        files: Array.from(files),
+      }));
+    }
+  };
+
+  const calculateOfferPrice = () => {
+    const { rate, discount } = formData;
+
+    if (rate && discount) {
+      const calculatedPrice = (parseFloat(rate) * parseFloat(discount)) / 100;
+      setFormData((prevData) => ({
+        ...prevData,
+        calculatedOfferPrice: calculatedPrice,
+        offer_price: calculatedPrice.toString(),
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        calculatedOfferPrice: null,
+        offer_price: '',  // Reset offer_price when either rate or discount is empty
+      }));
+    }
+  };3
+
+  const calculateTotalPrice = () => {
+    const { quantity, rate, discount } = formData;
+
+    if (quantity && rate && discount) {
+      const calculatedPrice = (parseFloat(quantity) * parseFloat(rate) * parseFloat(discount)) / 100;
+      setFormData((prevData) => ({
+        ...prevData,
+        calculatedTotalPrice: calculatedPrice,
+        total_price: calculatedPrice.toString(),
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        calculatedTotalPrice: null,
+      }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const formDataToSend = new FormData();
 
-    // Append form data to FormData object
     Object.entries(formData).forEach(([key, value]) => {
       if (key === 'files') {
-        // Handle files separately
-        formData.files.forEach((file) =>
-        formDataToSend.append('files', file),
-    )
+        formData.files.forEach((file) => formDataToSend.append('files', file));
       } else {
         formDataToSend.append(key, value);
       }
     });
 
-    // Make API call (replace with your actual API endpoint)
     try {
       const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/create/quotation', {
         method: 'POST',
@@ -83,81 +125,103 @@ const MyForm: React.FC = () => {
       });
 
       if (response.ok) {
-        alert('Quotation created successfully')
+        alert('Quotation created successfully');
         window.location.reload();
-        navigate(-1)
-        // Redirect to home page or any other page after successful creation
-    } else {
-        alert('Failed to create Quotation')
-    }
+        navigate(-1);
+      } else {
+        alert('Failed to create Quotation');
+      }
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
   };
-const navigate=useNavigate()
-return (
-  <form onSubmit={handleSubmit} className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
-    {/* Render input fields for each form field excluding project_id */}
-    {Object.entries(formData).map(([key, value]) => {
-      if (key === 'project_id') {
-        return null; // Skip rendering for project_id
-      }
 
-      // Replace underscores with spaces in the label
-      const formattedLabel = key.replace(/_/g, ' ');
+  const navigate = useNavigate();
 
-      if (key === 'files') {
-        return (
-          <>
-            <div className="">
+  return (
+    <form className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4' onSubmit={handleSubmit}>
+      {Object.entries(formData).map(([key, value]) => {
+        if (key === 'project_id' || key === 'calculatedOfferPrice' || key === 'calculatedTotalPrice') {
+          return null;
+        }
+
+        const formattedLabel = key.replace(/_/g, ' ');
+
+        if (key === 'files') {
+          return (
+            <div key={key} className="">
               <FormItem label='Files'>
-              <Upload onChange={(files) => handleFileChange(files)}>
-    <Button variant="solid" icon={<HiOutlineCloudUpload />} type='button' >
-        Upload your file
-    </Button>
-</Upload>
+                <Upload onChange={(files) => handleFileChange(files)}>
+                  <Button variant="solid" icon={<HiOutlineCloudUpload />} type='button'>
+                    Upload your file
+                  </Button>
+                </Upload>
               </FormItem>
             </div>
-          </>
-        );
-      }
+          );
+        }
 
-      return (
-        <div key={key} className=''>
-          <FormItem label={formattedLabel} className='capitalize'>
-            <Input
-              type="text"
-              id={key}
-              name={key}
-              value={value}
-              onChange={handleChange}
-            />
-          </FormItem>
-        </div>
-      );
-    })}
-    <StickyFooter
-      className="-mx-8 px-8 flex items-center justify-between py-4"
-      stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-    >
-      <div className="md:flex items-center">
-        <Button
-          size="sm"
-          className="ltr:mr-3 rtl:ml-3"
-          type="button"
-          onClick={() => {
-            navigate(-1)
-          }}
-        >
-          Discard
-        </Button>
-        <Button size="sm" variant="solid" type="submit">
-          Submit
-        </Button>
+        return (
+          <div key={key} className=''>
+            <FormItem label={formattedLabel} className='capitalize'>
+              <Input
+                type="text"
+                id={key}
+                name={key}
+                value={value}
+                onChange={handleChange}
+              />
+            </FormItem>
+          </div>
+        );
+      })}
+
+      <div className=''>
+        <FormItem label='Calculated Offer Price' className='capitalize'>
+          <Input
+            type='text'
+            id='calculatedOfferPrice'
+            name='calculatedOfferPrice'
+            value={formData.calculatedOfferPrice !== null ? formData.calculatedOfferPrice.toString() : ''}
+            readOnly
+          />
+        </FormItem>
       </div>
-    </StickyFooter>
-  </form>
-);
+
+      <div className=''>
+        <FormItem label='Calculated Total Price' className='capitalize'>
+          <Input
+            type='text'
+            id='calculatedTotalPrice'
+            name='calculatedTotalPrice'
+            value={formData.calculatedTotalPrice !== null ? formData.calculatedTotalPrice.toString() : ''}
+            readOnly
+          />
+        </FormItem>
+      </div>
+
+      <StickyFooter
+        className="-mx-8 px-8 flex items-center justify-between py-4"
+        stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+      >
+        <div className="md:flex items-center">
+          <Button
+            size="sm"
+            className="ltr:mr-3 rtl:ml-3"
+            type="button"
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            Discard
+          </Button>
+          <Button size="sm" variant="solid" type="submit">
+            Submit
+          </Button>
+        </div>
+      </StickyFooter>
+    </form>
+  );
 };
 
 export default MyForm;

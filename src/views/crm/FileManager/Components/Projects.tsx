@@ -21,7 +21,7 @@ const Projects = () => {
   }, []); // Empty dependency array ensures this effect runs only once on mount
 
   return (
-    <div className='grid grid-cols-3 gap-5'>
+    <div className='grid xl:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-5'>
       {projectData.map((projectItem) => (
         <Cards key={projectItem.project_id} data={projectItem} />
       ))}

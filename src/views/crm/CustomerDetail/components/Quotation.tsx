@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { HiOutlineHome } from 'react-icons/hi';
-import { MainQuotationItem, MainQuotationData } from './quoteTypeData'; // Replace with your actual library
+import {  MainQuotationData } from './quoteTypeData'; // Replace with your actual library
 import Filtering from './Quoation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Tabs } from '@/components/ui';
@@ -14,13 +13,12 @@ interface TabbedContentProps {
 }
 
 const TabbedContent: React.FC<TabbedContentProps> = ({ data }) => {
+  const location = useLocation();
     if (!data || !data.data || !data.data.main_quotation) {
       return null; // Return early if data or its nested properties are falsy
     }
-    const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const projectId = searchParams.get('project_id');
-  const navigate=useNavigate()
     return (
       <Tabs defaultValue='Final Estimate' className=''>
       
@@ -31,7 +29,7 @@ const TabbedContent: React.FC<TabbedContentProps> = ({ data }) => {
             <TabList className=' ' style={{ scrollbarWidth: "none" }} >
         <TabNav value='Final Estimate'>Final Estimate</TabNav>
           {data.data.main_quotation.map((quotation) => (
-              <TabNav value={quotation.type} className=' capitalize' >
+              <TabNav key={quotation.qutation_id} value={quotation.type} className=' capitalize'>
                 {quotation.type}
               </TabNav>
             ))}

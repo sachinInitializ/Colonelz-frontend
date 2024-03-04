@@ -1,8 +1,9 @@
-import { Button, FormItem, Upload } from '@/components/ui';
+import { Button, FormItem, Notification, Upload, toast } from '@/components/ui';
 import React, { useState } from 'react';
 import { HiOutlineCloudUpload } from 'react-icons/hi';
 import { useLocation } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
+import { Data, FolderItem, LeadDataItem } from './data';
 
 interface FormData {
   lead_id: string | null;
@@ -15,10 +16,11 @@ type Option = {
   label: string;
 };
 
-const YourFormComponent: React.FC = () => {
+const YourFormComponent: React.FC<Data> = (leadData) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const leadId = queryParams.get('lead_id');
+  
   const [formData, setFormData] = useState<FormData>({
     lead_id: leadId,
     folder_name: '',
@@ -54,11 +56,26 @@ const YourFormComponent: React.FC = () => {
       
     }
 }
+function closeAfter2000ms(data:string,type:string) {
+  toast.push(
+      <Notification closable type={type} duration={2000}>
+          {data}
+      </Notification>,{placement:'top-center'}
+  )
+}
 
  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
 
-  // Create FormData object
+  if (!formData.folder_name || formData.files.length === 0) {
+    toast.push(
+      <Notification closable type="warning" duration={3000}>
+        Please select a folder and upload at least one file.
+      </Notification>,
+      { placement: 'top-center' }
+    );
+    return;
+  }
   const postData = new FormData();
 
   // Append data to FormData
@@ -72,35 +89,47 @@ const YourFormComponent: React.FC = () => {
     postData.append('files', file);
   });
 
-  // Use postData to make a POST request to your API
   try {
     const response = await fetch(
       'https://col-u3yp.onrender.com/v1/api/admin/fileupload/',
       {
         method: 'POST',
         body: postData,
-      },
+      }
     );
 
-    // Handle the response as needed
-    console.log('Response:', response);
+    const responseData = await response.json(); 
+    console.log('Response Data:', responseData);
+
+    if (responseData.status===true) {
+      closeAfter2000ms('File uploaded successfully.','success');
+      window.location.reload();
+    } else {
+      closeAfter2000ms(`Error: ${responseData.message}`,'warning');
+    }
   } catch (error) {
     console.error('Error submitting form:', error);
+    closeAfter2000ms('An error occurred while submitting the form.','warning');
   }
 };
 
-  const clientOptions: Option[] = [
-    {
-      value: 'devashish',
-      label: 'devashish',
-    },
-    // Add more client options if needed
-  ];
+
+const uniqueFolderNames = Array.from(
+  new Set(
+    leadData.data.map((folderItem) => folderItem.folder_name.trim())
+  )
+);
+
+const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
+  value: folderName,
+  label: folderName,
+}));
 
   return (
     <form  className=' overflow-y-auto max-h-[400px]' style={{scrollbarWidth:'none'}} onSubmit={handleSubmit}>
      <h3 className='mb-5'>Project File Upload</h3>
       <div className='mb-5'>
+        <FormItem label='Folder Name'>
         <CreatableSelect
         name='folder_name'
           options={clientOptions}
@@ -108,6 +137,7 @@ const YourFormComponent: React.FC = () => {
             handleSelectChange(selectedOption, 'folder_name')
           }
         />
+        </FormItem>
       </div>
 
       <FormItem label="File">
@@ -115,7 +145,6 @@ const YourFormComponent: React.FC = () => {
                                 onChange={(files) => handleFileChange(files)}
                             >
                                 <Button
-                                    
                                     icon={<HiOutlineCloudUpload />}
                                     type="button"
                                 >

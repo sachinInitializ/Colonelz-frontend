@@ -1,10 +1,11 @@
-import { Button, FormItem, Upload } from '@/components/ui';
+import { Button, FormItem, Notification, Upload, toast } from '@/components/ui';
 import React, { useState } from 'react';
 import { HiOutlineCloudUpload } from 'react-icons/hi';
+import { useLocation } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
 
 interface FormData {
-  project_id: string;
+  project_id: string | null;
   folder_name: string;
   files: File[];
 }
@@ -15,8 +16,11 @@ type Option = {
 };
 
 const YourFormComponent: React.FC = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const projectId = queryParams.get('project_id');
   const [formData, setFormData] = useState<FormData>({
-    project_id: 'COLP-692488',
+    project_id: projectId,
     folder_name: '',
     files: [],
   });
@@ -50,23 +54,37 @@ const YourFormComponent: React.FC = () => {
       
     }
 }
+function closeAfter2000ms(data:string,type:string) {
+  toast.push(
+      <Notification closable type={type} duration={2000}>
+          {data}
+      </Notification>,{placement:'top-center'}
+  )
+}
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Create FormData object
+    if (!formData.folder_name || formData.files.length === 0) {
+      toast.push(
+        <Notification closable type="warning" duration={3000}>
+          Please select a folder and upload at least one file.
+        </Notification>,
+        { placement: 'top-center' }
+      );
+      return;
+    }
     const postData = new FormData();
 
-    // Append data to FormData
-    postData.append('project_id', formData.project_id);
+    if (formData.project_id !== null) {
+      postData.append('project_id', formData.project_id);
+    }
     postData.append('folder_name', formData.folder_name);
 
-    // Append files to FormData
     formData.files.forEach((file) =>
     postData.append('files', file),
 )
 
-    // Use postData to make a POST request to your API
     try {
       const response = await fetch(
         'https://col-u3yp.onrender.com/v1/api/admin/project/fileupload',
@@ -76,10 +94,20 @@ const YourFormComponent: React.FC = () => {
         },
       );
 
-      // Handle the response as needed
-      console.log('Response:', response);
+    
+      const responseData = await response.json(); 
+      console.log('Response Data:', responseData);
+  
+      if (response.ok) {
+        closeAfter2000ms('File uploaded successfully.','success');
+      
+        window.location.reload();
+      } else {
+        closeAfter2000ms(`Error: ${responseData.message}`,'warning');
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
+      closeAfter2000ms('An error occurred while submitting the form.','warning');
     }
   };
 

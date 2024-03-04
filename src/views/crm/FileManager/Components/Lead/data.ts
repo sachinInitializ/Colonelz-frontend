@@ -8,6 +8,9 @@ export interface FileItem {
     folder_name: string;
     files: FileItem[];
   }
+  export interface Data {
+    data:FolderItem[]
+  }
   
   export interface LeadDataItem {
     _id: string;

@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchLeadData } from '../data';
 import { Button, Checkbox, Dialog, Input, Notification, Segment, toast } from '@/components/ui';
 import { StickyFooter } from '@/components/shared';
-import { GiFiles } from 'react-icons/gi';
 import CreatableSelect from 'react-select/creatable';
+import { CiFileOn } from 'react-icons/ci';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
@@ -67,7 +67,7 @@ const Index = () => {
   const handleShareFiles = async () => {
 
     if (selectedFiles.length === 0 || selectedEmails.length === 0) {
-      console.warn('No files or email addresses selected for sharing.');
+      warn('No files or email addresses selected for sharing.')
       return;
     }
   
@@ -80,11 +80,18 @@ const Index = () => {
       body: body,
     };
 
-    function closeAfter2000ms() {
+    function closeAfter2000ms(text:string) {
       toast.push(
           <Notification closable type="success" duration={2000}>
-              Successfully Shared
-          </Notification>
+              {text}
+          </Notification>,{placement:'top-center'}
+      )
+  }
+    function warn(text:string) {
+      toast.push(
+          <Notification closable type="warning" duration={2000}>
+              {text}
+          </Notification>,{placement:'top-center'}
       )
   }
   
@@ -111,7 +118,7 @@ const Index = () => {
       setSubject('')
       setBody('')
       onDialogClose()
-      closeAfter2000ms()
+      closeAfter2000ms('Successfully Shared')
       const updatedLeadData = leadData.map((file) => ({ ...file, active: false }));
       setLeadData(updatedLeadData);
     } catch (error) {
@@ -128,8 +135,9 @@ const Index = () => {
        onClick={() => openDialog()}
       >Share</Button>
       </div>
-      <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2 gap-4'>
-        {leadData.map((file) => {
+      {leadData && leadData.length > 0 ? (
+        <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2 gap-4'>
+          {leadData.map((file) => {
           if (!file || typeof file.fileName !== 'string') {
             return null; 
           }
@@ -151,15 +159,18 @@ const Index = () => {
                   {['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension) ? (
                     <img src={file.fileUrl} alt={file.fileName} className='h-auto w-auto max-h-[140px]' />
                   ) : (
-                    <span  ><GiFiles className=' text-8xl'/></span>
+                    <span  ><CiFileOn className=' text-8xl'/></span>
                   )}
-                  <p className=' text-left'>{file.fileName}</p>
+                  <p className=' text-left' style={{overflowWrap:"anywhere"}}>{file.fileName}</p>
                 </div>
               </Segment.Item>
             </a>
           );
         })}
       </Segment>
+         ) : (
+          <p>Add files</p>
+        )}
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
         stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
@@ -207,6 +218,7 @@ const Index = () => {
 <div className='mt-4'>
           <label className='block text-sm font-medium text-gray-700'>Subject</label>
           <input
+          required
             type='text'
             className='mt-1 p-2 w-full border rounded-md'
             value={subject}
@@ -218,6 +230,7 @@ const Index = () => {
         <div className='mt-4'>
           <label className='block text-sm font-medium text-gray-700'>Body</label>
           <Input
+          required
            textArea
             className='mt-1 p-2 w-full border rounded-md'
             value={body}

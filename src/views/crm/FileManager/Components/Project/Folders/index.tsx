@@ -5,6 +5,7 @@ import { Button, Checkbox, Dialog, Notification, Segment, toast } from '@/compon
 import { GiFiles } from 'react-icons/gi';
 import { StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
+import { CiFileOn } from 'react-icons/ci';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
@@ -129,10 +130,11 @@ const Index = () => {
        onClick={() => openDialog()}
       >Share</Button>
       </div>
-      <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2 gap-4'>
-        {leadData.map((file) => {
+      {leadData && leadData.length > 0 ? (
+        <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2 gap-4'>
+          {leadData.map((file) => {
           if (!file || typeof file.fileName !== 'string') {
-            return null;
+            return null; 
           }
   
           const fileExtension = file.fileName.split('.').pop().toLowerCase();
@@ -152,15 +154,18 @@ const Index = () => {
                   {['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension) ? (
                     <img src={file.fileUrl} alt={file.fileName} className='h-auto w-auto max-h-[140px]' />
                   ) : (
-                    <span  ><GiFiles className=' text-8xl'/></span>
+                    <span  ><CiFileOn className=' text-8xl'/></span>
                   )}
-                  <p className=' text-left'>{file.fileName}</p>
+                  <p className=' text-left text-wrap' style={{overflowWrap:"anywhere"}}>{file.fileName}</p>
                 </div>
               </Segment.Item>
             </a>
           );
         })}
       </Segment>
+         ) : (
+          <p>Add files</p>
+        )}
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
         stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
