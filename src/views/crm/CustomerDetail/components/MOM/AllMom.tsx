@@ -74,18 +74,23 @@ const App: React.FC = () => {
     const parts = text ? text.split(regex) : [];
   
     return (
-      <>
-        {parts.map((part, index) =>
-          regex.test(part) ? (
-            <span key={index} className="bg-yellow-400 bg-opacity-50 rounded-md">
-              {isDate && regex.test(part) && text ? new Date(part).toISOString().split('T')[0] : part}
-            </span>
-          ) : (
-            <span key={index}>{part}</span>
-          )
-        )}
-      </>
-    );
+        <>
+            {parts.map((part, index) =>
+                regex.test(part) ? (
+                    <span
+                        key={index}
+                        className=" bg-[#FFFF00] bg-opacity-100 text-black rounded-md"
+                    >
+                        {isDate && regex.test(part) && text
+                            ? new Date(part).toISOString().split('T')[0]
+                            : part}
+                    </span>
+                ) : (
+                    <span key={index}>{part}</span>
+                ),
+            )}
+        </>
+    )
   };
   
   
@@ -134,7 +139,7 @@ const App: React.FC = () => {
                       .split('T')[0]}
                   </span>
                   <a
-                    href={`http://localhost:8000/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${item.mom_id}`}
+                    href={`http://localhost:8000/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${item.mom_id}`} target='_blank'
                   >
                     <Button size="sm" variant="solid">
                       View MOM
