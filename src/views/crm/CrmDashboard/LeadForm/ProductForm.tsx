@@ -24,7 +24,7 @@ interface FormData {
     email: string
     phone: string
     location: string
-    lead_manager:string
+    lead_manager: string
     status: string | null
     source: string
     content: string
@@ -40,7 +40,7 @@ const LeadForm: React.FC = () => {
         email: '',
         phone: '',
         location: '',
-        lead_manager:'',
+        lead_manager: '',
         status: null,
         source: '',
         content: '',
@@ -109,48 +109,46 @@ const LeadForm: React.FC = () => {
         return Object.keys(newErrors).length === 0
     }
     const navigate = useNavigate()
-   const handleSubmit = async (e: React.FormEvent) => {
-       e.preventDefault()
-       
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
 
-       if (validateForm()) {
-           try {
-               const formDataToSend = new FormData()
-               for (const key in formData) {
-                if (key !== 'files') {
-                    formDataToSend.append(key, formData[key])
+        if (validateForm()) {
+            try {
+                const formDataToSend = new FormData()
+                for (const key in formData) {
+                    if (key !== 'files') {
+                        formDataToSend.append(key, formData[key])
+                    }
                 }
+                // Append files
+                formData.files.forEach((file) => {
+                    formDataToSend.append('files', file)
+                })
+
+                const response = await fetch(
+                    'https://col-u3yp.onrender.com/v1/api/admin/create/lead/',
+                    {
+                        method: 'POST',
+                        body: formDataToSend,
+                    },
+                )
+
+                if (response.ok) {
+                    alert('Success! Form submitted successfully.')
+                    navigate('/app/leads')
+                    window.location.reload()
+                } else {
+                    alert('Lead creation failed')
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`)
             }
-            // Append files
-            formData.files.forEach((file) => {
-                formDataToSend.append('files', file)
-            })
-
-               const response = await fetch(
-                   'https://col-u3yp.onrender.com/v1/api/admin/create/lead/',
-                   {
-                       method: 'POST',
-                       body: formDataToSend,
-                   },
-               )
-
-               if (response.ok) {
-                   alert('Success! Form submitted successfully.')
-                   navigate('/app/leads')
-                   window.location.reload()
-               } else {
-                   alert('Lead creation failed')
-               }
-           } catch (error) {
-               alert(`Error: ${error.message}`)
-           }
-       } else {
-           alert(
-               'Form contains validation errors. Please check and submit again.',
-           )
-       }
-   }
-
+        } else {
+            alert(
+                'Form contains validation errors. Please check and submit again.',
+            )
+        }
+    }
 
     return (
         <form onSubmit={handleSubmit}>
@@ -212,7 +210,10 @@ const LeadForm: React.FC = () => {
                             type="text"
                             value={formData.lead_manager}
                             onChange={(e) =>
-                                handleInputChange('lead_manager', e.target.value)
+                                handleInputChange(
+                                    'lead_manager',
+                                    e.target.value,
+                                )
                             }
                         />
                     </FormItem>
@@ -249,7 +250,7 @@ const LeadForm: React.FC = () => {
                     <span className=" text-red-600">{errors.date}</span>
                 </div>
                 <div>
-                <FormItem label="Source">
+                    <FormItem label="Source">
                         <Select
                             options={optionsSource}
                             value={optionsSource.find(
@@ -265,7 +266,7 @@ const LeadForm: React.FC = () => {
                     </FormItem>
                 </div>
                 <div>
-                <label htmlFor="files">Files:</label>
+                    <label htmlFor="files">Files:</label>
                     <input
                         type="file"
                         id="files"
