@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { HiOutlineCloudUpload } from 'react-icons/hi';
 import { useLocation } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
+import { Data } from './data';
 
 interface FormData {
   project_id: string | null;
@@ -15,7 +16,7 @@ type Option = {
   label: string;
 };
 
-const YourFormComponent: React.FC = () => {
+const YourFormComponent: React.FC<Data> = (data) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get('project_id');
@@ -111,13 +112,14 @@ function closeAfter2000ms(data:string,type:string) {
     }
   };
 
-  const clientOptions: Option[] = [
-    {
-      value: 'devashish',
-      label: 'devashish',
-    },
-    // Add more client options if needed
-  ];
+const uniqueFolderNames = Array.from(
+    new Set(data.data.map((folderItem) => folderItem.folder_name.trim())),
+)
+
+const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
+    value: folderName,
+    label: folderName,
+}))
 
   return (
     <form onSubmit={handleSubmit} className=' overflow-y-auto max-h-[400px]' style={{scrollbarWidth:'none'}}>

@@ -66,9 +66,9 @@ const Index = () => {
   };
   const handleShareFiles = async () => {
 
-    if (selectedFiles.length === 0) {
-      console.warn('No files selected for sharing.');
-      return;
+    if (selectedFiles.length === 0 || selectedEmails.length === 0) {
+        warn('No files or email addresses selected for sharing.')
+        return
     }
   
     const postData = {
@@ -87,6 +87,15 @@ const Index = () => {
           </Notification>
       )
   }
+
+      function warn(text: string) {
+          toast.push(
+              <Notification closable type="warning" duration={2000}>
+                  {text}
+              </Notification>,
+              { placement: 'top-center' },
+          )
+      }
 
     try {
       const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/share/file', {

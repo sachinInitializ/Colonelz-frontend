@@ -10,7 +10,7 @@ const options = [
     { value: 'Follow Up', label: 'Follow Up' },
     { value: 'Interested', label: 'Interested' },
     { value: 'Not Interested', label: 'Not Interested' },
-    { value: 'NO Response', label: 'NO Response' },
+    { value: 'No Response', label: 'No Response' },
 ]
 const optionsSource = [
     { value: 'At Office', label: 'At Office' },
@@ -136,8 +136,8 @@ const LeadForm: React.FC = () => {
 
                if (response.ok) {
                    alert('Success! Form submitted successfully.')
-                //    navigate('/app/leads')
-                //    window.location.reload()
+                   navigate('/app/leads')
+                   window.location.reload()
                } else {
                    alert('Lead creation failed')
                }

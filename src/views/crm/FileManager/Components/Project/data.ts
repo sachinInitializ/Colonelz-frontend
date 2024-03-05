@@ -10,6 +10,9 @@ export interface FolderItem {
   folder_name: string;
   files: FileItem[];
 }
+  export interface Data {
+    data:FolderItem[]
+  }
 
 export interface ProjectDataItem {
   _id: string;
