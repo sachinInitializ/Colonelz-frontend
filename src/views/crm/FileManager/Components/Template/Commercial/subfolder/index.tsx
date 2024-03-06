@@ -2,27 +2,27 @@ import { Card } from '@/components/ui'
 import React from 'react'
 import { FaFolder } from 'react-icons/fa'
 
-const index = () => {
+const Index = () => {
   return (
     <div className='grid grid-cols-3 gap-4'>
      <Card>
-      <div className='flex justify-between text-lg'>
+      <div className='flex gap-4'>
       <div className={` text-xl mr-3 text-yellow-500`}>
                                   <FaFolder />
                               </div>
-     <p> Design</p>
+     <p> Contract</p>
       </div></Card>
   
     <Card>
-      <div className='flex justify-between text-lg'>
+      <div className='flex gap-4'>
       <div className={` text-xl mr-3 text-yellow-500`}>
                                   <FaFolder />
                               </div>
-     <p> Design and Execution</p>
+     <p> Quotation</p>
       </div></Card>
     
     </div>
   )
 }
 
-export default index
+export default Index
