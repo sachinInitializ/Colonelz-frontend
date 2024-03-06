@@ -11,6 +11,7 @@ import type { Customer } from '../store'
 import { useEffect, useState } from 'react'
 import { HiOutlineEye } from 'react-icons/hi'
 import useThemeClass from '@/utils/hooks/useThemeClass'
+import { BiSolidBellRing } from 'react-icons/bi'
 
 
 type LeadsProps = {
@@ -126,9 +127,15 @@ const Project = ({ data = [], className }: LeadsProps) => {
           </Tr>
         </THead>
         <TBody>
-          {apiData.map((item, index) => (
+          {apiData.map((item, index) => {
+              const currentDate = new Date();
+              const projectEndDate = new Date(item.timeline_date);
+              const dateDifference = Math.floor((projectEndDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24));
+            return(
             <Tr key={index}>
-              <Td className=' capitalize'>{item.project_name}</Td>
+            <Td className={`capitalize ${dateDifference <= 1 ? 'text-red-500' : ''} flex gap-2 items-center cursor-pointer`} onClick={()=>navigate(`/app/crm/project-details?project_id=${item.project_id}&client_name=${item.client[0].client_name}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}>
+              {item.project_name} {dateDifference <= 1 && <BiSolidBellRing />}
+            </Td>
               <Td className=' capitalize'>{item.project_status}</Td>
               <Td className="capitalize">{item.client[0].client_name}</Td>
               <Td>{dayjs(item.timeline_date).format('DD-MM-YYYY')}</Td>
@@ -141,7 +148,7 @@ const Project = ({ data = [], className }: LeadsProps) => {
               </Td>
               <Td className={`cursor-pointer p-2 hover:${textTheme} text-lg`}><HiOutlineEye onClick={()=>navigate(`/app/crm/project-details?project_id=${item.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}/></Td>
             </Tr>
-          ))}
+          )})}
         </TBody>
       </Table>
         </Card>

@@ -1,16 +1,20 @@
 import { Card } from '@/components/ui'
 import React from 'react'
+import { FaHome } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 const Template = () => {
+  const navigate=useNavigate()
   return (
     <div className='grid grid-cols-3 gap-4'>
-      <a href="https://myawsbucket12346780987.s3.ap-south-1.amazonaws.com/response.pdf" target='_blank' rel='noreferrer'>
-      <Card>Commercial</Card>
-      </a>
-
-      <a href="https://myawsbucket12346780987.s3.ap-south-1.amazonaws.com/Colonelz_Residential+Int+Design+Contract_Mr+ABC%2C+Noida_13122023.pdf" target='_blank' rel='noreferrer'>
-      <Card>Residential</Card>
-      </a>
+      <Card onClick={()=>navigate('/app/crm/fileManager/project/templates/commercial')}>Commercial</Card>
+    
+      <Card onClick={()=>navigate('/app/crm/fileManager/project/templates/residential')}>
+        <div className='flex gap-4'>
+          <div className=' text-lg' ><FaHome/></div>
+       <p> Residential</p>
+        </div></Card>
+      
       </div>
   )
 }

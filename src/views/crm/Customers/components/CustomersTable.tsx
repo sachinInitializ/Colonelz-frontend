@@ -23,8 +23,9 @@ import { HiOutlineEye, HiOutlineUserAdd, HiOutlineUserGroup, HiOutlineUsers } fr
 import { useNavigate } from 'react-router-dom'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import classNames from 'classnames'
-import { Button, Select } from '@/components/ui'
+import {  Select } from '@/components/ui'
 import { StatisticCard } from './CustomerStatistic'
+import { BiSolidBellRing } from 'react-icons/bi'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -54,7 +55,7 @@ function DebouncedInput({
         return () => clearTimeout(timeout)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
-   const navigate=useNavigate()
+
     return (
         <div className="flex justify-between ">
 
@@ -66,7 +67,7 @@ function DebouncedInput({
                     onChange={(e) => setValue(e.target.value)}
                 />
             </div>
-            <Button size='sm' variant='solid' onClick={()=>navigate('/app/crm/projectform')}>Create Project</Button>
+       
         </div>
     )
 }
@@ -124,6 +125,26 @@ const Filtering = () => {
             {
                 header: 'Project Name',
                 accessorKey: 'project_name',
+                cell: (prop) => {
+                    const row = prop.row.original;
+                    const projectName = row.project_name;
+            
+                    const dateObject = new Date(row.timeline_date);
+                    const currentDate = new Date();
+                    const dateDifference = Math.floor(
+                      (dateObject.getTime() - currentDate.getTime()) / (1000 * 3600 * 24)
+                    );
+            
+                    const cellClassName = classNames({
+                      'text-red-500': dateDifference <= 1,
+                    });
+            
+                    return (
+                      <span className={`${cellClassName} flex gap-2 items-center cursor-pointer` } onClick={()=>navigate(`/app/crm/project-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}>
+                        {projectName} {dateDifference <= 1 && <BiSolidBellRing/>}
+                      </span>
+                    );
+                  },
                
             },
             {

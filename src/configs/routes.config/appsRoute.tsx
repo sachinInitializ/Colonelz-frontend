@@ -76,6 +76,42 @@ const appsRoute: Routes = [
         },
     },
     {
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/commercial`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Template/Commercial/commercial')),
+        authority: [ADMIN, USER],
+        meta: {
+         
+        },
+    },
+    {
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/commercial/subfolder`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Template/Commercial/subfolder/index')),
+        authority: [ADMIN, USER],
+        meta: {
+         
+        },
+    },
+    {
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/residential`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Template/Residential/residential')),
+        authority: [ADMIN, USER],
+        meta: {
+         
+        },
+    },
+    {
+        key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/residential/subfolder`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Template/Residential/subfolder/index')),
+        authority: [ADMIN, USER],
+        meta: {
+         
+        },
+    },
+    {
         key: 'appsCrm.project',
         path: `${APP_PREFIX_PATH}/crm/projectslist`,
         component: lazy(() => import('@/views/crm/Customers')),

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import Select from 'react-select'
 import DatePicker from '@/components/ui/DatePicker/DatePicker'
-import axios from 'axios'
 import { Button, FormItem, Input } from '@/components/ui'
 import { useNavigate } from 'react-router-dom'
 import { StickyFooter } from '@/components/shared'
@@ -31,7 +30,7 @@ interface FormData {
     createdBy: string
     role: string
     date: string | null
-    files: File[]
+   
 }
 
 const LeadForm: React.FC = () => {
@@ -47,7 +46,6 @@ const LeadForm: React.FC = () => {
         createdBy: 'ADMIN',
         role: 'ADMIN',
         date: null,
-        files: [],
     })
 
     const [errors, setErrors] = useState<Partial<FormData>>({})
@@ -60,14 +58,6 @@ const LeadForm: React.FC = () => {
         setErrors({
             ...errors,
             [name]: '',
-        })
-    }
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || [])
-        setFormData({ ...formData, files })
-        setErrors({
-            ...errors,
-            files: '',
         })
     }
 
@@ -121,11 +111,6 @@ const LeadForm: React.FC = () => {
                     formDataToSend.append(key, formData[key])
                 }
             }
-            // Append files
-            formData.files.forEach((file) => {
-                formDataToSend.append('files', file)
-            })
-
                const response = await fetch(
                    'https://col-u3yp.onrender.com/v1/api/admin/create/lead/',
                    {
@@ -263,16 +248,6 @@ const LeadForm: React.FC = () => {
                             }
                         />
                     </FormItem>
-                </div>
-                <div>
-                <label htmlFor="files">Files:</label>
-                    <input
-                        type="file"
-                        id="files"
-                        name="files"
-                        multiple
-                        onChange={handleFileChange}
-                    />
                 </div>
                 <div>
                     <FormItem label="Description">
