@@ -59,58 +59,57 @@ const FileUploadForm: React.FC = () => {
 
     const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-    
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        const { name, value } = e.target
+
         // Check if it's the description field
         if (name === 'description') {
             setFormData({
                 ...formData,
                 description: value,
-            });
+            })
         } else {
             // For other input fields
             setFormData({
                 ...formData,
                 [name]: value,
-            });
+            })
         }
 
-    
         setErrors({
             ...errors,
             [name]: '',
-        });
-    };
-    
-    const handleRichTextChange = (value: string,) => {
+        })
+    }
+
+    const handleRichTextChange = (value: string) => {
         setFormData({
             ...formData,
             description: value,
-        });
-    
+        })
+
         // You can perform additional actions if needed
         // For example, updating errors or other state based on rich text changes
-    };
-    
-// ...
-
-const handleFileChange = (files: FileList | null) => {
-    if (files) {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            files: Array.from(files),
-        }));
-        setErrors({
-            ...errors,
-            files: '',
-        });
     }
-};
 
-// ...
+    // ...
 
-    
+    const handleFileChange = (files: FileList | null) => {
+        if (files) {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                files: Array.from(files),
+            }))
+            setErrors({
+                ...errors,
+                files: '',
+            })
+        }
+    }
+
+    // ...
 
     const handleDateChange = (date: Date | null, fieldName: string) => {
         setFormData({
@@ -129,8 +128,8 @@ const handleFileChange = (files: FileList | null) => {
     ]
     const projectStatusOptions = [
         { value: 'completed', label: 'Completed' },
-        { value: 'executing', label: 'Executing' },
         { value: 'designing', label: 'Designing' },
+        { value: 'executing', label: 'Executing' },
     ]
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -155,15 +154,13 @@ const handleFileChange = (files: FileList | null) => {
             validationErrors.client_contact =
                 'Valid 10-digit contact number without spaces'
         }
-       
-       
+
         if (!formData.project_type.trim()) {
             validationErrors.project_type = 'Project Type is required'
         }
         if (!formData.project_name.trim()) {
             validationErrors.project_name = ' Name is required'
         }
-       
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors)
@@ -182,23 +179,24 @@ const handleFileChange = (files: FileList | null) => {
             formData.files.forEach((file) => {
                 formDataToSend.append('files', file)
             })
-            
+
             const response = await fetch(
                 'https://col-u3yp.onrender.com/v1/api/admin/create/project/',
                 {
-                    method:'POST',
-                    body:formDataToSend
-                }
+                    method: 'POST',
+                    body: formDataToSend,
+                },
             )
             console.log(response)
 
             if (response.ok) {
-                 const confirmation = window.confirm('Project creation successful.');
-        if (confirmation) {
-            navigate('/app/crm/projectslist');
-            window.location.reload();
-        }
-    
+                const confirmation = window.confirm(
+                    'Project creation successful.',
+                )
+                if (confirmation) {
+                    navigate('/app/crm/projectslist')
+                    window.location.reload()
+                }
             } else {
                 alert('Project creation failed')
             }
@@ -251,7 +249,6 @@ const handleFileChange = (files: FileList | null) => {
                         name="client_email"
                         value={formData.client_email}
                         onChange={handleInputChange}
-                        
                     />
                     {errors.client_email && (
                         <span className="text-red-500">
@@ -315,7 +312,6 @@ const handleFileChange = (files: FileList | null) => {
                         onChange={handleInputChange}
                         required
                     />
-                   
                 </FormItem>
                 <FormItem label=" Designer">
                     <Input
@@ -327,9 +323,8 @@ const handleFileChange = (files: FileList | null) => {
                         onChange={handleInputChange}
                         required
                     />
-                   
                 </FormItem>
-                
+
                 <FormItem label="Visualizer">
                     <Input
                         size="sm"
@@ -340,9 +335,8 @@ const handleFileChange = (files: FileList | null) => {
                         onChange={handleInputChange}
                         required
                     />
-                   
                 </FormItem>
-              
+
                 <FormItem label="Project Status">
                     <Select
                         options={projectStatusOptions}
@@ -369,7 +363,6 @@ const handleFileChange = (files: FileList | null) => {
                         }}
                         required
                     />
-                    
                 </FormItem>
                 <FormItem label="Project Start Date">
                     <DatePicker
@@ -403,7 +396,6 @@ const handleFileChange = (files: FileList | null) => {
                         }
                         dateFormat="MM/dd/yyyy"
                     />
-                  
                 </FormItem>
                 <FormItem label="Project Budget">
                     <Input
@@ -426,25 +418,28 @@ const handleFileChange = (files: FileList | null) => {
                         onChange={handleInputChange}
                         required
                     />
-                  
                 </FormItem>
                 <FormItem label="Description">
-                <RichTextEditor
-    value={formData.description}
-    id="description"
-    name="description"
-    onChange={handleRichTextChange}
-/>
+                    <RichTextEditor
+                        value={formData.description}
+                        id="description"
+                        name="description"
+                        onChange={handleRichTextChange}
+                    />
                 </FormItem>
 
                 <div>
-                  <FormItem label='Files'>
-                  <Upload onChange={(files) => handleFileChange(files)}>
-    <Button variant="solid" icon={<HiOutlineCloudUpload />} type='button' >
-        Upload your file
-    </Button>
-</Upload>
-                  </FormItem>
+                    <FormItem label="Files">
+                        <Upload onChange={(files) => handleFileChange(files)}>
+                            <Button
+                                variant="solid"
+                                icon={<HiOutlineCloudUpload />}
+                                type="button"
+                            >
+                                Upload your file
+                            </Button>
+                        </Upload>
+                    </FormItem>
                 </div>
             </div>
             <StickyFooter

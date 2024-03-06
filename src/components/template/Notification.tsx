@@ -137,11 +137,11 @@ const Notification1 = () => {
             {notificationData.slice().reverse().map((notification) => (
               <div
                 key={notification._id}
-                className={`px-6 py-3 border-b border-gray-200 ${notification.status ? 'read' : 'unread'}`}
+                className={`px-6 py-3 border-b border-gray-200 cursor-pointer ${notification.status ? 'read' : 'unread'}`}
                 onClick={() => handleUpdate(notification)}
               >
                 {/* Customize the notification item based on your data structure */}
-                <p
+                <p 
                   style={{
                     color: notification.status ? 'gray' : 'black',
                     fontWeight: notification.status ? 'normal' : 'bold',
