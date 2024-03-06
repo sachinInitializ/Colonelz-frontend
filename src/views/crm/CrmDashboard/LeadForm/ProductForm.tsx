@@ -30,7 +30,7 @@ interface FormData {
     createdBy: string
     role: string
     date: string | null
-   
+  
 }
 
 const LeadForm: React.FC = () => {
@@ -46,6 +46,7 @@ const LeadForm: React.FC = () => {
         createdBy: 'ADMIN',
         role: 'ADMIN',
         date: null,
+        
     })
 
     const [errors, setErrors] = useState<Partial<FormData>>({})
@@ -110,15 +111,7 @@ const LeadForm: React.FC = () => {
                         formDataToSend.append(key, formData[key])
                     }
                 }
-
-            }
-               const response = await fetch(
-                   'https://col-u3yp.onrender.com/v1/api/admin/create/lead/',
-                   {
-                       method: 'POST',
-                       body: formDataToSend,
-                   },
-               
+             
 
                 const response = await fetch(
                     'https://col-u3yp.onrender.com/v1/api/admin/create/lead/',
@@ -233,7 +226,7 @@ const LeadForm: React.FC = () => {
                 </div>
                 <div>
                     <FormItem label="Date">
-                        <DatePicker
+                        <DatePicker 
                             selected={
                                 formData.date ? new Date(formData.date) : null
                             }
@@ -246,7 +239,7 @@ const LeadForm: React.FC = () => {
                 </div>
                 <div>
                     <FormItem label="Source">
-                        <Select
+                        <Select 
                             options={optionsSource}
                             value={optionsSource.find(
                                 (option) => option.value === formData.source,
@@ -260,15 +253,17 @@ const LeadForm: React.FC = () => {
                         />
                     </FormItem>
                 </div>
+               
+                   
+                   
                 <div>
-
                     <FormItem label="Description">
                         <Input
+                            textArea
                             value={formData.content}
                             onChange={(e) =>
                                 handleInputChange('content', e.target.value)
                             }
-                            textArea
                         />
                     </FormItem>
                 </div>
