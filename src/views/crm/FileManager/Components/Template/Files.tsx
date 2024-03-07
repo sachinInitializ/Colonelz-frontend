@@ -18,6 +18,7 @@ const Index = () => {
   const folderName = queryParams.get('folder');
   const type = queryParams.get('type');
   const subfolder = queryParams.get('subfolder');
+  const folderId = queryParams.get('folder_id');
   
   const navigate=useNavigate()
 
@@ -87,6 +88,7 @@ const Index = () => {
     }
   
     const postData = {
+      folder_id:folderId,
         type:'template',
       file_id: selectedFiles,
       email: selectedEmails,
@@ -154,7 +156,7 @@ const Index = () => {
       >Share</Button>
       </div>
       {leadData && leadData.length > 0 ? (
-        <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2 md:grid-cols-3 gap-4'>
+        <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2  gap-4'>
           {leadData.map((file) => {
           if (!file || typeof file.fileName !== 'string') {
             return null; 

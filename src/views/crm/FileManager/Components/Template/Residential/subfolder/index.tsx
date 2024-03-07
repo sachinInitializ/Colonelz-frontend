@@ -6,6 +6,7 @@ import { Button, Card, Dialog } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import { FaFolder } from 'react-icons/fa';
 import { StickyFooter } from '@/components/shared';
+import YourFormComponent from '../../TemplateForm';
 
 const Index = () => {
   const [templateData, setTemplateData] = useState<TemplateDataItem[]>([]);
@@ -54,11 +55,11 @@ const Index = () => {
                   <div className="grid xl:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-3">
                   {templateData.filter(item => item.files[0].folder_name ===type && item.files[0].sub_folder_name_first === folderName).map((item) => (
                       <Card
-                          key={item.files[0].folder_name}
+                          key={item.files[0].folder_id}
                           className=" cursor-pointer"
                           onClick={() =>
                               navigate(
-                                  `/app/crm/fileManager/project/templates/residential/subfolder/files?type=${type}&folder=${folderName}&subfolder=${item.files[0].sub_folder_name_second}`,
+                                  `/app/crm/fileManager/project/templates/residential/subfolder/files?type=${type}&folder=${folderName}&subfolder=${item.files[0].sub_folder_name_second}&folder_id=${item.files[0].folder_id}`,
                               )
                           }
                       >
@@ -99,7 +100,7 @@ const Index = () => {
               onClose={onDialogClose}
               onRequestClose={onDialogClose}
           >
-              
+             <YourFormComponent/> 
           </Dialog>
       </div>
   )
