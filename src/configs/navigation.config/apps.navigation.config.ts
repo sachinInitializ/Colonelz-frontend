@@ -14,7 +14,7 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: 'nav.appsCrm.dashboard',
                         icon: 'dashboard',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: [ADMIN, USER],
+                        authority: [],
                         subMenu: [],
                     },
                     {

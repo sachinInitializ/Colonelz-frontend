@@ -15,6 +15,7 @@ interface FormData {
   client_email: string;
   client_contact: string;
   location: string;
+  designer:string;
   description: string;
   project_type: string;
   project_name: string;
@@ -69,6 +70,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     client_email: allQueryParams.email,
     client_contact: allQueryParams.phone,
     location: allQueryParams.location,
+    designer:'',
     description: '',
     project_type: '',
     project_name: '',
@@ -88,9 +90,9 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     { value: 'residential', label: 'Residential' },
   ];
   const projectStatusOptions = [
-    { value: 'execution', label: 'Executing' },
-    { value: 'design', label: 'Designing' },
     { value: 'completed', label: 'Completed' },
+    { value: 'designing', label: 'Designing' },
+    { value: 'executing', label: 'Executing' },
   ];
 
   const handleStatusChange = (selectedOption: ValueType<{ value: string; label: string }>) => {
@@ -144,6 +146,9 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     if (!formData.location.trim()) {
       validationErrors.location = 'Location is required';
     }
+    if (!formData.designer.trim()) {
+      validationErrors.designer = 'Project Incharge is required';
+    }
     if (!formData.description.trim()) {
       validationErrors.description = 'Description is required';
     }
@@ -174,9 +179,11 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
         // Project creation successful, show success alert
         alert('Project creation successful');
         navigate(-1);
+        window.location.reload()
       } else {
-        // Project creation failed, show error alert
-        alert('Project creation failed');
+        const errorResponse = await response.json();
+        const errorMessage = errorResponse.errorMessage || 'Unknown error';
+        alert(`Project creation failed: ${errorMessage}`);
       }
     } catch (error) {
       // Handle any other errors
@@ -189,16 +196,6 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     <div>
       <div className='flex justify-between items-center max-sm:flex-col mb-6'>
         <h5>Basic Information</h5>
-        <Button
-          variant='solid'
-          onClick={() =>
-            navigate(
-              `/app/crm/lead-project/?id=${myParam}&name=${data?.name}&email=${data?.email}&phone=${data?.phone}&location=${data?.location}`
-            )
-          }
-        >
-          Create Project
-        </Button>
       </div>
       <form onSubmit={handleFormSubmit}>
         <FormContainer>
@@ -224,6 +221,10 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
             <FormItem label='Location' className=''>
               <Input name='location' value={formData.location} onChange={handleInputChange} />
               {errors.location && <span className='text-red-500'>{errors.location}</span>}
+            </FormItem>
+            <FormItem label='Project Incharge' className=''>
+              <Input name='designer' value={formData.designer} onChange={handleInputChange} />
+              {errors.designer && <span className='text-red-500'>{errors.designer}</span>}
             </FormItem>
             <FormItem label='Project Budget' className=''>
               <Input name='project_budget' value={formData.project_budget} onChange={handleInputChange} />
@@ -272,10 +273,10 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
                                 ? new Date(formData.project_start_date)
                                 : null
                         }
+                        dateFormat="MM/dd/yyyy"
                         onChange={(date) =>
                             handleDateChange(date, 'project_start_date')
                         }
-                        dateFormat="MM/dd/yyyy"
                     />
                     {errors.project_start_date && (
                         <span className="text-red-500">
@@ -291,10 +292,10 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
                                 ? new Date(formData.timeline_date)
                                 : null
                         }
+                        dateFormat="MM/dd/yyyy"
                         onChange={(date) =>
                             handleDateChange(date, 'timeline_date')
                         }
-                        dateFormat="MM/dd/yyyy"
                     />
                     {errors.timeline_date && (
                         <span className="text-red-500">
@@ -304,7 +305,12 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
                 </FormItem>
        
             <FormItem label='Description' className=''>
-              <Input name='description' value={formData.description} onChange={handleInputChange} textArea />
+              <Input
+              textArea 
+              name='description' 
+              value={formData.description} 
+              onChange={handleInputChange} 
+              />
             </FormItem>
            
           </div>

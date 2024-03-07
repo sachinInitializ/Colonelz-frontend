@@ -130,8 +130,8 @@ interface ProjectUpdateData {
 
     const projectStatusOptions = [
       { value: 'completed', label: 'Completed' },
-      { value: 'executing', label: 'Executing' },
       { value: 'designing', label: 'Designing' },
+      { value: 'executing', label: 'Executing' },
   ]
   
     return (
@@ -189,7 +189,10 @@ interface ProjectUpdateData {
                     />
           </FormItem>
           <br />
-          <Button type="button" onClick={handleUpdate} variant='solid'>
+          <Button type="button" 
+           variant='solid'
+             onClick={handleUpdate}
+           >
             Update Project
           </Button>
         </form>
@@ -206,7 +209,7 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
         setIsOpen(true)
     }
 
-    const onDialogClose = (e: MouseEvent) => {
+    const onDialogClose = () => {
         setIsOpen(false)
     }
     return (
@@ -259,11 +262,11 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                         title="Project Incharge"
                         value={data?.designer}
                     />
-                    <CustomerInfoField
-                        title="Description"
-                     value={data?.description}
-                    />
                 </div>
+                    <div  className=' mt-7'>
+                      <span>Description</span>
+                      <p className=' text-wrap text-gray-700 dark:text-gray-200 font-semibold'>{data?.description}</p>
+                    </div>
             </div>
           
         </Card>

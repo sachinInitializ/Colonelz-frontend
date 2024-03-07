@@ -23,9 +23,10 @@ import { HiOutlineEye, HiOutlineUserAdd, HiOutlineUserGroup, HiOutlineUsers } fr
 import { useNavigate } from 'react-router-dom'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import classNames from 'classnames'
-import {  Select } from '@/components/ui'
+import {  Dropdown, Select } from '@/components/ui'
 import { StatisticCard } from './CustomerStatistic'
 import { BiSolidBellRing } from 'react-icons/bi'
+import useResponsive from '@/utils/hooks/useResponsive'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -96,11 +97,12 @@ const pageSizeOption = [
     { value: 50, label: '50 / page' },
 ]
 const totalData=userDetailData.projects.length
-
 const Filtering = () => {
+    const { larger } = useResponsive()
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [selectedStatus] = useState<string>('');
     const [globalFilter, setGlobalFilter] = useState('')
+    const navigate=useNavigate()
     const ActionColumn = ({ row }: { row: Project }) => {
         const navigate = useNavigate()
         const { textTheme } = useThemeClass()
@@ -171,7 +173,14 @@ const Filtering = () => {
                 accessorKey: 'client_name',
                 cell: (props) => {
                     const row = props.row.original;
-                    return <span>{row.client[0].client_name}</span>;
+                    return <div className=' cursor-pointer text-nowrap'>  <Dropdown placement="top-center" renderTitle={<span>{row.client[0].client_name}</span>} className=' cursor-pointer' style={{width:'auto'}}>
+                        <div className='px-2'>
+                        <p>Client Name: {row.client[0].client_name}</p>
+                        <p>Client Email: {row.client[0].client_email}</p>
+                        <p>Client Contact: {row.client[0].client_contact}</p>
+                        </div>
+                </Dropdown>
+                </div>;
                 },
                
             },

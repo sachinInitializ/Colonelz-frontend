@@ -8,14 +8,14 @@ const appsRoute: Routes = [
         key: 'appsCrm.dashboard',
         path: `${APP_PREFIX_PATH}/crm/dashboard`,
         component: lazy(() => import('@/views/crm/CrmDashboard')),
-        authority: [ADMIN, USER],
+        authority: [],
       
     },
     {
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager`,
         component: lazy(() => import('@/views/crm/FileManager')),
-        authority: [ADMIN, USER],
+        authority: [],
         meta: {
             header: 'File Manager',
             headerContainer: true,

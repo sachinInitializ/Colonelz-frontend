@@ -13,6 +13,8 @@ import type { TableQueries } from '@/@types/common'
 
 export type Client={
     client_name:string
+    client_email:string
+    client_contact:string
 }
 export type Project = {
     id: string;
