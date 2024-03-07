@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FileItem, fetchProjectData } from '../data';
 import { Button, Checkbox, Dialog, Notification, Segment, toast } from '@/components/ui';
 import { StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn } from 'react-icons/ci';
+import { getTemplateData } from '../data';
+import {  FileItem } from '../type';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
@@ -14,8 +15,10 @@ const Index = () => {
   const [body, setBody] = useState('');
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const leadId = queryParams.get('project_id');
-  const folderName = queryParams.get('folder_name'); // Assuming folder_name is in the query params
+  const folderName = queryParams.get('folder');
+  const type = queryParams.get('type');
+  const subfolder = queryParams.get('subfolder');
+  
   const navigate=useNavigate()
 
   const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,22 +42,35 @@ const Index = () => {
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
-        const leadData = await fetchProjectData(leadId);
-        const folderdata=leadData[0].files
-        // Assuming leadData is an array and contains the necessary data structure
-        const selectedFolder = folderdata.find((folder) => folder.folder_name === folderName);
-
-        if (selectedFolder) {
-          setLeadData(selectedFolder.files);
+        const templateData = await getTemplateData();
+        console.log(templateData);
+  
+        // Filter folders based on query parameters
+        const filteredFolders = templateData.filter((folder) => {
+          return (
+            folder.files[0].folder_name === type &&
+            folder.files[0].sub_folder_name_first === folderName &&
+            folder.files[0].sub_folder_name_second === subfolder
+          );
+        });
+  console.log(filteredFolders);
+  
+        if (filteredFolders.length > 0) {
+          setLeadData(filteredFolders[0].files[0].files);
+        } else {
+          console.warn('No matching folder found.');
+          // Handle case where no matching folder is found based on query parameters
         }
+  
+        console.log(leadData);
+        
       } catch (error) {
         console.error('Error fetching lead data', error);
       }
     };
-
+  
     fetchDataAndLog();
-  }, [leadId, folderName]);
-  console.log(leadData);
+  }, [type, folderName, subfolder]);
 
   const handleFileSelect = (fileId: string) => {
     const updatedSelectedFiles = selectedFiles.includes(fileId)
@@ -71,9 +87,8 @@ const Index = () => {
     }
   
     const postData = {
+        type:'template',
       file_id: selectedFiles,
-      lead_id: '',
-      project_id: leadId,
       email: selectedEmails,
       subject: subject,
       body: body,
@@ -139,7 +154,7 @@ const Index = () => {
       >Share</Button>
       </div>
       {leadData && leadData.length > 0 ? (
-        <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2 gap-4'>
+        <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2 md:grid-cols-3 gap-4'>
           {leadData.map((file) => {
           if (!file || typeof file.fileName !== 'string') {
             return null; 
