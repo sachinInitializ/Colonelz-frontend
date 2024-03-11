@@ -139,7 +139,7 @@ const Index = () => {
       >Share</Button>
       </div>
       {leadData && leadData.length > 0 ? (
-        <Segment selectionType="multiple" className='grid grid-cols-1 xl:grid-cols-4 sm:grid-cols-2 gap-4'>
+        <div className='grid grid-cols-2 xl:grid-cols-6 sm:grid-cols-4 gap-4'>
           {leadData.map((file) => {
           if (!file || typeof file.fileName !== 'string') {
             return null; 
@@ -149,12 +149,11 @@ const Index = () => {
   
           return (
             <a href={file.fileUrl} target='_blank' rel='noreferrer' key={file.fileId}>
-              <Segment.Item
+              <div
                 key={file.fileId}
-                value={file.fileId}
                 className='min-h-[200px] max-h-[250px] flex justify-between'
               >
-                <Checkbox
+                <Checkbox 
                   checked={selectedFiles.includes(file.fileId)}
                   onChange={() => handleFileSelect(file.fileId)}
                 />
@@ -164,15 +163,17 @@ const Index = () => {
                   ) : (
                     <span  ><CiFileOn className=' text-8xl'/></span>
                   )}
-                  <p className=' text-left text-wrap' style={{overflowWrap:"anywhere"}}>{file.fileName}</p>
+                  <p className=' capitalize text-wrap overflow-hidden overflow-ellipsis whitespace-nowrap' style={{overflowWrap:"anywhere"}}>
+                  {file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName}
+                    </p>
                 </div>
-              </Segment.Item>
+              </div>
             </a>
           );
         })}
-      </Segment>
+      </div>
          ) : (
-          <p>Add files</p>
+          <p>No files</p>
         )}
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"

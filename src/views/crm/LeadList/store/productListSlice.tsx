@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {
     apiGetSalesProducts,
-    apiDeleteSalesProducts,
+    apiDeleteSalesProducts
 } from '@/services/SalesService'
 import type { TableQueries } from '@/@types/common'
+
+
 
 type Product = {
     lead_id: string
@@ -43,7 +45,9 @@ export const SLICE_NAME = 'salesProductList'
 
 export const getProducts = createAsyncThunk(
     SLICE_NAME + '/getProducts',
+    
     async (data: GetSalesProductsRequest) => {
+        console.log(data);
         const response = await apiGetSalesProducts<
             GetSalesProductsResponse,
             GetSalesProductsRequest

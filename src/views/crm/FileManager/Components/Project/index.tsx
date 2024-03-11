@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FolderItem, fetchProjectData } from './data';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Card, Dialog } from '@/components/ui';
+import { Button, Dialog } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import YourFormComponent from './ProjectForm';
 import { FaFolder } from 'react-icons/fa';
@@ -51,9 +51,9 @@ const Index = () => {
                   No folders available. Click the button above to add folders.
               </p>
           ) : (
-              <div className="grid xl:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-3">
+              <div className="grid xl:grid-cols-5 sm:grid-cols-4 grid-cols-2 gap-5">
                   {projectData.map((item) => (
-                      <Card
+                      <div
                           key={item.folder_name}
                           className=" cursor-pointer"
                           onClick={() =>
@@ -62,15 +62,15 @@ const Index = () => {
                               )
                           }
                       >
-                          <div className="flex ">
-                              <div className={` text-xl mr-3 text-yellow-500`}>
+                          <div className="flex flex-col justify-center items-center ">
+                              <div className={` text-2xl mr-3 text-yellow-500`}>
                                   <FaFolder />
                               </div>
-                              <p className=" capitalize text-wrap">
-                                  {item.folder_name}
-                              </p>
+                              <p className="capitalize text-wrap overflow-hidden overflow-ellipsis whitespace-nowrap" style={{maxWidth: '150px'}}>
+    {item.folder_name}
+</p>
                           </div>
-                      </Card>
+                      </div>
                   ))}
               </div>
           )}

@@ -18,13 +18,13 @@ interface SignInFormProps extends CommonProps {
 }
 
 type SignInFormSchema = {
-    userName: string
+    user_name: string
     password: string
     rememberMe: boolean
 }
 
 const validationSchema = Yup.object().shape({
-    userName: Yup.string().required('Please enter your user name'),
+    user_name: Yup.string().required('Please enter your user name'),
     password: Yup.string().required('Please enter your password'),
     rememberMe: Yup.bool(),
 })
@@ -34,7 +34,7 @@ const SignInForm = (props: SignInFormProps) => {
         disableSubmit = false,
         className,
         forgotPasswordUrl = '/forgot-password',
-        signUpUrl = '/sign-up',
+        // signUpUrl = '/sign-up',
     } = props
 
     const [message, setMessage] = useTimeOutMessage()
@@ -45,11 +45,12 @@ const SignInForm = (props: SignInFormProps) => {
         values: SignInFormSchema,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
-        const { userName, password } = values
+        const { user_name, password } = values
         setSubmitting(true)
 
-        const result = await signIn({ userName, password })
-
+        const result = await signIn({ user_name, password })
+        console.log('signinform', result);
+        
         if (result?.status === 'failed') {
             setMessage(result.message)
         }
@@ -66,8 +67,8 @@ const SignInForm = (props: SignInFormProps) => {
             )}
             <Formik
                 initialValues={{
-                    userName: 'admin',
-                    password: '123Qwe',
+                    user_name: '',
+                    password: '',
                     rememberMe: true,
                 }}
                 validationSchema={validationSchema}
@@ -85,15 +86,15 @@ const SignInForm = (props: SignInFormProps) => {
                             <FormItem
                                 label="User Name"
                                 invalid={
-                                    (errors.userName &&
-                                        touched.userName) as boolean
+                                    (errors.user_name &&
+                                        touched.user_name) as boolean
                                 }
-                                errorMessage={errors.userName}
+                                errorMessage={errors.user_name}
                             >
                                 <Field
                                     type="text"
                                     autoComplete="off"
-                                    name="userName"
+                                    name="user_name"
                                     placeholder="User Name"
                                     component={Input}
                                 />
@@ -133,10 +134,7 @@ const SignInForm = (props: SignInFormProps) => {
                             >
                                 {isSubmitting ? 'Signing in...' : 'Sign In'}
                             </Button>
-                            <div className="mt-4 text-center">
-                                <span>{`Don't have an account yet?`} </span>
-                                <ActionLink to={signUpUrl}>Sign up</ActionLink>
-                            </div>
+                           
                         </FormContainer>
                     </Form>
                 )}

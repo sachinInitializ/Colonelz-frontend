@@ -4,6 +4,8 @@ import { FaFolder } from 'react-icons/fa'
 
 const index = () => {
   return (
+    <div>
+      <h3 className='mb-4'>Folder</h3>
     <div className='grid grid-cols-3 gap-4'>
      <Card>
       <div className='flex justify-between text-lg'>
@@ -21,6 +23,7 @@ const index = () => {
      <p> Design and Execution</p>
       </div></Card>
     
+    </div>
     </div>
   )
 }

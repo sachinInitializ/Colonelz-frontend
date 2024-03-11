@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import {  getTemplateData } from '../../../data';
-import {  TemplateDataItem } from '../../../type';
+import {  getTemplateData } from '../../data';
+import {  TemplateDataItem } from '../../type';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Card, Dialog } from '@/components/ui';
+import { Button, Dialog } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import { FaFolder } from 'react-icons/fa';
 import { StickyFooter } from '@/components/shared';
-import YourFormComponent from '../../TemplateForm';
-import Footer from '@/views/crm/FileManager/Footer';
+import YourFormComponent from '../TemplateForm';
 
 const Index = () => {
   const [templateData, setTemplateData] = useState<TemplateDataItem[]>([]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const folderName = queryParams.get('folder');
-  const type='commercial'
+  const type='miscellaneous'
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
@@ -53,7 +52,7 @@ const Index = () => {
           </div>
           {templateData.length>0 ? (
               <p>
-                  <div className="grid xl:grid-cols-6 sm:grid-cols-3 grid-cols-2 gap-3">
+                  <div className="grid xl:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-3">
                   {templateData.filter(item => item.files[0].folder_name ===type && item.files[0].sub_folder_name_first === folderName).map((item) => (
                       <div
                           key={item.files[0].folder_id}
@@ -77,13 +76,29 @@ const Index = () => {
           ) : (
              <p>No folders available. Click the button above to add folders.</p>
           )}
-         <Footer/>
+          <StickyFooter
+              className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
+              stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+          >
+              <div className="md:flex items-center">
+                  <Button
+                      size="sm"
+                      className="ltr:mr-3 rtl:ml-3"
+                      type="button"
+                      onClick={() => {
+                          navigate(-1)
+                      }}
+                  >
+                      Back
+                  </Button>
+              </div>
+          </StickyFooter>
           <Dialog
               isOpen={dialogIsOpen}
               onClose={onDialogClose}
               onRequestClose={onDialogClose}
           >
-              <YourFormComponent/>
+             <YourFormComponent/> 
           </Dialog>
       </div>
   )

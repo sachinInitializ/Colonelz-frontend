@@ -48,9 +48,9 @@ const Index = () => {
                   Upload
               </Button>
           </div>
-          <div className="grid xl:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-3">
+          <div className="grid xl:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-3">
               {leadData.map((item) => (
-                  <Card
+                  <div
                       key={item.folder_name}
                       className=" cursor-pointer"
                       onClick={() =>
@@ -59,15 +59,15 @@ const Index = () => {
                           )
                       }
                   >
-                      <div className="flex ">
-                          <div className={` text-xl mr-3 text-yellow-500`}>
-                              <FaFolder />
+                    <div className="flex flex-col justify-center items-center ">
+                              <div className={` text-2xl mr-3 text-yellow-500`}>
+                                  <FaFolder />
+                              </div>
+                              <p className="capitalize text-wrap overflow-hidden overflow-ellipsis whitespace-nowrap" style={{maxWidth: '150px'}}>
+    {item.folder_name}
+</p>
                           </div>
-                          <p className=" capitalize text-wrap">
-                              {item.folder_name}
-                          </p>
-                      </div>
-                  </Card>
+                  </div>
               ))}
           </div>
               <StickyFooter

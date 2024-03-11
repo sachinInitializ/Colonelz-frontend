@@ -25,26 +25,20 @@ function useAuth() {
 
     const signIn = async (
         values: SignInCredential
-    ): Promise<
-        | {
-              status: Status
-              message: string
-          }
-        | undefined
-    > => {
+    ) => {
         try {
-            const resp = await apiSignIn(values)
+            const resp =await apiSignIn(values)
+            console.log(resp);
             if (resp.data) {
                 const { token } = resp.data
+                console.log('token',resp.data.role);
                 dispatch(signInSuccess(token))
-                if (resp.data.user) {
+                if (resp.data) {
                     dispatch(
                         setUser(
-                            resp.data.user || {
-                                avatar: '',
-                                userName: 'Anonymous',
-                                authority: ['USER'],
-                                email: '',
+                            {
+                                authority: [resp.data.role],
+                                user_name: '',
                             }
                         )
                     )
@@ -70,30 +64,7 @@ function useAuth() {
     const signUp = async (values: SignUpCredential) => {
         try {
             const resp = await apiSignUp(values)
-            if (resp.data) {
-                const { token } = resp.data
-                dispatch(signInSuccess(token))
-                if (resp.data.user) {
-                    dispatch(
-                        setUser(
-                            resp.data.user || {
-                                avatar: '',
-                                userName: 'Anonymous',
-                                authority: ['USER'],
-                                email: '',
-                            }
-                        )
-                    )
-                }
-                const redirectUrl = query.get(REDIRECT_URL_KEY)
-                navigate(
-                    redirectUrl ? redirectUrl : appConfig.authenticatedEntryPath
-                )
-                return {
-                    status: 'success',
-                    message: '',
-                }
-            }
+           console.log('signup',resp);
             // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         } catch (errors: any) {
             return {
@@ -109,7 +80,7 @@ function useAuth() {
             setUser({
                 avatar: '',
                 userName: '',
-                email: '',
+                user_name: '',
                 authority: [],
             })
         )

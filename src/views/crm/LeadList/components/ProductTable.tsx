@@ -1,9 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import Avatar from '@/components/ui/Avatar'
-import Badge from '@/components/ui/Badge'
+import { useEffect, useMemo, useRef } from 'react'
 import DataTable from '@/components/shared/DataTable'
-import { HiOutlineEye, HiOutlinePencil, HiOutlineTrash, HiOutlineViewGrid, HiOutlineViewList } from 'react-icons/hi'
-import { FiPackage } from 'react-icons/fi'
+import { HiOutlineEye } from 'react-icons/hi'
 import {
     getProducts,
     setTableData,
@@ -14,7 +11,7 @@ import {
 } from '../store'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import ProductDeleteConfirmation from './ProductDeleteConfirmation'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import cloneDeep from 'lodash/cloneDeep'
 import type {
     DataTableResetHandle,
@@ -23,30 +20,7 @@ import type {
 } from '@/components/shared/DataTable'
 
 
-const inventoryStatusColor: Record<
-    string,
-    {
-        label: string
-        dotClass: string
-        textClass: string
-    }
-> = {
-   "Interested" : {
-        label: 'Interested',
-        dotClass: 'bg-emerald-500',
-        textClass: 'text-emerald-500',
-    },
-    "followUp": {
-        label: 'Follow Up',
-        dotClass: 'bg-amber-500',
-        textClass: 'text-amber-500',
-    },
-    "cancel": {
-        label: 'Not Interested',
-        dotClass: 'bg-red-500',
-        textClass: 'text-red-500',
-    },
-}
+
 
 const ActionColumn = ({ row }: { row: Product }) => {
     const dispatch = useAppDispatch()

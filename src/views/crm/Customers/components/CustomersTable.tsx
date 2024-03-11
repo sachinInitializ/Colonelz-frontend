@@ -26,7 +26,6 @@ import classNames from 'classnames'
 import {  Dropdown, Select } from '@/components/ui'
 import { StatisticCard } from './CustomerStatistic'
 import { BiSolidBellRing } from 'react-icons/bi'
-import useResponsive from '@/utils/hooks/useResponsive'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -98,7 +97,6 @@ const pageSizeOption = [
 ]
 const totalData=userDetailData.projects.length
 const Filtering = () => {
-    const { larger } = useResponsive()
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [selectedStatus] = useState<string>('');
     const [globalFilter, setGlobalFilter] = useState('')

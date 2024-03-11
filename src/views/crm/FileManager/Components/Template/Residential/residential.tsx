@@ -1,32 +1,35 @@
-import { Card } from '@/components/ui'
 import React from 'react'
 import { FaFolder } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import Footer from '../../../Footer'
 
 const Residential = () => {
     const navigate=useNavigate()
   return (
     <>
-    <div className='mb-5'>
+    <div>
+    <div className='mb-8'>
       <h3>Folder</h3>
     </div>
     <div className='grid grid-cols-3 gap-4'>
-     <Card onClick={()=>navigate('/app/crm/fileManager/project/templates/residential/subfolder?type=residential&folder=designing')}>
-      <div className='flex gap-4'>
+     <div className=' cursor-pointer' onClick={()=>navigate('/app/crm/fileManager/project/templates/residential/subfolder?type=residential&folder=designing')}>
+     <div className='flex flex-col justify-center items-center gap-1'>
       <div className={` text-xl mr-3 text-yellow-500`}>
                                   <FaFolder />
                               </div>
      <p> Design</p>
-      </div></Card>
+      </div></div>
   
-    <Card onClick={()=>navigate('/app/crm/fileManager/project/templates/residential/subfolder?type=residential&folder=executing')}>
-      <div className='flex gap-4'>
+    <div className=' cursor-pointer' onClick={()=>navigate('/app/crm/fileManager/project/templates/residential/subfolder?type=residential&folder=executing')}>
+    <div className='flex flex-col justify-center items-center gap-1'>
       <div className={` text-xl mr-3 text-yellow-500`}>
                                   <FaFolder />
                               </div>
      <p> Design and Execution</p>
-      </div></Card>
+      </div></div>
     
+    </div>
+    <Footer/>
     </div>
     </>
   )

@@ -41,7 +41,6 @@ import {
     projectFakeApi,
     crmFakeApi,
     salesFakeApi,
-    projectsFakeApi,
     accountFakeApi,
     cryptoFakeApi,
     authFakeApi,
