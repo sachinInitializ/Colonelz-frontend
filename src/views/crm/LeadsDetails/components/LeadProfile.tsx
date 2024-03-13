@@ -2,23 +2,13 @@ import React, {  useState } from 'react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Notification from '@/components/ui/Notification'
-import toast from '@/components/ui/toast'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'
-import dayjs from 'dayjs'
 import type { MouseEvent } from 'react'
-import { HiPencilAlt, HiOutlineTrash } from 'react-icons/hi'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
-    deleteCustomer,
-    openEditCustomerDetailDialog,
-    useAppDispatch,
     Customer,
 } from '../store'
-import { Dialog, Dropdown } from '@/components/ui'
-import * as Yup from 'yup'
-import { useFormik } from 'formik'
-import axios from 'axios'
-
+import { Dialog } from '@/components/ui'
 type CustomerInfoFieldProps = {
     title?: string
     value?: string
@@ -27,18 +17,7 @@ type CustomerInfoFieldProps = {
 type CustomerProfileProps = {
     data?: Partial<Customer>
 }
-type InitialData = {
-    id?: string
-    name?: string
-    email?: string
-    phone?: string
-    location?: string
-    status?: string
-    source?: string
-    content?: string
-    createBy?: string
-    lead_id?: string
-}
+
 
 const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
     return (
@@ -200,10 +179,11 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                                                     value={note.status}
                                                 />
                                             </div>
-                                            <CustomerInfoField
-                                                title="Description"
-                                                value={note.content}
-                                            />
+                                            <div>
+                                                <p>Description</p>
+                                                <p className="text-gray-700 dark:text-gray-200 font-semibold text-wrap">
+                                                    {note.content}</p>
+                                            </div>
                                         </Card>
                                     </div>
                                 ))}

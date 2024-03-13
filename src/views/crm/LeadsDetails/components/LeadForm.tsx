@@ -8,6 +8,7 @@ import { AiOutlineSave } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import type { MouseEvent } from 'react'
 import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker';
+import Cookies from 'js-cookie';
 
 interface FormData {
   lead_id: string | null;
@@ -78,10 +79,10 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
   const navigate = useNavigate();
 
   const statusOptions = [
-    { value: 'noresponse', label: 'No Response' },
-    { value: 'notInterested', label: 'Not Interested' },
-    { value: 'followUp', label: 'Follow Up' },
-    { value: 'interested', label: 'Interested' },
+    { value: 'No Response', label: 'No Response' },
+    { value: 'Not Interested', label: 'Not Interested' },
+    { value: 'Follow Up', label: 'Follow Up' },
+    { value: 'Interested', label: 'Interested' },
     // Add other status options as needed
   ];
 
@@ -113,7 +114,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
       [name]: '',
     });
   };
-
+const token=Cookies.get('token')
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -140,8 +141,11 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(formData),
+        
+
       });
 
       if (response.ok) {
@@ -261,7 +265,10 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
                 <CustomerInfoField title="Date" value={note.date}/>
                 <CustomerInfoField title="Status" value={note.status} />
               </div>
-              <CustomerInfoField title="Description" value={note.content} />
+              <div>
+                <p>Description</p>
+                <p className='text-gray-700 dark:text-gray-200 font-semibold text-wrap'>{note.content}</p>
+              </div>
             </Card>
             
           </div>

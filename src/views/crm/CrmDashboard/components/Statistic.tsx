@@ -14,34 +14,7 @@ import {GrInProgress} from 'react-icons/gr'
 import {MdOutlineVerified} from 'react-icons/md'
 import type { Statistic } from '../store'
 
-const GrowShrink = ({ value }: { value: number }) => {
-    return (
-        <span className="flex items-center rounded-full gap-1">
-            <span
-                className={classNames(
-                    'rounded-full p-1',
-                    value > 0 &&
-                        'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100',
-                    value < 0 &&
-                        'text-red-600 bg-red-100 dark:text-red-100 dark:bg-red-500/20'
-                )}
-            >
-                {value > 0 && <HiOutlineTrendingUp />}
-                {value < 0 && <HiOutlineTrendingDown />}
-            </span>
-            <span
-                className={classNames(
-                    'font-semibold',
-                    value > 0 && 'text-emerald-600',
-                    value < 0 && 'text-red-600'
-                )}
-            >
-                {value > 0 && <>+ </>}
-                {value}
-            </span>
-        </span>
-    )
-}
+
 
 const StatisticIcon = ({ type }: { type?: string }) => {
     switch (type) {
@@ -108,7 +81,7 @@ const Statistic = ({ data = [] }: { data?: Partial<Statistic>[] }) => {
             {data.map((card) => (
                 <StatisticCard key={card.key} data={card} />
             ))}
-        </div>
+        </div>  
     )
 }
 

@@ -32,7 +32,7 @@ function useAuth() {
             if (resp.data) {
                 const { token } = resp.data
                 console.log('token',resp.data.role);
-                dispatch(signInSuccess(token))
+                dispatch(signInSuccess({ token, userId: resp.data.userID }))
                 if (resp.data) {
                     dispatch(
                         setUser(
@@ -83,8 +83,9 @@ function useAuth() {
                 user_name: '',
                 authority: [],
             })
-        )
-        navigate(appConfig.unAuthenticatedEntryPath)
+            )
+            navigate(appConfig.unAuthenticatedEntryPath)
+            window.location.reload()
     }
 
     const signOut = async () => {

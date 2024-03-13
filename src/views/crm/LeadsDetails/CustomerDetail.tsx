@@ -6,6 +6,7 @@ import useQuery from '@/utils/hooks/useQuery'
 import MOM from './components/LeadForm'
 import { Card } from '@/components/ui'
 import CustomerProfile from './components/LeadProfile'
+import { apiGetCrmLeadsDetails } from '@/services/CrmService'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -30,9 +31,8 @@ const CustomerDetail = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getsingle/lead/?lead_id=${myParam}`);
-                const data = await response.json();
-                setDetails(data);
+                const response = await apiGetCrmLeadsDetails(myParam);
+                setDetails(response);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

@@ -7,11 +7,11 @@ import {
     issueData,
     projectDashboardData,
 } from './data/projectData'
-import { usersData, userDetailData } from './data/usersData'
+import { usersData } from './data/usersData'
 import { eventsData, mailData, crmDashboardData } from './data/crmData'
 import {
-    productsData,projectdata,
-    ordersData,
+   
+   
     orderDetailsData,
     salesDashboardData
 } from './data/salesData'
@@ -61,12 +61,8 @@ export function mockServer({ environment = 'test' }) {
                 scrumboardData,
                 issueData,
                 usersData,
-                userDetailData,
                 eventsData,
                 mailData,
-                productsData,
-                projectdata,
-                ordersData,
                 orderDetailsData,
                 settingData,
                 settingIntergrationData,

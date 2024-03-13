@@ -1,3 +1,4 @@
+import { apiGetCrmFileManagerProjects } from "@/services/CrmService";
 
 
 export interface FileItem {
@@ -35,10 +36,10 @@ export interface ApiResponse {
 
   
 
-  export const fetchProjectData = async (projectId: string | null): Promise<ProjectDataItem[]> => {
+  export const fetchProjectData = async (projectId: string  ): Promise<ProjectDataItem[]> => {
     try {
-      const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/project/getfile/?project_id=${projectId}`);
-      const data: ApiResponse = await response.json();
+      const response = await apiGetCrmFileManagerProjects(projectId);
+      const data=response
       return data.data;
     } catch (error) {
       console.error('Error fetching lead data', error);

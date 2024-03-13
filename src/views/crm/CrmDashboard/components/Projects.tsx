@@ -12,6 +12,8 @@ import { useEffect, useState } from 'react'
 import { HiOutlineEye } from 'react-icons/hi'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import { BiSolidBellRing } from 'react-icons/bi'
+import { apiGetCrmProjects } from '@/services/CrmService'
+
 
 
 type LeadsProps = {
@@ -66,12 +68,9 @@ const LeadStatus = ({ status }: { status: number }) => {
 const columnHelper = createColumnHelper<Customer>()
 
 
-const Project = ({ data = [], className }: LeadsProps) => {
-    const [datas, setData] = useState([]);
+const Project = ({  className }: LeadsProps) => {   
     const { textTheme } = useThemeClass()
-  
     const navigate = useNavigate()
-
  
 
     const onNavigate = () => {
@@ -88,24 +87,22 @@ const Project = ({ data = [], className }: LeadsProps) => {
        client:client[]
        timeline_date:string
       }
-      interface ApiResponse {
-        projects: Data[];
-      }
-      interface ApiResponse1 {
-        data: ApiResponse[];
-      }
-
     const [apiData, setApiData] = useState<Data[]>([]);
 
+
     useEffect(() => {
-      // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
-      fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project/?id=65c32e19e0f36d8e1f30955c')
-        .then((response) => response.json())
-        .then((data: ApiResponse1) => setApiData(data.data.projects.slice(0,5)))
-        .catch((error) => console.error('Error fetching data:', error));
+        const fetchData = async () => {
+            const response = await apiGetCrmProjects();
+            const data = response.data.projects;
+            console.log('Received response from server:', data);
+            setApiData(data);
+        };
+        fetchData();
     }, []);
+    
    
     
+console.log('apiData',apiData);
 
     return (
         <Card className={className}>
@@ -116,41 +113,42 @@ const Project = ({ data = [], className }: LeadsProps) => {
                 </Button>
             </div>
             <Table>
-        <THead>
-          <Tr>
-            <Th>Project Name</Th>
-            <Th>Project Status</Th>
-            <Th>Client Name</Th>
-            <Th>Project End Date</Th>
-            <Th>Project Type</Th>
-            <Th></Th>
-          </Tr>
-        </THead>
-        <TBody>
-          {apiData.map((item, index) => {
-              const currentDate = new Date();
-              const projectEndDate = new Date(item.timeline_date);
-              const dateDifference = Math.floor((projectEndDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24));
-            return(
-            <Tr key={index}>
-            <Td className={`capitalize ${dateDifference <= 1 ? 'text-red-500' : ''} flex gap-2 items-center cursor-pointer`} onClick={()=>navigate(`/app/crm/project-details?project_id=${item.project_id}&client_name=${item.client[0].client_name}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}>
-              {item.project_name} {dateDifference <= 1 && <BiSolidBellRing />}
-            </Td>
-              <Td className=' capitalize'>{item.project_status}</Td>
-              <Td className="capitalize">{item.client[0].client_name}</Td>
-              <Td>{dayjs(item.timeline_date).format('DD-MM-YYYY')}</Td>
-              <Td  >
-                <span className={
-                  item.project_type === 'commercial' || item.project_type==='Commercial'
-                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded px-2 py-1 capitalize font-semibold text-xs'
-                    : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100  border-0 rounded capitalize font-semibold text-xs px-2 py-1'
-                }>{item.project_type}</span>
-              </Td>
-              <Td className={`cursor-pointer p-2 hover:${textTheme} text-lg`}><HiOutlineEye onClick={()=>navigate(`/app/crm/project-details?project_id=${item.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}/></Td>
-            </Tr>
-          )})}
-        </TBody>
-      </Table>
+                <THead>
+                    <Tr>
+                        <Th>Project Name</Th>
+                        <Th>Project Status</Th>
+                        <Th>Client Name</Th>
+                        <Th>Project End Date</Th>
+                        <Th>Project Type</Th>
+                        <Th></Th>
+                    </Tr>
+                </THead>
+                <TBody>
+                    {apiData.slice(0, 5).map((item, index) => {
+                        const currentDate = new Date();
+                        const projectEndDate = new Date(item.timeline_date);
+                        const dateDifference = Math.floor((projectEndDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24));
+                        return (
+                            <Tr key={index}>
+                                <Td className={`capitalize ${dateDifference <= 1 ? 'text-red-500' : ''} flex gap-2 items-center cursor-pointer`} onClick={() => navigate(`/app/crm/project-details?project_id=${item.project_id}&client_name=${item.client[0].client_name}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}>
+                                    {item.project_name} {dateDifference <= 1 && <BiSolidBellRing />}
+                                </Td>
+                                <Td className=' capitalize'>{item.project_status}</Td>
+                                <Td className="capitalize">{item.client[0].client_name}</Td>
+                                <Td>{dayjs(item.timeline_date).format('DD-MM-YYYY')}</Td>
+                                <Td  >
+                                    <span className={
+                                        item.project_type === 'commercial' || item.project_type === 'Commercial'
+                                            ? 'bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded px-2 py-1 capitalize font-semibold text-xs'
+                                            : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100  border-0 rounded capitalize font-semibold text-xs px-2 py-1'
+                                    }>{item.project_type}</span>
+                                </Td>
+                                <Td className={`cursor-pointer p-2 hover:${textTheme} text-lg`}><HiOutlineEye onClick={() => navigate(`/app/crm/project-details?project_id=${item.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}/></Td>
+                            </Tr>
+                        )
+                    })}
+                </TBody>
+            </Table>
         </Card>
     )
 }

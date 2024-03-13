@@ -1,36 +1,168 @@
+import appConfig from '@/configs/app.config';
 import ApiService from './ApiService'
+import Cookies from 'js-cookie';
 
-export async function apiGetCrmDashboardData<T>() {
-    return ApiService.fetchData<T>({
-        url: '/crm/dashboard',
-        method: 'get',
-    })
+const { apiPrefix } = appConfig
+const token = Cookies.get('auth')
+const userId = Cookies.get('userId')
+console.log('token',token);
+
+
+
+
+export async function apiGetMomData() {
+    const response = await fetch(`${apiPrefix}admin/getall/project/mom?id=65c32e19e0f36d8e1f30955c`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
 }
 
+export async function apiGetCrmProjects() {
+    const response = await fetch(`${apiPrefix}admin/getall/project/?id=${userId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
 
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmSingleProjects(projectId:string) {
+    const response = await fetch(`${apiPrefix}admin/getsingle/project/?project_id=${projectId}&id=${userId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
 
-export async function apiGetCrmCalendar<T>() {
-    return ApiService.fetchData<T>({
-        url: '/crm/calendar',
-        method: 'get',
-    })
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmProjectsMom(projectId:string) {
+    const response = await fetch(`${apiPrefix}admin/getall/mom/?project_id=${projectId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
 }
 
-export async function apiGetCrmCustomers<T, U extends Record<string, unknown>>(
-    data: U
-) {
-    return ApiService.fetchData<T>({
-        url: '/crm/customers',
-        method: 'post',
-        data,
-    })
-}
+export async function apiGetCrmFileManager() {
+    const response = await fetch(`${apiPrefix}admin/getfile/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
 
-export async function apiGetCrmCustomersStatistic<T>() {
-    return ApiService.fetchData<T>({
-        url: '/crm/customers-statistic',
-        method: 'get',
-    })
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmFileManagerProjects(projectId:string) {
+    const response = await fetch(`${apiPrefix}admin/project/getfile/?project_id=${projectId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmFileManagerLeads(leadId:string) {
+    const response = await fetch(`${apiPrefix}admin/lead/getfile/?lead_id=${leadId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmLeads() {
+    const response = await fetch(`${apiPrefix}admin/getall/lead/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmLeadsDetails(leadId:string | null) {
+    const response = await fetch(`${apiPrefix}admin/getsingle/lead/?lead_id=${leadId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
 }
 
 export async function apPutCrmCustomer<T, U extends Record<string, unknown>>(

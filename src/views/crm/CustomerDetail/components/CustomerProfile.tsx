@@ -6,6 +6,7 @@ import {
     Customer,
 } from '../store'
 import { DatePicker, Dialog, FormItem, Input, Select } from '@/components/ui'
+import Cookies from 'js-cookie'
 
 
 type CustomerInfoFieldProps = {
@@ -100,13 +101,14 @@ interface ProjectUpdateData {
     }
   };
   
-  
+  const token=Cookies.get('auth')
   const handleUpdate = async () => {
     try {
       const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/update/project/', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
         },
         body: JSON.stringify({
          
@@ -117,7 +119,7 @@ interface ProjectUpdateData {
       const data = await response.json();
       if (data.status) {
         alert("Success")
-        window.location.reload()
+        // window.location.reload()
       } else {
         alert('Error updating project status');
       }

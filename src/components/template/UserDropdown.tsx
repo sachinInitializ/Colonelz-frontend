@@ -17,20 +17,11 @@ type DropdownList = {
 
 const dropdownItemList: DropdownList[] = [
     {
-        label: 'Profile',
-        path: '/app/account/settings/profile',
+        label: 'Register',
+        path: '/app/crm/register',
         icon: <HiOutlineUser />,
     },
-    {
-        label: 'Account Setting',
-        path: '/app/account/settings/profile',
-        icon: <HiOutlineCog />,
-    },
-    {
-        label: 'Activity Log',
-        path: '/app/account/activity-log',
-        icon: <FiActivity />,
-    },
+    
 ]
 
 const _UserDropdown = ({ className }: CommonProps) => {

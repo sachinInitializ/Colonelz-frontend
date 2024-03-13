@@ -1,5 +1,5 @@
+import axios from 'axios';
 import ApiService from './ApiService'
-import axios from 'axios'
 import type {
     SignInCredential,
     SignUpCredential,
@@ -8,9 +8,12 @@ import type {
     SignInResponse,
     SignUpResponse,
 } from '@/@types/auth'
+import Cookies from 'js-cookie';
+
+const token = Cookies.get('auth');
+ // Replace 'token' with the name of your cookie
 
 export async function apiSignIn(data: SignInCredential): Promise<SignInResponse> {
-    console.log('Sending request to server...');
     try {
         const response = await fetch('https://col-back.onrender.com/v1/api/users/login', {
             method: 'POST',
@@ -34,18 +37,52 @@ export async function apiSignIn(data: SignInCredential): Promise<SignInResponse>
 }
 
 export async function apiSignUp(data: SignUpCredential) {
-    return ApiService.fetchData<SignUpResponse>({
-        url: 'https://col-back.onrender.com/v1/api/admin/create/user',
-        method: 'post',
-        data,
-    })
+    try {
+        const response = await fetch('https://col-back.onrender.com/v1/api/admin/create/user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        console.log('Received response from server:', responseData);
+        return responseData;
+    } catch (error) {
+        console.error('Error sending request to server:', error);
+        throw error;
+    }
 }
 
 export async function apiSignOut() {
-    return ApiService.fetchData({
-        url: '/sign-out',
-        method: 'post',
-    })
+    try {
+        const token = Cookies.get('auth');
+        const userId = Cookies.get('userId'); // Get the userId from cookies 
+        // Get the token from cookies
+        const response = await fetch('https://col-back.onrender.com/v1/api/users/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Add the token to the Authorization header
+            },
+            body: JSON.stringify({ userId,token })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const responseData = await response.json();
+        console.log('Received response from server:', responseData);
+        return responseData;
+    } catch (error) {
+        console.error('Error sending request to server:', error);
+        throw error;
+    }
 }
 
 export async function apiForgotPassword(data: ForgotPassword) {

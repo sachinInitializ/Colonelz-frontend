@@ -13,6 +13,7 @@ import type { ColumnDef, Row, ColumnSort } from '@tanstack/react-table'
 import type { ReactElement } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui'
+import { apiGetCrmProjectsMom } from '@/services/CrmService'
 
 type ReactTableProps<T> = {
     renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
@@ -115,10 +116,8 @@ function ReactTable({
         if (projectId) {
             const fetchData = async () => {
                 try {
-                    const response = await fetch(
-                        `https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${projectId}`,
-                    )
-                    const data = await response.json()
+                    const response = await apiGetCrmProjectsMom(projectId)
+                    const data = response
                     setLeadData(data.data.mom_data)
                     setClient(data.data)
                 } catch (error) {

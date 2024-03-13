@@ -2,106 +2,43 @@ import React, { useState, useEffect } from 'react';
 import { HiOutlineBell, HiOutlineMailOpen } from 'react-icons/hi';
 import Dropdown from '@/components/ui/Dropdown';
 import useResponsive from '@/utils/hooks/useResponsive';
-import {  Badge, Button, Tooltip } from '../ui';
-
+import { Badge, Button, Tooltip } from '../ui';
+import { apiGetNotification, apiPutNotificationUpdate } from '@/services/CommonService';
 
 interface Notification {
   _id: string;
   status: boolean;
-  message: string; // Adjust this based on your actual data structure
-  // Add other properties if needed
+  message: string;
 }
-interface DropdownProps {
-  title: React.ReactNode;
-}
-
 const Notification1 = () => {
   const [notificationData, setNotificationData] = useState<Notification[]>([]);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/get/notification'); // Replace with your API endpoint
-      const data = await response.json();
-      if (data.status) {
-        setNotificationData(data.data);
-      } else {
-        // Handle error if needed
-        console.error('Error fetching notification data');
-      }
-    } catch (error) {
-      // Handle error if needed
-      console.error('Error fetching notification data', error);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      const userDetailData = await apiGetNotification();
+      setNotificationData(userDetailData.data.NotificationData);
+    };
     fetchData();
-  }, []); // Fetch data when the component mounts
+  }, []);
 
   const { larger } = useResponsive();
 
-  const handleUpdate = async (notification:Notification) => {
-    try {
-      const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/update/notification`, {
-        method: 'PUT', // or 'PUT' depending on your API
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'One',
-          notification_id:notification._id
-        }),
-      });
-
-      const data = await response.json();
-      if (data.status) {
-        // Update the notification status locally to mark it as read
-        setNotificationData((prevData) =>
-          prevData.map((item) =>
-            item._id === notification._id ? { ...item, status: true } : item
-          )
-        );
-      } else {
-        // Handle error if needed
-        console.error('Error updating notification status');
-      }
-    } catch (error) {
-      // Handle error if needed
-      console.error('Error updating notification status', error);
-    }
+  const handleUpdate = async (notification: Notification,type:string) => {
+    await apiPutNotificationUpdate(notification._id,type);
+    if (type === 'All') {
+      setNotificationData((prevData) =>
+          prevData.map((item) => ({ ...item, status: true }))
+      );}
+    setNotificationData((prevData) =>
+      prevData.map((item) =>
+        item._id === notification._id ? { ...item, status: true } : item
+      )
+    );
   };
 
   const unreadNotifications = notificationData.filter(notification => !notification.status);
 
- const handleUpdateAll = async () => {
-    try {
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/update/notification', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'All',
-        }),
-      });
-
-      const data = await response.json();
-      if (data.status) {
-        // Update the status of all notifications locally to mark them as read
-        setNotificationData((prevData) =>
-          prevData.map((item) => ({ ...item, status: true }))
-        );
-        // Provide feedback to the user (you can customize this part)
-       
-      } else {
-        // Handle error if needed
-        console.error('Error updating all notifications status');
-      }
-    } catch (error) {
-      // Handle error if needed
-      console.error('Error updating all notifications status', error);
-    }
-  };
+  
 
   return (
     <div>
@@ -127,7 +64,7 @@ const Notification1 = () => {
                 shape="circle"
                 size="sm"
                 icon={<HiOutlineMailOpen className="text-xl" />}
-                onClick={handleUpdateAll}
+                onClick={()=>handleUpdate( notificationData[0],'All')}
               />
             </Tooltip>
           </div>
@@ -138,10 +75,9 @@ const Notification1 = () => {
               <div
                 key={notification._id}
                 className={`px-6 py-3 border-b border-gray-200 cursor-pointer ${notification.status ? 'read' : 'unread'}`}
-                onClick={() => handleUpdate(notification)}
+                onClick={() => handleUpdate(notification,'One')}
               >
-                {/* Customize the notification item based on your data structure */}
-                <p 
+                <p
                   style={{
                     color: notification.status ? 'gray' : 'black',
                     fontWeight: notification.status ? 'normal' : 'bold',

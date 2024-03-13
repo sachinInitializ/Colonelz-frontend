@@ -1,18 +1,15 @@
+import { apiGetCrmFileManager } from "@/services/CrmService";
 import { ApiResponse, LeadDataItem, ProjectDataItem, TemplateDataItem } from "./type";
 
 let cachedData: ApiResponse | null = null;
-
 export const fetchData = async (): Promise<ApiResponse> => {
   try {
     if (cachedData) {
       return cachedData;
     }
-
-    const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getfile/');
-    const data: ApiResponse = await response.json();
-    cachedData = data;
-
-    return data;
+    const response = await apiGetCrmFileManager();
+    cachedData = response;
+    return response;
   } catch (error) {
     console.error('Error fetching data', error);
     throw error;

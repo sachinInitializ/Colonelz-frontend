@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { apiGetCrmDashboardData } from '@/services/CrmService'
+
 
 export type Statistic = {
     key: string
@@ -48,7 +47,7 @@ export type DashboardData = {
     }
 }
 
-type CrmDashboardDataResponse = DashboardData
+
 
 export type CrmDashboardState = {
     loading: boolean
@@ -57,36 +56,10 @@ export type CrmDashboardState = {
 
 export const SLICE_NAME = 'crmDashboard'
 
-export const getCrmDashboardData = createAsyncThunk(
-    'crmDashboard/data/getCrmDashboardData',
-    async () => {
-        const response =
-            await apiGetCrmDashboardData<CrmDashboardDataResponse>()
-        return response.data
-    }
-)
-console.log(getCrmDashboardData());
 
 
-const initialState: CrmDashboardState = {
-    loading: true,
-    dashboardData: {},
-}
 
-const crmDashboardSlice = createSlice({
-    name: `${SLICE_NAME}/state`,
-    initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(getCrmDashboardData.fulfilled, (state, action) => {
-                state.dashboardData = action.payload
-                state.loading = false
-            })
-            .addCase(getCrmDashboardData.pending, (state) => {
-                state.loading = true
-            })
-    },
-})
 
-export default crmDashboardSlice.reducer
+
+
+

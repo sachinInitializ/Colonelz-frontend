@@ -2,6 +2,7 @@ import { Button, Card, Input } from '@/components/ui';
 import React, { useEffect, useState } from 'react';
 import { MomData, projectId } from './data';
 import { useLocation } from 'react-router-dom';
+import { apiGetCrmProjectsMom } from '@/services/CrmService';
 
 const App: React.FC = () => {
   const [momData, setMomData] = useState<MomData[]>([]);
@@ -39,11 +40,22 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    fetch(`https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${allQueryParams.project_id}`)
-      .then(response => response.json())
-      .then(data => setMomData(data.data.mom_data))
-      .catch(error => console.error('Error fetching data:', error));
+    const fetchData = async () => {
+      try {
+        const response = await apiGetCrmProjectsMom(allQueryParams.project_id);
+        setMomData(response.data.mom_data);
+        console.log('Received response from server:', );
+        
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  
   }, [allQueryParams.project_id]);
+  console.log(momData);
+  
 
   const filteredMomData = momData.filter((item) => {
     const searchIn = (str: string | undefined): boolean => {

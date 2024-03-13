@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import DataTable from '@/components/shared/DataTable'
 import { HiOutlineEye } from 'react-icons/hi'
 import {
@@ -18,6 +18,8 @@ import type {
     OnSortParam,
     ColumnDef,
 } from '@/components/shared/DataTable'
+import { use } from 'i18next'
+import { apiGetCrmLeads } from '@/services/CrmService'
 
 
 
@@ -77,9 +79,16 @@ const ProductTable = () => {
         (state) => state.salesProductList.data.loading
     )
 
-    var data = useAppSelector(
-        (state) => state.salesProductList.data.productList
-    )
+   const [data,setData] = useState([])
+   useEffect(() => {
+    const fetchData=async()=>{
+        const response = await apiGetCrmLeads();
+        const data = response.data;
+        console.log('Received response from server:', data);
+        setData(data);
+    
+   }
+fetchData()},[])
 
     useEffect(() => {
         fetchData()

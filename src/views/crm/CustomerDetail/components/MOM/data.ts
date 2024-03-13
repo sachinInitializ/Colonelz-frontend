@@ -1,3 +1,5 @@
+import { apiGetCrmProjectsMom } from "@/services/CrmService";
+
 export type Attendees = {
   client_name: string[] | null;
   organisor: string[];
@@ -48,11 +50,11 @@ const queryParams = parseQueryString(queryString);
 export const projectId = queryParams.project_id;
 console.log(projectId);
 
-const response1 = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getall/mom/?project_id=${projectId}`);
-const jsonData1= await response1.json();
+const response1 = await apiGetCrmProjectsMom(projectId);
+
 console.log(projectId);
 
-export const ordersData =jsonData1.data
+export const ordersData =response1.data
 console.log(ordersData);
 
-export const momApiResponse: ApiResponse  =jsonData1.data
+export const momApiResponse: ApiResponse  =response1.data

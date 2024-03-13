@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {
-    apiGetSalesProducts,
+    
     apiDeleteSalesProducts
 } from '@/services/SalesService'
 import type { TableQueries } from '@/@types/common'
@@ -48,11 +48,8 @@ export const getProducts = createAsyncThunk(
     
     async (data: GetSalesProductsRequest) => {
         console.log(data);
-        const response = await apiGetSalesProducts<
-            GetSalesProductsResponse,
-            GetSalesProductsRequest
-        >(data)
-        return response.data
+       
+        return data
     }
 )
 

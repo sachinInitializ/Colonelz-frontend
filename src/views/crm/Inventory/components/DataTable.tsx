@@ -21,8 +21,8 @@ import { HiOutlineEye } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import { Button, Select } from '@/components/ui'
-import { ordersData } from '@/mock/data/salesData'
 import { ProjectMomItem } from '../store'
+import { apiGetMomData } from '@/services/CrmService'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -92,6 +92,8 @@ const pageSizeOption = [
     { value: 40, label: '40 / page' },
     { value: 50, label: '50 / page' },
 ]
+const userDetailData = await apiGetMomData();
+const ordersData=userDetailData.data.MomData
 const totalData=ordersData.length
 
 const Filtering = () => {

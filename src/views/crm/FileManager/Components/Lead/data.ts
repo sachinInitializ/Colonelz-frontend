@@ -1,3 +1,5 @@
+import { apiGetCrmFileManagerLeads } from "@/services/CrmService";
+
 export interface FileItem {
     fileUrl: string;
     fileId: string;
@@ -32,9 +34,9 @@ export interface FileItem {
   }
   
 
-  export const fetchLeadData = async (leadId: string | null): Promise<LeadDataItem[]> => {
+  export const fetchLeadData = async (leadId: string ): Promise<LeadDataItem[]> => {
     try {
-      const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/lead/getfile/?lead_id=${leadId}`);
+      const response = await apiGetCrmFileManagerLeads(leadId);
       const data: ApiResponse = await response.json();
       return data.data;
     } catch (error) {

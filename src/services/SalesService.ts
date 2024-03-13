@@ -9,15 +9,15 @@ export async function apiGetSalesDashboardData<
     })
 }
 
-export async function apiGetSalesProducts<T, U extends Record<string, unknown>>(
-    data: U
-) {
-    return ApiService.fetchData<T>({
-        url: '/sales/products',
-        method: 'post',
-        data,
-    })
-}
+// export async function apiGetSalesProducts<T, U extends Record<string, unknown>>(
+//     data: U
+// ) {
+//     return ApiService.fetchData<T>({
+//         url: '/sales/products',
+//         method: 'post',
+//         data,
+//     })
+// }
 
 export async function apiDeleteSalesProducts<
     T,
@@ -30,15 +30,15 @@ export async function apiDeleteSalesProducts<
     })
 }
 
-export async function apiGetSalesProduct<T, U extends Record<string, unknown>>(
-    params: U
-) {
-    return ApiService.fetchData<T>({
-        url: '/sales/product',
-        method: 'get',
-        params,
-    })
-}
+// export async function apiGetSalesProduct<T, U extends Record<string, unknown>>(
+//     params: U
+// ) {
+//     return ApiService.fetchData<T>({
+//         url: '/sales/product',
+//         method: 'get',
+//         params,
+//     })
+// }
 
 export async function apiPutSalesProduct<T, U extends Record<string, unknown>>(
     data: U

@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {
-    apiGetCrmCustomers,
+   
     apPutCrmCustomer,
-    apiGetCrmCustomersStatistic,
+   
 } from '@/services/CrmService'
 import type { TableQueries } from '@/@types/common'
 
@@ -83,16 +83,7 @@ export const getCustomerStatistic = createAsyncThunk(
     }
 )
 
-export const getCustomers = createAsyncThunk(
-    'crmCustomers/data/getCustomers',
-    async (data: TableQueries & { filterData?: Filter }) => {
-        const response = await apiGetCrmCustomers<
-            GetCrmCustomersResponse,
-            TableQueries
-        >(data)
-        return response.data
-    }
-)
+
 
 export const putCustomer = createAsyncThunk(
     'crmCustomers/data/putCustomer',
@@ -151,24 +142,7 @@ const customersSlice = createSlice({
             state.drawerOpen = false
         },
     },
-    extraReducers: (builder) => {
-        builder
-            .addCase(getCustomers.fulfilled, (state, action) => {
-                state.customerList = action.payload.data
-                state.tableData.total = action.payload.total
-                state.loading = false
-            })
-            .addCase(getCustomers.pending, (state) => {
-                state.loading = true
-            })
-            .addCase(getCustomerStatistic.fulfilled, (state, action) => {
-                state.statisticData = action.payload
-                state.statisticLoading = false
-            })
-            .addCase(getCustomerStatistic.pending, (state) => {
-                state.statisticLoading = true
-            })
-    },
+   
 })
 
 export const {

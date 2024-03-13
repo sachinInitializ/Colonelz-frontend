@@ -12,6 +12,7 @@ import TabNav from '@/components/ui/Tabs/TabNav'
 import TabContent from '@/components/ui/Tabs/TabContent'
 import { useLocation } from 'react-router-dom'
 import AllMom from './components/MOM/AllMom'
+import { apiGetCrmSingleProjects } from '@/services/CrmService'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -58,8 +59,8 @@ const CustomerDetail = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getsingle/project/?project_id=${allQueryParams.project_id}&id=${allQueryParams.id}`);
-                const data = await response.json();
+                const response = await apiGetCrmSingleProjects(allQueryParams.project_id);
+                const data = response
                 setDetails(data.data[0]);
                 setmomdata(data.data[0].mom)
             } catch (error) {

@@ -4,6 +4,7 @@ import DatePicker from '@/components/ui/DatePicker/DatePicker'
 import { Button, FormItem, Input } from '@/components/ui'
 import { useNavigate } from 'react-router-dom'
 import { StickyFooter } from '@/components/shared'
+import Cookies from 'js-cookie'
 
 const options = [
     { value: 'Follow Up', label: 'Follow Up' },
@@ -100,6 +101,7 @@ const LeadForm: React.FC = () => {
         return Object.keys(newErrors).length === 0
     }
     const navigate = useNavigate()
+    const token = Cookies.get('auth')
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
@@ -117,6 +119,9 @@ const LeadForm: React.FC = () => {
                     'https://col-u3yp.onrender.com/v1/api/admin/create/lead/',
                     {
                         method: 'POST',
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
                         body: formDataToSend,
                     },
                 )
@@ -124,7 +129,7 @@ const LeadForm: React.FC = () => {
                 if (response.ok) {
                     alert('Success! Form submitted successfully.')
                     navigate('/app/leads')
-                    window.location.reload()
+                    // window.location.reload()2
                 } else {
                     alert('Lead creation failed')
                 }

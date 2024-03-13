@@ -1,3 +1,5 @@
+import { apiGetCrmProjects } from "@/services/CrmService"
+
 function getDate(dayString: string) {
     const today = new Date()
     const year = today.getFullYear().toString()
@@ -9,9 +11,10 @@ function getDate(dayString: string) {
 
     return dayString.replace('YEAR', year).replace('MONTH', month)
 }
-const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
-const jsonData = await response.json();
 
+// const response = await apiGetCrmProjects();
+// const data = response.data;
+// console.log('Received response from server:', data);
 
 
 export const crmDashboardData = {
@@ -20,19 +23,19 @@ export const crmDashboardData = {
         {
             key: 'inProgress',
             label: 'Execution',
-            value: jsonData.data.Execution_Phase,
+            // value: data.Execution_Phase,
             growShrink: 5.5,
         },
         {
             key: 'inReview',
             label: 'Design',
-            value: jsonData.data.Design_Phase,
+            // value: data.Design_Phase,
             growShrink: -0.7,
         },
         {
             key: 'completed',
             label: 'Completed',
-            value: jsonData.data.completed,
+            // value: data.completed,
             growShrink: 2.6,
         },
     ],
