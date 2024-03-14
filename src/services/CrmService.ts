@@ -165,6 +165,45 @@ export async function apiGetCrmLeadsDetails(leadId:string | null) {
     return data;
 }
 
+export async function apiGetCrmCreateLead(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/create/lead/`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        body: formData
+        
+    });
+
+    return response;
+}
+export async function apiGetCrmCreateLeadToProject(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/create/lead/project`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData),
+        
+    });
+
+    return response;
+}
+export async function apiGetCrmLeadsUpdates(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/update/lead/`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+           'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+        
+    });
+
+    return response;
+}
+
 export async function apPutCrmCustomer<T, U extends Record<string, unknown>>(
     data: U
 ) {

@@ -1,22 +1,36 @@
 import React, {  useState } from 'react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
-import Notification from '@/components/ui/Notification'
-import ConfirmDialog from '@/components/shared/ConfirmDialog'
 import type { MouseEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {
-    Customer,
-} from '../store'
 import { Dialog } from '@/components/ui'
+
 type CustomerInfoFieldProps = {
     title?: string
-    value?: string
+    value?: any
 }
 
 type CustomerProfileProps = {
     data?: Partial<Customer>
 }
+type Customer = {
+    _id: string
+    name: string
+    lead_id:string
+    email:string
+    phone:string
+    location:string
+    status:string
+    source:string
+    notes?: Note[];
+}
+interface Note {
+    _id: string;
+    content: string;
+    createdBy: string;
+    date: string;
+    status: string;
+  }
 
 
 const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
@@ -31,48 +45,11 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
 }
 
 
-interface CustomerProfilePropss {
-    data: {
-        // Define the structure of the data object here
-        _id: string
-        name: string
-        lead_id: string
-        email: string
-        phone: string
-        location: string
-        status: string
-        source: string
-        date: string
-        notes?: Note[] // Make notes optional
-        createdAt: string
-        __v: number
-        files: File[]
-        // Add other properties as needed
-    }
-}
-interface File {
-    date: string
-    files: Array<string>
-}
-interface Note {
-    _id: string
-    content: string
-    createdBy: string
-    date: string
-    status: string
-}
-
 const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
 
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false)
-    const [showErrorMessage, setShowErrorMessage] = useState(false)
-    // const urlParams = new URLSearchParams(window.location.search);
-    // let myParam = urlParams.get('id');
-    // console.log(typeof(myParam));
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
     const myParam = queryParams.get('id') || ''
-
     const [dialogIsOpen, setIsOpen] = useState(false)
 
     const onDialogClose = (e: MouseEvent) => {
@@ -86,9 +63,6 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
     }
 
     const navigate = useNavigate()
-
-
-    const Toggle = <Button>Files</Button>
 
     return (
         <div className=" flex flex-col gap-3">
@@ -126,29 +100,6 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                             title="Source"
                             value={data?.source}
                         />
-                        {/* <Dropdown renderTitle={Toggle}>
-                            {data?.files?.map((file) => {
-                                return (
-                                    <div key={file}>
-                                        {file.files.map((item) => {
-                                            return (
-                                                <div key={item}>
-                                                    <a
-                                                        href={item}
-                                                        target="_blank"
-                                                        rel='noreferrer'
-                                                    >
-                                                        <Dropdown.Item eventKey="a">
-                                                            File
-                                                        </Dropdown.Item>
-                                                    </a>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                )
-                            })}
-                        </Dropdown> */}
                         <Dialog
                             isOpen={dialogIsOpen}
                             width={1000}
@@ -202,21 +153,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                 </div>
             </Card>
 
-            {showSuccessMessage && (
-                <ConfirmDialog
-                    isOpen={showSuccessMessage}
-                    type="success"
-                    title="Success"
-                    onClose={() => setShowSuccessMessage(false)}
-                >
-                    <p>Data added successfully!</p>
-                </ConfirmDialog>
-            )}
-            {showErrorMessage && (
-                <Notification title={'Submission Error'} type="error">
-                    Error submitting data. Please try again.
-                </Notification>
-            )}
+          
         </div>
     )
 }

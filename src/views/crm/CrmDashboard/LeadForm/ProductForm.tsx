@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import Select from 'react-select'
 import DatePicker from '@/components/ui/DatePicker/DatePicker'
-import { Button, FormItem, Input } from '@/components/ui'
+import { Button, FormItem, Input, Notification, toast } from '@/components/ui'
 import { useNavigate } from 'react-router-dom'
 import { StickyFooter } from '@/components/shared'
 import Cookies from 'js-cookie'
+import { apiGetCrmCreateLead, apiGetCrmLeadsToProject } from '@/services/CrmService'
 
 const options = [
     { value: 'Follow Up', label: 'Follow Up' },
@@ -101,6 +102,15 @@ const LeadForm: React.FC = () => {
         return Object.keys(newErrors).length === 0
     }
     const navigate = useNavigate()
+
+    function closeAfter2000ms(type:string, message:string) {
+        toast.push(
+            <Notification closable type={type} duration={2000}>
+                {message}
+            </Notification>
+        )
+    }
+
     const token = Cookies.get('auth')
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -115,32 +125,22 @@ const LeadForm: React.FC = () => {
                 }
              
 
-                const response = await fetch(
-                    'https://col-u3yp.onrender.com/v1/api/admin/create/lead/',
-                    {
-                        method: 'POST',
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                        body: formDataToSend,
-                    },
-                )
-
+                const response = await apiGetCrmCreateLead(formDataToSend)
+                const errorMessage = await response.json()
                 if (response.ok) {
-                    alert('Success! Form submitted successfully.')
+                    closeAfter2000ms('success','Lead added successfully')
                     navigate('/app/leads')
-                    // window.location.reload()2
+                    window.location.reload()
                 } else {
-                    alert('Lead creation failed')
+                    closeAfter2000ms('danger',errorMessage.errorMessage)
                 }
             } catch (error) {
-                alert(`Error: ${error.message}`)
+              closeAfter2000ms('danger',`Error: ${error.message}`)
             }
-        } else {
-            alert(
-                'Form contains validation errors. Please check and submit again.',
-            )
         }
+        else {
+            closeAfter2000ms('warning','Please check all the required fields')
+        } 
     }
 
     return (
@@ -258,9 +258,7 @@ const LeadForm: React.FC = () => {
                         />
                     </FormItem>
                 </div>
-               
-                   
-                   
+                
                 <div>
                     <FormItem label="Description">
                         <Input
@@ -284,7 +282,6 @@ const LeadForm: React.FC = () => {
                         type="button"
                         onClick={() => {
                             navigate(-1)
-                            // window.location.reload()
                         }}
                     >
                         Discard

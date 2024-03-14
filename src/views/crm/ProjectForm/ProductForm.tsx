@@ -1,10 +1,11 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import ValueType from 'react-select';
-import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui';
+import { Button, FormContainer, FormItem, Input, Notification, Select, toast } from '@/components/ui';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns'
 import DatePicker from '@/components/ui/DatePicker/DatePicker';
 import { StickyFooter } from '@/components/shared';
+import { apiGetCrmCreateLeadToProject } from '@/services/CrmService';
 
 interface FormData {
   lead_id: string | null;
@@ -20,9 +21,9 @@ interface FormData {
   project_type: string;
   project_name: string;
   project_status:string;
-  timeline_date:Date;
+  timeline_date:Date | null;
   project_budget:string;
-  project_start_date:Date;
+  project_start_date:Date | null;
 }
 
 interface CustomerProfileProps {
@@ -74,9 +75,9 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     description: '',
     project_type: '',
     project_name: '',
-    project_status:'df',
-    project_start_date: new Date(),
-    timeline_date: new Date(),
+    project_status:'',
+    project_start_date: null,
+    timeline_date:null ,
     project_budget:'',
   };
 
@@ -127,6 +128,14 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     });
   };
 
+  function closeAfter2000ms(type:string, message:string) {
+    toast.push(
+        <Notification closable type={type} duration={2000}>
+            {message}
+        </Notification>
+    )
+}
+
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -149,9 +158,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     if (!formData.designer.trim()) {
       validationErrors.designer = 'Project Incharge is required';
     }
-    if (!formData.description.trim()) {
-      validationErrors.description = 'Description is required';
-    }
+    
     if (!formData.project_type.trim()) {
       validationErrors.project_type = 'Project Type is required';
     }
@@ -159,36 +166,47 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     if (!formData.project_name.trim()) {
       validationErrors.project_name = 'Project Name is required';
     }
+    if (!formData.project_budget.trim()) {
+      validationErrors.project_budget = 'Project Budget is required';
+    }
+    if (!formData.project_status.trim()) {
+      validationErrors.project_status = 'Project Status is required';
+    }
+    if (!formData.project_start_date) {
+      validationErrors.project_start_date = 'Project Start Date is required';
+    }
+    
+    // Add validation for timeline_date
+    if (!formData.timeline_date) {
+      validationErrors.timeline_date = 'Timeline Date is required';
+    }
+   
   
     if (Object.keys(validationErrors).length > 0) {
+      console.log(formData);
+      
+      closeAfter2000ms('warning', 'Please fill in the required fields');
       setErrors(validationErrors);
       return;
     }
 
     try {
       // Assuming you have an API endpoint for creating projects
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/create/lead/project', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await apiGetCrmCreateLeadToProject(formData);
 
       if (response.ok) {
-        // Project creation successful, show success alert
-        alert('Project creation successful');
+        closeAfter2000ms('success', 'Project created successfully');
         navigate(-1);
         window.location.reload()
       } else {
         const errorResponse = await response.json();
         const errorMessage = errorResponse.errorMessage || 'Unknown error';
-        alert(`Project creation failed: ${errorMessage}`);
+       closeAfter2000ms('danger', errorMessage);
       }
     } catch (error) {
       // Handle any other errors
       console.error('Error:', error);
-      alert('An error occurred');
+     closeAfter2000ms('danger', 'An error occurred');
     }
   };
 
@@ -266,43 +284,43 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
             </FormItem>
 
             <FormItem label="Project Start Date">
-                    <DatePicker
-                        size="sm"
-                        selected={
-                            formData.project_start_date
-                                ? new Date(formData.project_start_date)
-                                : null
-                        }
-                        dateFormat="MM/dd/yyyy"
-                        onChange={(date) =>
-                            handleDateChange(date, 'project_start_date')
-                        }
-                    />
-                    {errors.project_start_date && (
-                        <span className="text-red-500">
-                            {errors.project_start_date}
-                        </span>
-                    )}
-                </FormItem>
-                <FormItem label="Timeline Date">
-                    <DatePicker
-                        size="sm"
-                        selected={
-                            formData.timeline_date
-                                ? new Date(formData.timeline_date)
-                                : null
-                        }
-                        dateFormat="MM/dd/yyyy"
-                        onChange={(date) =>
-                            handleDateChange(date, 'timeline_date')
-                        }
-                    />
-                    {errors.timeline_date && (
-                        <span className="text-red-500">
-                            {errors.timeline_date}
-                        </span>
-                    )}
-                </FormItem>
+    <DatePicker
+        size="sm"
+        selected={
+            formData.project_start_date
+                ? new Date(formData.project_start_date)
+                : null
+        }
+        dateFormat="MM/dd/yyyy"
+        onChange={(date) =>
+            handleDateChange(date, 'project_start_date')
+        }
+    />
+    {errors.project_start_date && (
+        <span className="text-red-500">
+            {errors.project_start_date}
+        </span>
+    )}
+</FormItem>
+<FormItem label="Timeline Date">
+    <DatePicker
+        size="sm"
+        selected={
+            formData.timeline_date
+                ? new Date(formData.timeline_date)
+                : null
+        }
+        dateFormat="MM/dd/yyyy"
+        onChange={(date) =>
+            handleDateChange(date, 'timeline_date')
+        }
+    />
+    {errors.timeline_date && (
+        <span className="text-red-500">
+            {errors.timeline_date}
+        </span>
+    )}
+</FormItem>
        
             <FormItem label='Description' className=''>
               <Input

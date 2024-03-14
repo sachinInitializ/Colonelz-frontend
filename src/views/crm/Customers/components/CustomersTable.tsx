@@ -35,7 +35,8 @@ interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>
 const { Tr, Th, Td, THead, TBody, Sorter } = Table
 
 const userDetailData = await apiGetCrmProjects();
-const projectData=userDetailData.data.projects
+const projectData=userDetailData.data
+const projects=userDetailData.data.projects
 console.log('userDetailData', projectData);
 
 function DebouncedInput({
@@ -92,7 +93,7 @@ const pageSizeOption = [
     { value: 40, label: '40 / page' },
     { value: 50, label: '50 / page' },
 ]
-const totalData=projectData.length
+const totalData=projects.length
 
 const Filtering = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -201,7 +202,7 @@ const Filtering = () => {
         },
     ], [navigate])
 
-    const [data,setData] = useState(() => projectData)
+    const [data,setData] = useState(() => projects)
 
     const table = useReactTable({
         data,
@@ -226,12 +227,13 @@ const Filtering = () => {
         debugHeaders: true,
         debugColumns: false,
     })
+    
 
     useEffect(() => {
         const filteredData =
             selectedStatus !== ''
-                ? userDetailData.projects.filter((project:Project) => project.project_status === selectedStatus)
-                : userDetailData.projects;
+                ? projects.projects.filter((project:Project) => project.project_status === selectedStatus)
+                : projects.projects;
 
         setData(filteredData);
     }, [selectedStatus]);
@@ -267,12 +269,12 @@ const Filtering = () => {
         }
 
         if (Array.isArray(status)) {
-            const filteredData = userDetailData.projects.filter((project:Project) =>
+            const filteredData = userDetailData.data.projects.filter((project:Project) =>
                 status.includes(project.project_status)
             );
             setData(filteredData);
         } else {
-            const filteredData = userDetailData.projects.filter(
+            const filteredData = projectData.projects.filter(
                 (project:Project) => project.project_status === status
             );
             setData(filteredData);
@@ -286,7 +288,7 @@ const Filtering = () => {
                     icon={<HiOutlineUserGroup />}
                     avatarClass="!bg-indigo-600"
                     label="Total Projects"
-                    value={userDetailData.total_Project}
+                    value={projectData.total_Project}
                     loading={loading}
                     onClick={() => handleStatusChange('Total Projects')}
                 />
@@ -294,7 +296,7 @@ const Filtering = () => {
                     icon={<HiOutlineUsers />}
                     avatarClass="!bg-blue-500"
                     label="Active Projects"
-                    value={userDetailData.active_Project}
+                    value={projectData.active_Project}
                     loading={loading}
                     onClick={() => handleStatusChange('Active Projects')}
                 />
@@ -302,7 +304,7 @@ const Filtering = () => {
                     icon={<HiOutlineUserAdd />}
                     avatarClass="!bg-emerald-500"
                     label="Completed Projects"
-                    value={userDetailData.completed}
+                    value={projectData.completed}
                     loading={loading}
                     onClick={() => handleStatusChange('Completed Projects')}
                 />

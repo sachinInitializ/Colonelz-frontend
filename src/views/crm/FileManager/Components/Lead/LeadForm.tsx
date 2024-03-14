@@ -94,6 +94,8 @@ function closeAfter2000ms(data:string,type:string) {
       'https://col-u3yp.onrender.com/v1/api/admin/fileupload/',
       {
         method: 'POST',
+        
+        
         body: postData,
       }
     );

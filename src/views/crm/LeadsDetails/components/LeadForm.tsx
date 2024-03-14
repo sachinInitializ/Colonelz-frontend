@@ -1,14 +1,11 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-
 import ValueType from 'react-select';
-import DatePicker from '@/components/ui/DatePicker/DatePicker';
-import { StickyFooter } from '@/components/shared';
-import { Button, Card, Dialog, FormContainer, FormItem, Input, Select } from '@/components/ui';
-import { AiOutlineSave } from 'react-icons/ai';
-import { useNavigate } from 'react-router-dom';
+import { Button, Card, Dialog, FormContainer, FormItem, Input, Notification, Select, toast } from '@/components/ui';
 import type { MouseEvent } from 'react'
 import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker';
 import Cookies from 'js-cookie';
+import { apiGetCrmLeadsUpdates } from '@/services/CrmService';
+import { useLocation } from 'react-router-dom';
 
 interface FormData {
   lead_id: string | null;
@@ -18,53 +15,41 @@ interface FormData {
   createdBy: string;
 }
 
-const urlParams = new URLSearchParams(window.location.search);
-const myParam = urlParams.get('id');
+type CustomerInfoFieldProps = {
+  title?: string
+  value?: string
+}
+
+
 
 type CustomerProfileProps = {
-    data?: Partial<Customer>
+  data?: Partial<Customer>
 }
-type Customer = {
-    _id: string
-    name: string
-    lead_id:string
-    email:string
-    phone:string
-    location:string
-    status:string
-    source:string
-    notes?: Note[];
-}
-interface Note {
-    _id: string;
-    content: string;
-    createdBy: string;
-    date: string;
-    status: string;
-  }
 
-interface CustomerProfilePropss {
-    data: {
-      // Define the structure of the data object here
-      _id: string;
-      name: string;
-      lead_id: string;
-      email: string;
-      phone: string;
-      location: string;
-      status: string;
-      source: string;
-      date: string;
-      // Make notes optional
-      createdAt: string;
-      __v: number;
-      // Add other properties as needed
-    };
-  }
+type Customer = {
+  _id: string
+  name: string
+  lead_id:string
+  email:string
+  phone:string
+  location:string
+  status:string
+  source:string
+  notes?: Note[];
+}
+
+interface Note {
+  _id: string;
+  content: string;
+  createdBy: string;
+  date: string;
+  status: string;
+}
 
 const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
-   
-    
+  const location = useLocation()
+const queryParams = new URLSearchParams(location.search)
+const myParam = queryParams.get('id') || ''
   const initialFormData: FormData = {
     lead_id: myParam,
     status: '',
@@ -74,16 +59,14 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
   };
 
   const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [selectedStatus, setSelectedStatus] = useState<ValueType<{ value: string; label: string }>>(null);
+  const [selectedStatus, setSelectedStatus] = useState(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const navigate = useNavigate();
 
   const statusOptions = [
     { value: 'No Response', label: 'No Response' },
     { value: 'Not Interested', label: 'Not Interested' },
     { value: 'Follow Up', label: 'Follow Up' },
     { value: 'Interested', label: 'Interested' },
-    // Add other status options as needed
   ];
 
   const handleStatusChange = (selectedOption: ValueType<{ value: string; label: string }>) => {
@@ -114,20 +97,26 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
       [name]: '',
     });
   };
-const token=Cookies.get('token')
+
+  const token=Cookies.get('auth')
+
+  function closeAfter2000ms(type:string, message:string) {
+    toast.push(
+        <Notification closable type={type} duration={2000}>
+            {message}
+        </Notification>
+    )
+}
+
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    // Validate the form data
     const validationErrors: { [key: string]: string } = {};
     if (!selectedStatus) {
       validationErrors.status = 'Status is required';
     }
     if (!formData.date) {
       validationErrors.date = 'Date is required';
-    }
-    if (!formData.content.trim()) {
-      validationErrors.content = 'Content is required';
     }
 
     if (Object.keys(validationErrors).length > 0) {
@@ -136,106 +125,88 @@ const token=Cookies.get('token')
     }
 
     try {
-      // Assuming you have an API endpoint for updating leads
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/update/lead/', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData),
-        
-
-      });
-
+      const response = await apiGetCrmLeadsUpdates(formData)
+      const errorMessage = await response.json()
       if (response.ok) {
-        // Update successful, show success alert
-        alert('Update successful');
+          closeAfter2000ms('success','Lead added successfully')
           window.location.reload()
       } else {
-        // Update failed, show error alert
-        alert('Update failed');
+          closeAfter2000ms('danger',errorMessage.errorMessage)
       }
-    } catch (error) {
-      // Handle any other errors
-      console.error('Error:', error);
-      alert('An error occurred');
-    }
+  } catch (error) {
+    closeAfter2000ms('danger',`Error: ${error}`)
+  }
   };
 
-
-  const [dialogIsOpen, setIsOpen] = useState(false)
+  const [dialogIsOpen, setIsOpen] = useState(false);
 
   const openDialog = () => {
-      setIsOpen(true)
-  }
+    setIsOpen(true);
+  };
 
   const onDialogClose = (e: MouseEvent) => {
-      console.log('onDialogClose', e)
-      setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
 
   const onDialogOk = (e: MouseEvent) => {
-      console.log('onDialogOk', e)
-      setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
 
-const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
+  const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
     return (
-        <div>
-            <span>{title}</span>
-            <p className="text-gray-700 dark:text-gray-200 font-semibold">
-                {value}
-            </p>
-        </div>
-    )
-}
+      <div>
+        <span>{title}</span>
+        <p className="text-gray-700 dark:text-gray-200 font-semibold">
+          {value}
+        </p>
+      </div>
+    );
+  };
+
   return (
     <div>
-          <div className='flex justify-between items-center'>
-              <h5>Actions</h5>
-              <Button variant='solid' onClick={() => openDialog()} >View Last Update</Button>
-              </div>
-    <form onSubmit={handleFormSubmit}>
-      <FormContainer>
-    
-        <div className='grid grid-cols-3 gap-5'>
-          <FormItem>
-            Status:
-            <Select
-              value={selectedStatus}
-              options={statusOptions}
-              onChange={handleStatusChange}
-            />
-            {errors.status && <span className="text-red-500">{errors.status}</span>}
-          </FormItem>
-
-          <FormItem>
-            Date:
-            <DateTimepicker
-              size='md'
-              selected={formData.date}
-              onChange={handleDateChange}
-              dateFormat="MM/dd/yyyy"
-            />
-            {errors.date && <span className="text-red-500">{errors.date}</span>}
+      <div className='flex justify-between items-center'>
+        <h5>Actions</h5>
+        <Button variant='solid' onClick={() => openDialog()} >View Last Update</Button>
+      </div>
+      <form onSubmit={handleFormSubmit}>
+        <FormContainer>
+          <div className='grid grid-cols-3 gap-5'>
+            <FormItem>
+              Status:
+              <Select
+                value={selectedStatus}
+                options={statusOptions}
+                onChange={handleStatusChange}
+              />
+              {errors.status && <span className="text-red-500">{errors.status}</span>}
             </FormItem>
-          
+
+            <FormItem>
+              Date:
+              <DateTimepicker
+                size='md'
+                selected={formData.date}
+                dateFormat="MM/dd/yyyy"
+                onChange={handleDateChange}
+              />
+              {errors.date && <span className="text-red-500">{errors.date}</span>}
+            </FormItem>
           </div>
           <div className='flex justify-between items-center '>
-          <FormItem
-                label="Today's Update"
-                labelClass="!justify-start"
-                className='w-2/3'
+            <FormItem
+              label="Today's Update"
+              labelClass="!justify-start"
+              className='w-2/3'
             >
-                <Input
-                     textArea
-                     name="content"
-                     value={formData.content}
-                     onChange={handleInputChange}
-                />
-                </FormItem>
-          <Button
+              <Input
+                textArea
+                name="content"
+                value={formData.content}
+                onChange={handleInputChange}
+              />
+            </FormItem>
+            <Button
               size="sm"
               variant="solid"
               type="submit"
@@ -243,44 +214,39 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
             >
               Submit
             </Button>
-         
-            </div>
-
-        
-      </FormContainer>
-    </form>
-
-    <Dialog
-                isOpen={dialogIsOpen}
-                width={1000}
-                height={490}
-                onClose={onDialogClose}
-                onRequestClose={onDialogClose}
-            >
-              <div style={{ maxHeight: '400px', overflowY: 'auto', marginRight:"2%", marginLeft:"1%", scrollbarWidth:'none'  }} className='scrollbar-hide  whitespace-nowrap'>
-        {data?.notes?.map((note) => (
-          <div key={note._id} className='mb-4 mr-4'>
-            <Card>
-              <div className='flex flex-row justify-between items-center mb-4 '>
-                <CustomerInfoField title="Date" value={note.date}/>
-                <CustomerInfoField title="Status" value={note.status} />
-              </div>
-              <div>
-                <p>Description</p>
-                <p className='text-gray-700 dark:text-gray-200 font-semibold text-wrap'>{note.content}</p>
-              </div>
-            </Card>
-            
           </div>
-        ))}
-        <div className="text-right mt-6 mb-4 mr-[2%]">
-        <Button variant="solid" onClick={onDialogOk}>
-          Okay
-        </Button>
-      </div>
-      </div>
-      
-            </Dialog>
+        </FormContainer>
+      </form>
+
+      <Dialog
+        isOpen={dialogIsOpen}
+        width={1000}
+        height={490}
+        onClose={onDialogClose}
+        onRequestClose={onDialogClose}
+      >
+        <div style={{ maxHeight: '400px', overflowY: 'auto', marginRight:"2%", marginLeft:"1%", scrollbarWidth:'none'  }} className='scrollbar-hide  whitespace-nowrap'>
+          {data?.notes?.map((note) => (
+            <div key={note._id} className='mb-4 mr-4'>
+              <Card>
+                <div className='flex flex-row justify-between items-center mb-4 '>
+                  <CustomerInfoField title="Date" value={note.date}/>
+                  <CustomerInfoField title="Status" value={note.status} />
+                </div>
+                <div>
+                  <p>Description</p>
+                  <p className='text-gray-700 dark:text-gray-200 font-semibold text-wrap'>{note.content}</p>
+                </div>
+              </Card>
+            </div>
+          ))}
+          <div className="text-right mt-6 mb-4 mr-[2%]">
+            <Button variant="solid" onClick={onDialogOk}>
+              Okay
+            </Button>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };
