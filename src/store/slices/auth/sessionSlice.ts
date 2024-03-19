@@ -26,16 +26,22 @@ const sessionSlice = createSlice({
         signInSuccess(state, action: PayloadAction<SignInPayload>) {
             state.signedIn = true;
             state.token = action.payload.token;
-            state.userId = action.payload.userId; // Store the user ID in the state
-            Cookies.set('auth', action.payload.token); // Store the token in cookies
-            Cookies.set('userId', action.payload.userId); // Store the user ID in cookies
-        },
+            state.userId = action.payload.userId; 
+            localStorage.setItem('auth', action.payload.token);
+  localStorage.setItem('userId', action.payload.userId);
+
+  // Set a timeout to remove the token after 24 hours
+  setTimeout(() => {
+    localStorage.removeItem('auth');
+    localStorage.removeItem('userId');
+  }, 24 * 60 * 60 * 1000);  // 24 hours in milliseconds
+},
         signOutSuccess(state) {
             state.signedIn = false;
             state.token = null;
-            state.userId = null; // Remove the user ID from the state
-            Cookies.remove('auth'); // Remove the token from cookies
-            Cookies.remove('userId'); // Remove the user ID from cookies
+            state.userId = null; 
+            Cookies.remove('auth'); 
+            Cookies.remove('userId');
         },
     },
 });

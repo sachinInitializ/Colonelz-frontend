@@ -4,8 +4,10 @@ import Cookies from 'js-cookie';
 import { json } from 'd3-fetch';
 
 const { apiPrefix } = appConfig
-const token = Cookies.get('auth')
-const userId = Cookies.get('userId')
+const token = localStorage.getItem('auth');
+const userId=localStorage.getItem('userId');
+const tokens = Cookies.get('auth')
+const userIds = Cookies.get('userId')
 console.log('token',token);
 
 export async function apiGetMomData() {

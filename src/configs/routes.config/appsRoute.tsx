@@ -9,14 +9,12 @@ const appsRoute: Routes = [
         path: `${APP_PREFIX_PATH}/crm/dashboard`,
         component: lazy(() => import('@/views/crm/CrmDashboard')),
         authority: [],
-      
     },
     {
         key: 'appsCrm.register',
         path: `${APP_PREFIX_PATH}/crm/register`,
         component: lazy(() => import('@/views/crm/Register')),
         authority: [],
-      
     },
     {
         key: 'appsCrm.fileManager',
