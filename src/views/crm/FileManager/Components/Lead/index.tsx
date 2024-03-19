@@ -7,7 +7,9 @@ import YourFormComponent from './LeadForm';
 import { FaFolder, FaRegFolder } from 'react-icons/fa';
 import { useTheme } from '@emotion/react';
 import { StickyFooter } from '@/components/shared';
-
+import { apiGetCrmFileManagerLeads } from '@/services/CrmService';
+import LeadDataContext from './LeadDataContext';
+import Indexe from './Folders';
 
 const Index = () => {
     const [leadData, setLeadData] = useState<FolderItem[]>([]);
@@ -17,9 +19,9 @@ const Index = () => {
     useEffect(() => {
       const fetchDataAndLog = async () => {
         try {
-          const leadData = await fetchLeadData(leadId);
+          const leadData = await apiGetCrmFileManagerLeads(leadId);
           console.log(leadData);
-          setLeadData(leadData[0].files);
+          setLeadData(leadData.data[0].files);
         } catch (error) {
           console.error('Error fetching lead data', error);
         }
@@ -27,6 +29,7 @@ const Index = () => {
   
       fetchDataAndLog();
     }, []);
+    
     const navigate=useNavigate()
 
     const [dialogIsOpen, setIsOpen] = useState(false)
@@ -94,6 +97,7 @@ const Index = () => {
           >
               <YourFormComponent data={leadData} />
           </Dialog>
+          
       </div>
   )
 }

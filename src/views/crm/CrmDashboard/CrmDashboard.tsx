@@ -4,32 +4,57 @@ import { useEffect, useState } from "react";
 import { Data } from "../CustomerDetail/components/MOM/data";
 import { crmDashboardData } from "@/mock/data/crmData";
 import Statistic from "./components/Statistic";
+import Leads from "./components/Leads";
 
+interface Data{
+    Execution_Phase:string,
+    Design_Phase:string,
+    completed:string
 
+}
 const CrmDashboard = () => {
-    const [apiData, setApiData] = useState<Data[]>([]);
+    const [apiData, setApiData] = useState<Data>();
 
 console.log('apiData',crmDashboardData.statisticData);
+
     useEffect(() => {
         const fetchData = async () => {
             const response = await apiGetCrmProjects();
             const data = response.data;
-            console.log('Received response from server:', data);
             setApiData(data);
         };
         fetchData();
     }, []);
+    console.log(apiData);
+
+    const data=[
+        {
+            key: 'inProgress',
+            label: 'Execution',
+            value:apiData?.Execution_Phase,
+            growShrink: 5.5,
+        },
+        {
+            key: 'inReview',
+            label: 'Design',
+            value: apiData?.Design_Phase,
+            growShrink: -0.7,
+        },
+        {
+            key: 'completed',
+            label: 'Completed',
+            value: apiData?.completed,
+            growShrink: 2.6,
+        },
+    ]
+    
     return (
         <div className="flex flex-col gap-4 h-full">
-                    <Statistic data={crmDashboardData.statisticData} />
+                    <Statistic data={data} />
                 <div className="grid grid-cols-1 xl:grid-cols-7 gap-4">
-                    {/* <LeadByCountries
-                        className="xl:col-span-5"
-                        data={leadByRegionData}
-                    /> */}
                 </div>
                 <Project />
-                {/* <Leads data={datas} /> */}
+                <Leads  />
           
         </div>
     )

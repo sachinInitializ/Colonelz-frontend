@@ -6,11 +6,12 @@ import PasswordInput from '@/components/shared/PasswordInput'
 import ActionLink from '@/components/shared/ActionLink'
 import { apiResetPassword } from '@/services/AuthService'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import type { CommonProps } from '@/@types/common'
 import type { AxiosError } from 'axios'
+import Cookies from 'js-cookie'
 
 interface ResetPasswordFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -18,16 +19,17 @@ interface ResetPasswordFormProps extends CommonProps {
 }
 
 type ResetPasswordFormSchema = {
+    email: string| null
+    token: string 
     password: string
-    confirmPassword: string
 }
 
 const validationSchema = Yup.object().shape({
-    password: Yup.string().required('Please enter your password'),
-    confirmPassword: Yup.string().oneOf(
-        [Yup.ref('password')],
-        'Your passwords do not match'
-    ),
+    password: Yup.string().required('Please enter your password').matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+        "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+      )
+    
 })
 
 const ResetPasswordForm = (props: ResetPasswordFormProps) => {
@@ -38,15 +40,20 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
     const [message, setMessage] = useTimeOutMessage()
 
     const navigate = useNavigate()
+    const location = useLocation()
+    const queryParams = new URLSearchParams(location.search)
+    const email = queryParams.get('email')
+    const token=Cookies.get('auth')
 
     const onSubmit = async (
         values: ResetPasswordFormSchema,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
-        const { password } = values
+        const { password,email,token } = values
         setSubmitting(true)
         try {
-            const resp = await apiResetPassword({ password })
+            const resp = await apiResetPassword({ password,email,token })
+            
             if (resp.data) {
                 setSubmitting(false)
                 setResetComplete(true)
@@ -88,8 +95,9 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
             )}
             <Formik
                 initialValues={{
-                    password: '123Qwe1',
-                    confirmPassword: '123Qwe1',
+                    email:email,
+                    token: token,
+                    password: '',
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values, { setSubmitting }) => {
@@ -110,7 +118,7 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
                                         invalid={
                                             errors.password && touched.password
                                         }
-                                        errorMessage={errors.password}
+                                        className=' mb-0'
                                     >
                                         <Field
                                             autoComplete="off"
@@ -119,21 +127,10 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
                                             component={PasswordInput}
                                         />
                                     </FormItem>
-                                    <FormItem
-                                        label="Confirm Password"
-                                        invalid={
-                                            errors.confirmPassword &&
-                                            touched.confirmPassword
-                                        }
-                                        errorMessage={errors.confirmPassword}
-                                    >
-                                        <Field
-                                            autoComplete="off"
-                                            name="confirmPassword"
-                                            placeholder="Confirm Password"
-                                            component={PasswordInput}
-                                        />
-                                    </FormItem>
+                                    <div className=" text-red-500" >
+          {errors.password}
+        </div>
+                               
                                     <Button
                                         block
                                         loading={isSubmitting}

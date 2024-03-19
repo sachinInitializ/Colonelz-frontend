@@ -4,6 +4,7 @@ import { HiOutlineCloudUpload } from 'react-icons/hi';
 import { useLocation } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
 import { Data, FolderItem, LeadDataItem } from './data';
+import { apiGetCrmFileManagerCreateLeadFolder } from '@/services/CrmService';
 
 interface FormData {
   lead_id: string | null;
@@ -90,22 +91,14 @@ function closeAfter2000ms(data:string,type:string) {
   });
 
   try {
-    const response = await fetch(
-      'https://col-u3yp.onrender.com/v1/api/admin/fileupload/',
-      {
-        method: 'POST',
-        
-        
-        body: postData,
-      }
-    );
+    const response = await apiGetCrmFileManagerCreateLeadFolder(postData);
 
     const responseData = await response.json(); 
     console.log('Response Data:', responseData);
 
     if (responseData.status===true) {
       closeAfter2000ms('File uploaded successfully.','success');
-      window.location.reload();
+      // window.location.reload();
     } else {
       closeAfter2000ms(`Error: ${responseData.message}`,'warning');
     }
@@ -145,6 +138,7 @@ const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
       <FormItem label="File">
                             <Upload
                                 onChange={(files) => handleFileChange(files)}
+                                multiple
                             >
                                 <Button
                                     icon={<HiOutlineCloudUpload />}

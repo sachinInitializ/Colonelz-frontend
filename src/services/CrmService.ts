@@ -1,14 +1,12 @@
 import appConfig from '@/configs/app.config';
 import ApiService from './ApiService'
 import Cookies from 'js-cookie';
+import { json } from 'd3-fetch';
 
 const { apiPrefix } = appConfig
 const token = Cookies.get('auth')
 const userId = Cookies.get('userId')
 console.log('token',token);
-
-
-
 
 export async function apiGetMomData() {
     const response = await fetch(`${apiPrefix}admin/getall/project/mom?id=65c32e19e0f36d8e1f30955c`, {
@@ -44,7 +42,50 @@ export async function apiGetCrmProjects() {
     console.log('Received response from server:', data);
     return data;
 }
-export async function apiGetCrmSingleProjects(projectId:string) {
+export async function apiGetCrmSingleProjectQuotation(projectId:string ) {
+    const response = await fetch(`${apiPrefix}admin/get/quotationdata/?project_id=${projectId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+}
+export async function apiGetCrmProjectShareQuotation(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/share/quotation`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+        
+    });
+
+    return response;
+}
+export async function apiGetCrmProjectShareQuotationApproval(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/quotation/approval`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+        
+    });
+
+    return response;
+}
+
+export async function apiGetCrmSingleProjects(projectId:string ) {
     const response = await fetch(`${apiPrefix}admin/getsingle/project/?project_id=${projectId}&id=${userId}`, {
         method: 'GET',
         headers: {
@@ -58,9 +99,9 @@ export async function apiGetCrmSingleProjects(projectId:string) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    console.log('Received response from server:', data);
     return data;
 }
+
 export async function apiGetCrmProjectsMom(projectId:string) {
     const response = await fetch(`${apiPrefix}admin/getall/mom/?project_id=${projectId}`, {
         method: 'GET',
@@ -96,7 +137,8 @@ export async function apiGetCrmFileManager() {
     console.log('Received response from server:', data);
     return data;
 }
-export async function apiGetCrmFileManagerProjects(projectId:string) {
+
+export async function apiGetCrmFileManagerProjects(projectId:string | null) {
     const response = await fetch(`${apiPrefix}admin/project/getfile/?project_id=${projectId}`, {
         method: 'GET',
         headers: {
@@ -110,10 +152,61 @@ export async function apiGetCrmFileManagerProjects(projectId:string) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    console.log('Received response from server:', data);
     return data;
 }
-export async function apiGetCrmFileManagerLeads(leadId:string) {
+export async function apiGetCrmFileManagerCreateLeadFolder(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/fileupload/`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        body: formData
+        
+    });
+
+    return response;
+}
+export async function apiDeleteFileManagerFiles(postData: any) {     
+    const response = await fetch(`${apiPrefix}admin/delete/file/`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(postData)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response;
+}
+export async function apiGetCrmFileManagerCreateProjectFolder(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/project/fileupload`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        body: formData
+        
+    });
+
+    return response;
+}
+export async function apiGetCrmFileManagerCreateTemplateFolder(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/template/fileupload`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        body: formData
+        
+    });
+
+    return response;
+}
+export async function apiGetCrmFileManagerLeads(leadId:string | null) {
     const response = await fetch(`${apiPrefix}admin/lead/getfile/?lead_id=${leadId}`, {
         method: 'GET',
         headers: {
@@ -129,6 +222,19 @@ export async function apiGetCrmFileManagerLeads(leadId:string) {
     const data = await response.json();
     console.log('Received response from server:', data);
     return data;
+}
+export async function apiGetCrmFileManagerShareFiles(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/share/file`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+        
+    });
+
+    return response;
 }
 export async function apiGetCrmLeads() {
     const response = await fetch(`${apiPrefix}admin/getall/lead/`, {

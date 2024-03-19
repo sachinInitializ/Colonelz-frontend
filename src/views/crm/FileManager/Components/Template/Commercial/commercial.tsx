@@ -11,7 +11,7 @@ const Commercial = () => {
      <div>
       <h3 className='mb-8'>Folder</h3>
     <div className='grid grid-cols-6 gap-4'>
-     <div className=' cursor-pointer' onClick={()=>navigate('/app/crm/fileManager/project/templates/commercial/subfolder?type=commercial&folder=design')}>
+     <div className=' cursor-pointer' onClick={()=>navigate('/app/crm/fileManager/project/templates/commercial/subfolder?type=commercial&folder=designing')}>
       <div className='flex flex-col justify-center items-center gap-1'>
       <div className={` text-xl mr-3 text-yellow-500`}>
                                   <FaFolder />

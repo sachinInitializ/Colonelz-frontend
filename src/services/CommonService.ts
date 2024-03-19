@@ -6,8 +6,8 @@ const { apiPrefix } = appConfig
 const userId = Cookies.get('userId')
 
 const token = Cookies.get('auth')
-export async function apiGetNotification() {
-    const response = await fetch(`${apiPrefix}admin/get/notification`, {
+export async function apiGetNotification(userId: string | undefined) {
+    const response = await fetch(`${apiPrefix}admin/get/notification?userId=${userId}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

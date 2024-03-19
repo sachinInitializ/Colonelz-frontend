@@ -77,7 +77,7 @@ const authDemoRoute: Routes = [
             () =>
                 import('@/views/auth-demo/ForgotPassword/ForgotPasswordSimple')
         ),
-        authority: [ADMIN, USER],
+        authority: [],
         meta: {
             layout: 'blank',
             pageContainerType: 'gutterless',

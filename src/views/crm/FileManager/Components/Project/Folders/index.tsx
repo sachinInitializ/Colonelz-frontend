@@ -1,15 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchProjectData } from '../data';
-import { Button, Checkbox, Dialog, Notification, Segment, toast } from '@/components/ui';
+import { Button, Checkbox, Dialog, Input, Notification, Segment, Select, toast } from '@/components/ui';
 import { StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn } from 'react-icons/ci';
+import { apiDeleteFileManagerFiles, apiGetCrmFileManagerShareFiles, apiGetCrmProjectShareQuotation } from '@/services/CrmService';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  const [usernames, setUsernames] = useState(['User1', 'User2', 'User3']);
+  const [selectedType, setSelectedType] = useState("Internal");
+  const [selectedUsername, setSelectedUsername] = useState("");
+  const [clientName, setClientName] = useState("");
+const [clientEmail, setClientEmail] = useState("");
+const [usernameError, setUsernameError] = useState("");
+const [clientNameError, setClientNameError] = useState("");
+const [clientEmailError, setClientEmailError] = useState("");
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const location = useLocation();
@@ -27,9 +36,16 @@ const Index = () => {
   };
 
   const [dialogIsOpen, setIsOpen] = useState(false)
+  const [dialogIsOpen1, setIsOpen1] = useState(false)
 
   const openDialog = () => {
       setIsOpen(true)
+  }
+  const openDialog1 = () => {
+      setIsOpen1(true)
+  }
+  const onDialogClose1 = () => {
+      setIsOpen1(false)
   }
 
   const onDialogClose = () => {
@@ -56,13 +72,107 @@ const Index = () => {
   }, [leadId, folderName]);
   console.log(leadData);
 
-  const handleFileSelect = (fileId: string) => {
-    const updatedSelectedFiles = selectedFiles.includes(fileId)
-      ? selectedFiles.filter((id) => id !== fileId)
-      : [...selectedFiles, fileId];
-    setSelectedFiles(updatedSelectedFiles);
-
+  const handleFileSelect = (fileId:any) => {
+    if (folderName?.toUpperCase() === "QUOTATION" || folderName?.toUpperCase() === "CONTRACT"){
+      setSelectedFiles([fileId]);
+    } else {
+      if (selectedFiles.includes(fileId)) {
+        setSelectedFiles(selectedFiles.filter((id) => id !== fileId));
+      } else {
+        setSelectedFiles([...selectedFiles, fileId]);
+      }
+    }
   };
+  const deleteFiles = async () => {
+    function warn(text:string) {
+      toast.push(
+          <Notification closable type="warning" duration={2000}>
+              {text}
+          </Notification>,{placement:'top-center'}
+      )
+  }
+    if (selectedFiles.length === 0) {
+      warn('No files selected for deletion.')
+      return;
+    }
+    
+    const postData = {
+      file_id: selectedFiles,
+      folder_name: folderName,
+      project_id: leadId,
+    };
+    try {
+      const response=await apiDeleteFileManagerFiles(postData);
+      const responseJson=await response.json()
+      console.log(responseJson);
+      
+      if (response.ok) {
+        toast.push(
+          <Notification closable type="success" duration={2000}>
+            Files deleted successfully
+          </Notification>,{placement:'top-center'}
+        )
+        window.location.reload()
+      }
+      else{
+        toast.push(
+          <Notification closable type="danger" duration={2000}>
+            {responseJson.errorMessage}
+          </Notification>,{placement:'top-center'}
+        )
+      }
+    
+    } catch (error) {
+      console.error('Error deleting files:', error);
+    }
+    
+  }
+
+  const options = [
+    { value: 'Internal', label: 'Internal' },
+    { value: 'Client', label: 'Client' }
+  ];
+
+ const handleShareFileForApproval = async () => {
+    if(selectedFiles.length===0){
+      toast.push(
+        <Notification closable type="warning" duration={2000}>
+          Please select a file to share
+        </Notification>,{placement:'top-center'}
+      )
+      return;
+    }
+    if (selectedType === 'Client' && (clientName === '' || clientEmail === '')) {
+      setClientNameError('Client Name is mandatory for Client');
+      setClientEmailError('Client Email is mandatory for Client');
+      return;
+    }
+
+    const postData = {
+      user_name:  selectedUsername,
+      type: selectedType,
+      file_id: selectedFiles[0], 
+      folder_name: 'quotation',
+      project_id: leadId,
+      client_name: clientName,
+      client_email: clientEmail, 
+    };
+    try{
+      const response=await apiGetCrmProjectShareQuotation(postData);
+      const responseJson=await response.json()
+      if (response.ok) {
+        toast.push(
+          <Notification closable type="success" duration={2000}>
+            File shared successfully
+          </Notification>,{placement:'top-center'}
+        )
+        setIsOpen1(false)
+      }
+    }
+    catch(error){
+      console.error('Error sharing files:', error);
+    }
+ }
   const handleShareFiles = async () => {
 
     if (selectedFiles.length === 0 || selectedEmails.length === 0) {
@@ -97,20 +207,14 @@ const Index = () => {
       }
 
     try {
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/share/file', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(postData),
-      });
+      const response = await apiGetCrmFileManagerShareFiles(postData);
   
+      const responseData = await response.json();
       if (!response.ok) {
-        console.error('Error sharing files:', response.statusText);
+        console.error('Error sharing files:', responseData.errorMessage);
         return;
       }
   
-      const responseData = await response.json();
   
       console.log('Files shared successfully:', responseData);
   
@@ -133,10 +237,13 @@ const Index = () => {
     <div>
         <div className='flex justify-between'>
       <h3 className='mb-5'>Files</h3>
+      <div>
+        <Button variant='solid' color='red-600' className='mr-3' onClick={()=>deleteFiles()}>Delete</Button>
       <Button
        variant='solid'
        onClick={() => openDialog()}
       >Share</Button>
+      </div>
       </div>
       {leadData && leadData.length > 0 ? (
         <div className='grid grid-cols-2 xl:grid-cols-6 sm:grid-cols-4 gap-4'>
@@ -190,9 +297,17 @@ const Index = () => {
           >
             Back
           </Button>
-          <Button size="sm" variant="solid" type="submit" onClick={handleShareFiles}>
-            Share
-          </Button>
+          {folderName?.toUpperCase() === "QUOTATION" || folderName?.toUpperCase() === "CONTRACT" ? (
+          <Button
+            size="sm"
+            className="ltr:mr-3 rtl:ml-3"
+            type="button"
+            variant='solid'
+            onClick={()=>openDialog1()}
+          >
+            Share for Approval
+          </Button>):null}
+          
         </div>
       </StickyFooter>
       <Dialog
@@ -244,6 +359,91 @@ const Index = () => {
   
          <div className='flex justify-end'>
          <Button size="sm" variant="solid" type="submit" className='mt-5 ' onClick={handleShareFiles} >
+            Share
+          </Button>
+          </div>
+            </Dialog>
+      <Dialog
+                isOpen={dialogIsOpen1}
+                style={{}}
+                className='max-h-[300px]'
+                onClose={onDialogClose1} 
+                onRequestClose={onDialogClose1}
+
+            >
+              <h3 className='mb-5'>Share Files For Approval</h3>
+               <div className=' gap-3 grid'>
+               <Select
+    defaultValue={options[0]}
+    size='sm'
+    options={options}
+    onChange={(selectedOption) => {
+      setSelectedType(selectedOption.value);
+      if (selectedOption.value === 'Internal' && selectedUsername === '') {
+        setUsernameError('Username is mandatory for internal type');
+      } else {
+        setUsernameError('');
+      }
+    }}
+  />
+  
+              <CreatableSelect
+               options={usernames.map((username) => ({ label: username, value: username }))}
+               value={selectedUsername ? { label: selectedUsername, value: selectedUsername } : null}
+               placeholder="Add a username..."
+               onChange={(newValue) => {
+                const username = newValue ? newValue.value : '';
+                setSelectedUsername(username);
+                if (selectedType === 'Internal' && username === '') {
+                  setUsernameError('Username is mandatory for internal type');
+                } else {
+                  setUsernameError('');
+                }
+              }}
+               onCreateOption={(inputValue) => {
+                 const newUsernames= [...usernames, inputValue];
+                 setUsernames(newUsernames);
+                 setSelectedUsername(inputValue);
+               }}
+                  />
+                  {usernameError && <div className=" text-red-600">{usernameError}</div>}
+
+<Input
+    type="text"
+    placeholder="Client Name"
+    value={clientName}
+    onChange={(e) => {
+      setClientName(e.target.value);
+      if (selectedType === 'Client' && e.target.value === '') {
+        setClientNameError('Client Name is mandatory for Client');
+      } else {
+        setClientNameError('');
+      }
+    }}
+  />
+ {clientNameError && <div className=" text-red-600">{clientNameError}</div>}
+<Input
+    type="email"
+    placeholder="Client Email"
+    value={clientEmail}
+    onChange={(e) => {
+      setClientEmail(e.target.value);
+      if (selectedType === 'Client' && e.target.value === '') {
+        setClientEmailError('Client Email is mandatory for Client');
+      } else {
+        setClientEmailError('');
+      }
+    }}
+  />
+    
+ 
+  {clientEmailError && <div className=" text-red-600">{clientEmailError}</div>}
+                  </div>
+              
+
+  
+         <div className='flex justify-end'>
+         <Button size="sm" variant="solid" type="submit" className='mt-5 ' onClick={handleShareFileForApproval} >
             Share
           </Button>
           </div>

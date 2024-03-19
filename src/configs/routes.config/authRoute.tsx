@@ -12,8 +12,14 @@ const authRoute: Routes = [
    
     {
         key: 'forgotPassword',
-        path: `/forgot-password/:aaaa`,
+        path: `/forgot-password`,
         component: lazy(() => import('@/views/auth/ForgotPassword')),
+        authority: [],
+    },
+    {
+        key: 'otpVerify',
+        path: `/otp-verify`,
+        component: lazy(() => import('@/views/auth/OtpVerify')),
         authority: [],
     },
     {

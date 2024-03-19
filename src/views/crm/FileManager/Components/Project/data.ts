@@ -2,6 +2,7 @@ import { apiGetCrmFileManagerProjects } from "@/services/CrmService";
 
 
 export interface FileItem {
+  date:string
   fileUrl: string;
   fileId: string;
   fileName:string

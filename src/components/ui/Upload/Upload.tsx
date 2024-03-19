@@ -202,6 +202,7 @@ const Upload = forwardRef<HTMLDivElement, UploadProps>((props, ref) => {
                 {...rest}
             >
                 <input
+                    
                     ref={fileInputField}
                     className={uploadInputClass}
                     type="file"

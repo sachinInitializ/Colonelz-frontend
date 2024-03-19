@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
 import { getTemplateData } from '../data';
 import {  FoldersItem } from '../type';
+import { apiGetCrmFileManagerCreateTemplateFolder } from '@/services/CrmService';
 
 interface FormData {
   sub_folder_name_first: string | null,
@@ -125,13 +126,7 @@ function closeAfter2000ms(data:string,type:string) {
 )
 
     try {
-      const response = await fetch(
-        'https://col-back.onrender.com/v1/api/admin/template/fileupload',
-        {
-          method: 'POST',
-          body: postData,
-        },
-      );
+      const response = await apiGetCrmFileManagerCreateTemplateFolder(postData);
 
     
       const responseData = await response.json(); 
@@ -179,6 +174,7 @@ const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
       <FormItem label="File">
                             <Upload
                                 onChange={(files) => handleFileChange(files)}
+                                multiple
                             >
                                 <Button
                                     icon={<HiOutlineCloudUpload />}

@@ -12,17 +12,16 @@ import TabNav from '@/components/ui/Tabs/TabNav'
 import TabContent from '@/components/ui/Tabs/TabContent'
 import { useLocation } from 'react-router-dom'
 import AllMom from './components/MOM/AllMom'
-import { apiGetCrmSingleProjects } from '@/services/CrmService'
+import { apiGetCrmFileManagerProjects, apiGetCrmSingleProjectQuotation, apiGetCrmSingleProjects } from '@/services/CrmService'
+import Quotations from './Quotation/Quotations'
+import { FileItem } from '../FileManager/Components/Project/data'
+import Index from './Quotation'
 
 injectReducer('crmCustomerDetails', reducer)
 
 const CustomerDetail = () => {
     const dispatch = useAppDispatch()
-
     const query = useQuery()
-
-
-
     useEffect(() => {
         fetchData()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -40,19 +39,15 @@ const CustomerDetail = () => {
         mom:string
       
       }
+      const [fileData,setFileData]=useState<FileItem[]>();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    
-    // Create an object to store and map the query parameters
     const allQueryParams: QueryParams = {
       id: queryParams.get('id') || '',
       project_id: queryParams.get('project_id') || '',
       mom: queryParams.get('type') || '',
-      
-
     };
     console.log(allQueryParams.mom);
-    
     const [details, setDetails] = useState<any | null>(null);
     const[momdata,setmomdata]= useState<any | null>(null);
 
@@ -67,10 +62,25 @@ const CustomerDetail = () => {
                 console.error('Error fetching data:', error);
             }
         };
-
         fetchData();
     }, [allQueryParams.id]);
-    console.log(details);
+
+    useEffect(() => {
+        const fetchDataAndLog = async () => {
+          try {
+            const leadData = await apiGetCrmSingleProjectQuotation(allQueryParams.project_id);
+            console.log(leadData.data);
+            
+           setFileData(leadData.data)
+          } catch (error) {
+            console.error('Error fetching lead data', error);
+          }
+        };
+    
+        fetchDataAndLog();
+      }, [allQueryParams.project_id]);
+      console.log(fileData);
+      
       return (
         <div>
         <Tabs defaultValue={allQueryParams.mom}>
@@ -87,7 +97,7 @@ const CustomerDetail = () => {
                     </Container>
                 </TabContent>
                 <TabContent value="tab2">
-                   <PaymentHistory/>
+                   <Index data={fileData}/>
                 </TabContent>
                 <TabContent value="mom">
                   <MOM data={details} />

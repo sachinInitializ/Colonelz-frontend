@@ -4,6 +4,7 @@ export type SignInCredential = {
 }
 
 export interface SignInResponse {
+    errorMessage:string
     data: {
         userID: string;
         token: string;
@@ -23,7 +24,13 @@ export type SignUpCredential = {
 export type ForgotPassword = {
     email: string
 }
+export type OtpVerify = {
+    email: string
+    otp: string
+}
 
 export type ResetPassword = {
     password: string
+    email: string | null
+    token: string
 }

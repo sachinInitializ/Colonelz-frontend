@@ -3,7 +3,7 @@ import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import { useLocation } from 'react-router-dom'
 import {
-    Customer,
+    Customer, Data, Project,
 } from '../store'
 import { DatePicker, Dialog, FormItem, Input, Select } from '@/components/ui'
 import Cookies from 'js-cookie'
@@ -69,7 +69,7 @@ interface ProjectUpdateData {
     project_status: string;
     designer:string
   }
-  const ProjectUpdate: React.FC = (data:any) => {
+  const ProjectUpdate: React.FC<Data> = (data) => {
     const location=useLocation()
     const searchParams = new URLSearchParams(location.search);
     const projectId = searchParams.get('project_id');

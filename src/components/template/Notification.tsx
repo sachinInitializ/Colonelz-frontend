@@ -4,6 +4,8 @@ import Dropdown from '@/components/ui/Dropdown';
 import useResponsive from '@/utils/hooks/useResponsive';
 import { Badge, Button, Tooltip } from '../ui';
 import { apiGetNotification, apiPutNotificationUpdate } from '@/services/CommonService';
+import Cookies from 'js-cookie';
+import { log } from 'console';
 
 interface Notification {
   _id: string;
@@ -15,11 +17,14 @@ const Notification1 = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const userDetailData = await apiGetNotification();
+      const userId=Cookies.get('userId');
+      const userDetailData = await apiGetNotification(userId);
       setNotificationData(userDetailData.data.NotificationData);
     };
     fetchData();
   }, []);
+  console.log(notificationData);
+  
 
   const { larger } = useResponsive();
 
@@ -43,7 +48,7 @@ const Notification1 = () => {
   return (
     <div>
       <Dropdown
-        title={
+      renderTitle={
           <>
             <Badge className="mr-4 text-2xl rounded-md" content={unreadNotifications.length}>
               <HiOutlineBell />
@@ -71,7 +76,7 @@ const Notification1 = () => {
         </Dropdown.Item>
         <div className="ltr: rtl: text-sm overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
           <div className="overflow-y-auto h-[250px] pb-8" style={{ scrollbarWidth: 'none' }}>
-            {notificationData.slice().reverse().map((notification) => (
+            {notificationData.slice().map((notification) => (
               <div
                 key={notification._id}
                 className={`px-6 py-3 border-b border-gray-200 cursor-pointer ${notification.status ? 'read' : 'unread'}`}

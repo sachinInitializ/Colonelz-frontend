@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchLeadData } from '../data';
 import { Button, Checkbox, Dialog, Input, Notification, Segment, toast } from '@/components/ui';
 import { StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn } from 'react-icons/ci';
+import LeadDataContext from '../LeadDataContext';
+import { apiDeleteFileManagerFiles, apiGetCrmFileManagerLeads, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
@@ -36,12 +38,12 @@ const Index = () => {
       
       setIsOpen(false)
   }
-
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
-        const leadData = await fetchLeadData(leadId);
-        const folderData = leadData[0].files;
+        const leadData = await apiGetCrmFileManagerLeads(leadId);
+        console.log(leadData);
+        const folderData = leadData?.data[0]?.files;
         const selectedFolder = folderData.find((folder) => folder.folder_name === folderName);
 
         if (selectedFolder) {
@@ -54,6 +56,8 @@ const Index = () => {
 
     fetchDataAndLog();
   }, [leadId, folderName]);
+  console.log(leadData);
+  
 
   const handleFileSelect = (fileId: string) => {
     const updatedSelectedFiles = selectedFiles.includes(fileId)
@@ -62,6 +66,43 @@ const Index = () => {
     setSelectedFiles(updatedSelectedFiles);
 
   };
+
+  console.log(selectedFiles);
+  const deleteFiles = async () => {
+    function warn(text:string) {
+      toast.push(
+          <Notification closable type="warning" duration={2000}>
+              {text}
+          </Notification>,{placement:'top-center'}
+      )
+  }
+    if (selectedFiles.length === 0) {
+      warn('No files selected for deletion.')
+      return;
+    }
+    
+    const postData = {
+      file_id: selectedFiles,
+      folder_name: folderName,
+      lead_id: leadId,
+    };
+    try {
+      await apiDeleteFileManagerFiles(postData);
+      toast.push(
+        <Notification closable type="success" duration={2000}>
+          Files deleted successfully
+        </Notification>,{placement:'top-center'}
+      )
+      window.location.reload()
+    } catch (error) {
+      toast.push(
+        <Notification closable type="danger" duration={2000}>
+          Error deleting files
+        </Notification>,{placement:'top-center'}
+      )
+    }
+    
+  }
 
 
   const handleShareFiles = async () => {
@@ -87,23 +128,16 @@ const Index = () => {
           </Notification>,{placement:'top-center'}
       )
   }
-    function warn(text:string) {
-      toast.push(
-          <Notification closable type="warning" duration={2000}>
-              {text}
-          </Notification>,{placement:'top-center'}
-      )
-  }
+  function warn(text:string) {
+    toast.push(
+        <Notification closable type="warning" duration={2000}>
+            {text}
+        </Notification>,{placement:'top-center'}
+    )
+}
   
     try {
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/share/file', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        
-        },
-        body: JSON.stringify(postData),
-      });
+      const response = await apiGetCrmFileManagerShareFiles(postData);
   
       if (!response.ok) {
         console.error('Error sharing files:', response.statusText);
@@ -125,15 +159,19 @@ const Index = () => {
       console.error('Error sharing files:', error);
     }
   };
+  
 
   return (
     <div>
        <div className='flex justify-between'>
       <h3 className='mb-5'>Files</h3>
+      <div>
+        <Button variant='solid' color='red-600' className='mr-3' onClick={()=>deleteFiles()}>Delete</Button>
       <Button
        variant='solid'
        onClick={() => openDialog()}
       >Share</Button>
+      </div>
       </div>
       {leadData && leadData.length > 0 ? (
         <div  className='grid grid-cols-2 xl:grid-cols-6 sm:grid-cols-4 gap-4'>
@@ -170,7 +208,7 @@ const Index = () => {
         })}
       </div>
          ) : (
-          <p>Add files</p>
+          <p>No files</p>
         )}
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
@@ -196,7 +234,6 @@ const Index = () => {
                 className='max-h-[300px]'
                 onClose={onDialogClose} 
                 onRequestClose={onDialogClose}
-
             >
               <h3 className='mb-5'>Share Files</h3>
 

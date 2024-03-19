@@ -57,6 +57,13 @@ export type Subscription = {
 type mom={
    mom_id:string
 }
+export type Project = {
+    data:Data
+}
+export type Data = {
+    data:Customer
+}
+
 export type Customer = {
     id: string
     designer:string

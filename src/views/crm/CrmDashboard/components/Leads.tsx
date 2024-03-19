@@ -13,6 +13,7 @@ import type { Lead } from '../store'
 import { useEffect, useState } from 'react'
 import { HiOutlineEye } from 'react-icons/hi'
 import useThemeClass from '@/utils/hooks/useThemeClass'
+import { apiGetCrmLeads } from '@/services/CrmService'
 
 
 type LeadsProps = {
@@ -121,11 +122,13 @@ const Leads = ({ data = [], className }: LeadsProps) => {
     const [apiData, setApiData] = useState<Data[]>([]);
 
     useEffect(() => {
-      // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
-      fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/')
-        .then((response) => response.json())
-        .then((data: ApiResponse) => setApiData(data.data.slice(0,5)))
-        .catch((error) => console.error('Error fetching data:', error));
+      const fetchData = async () => {
+        const response = await apiGetCrmLeads();
+        const data = response.data
+        console.log('Received response from server:', data);
+        setApiData(data.slice(0,5));
+    };
+    fetchData();
     }, []);
  
 

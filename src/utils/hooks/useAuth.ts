@@ -49,7 +49,7 @@ function useAuth() {
                 )
                 return {
                     status: 'success',
-                    message: '',
+                    message: `${resp.errorMessage}`,
                 }
             }
             // eslint-disable-next-line  @typescript-eslint/no-explicit-any
