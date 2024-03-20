@@ -13,13 +13,12 @@ import Cookies from 'js-cookie';
 import appConfig from '@/configs/app.config';
 import { Alert, Notification, toast } from '@/components/ui';
 
-const token = Cookies.get('auth');
- // Replace 'token' with the name of your cookie
+const token=localStorage.getItem('auth');   
+const userId=localStorage.getItem('userId');
 
  const { apiPrefix } = appConfig
 
 export async function apiSignIn(data: SignInCredential): Promise<SignInResponse> {
-    try {
         const response = await fetch(`${apiPrefix}users/login`, {
             method: 'POST',
             headers: {
@@ -28,47 +27,37 @@ export async function apiSignIn(data: SignInCredential): Promise<SignInResponse>
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
 
         const responseData = await response.json();
         console.log('Received response from server:', responseData);
         return responseData;
-    } catch (error) {
-        console.error('Error sending request to server:', error);
-        throw error;
-    }
 }
 
 export async function apiSignUp(data: SignUpCredential) {
-    try {
+    const Data:SignUpCredential={
+        id:userId,
+        email:data.email.toLowerCase(),
+        role:data.role,
+        user_name:data.user_name
+    }
+    console.log(Data);
+    
         const response = await fetch(`${apiPrefix}admin/create/user`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(Data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const responseData = await response.json();
-        console.log('Received response from server:', responseData);
         return responseData;
-    } catch (error) {
-        console.error('Error sending request to server:', error);
-        throw error;
-    }
 }
 
 export async function apiSignOut() {
-    try {
-        const token = Cookies.get('auth');
-        const userId = Cookies.get('userId'); // Get the userId from cookies 
-        // Get the token from cookies
+     const token=localStorage.getItem('auth');
+     const userId=localStorage.getItem('userId');
         const response = await fetch(`${apiPrefix}users/logout`, {
             method: 'POST',
             headers: {
@@ -84,34 +73,22 @@ export async function apiSignOut() {
         const responseData = await response.json();
         console.log('Received response from server:', responseData);
         return responseData;
-    } catch (error) {
-        console.error('Error sending request to server:', error);
-        throw error;
-    }
 }
 
 export async function apiForgotPassword(data: ForgotPassword) {
-    try {
+     const Data:ForgotPassword={
+        email:data.email.toLowerCase(),
+     }
         const response = await fetch(`${apiPrefix}users/sendotp/forget/password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const responseData = await response.json();
-        return responseData;
-    } catch (error) {
-        
-           alert({message: 'Error sending request to server:', type: 'danger'})
-    }
+            body: JSON.stringify(Data)
+        });        
+        return response.json();
 }
 export async function apiOtpVerify(data: OtpVerify) {
-    try {
         const response = await fetch(`${apiPrefix}users/verifyotp/forget/password`, {
             method: 'POST',
             headers: {
@@ -119,16 +96,9 @@ export async function apiOtpVerify(data: OtpVerify) {
             },
             body: JSON.stringify(data)
         });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
         const responseData = await response.json();
         return responseData;
-    } catch (error) {
-        console.error('Error sending request to server:', error);
-        throw error;
-    }
+    
 }
 
 export async function apiResetPassword(data: ResetPassword) {

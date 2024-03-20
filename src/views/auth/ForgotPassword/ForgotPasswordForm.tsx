@@ -10,6 +10,7 @@ import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import type { CommonProps } from '@/@types/common'
 import type { AxiosError } from 'axios'
+import { Notification, toast } from '@/components/ui'
 
 interface ForgotPasswordFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -36,22 +37,22 @@ const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
         setSubmitting(true)
-        try {
+        console.log(values);
             const resp = await apiForgotPassword(values)
-           
             console.log(resp);
             
-            if (resp.data) {
+            if (resp.code === 200) {
                 setSubmitting(false)
                 setEmailSent(true)
             }
-        } catch (errors) {
-            setMessage(
-                (errors as AxiosError<{ message: string }>)?.response?.data
-                    ?.message || (errors as Error).toString()
-            )
-            setSubmitting(false)
-        }
+            else{
+                setSubmitting(false)
+                toast.push(
+                  <Notification closable type='danger' duration={2000}> {resp.errorMessage}</Notification>
+                )
+                setSubmitting(false)
+            }
+      
     }
 
     return (

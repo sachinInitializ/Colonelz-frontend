@@ -28,6 +28,12 @@ const authRoute: Routes = [
         component: lazy(() => import('@/views/auth/ResetPassword')),
         authority: [],
     },
+    {
+        key: 'remark',
+        path: `/client-remark`,
+        component: lazy(() => import('@/views/crm/FileManager/Components/Client_approval')),
+        authority: [],
+    },
 ]
 
 export default authRoute

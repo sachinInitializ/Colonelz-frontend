@@ -5,7 +5,6 @@ import useResponsive from '@/utils/hooks/useResponsive';
 import { Badge, Button, Tooltip } from '../ui';
 import { apiGetNotification, apiPutNotificationUpdate } from '@/services/CommonService';
 import Cookies from 'js-cookie';
-import { log } from 'console';
 
 interface Notification {
   _id: string;
@@ -17,17 +16,15 @@ const Notification1 = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const userId=Cookies.get('userId');
+      const userId=localStorage.getItem('userId');
       const userDetailData = await apiGetNotification(userId);
       setNotificationData(userDetailData.data.NotificationData);
     };
     fetchData();
   }, []);
-  console.log(notificationData);
-  
+
 
   const { larger } = useResponsive();
-
   const handleUpdate = async (notification: Notification,type:string) => {
     await apiPutNotificationUpdate(notification._id,type);
     if (type === 'All') {
@@ -50,7 +47,7 @@ const Notification1 = () => {
       <Dropdown
       renderTitle={
           <>
-            <Badge className="mr-4 text-2xl rounded-md" content={unreadNotifications.length}>
+            <Badge className="mr-4 text-2xl rounded-md cursor-pointer" content={unreadNotifications.length}>
               <HiOutlineBell />
             </Badge>
           </>

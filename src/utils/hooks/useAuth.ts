@@ -11,6 +11,7 @@ import { REDIRECT_URL_KEY } from '@/constants/app.constant'
 import { useNavigate } from 'react-router-dom'
 import useQuery from './useQuery'
 import type { SignInCredential, SignUpCredential } from '@/@types/auth'
+import { toast } from '@/components/ui'
 
 type Status = 'success' | 'failed'
 
@@ -26,10 +27,10 @@ function useAuth() {
     const signIn = async (
         values: SignInCredential
     ) => {
-        try {
+
             const resp =await apiSignIn(values)
             console.log(resp);
-            if (resp.data) {
+            if (resp.code===200) {
                 const { token } = resp.data
                 console.log('token',resp.data.role);
                 dispatch(signInSuccess({ token, userId: resp.data.userID }))
@@ -52,26 +53,20 @@ function useAuth() {
                     message: `${resp.errorMessage}`,
                 }
             }
-            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        } catch (errors: any) {
-            return {
+            else{
+            return{
                 status: 'failed',
-                message: errors?.response?.data?.message || errors.toString(),
+                message: `${resp.errorMessage}`,c
             }
-        }
+            }
+              
     }
 
     const signUp = async (values: SignUpCredential) => {
-        try {
+        
             const resp = await apiSignUp(values)
            console.log('signup',resp);
-            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        } catch (errors: any) {
-            return {
-                status: 'failed',
-                message: errors?.response?.data?.message || errors.toString(),
-            }
-        }
+          return resp
     }
 
     const handleSignOut = () => {
@@ -88,10 +83,11 @@ function useAuth() {
             window.location.reload()
     }
 
-    const signOut = async () => {
+    const signOut = async () => {  
         await apiSignOut()
         handleSignOut()
     }
+    setTimeout(signOut, 7*24*60*60*1000);
 
     return {
         authenticated: token && signedIn,

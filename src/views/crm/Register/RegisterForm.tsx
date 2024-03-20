@@ -15,7 +15,7 @@ interface SignUpFormProps extends CommonProps {
 }
 
 type SignUpFormSchema = {
-    id: string
+    id: string | null
     user_name: string
     email: string
     role:string
@@ -29,13 +29,7 @@ const validationSchema = Yup.object().shape({
     role:Yup.string().required('Please enter your role'),   
     
 })
-function closeAfter2000ms() {
-    toast.push(
-        <Notification closable type="success" duration={2000}>
-            Success
-        </Notification>,{placement:'top-center'}
-    )
-}
+
 
 const SignUpForm = (props: SignUpFormProps) => {
     const { disableSubmit = false, className, signInUrl = '/sign-in' } = props
@@ -52,21 +46,27 @@ const SignUpForm = (props: SignUpFormProps) => {
         setSubmitting(true)
         const result = await signUp({ id,user_name, role, email })
        
-        
         console.log('signup', result)
-        if (result?.status === 'failed') {
-            setMessage(result.message)
+        if (result.code===200) {
+          toast.push(
+            <Notification closable type="success" duration={2000}>
+                User Registered Successfully
+            </Notification>,{placement:'top-center'})
         }
         else{
-            closeAfter2000ms()
+            toast.push(
+                <Notification closable type="danger" duration={2000}>
+                    {result.errorMessage}
+                </Notification>,{placement:'top-center'}
+            )
         }
 
         setSubmitting(false)
     }
 
     const rolesOptions = [
-        { label: 'Admin', value: 'admin' },
-        { label: 'User', value: 'user' },
+        { label: 'Admin', value: 'ADMIN' },
+        { label: 'Procurement', value: 'PROCUREMENT' },
         {label:'Designer',value:'designer'}
     ]
 
@@ -79,7 +79,7 @@ const SignUpForm = (props: SignUpFormProps) => {
             )}
             <Formik
                 initialValues={{
-                    id:'65c32e19e0f36d8e1f30955c',
+                    id:'',
                     user_name: '',
                     email: '',
                     role:'',

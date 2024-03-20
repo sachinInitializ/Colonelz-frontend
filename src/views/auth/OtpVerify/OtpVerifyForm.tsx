@@ -12,6 +12,7 @@ import type { CommonProps } from '@/@types/common'
 import type { AxiosError } from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
+import { Notification, toast } from '@/components/ui'
 
 interface ForgotPasswordFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -39,20 +40,21 @@ const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
         setSubmitting(true)
-        try {
             const resp = await apiOtpVerify(values)
-            if (resp.data) {
+            console.log(resp);
+            
+            if (resp.code === 200) {
                 setSubmitting(false)
                 Cookies.set('auth', resp.data.token)
                 navigate('/reset-password?email='+values.email)
             }
-        } catch (errors) {
-            setMessage(
-                (errors as AxiosError<{ message: string }>)?.response?.data
-                    ?.message || (errors as Error).toString()
-            )
-            setSubmitting(false)
-        }
+            else{
+                setSubmitting(false)    
+                toast.push(
+                    <Notification closable type='danger' duration={2000}> {resp.errorMessage}</Notification>
+                    )
+            }
+        
     }
 
     return (

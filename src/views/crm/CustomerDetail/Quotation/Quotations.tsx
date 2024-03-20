@@ -139,14 +139,13 @@ const Quotations=(data : FileItemProps )=> {
         useMemo <ColumnDef <FileItem >[] >
         (() => {
             return [
-               
                 {
                     header: 'File Name',
                     accessorKey: 'firstName',
                     cell:({row})=>{
                         const fileName=row.original.file_name;
                         return(
-                            <a href={`${row.original.files[0].fileUrl}`} className=' cursor-pointer' target=''>
+                            <a href={`${row.original.files[0].fileUrl}`} className=' cursor-pointer' target='_blank'>
                         <div>{fileName.length > 20 ? `${fileName.substring(0, 20)}...` : fileName}</div></a>)
                     }
                 },
@@ -154,6 +153,18 @@ const Quotations=(data : FileItemProps )=> {
                 {
                     header: 'Client Status',
                     accessorKey: 'client_status',
+                    cell:({row})=>{
+                        const status=row.original.client_status;
+                        return(
+                            status==='approved'?(
+                                <div>Approved</div>
+                            ):status==='rejected'?(
+                                <div>Rejected</div>
+                            ):status==='pending'?(
+                                <div>Pending</div>
+                            ):(<div>Not Sent</div>)
+                        )
+                    }
                     
                 },
                 {
@@ -167,11 +178,13 @@ const Quotations=(data : FileItemProps )=> {
                                 <div>Approved</div>
                             ):status==='rejected'?(
                                 <div>Rejected</div>
-                            ):(
+                            ):status==='pending'?(
                                 <div className='flex gap-1'>
                                 <Button variant='solid' size='sm' onClick={()=>Approval(fileId,'approved')}>Accept</Button>
                                 <Button variant='solid' color='red-600' size='sm' onClick={()=>openDialog(fileId)}>Reject</Button>
                                 </div>
+                            ):(
+                                <div>Not Sent</div>
                             )
                         )
                     }

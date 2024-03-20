@@ -6,19 +6,19 @@ import { StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn } from 'react-icons/ci';
 import { apiDeleteFileManagerFiles, apiGetCrmFileManagerShareFiles, apiGetCrmProjectShareQuotation } from '@/services/CrmService';
+import { apiGetUsers } from '@/services/CommonService';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
-  const [usernames, setUsernames] = useState(['User1', 'User2', 'User3']);
   const [selectedType, setSelectedType] = useState("Internal");
   const [selectedUsername, setSelectedUsername] = useState("");
   const [clientName, setClientName] = useState("");
-const [clientEmail, setClientEmail] = useState("");
-const [usernameError, setUsernameError] = useState("");
-const [clientNameError, setClientNameError] = useState("");
-const [clientEmailError, setClientEmailError] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [clientNameError, setClientNameError] = useState("");
+  const [clientEmailError, setClientEmailError] = useState("");
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const location = useLocation();
@@ -26,7 +26,23 @@ const [clientEmailError, setClientEmailError] = useState("");
   const leadId = queryParams.get('project_id');
   const folderName = queryParams.get('folder_name'); // Assuming folder_name is in the query params
   const navigate=useNavigate()
+  const [usernames, setUsernames] = useState([]);
 
+  useEffect(() => {
+    const response=async()=>{
+      const data = await apiGetUsers();
+     const userdata=data.data
+     const usernames = userdata
+     .filter(user => user.role === 'PROCUREMENT')
+     .map(user => user.username);
+      if (usernames) {
+        setUsernames(usernames);
+      }
+    }
+    response()
+  }, [])
+
+  
   const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSubject(e.target.value);
   };

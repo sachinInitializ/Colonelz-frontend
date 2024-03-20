@@ -3,11 +3,25 @@ import ApiService from './ApiService'
 import appConfig from '@/configs/app.config';
 
 const { apiPrefix } = appConfig
-const userId = Cookies.get('userId')
-
-const token = Cookies.get('auth')
-export async function apiGetNotification(userId: string | undefined) {
+const token = localStorage.getItem('auth'); 
+const userId = localStorage.getItem('userId');
+export async function apiGetNotification(userId: string | null) {
     const response = await fetch(`${apiPrefix}admin/get/notification?userId=${userId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+}
+export async function apiGetUsers() {
+    const response = await fetch(`${apiPrefix}admin/get/alluser`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

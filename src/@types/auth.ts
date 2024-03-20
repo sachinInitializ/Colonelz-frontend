@@ -5,6 +5,7 @@ export type SignInCredential = {
 
 export interface SignInResponse {
     errorMessage:string
+    code:number
     data: {
         userID: string;
         token: string;
@@ -15,7 +16,7 @@ export interface SignInResponse {
 export type SignUpResponse = SignInResponse
 
 export type SignUpCredential = {
-    id:string
+    id:string | null
     user_name: string
     email: string
     role: string

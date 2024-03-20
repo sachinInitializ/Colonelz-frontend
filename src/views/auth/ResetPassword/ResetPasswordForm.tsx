@@ -127,7 +127,7 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
                                             component={PasswordInput}
                                         />
                                     </FormItem>
-                                    <div className=" text-red-500" >
+                                    <div className=" text-red-500 mb-4" >
           {errors.password}
         </div>
                                

@@ -13,6 +13,7 @@ import { HiOutlineEye } from 'react-icons/hi'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import { BiSolidBellRing } from 'react-icons/bi'
 import { apiGetCrmProjects } from '@/services/CrmService'
+import { Dropdown } from '@/components/ui'
 
 
 
@@ -78,6 +79,8 @@ const Project = ({  className }: LeadsProps) => {
     }
     interface client{
         client_name:string
+        client_email:string
+        client_contact:string
     }
     interface Data {
        project_name:string
@@ -134,7 +137,13 @@ console.log('apiData',apiData);
                                     {item.project_name} {dateDifference <= 1 && <BiSolidBellRing />}
                                 </Td>
                                 <Td className=' capitalize'>{item.project_status}</Td>
-                                <Td className="capitalize">{item.client[0].client_name}</Td>
+                                <Td className="capitalize"><Dropdown placement="bottom-center" renderTitle={<span>{item.client[0].client_name}</span>} className=' cursor-pointer' style={{width:'auto'}}>
+                            <div className='px-2'>
+                                <p>Client Name: {item.client[0].client_name}</p>
+                                <p>Client Email: {item.client[0].client_email}</p>
+                                <p>Client Contact: {item.client[0].client_contact}</p>
+                            </div>
+                        </Dropdown></Td>
                                 <Td>{dayjs(item.timeline_date).format('DD-MM-YYYY')}</Td>
                                 <Td  >
                                     <span className={
