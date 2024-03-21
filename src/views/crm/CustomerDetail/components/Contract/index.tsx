@@ -1,15 +1,18 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import { Formik, Field, Form, ErrorMessage,FieldProps } from 'formik';
 import * as Yup from 'yup';
 import { FormItem, Input } from '@/components/ui';
 import { useLocation } from 'react-router-dom';
 import { apiGetCrmProjectMakeContract } from '@/services/CrmService';
+import CreatableSelect from 'react-select/creatable';
 
 interface FormValues {
     client: string;
-    client_email: string;
-    client_name: string;
-    client_phone: string;
+    client_email: [];
+    client_name: [];
+    client_phone: [];
     project_name: string;
     site_address: string;
     date: string;
@@ -26,9 +29,6 @@ interface FormValues {
 
   const validationSchema = Yup.object().shape({
     client: Yup.string().required('Required'),
-    client_email: Yup.string().email('Invalid email').required('Required'),
-    client_name: Yup.string().required('Required'),
-    client_phone: Yup.string().required('Required'),
     project_name: Yup.string().required('Required'),
     site_address: Yup.string().required('Required'),
     date: Yup.date().required('Required'),
@@ -83,14 +83,15 @@ const project_type = queryParams.get('project_type');
     console.log(reponse);
     console.log(values);
   };
+  const animatedComponents = makeAnimated();
 
   return (
     <Formik
     initialValues={{
       client: '',
-      client_email: '',
-      client_name: '',
-      client_phone: '',
+      client_email: [],
+      client_name: [],
+      client_phone: [],
       project_name: '',
       site_address: '',
       date: '',
@@ -116,15 +117,42 @@ const project_type = queryParams.get('project_type');
     <ErrorMessage name="client" component="div" className=' text-red-600' />
   </FormItem>
   <FormItem label="Client Email">
-    <Field component={Input} type="email" name="client_email" size='sm' />
+  <Field name="client_email">
+  {({ field, form }: FieldProps) => (
+    <CreatableSelect
+      isMulti
+      components={animatedComponents}
+      onChange={(value) => form.setFieldValue(field.name, value.map((v) => v.value))}
+      onBlur={() => form.setFieldTouched(field.name, true)}
+    />
+  )}
+</Field>
     <ErrorMessage name="client_email" component="div" className=' text-red-600' />
   </FormItem>
   <FormItem label="Client Name">
-    <Field component={Input} type="text" name="client_name" size='sm' />
+  <Field name="client_name">
+  {({ field, form }: FieldProps) => (
+    <CreatableSelect
+      isMulti
+      components={animatedComponents}
+      onChange={(value) => form.setFieldValue(field.name, value.map((v) => v.value))}
+      onBlur={() => form.setFieldTouched(field.name, true)}
+    />
+  )}
+</Field>
     <ErrorMessage name="client_name" component="div" className=' text-red-600' />
   </FormItem>
   <FormItem label="Client Phone">
-    <Field component={Input} type="text" name="client_phone" size='sm' />
+  <Field name="client_phone">
+  {({ field, form }:FieldProps) => (
+    <CreatableSelect
+      isMulti
+      components={animatedComponents}
+      onChange={(value) => form.setFieldValue(field.name, value.map((v) => v.value))}
+      onBlur={() => form.setFieldTouched(field.name, true)}
+    />
+  )}
+</Field>
     <ErrorMessage name="client_phone" component="div" className=' text-red-600' />
   </FormItem>
   <FormItem label="Project Name">
