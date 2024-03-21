@@ -104,7 +104,7 @@ const Filtering = () => {
         const navigate = useNavigate()
         const { textTheme } = useThemeClass()
         const onEdit = () => {
-            navigate(`/app/crm/project-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
+            navigate(`/app/crm/project-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&project_type=${row.project_type}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
         }
         return (
             <div className="flex justify-end text-lg">
@@ -134,7 +134,7 @@ const Filtering = () => {
                     'text-red-500': dateDifference <= 1 && row.project_status !== 'completed',
                 });
                 return (
-                    <span className={`${cellClassName} flex gap-2 items-center cursor-pointer` } onClick={()=>navigate(`/app/crm/project-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}>
+                    <span className={`${cellClassName} flex gap-2 items-center cursor-pointer` } onClick={()=>navigate(`/app/crm/project-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&project_type=${row.project_type}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}>
                         {projectName} {dateDifference <= 1 && row.project_status!=='completed' && <BiSolidBellRing/>}
                     </span>
                 );

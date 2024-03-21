@@ -44,6 +44,19 @@ export async function apiGetCrmProjects() {
     console.log('Received response from server:', data);
     return data;
 }
+export async function apiGetCrmProjectMakeContract(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/send/contract`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+        
+    });
+
+    return response;
+}
 export async function apiGetCrmSingleProjectQuotation(projectId:string ) {
     const response = await fetch(`${apiPrefix}admin/get/quotationdata/?project_id=${projectId}`, {
         method: 'GET',

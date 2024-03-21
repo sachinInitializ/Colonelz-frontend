@@ -203,6 +203,13 @@ const appsRoute: Routes = [
         },
     },
     {
+        key: 'appsCrm.customerDetails',
+        path: `${APP_PREFIX_PATH}/crm/contract`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/Contract/index')),
+        authority: [],
+       
+    },
+    {
         key: 'appsCrm.mom',
         path: `${APP_PREFIX_PATH}/crm/MOM`,
         component: lazy(() => import('@/views/crm/Inventory')),

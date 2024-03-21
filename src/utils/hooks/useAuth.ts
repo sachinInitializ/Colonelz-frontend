@@ -56,7 +56,7 @@ function useAuth() {
             else{
             return{
                 status: 'failed',
-                message: `${resp.errorMessage}`,c
+                message: `${resp.errorMessage}`,
             }
             }
               

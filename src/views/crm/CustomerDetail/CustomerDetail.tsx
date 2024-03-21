@@ -16,6 +16,7 @@ import { apiGetCrmFileManagerProjects, apiGetCrmSingleProjectQuotation, apiGetCr
 import Quotations from './Quotation/Quotations'
 import { FileItem } from '../FileManager/Components/Project/data'
 import Index from './Quotation'
+import Contract from './components/Contract'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -47,7 +48,6 @@ const CustomerDetail = () => {
       project_id: queryParams.get('project_id') || '',
       mom: queryParams.get('type') || '',
     };
-    console.log(allQueryParams.mom);
     const [details, setDetails] = useState<any | null>(null);
     const[momdata,setmomdata]= useState<any | null>(null);
 
@@ -79,7 +79,6 @@ const CustomerDetail = () => {
     
         fetchDataAndLog();
       }, [allQueryParams.project_id]);
-      console.log(fileData);
       
       return (
         <div>
@@ -87,6 +86,7 @@ const CustomerDetail = () => {
             <TabList>
                 <TabNav value="tab1">Details</TabNav>
                 <TabNav value="tab2">Quotation</TabNav>
+                <TabNav value="contract">Contract</TabNav>
                 <TabNav value="mom">MOM</TabNav>
                 <TabNav value="tab5">All MOM</TabNav>
             </TabList>
@@ -98,6 +98,9 @@ const CustomerDetail = () => {
                 </TabContent>
                 <TabContent value="tab2">
                    <Index data={fileData}/>
+                </TabContent>
+                <TabContent value="contract">
+                  <Contract/>
                 </TabContent>
                 <TabContent value="mom">
                   <MOM data={details} />

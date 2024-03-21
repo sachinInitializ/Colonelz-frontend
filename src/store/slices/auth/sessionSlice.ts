@@ -5,13 +5,13 @@ import Cookies from 'js-cookie'
 export interface SessionState {
     signedIn: boolean
     token: string | null
-    userId: string | null // Add the user ID to the state
+    userId: string | null 
 }
 
 const initialState: SessionState = {
     signedIn: false,
     token: null,
-    userId: Cookies.get('userId') || null, // Get the user ID from cookies
+    userId: Cookies.get('userId') || null, 
 }
 
 interface SignInPayload {
@@ -36,7 +36,7 @@ const sessionSlice = createSlice({
             state.userId = null; 
             localStorage.removeItem('auth');
             localStorage.removeItem('userId');
-            Cookies.remove('userId'); // Remove the user ID from cookies
+            Cookies.remove('userId'); 
         },
     },
 });

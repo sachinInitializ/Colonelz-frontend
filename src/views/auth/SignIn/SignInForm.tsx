@@ -52,6 +52,7 @@ const SignInForm = (props: SignInFormProps) => {
         console.log('signinform', result);
         
         if (result?.status === 'failed') {
+            setSubmitting(false)
             setMessage(result.message)
         }
 
