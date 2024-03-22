@@ -3,7 +3,7 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { Formik, Field, Form, ErrorMessage,FieldProps } from 'formik';
 import * as Yup from 'yup';
-import { FormItem, Input } from '@/components/ui';
+import { Button, FormItem, Input } from '@/components/ui';
 import { useLocation } from 'react-router-dom';
 import { apiGetCrmProjectMakeContract } from '@/services/CrmService';
 import CreatableSelect from 'react-select/creatable';
@@ -111,7 +111,11 @@ const project_type = queryParams.get('project_type');
     validateOnBlur={true}
 >
       {({ isSubmitting }) => (
-        <Form className='grid grid-cols-3 gap-3'>
+        <>
+        <h3 className='mb-4'>Contract</h3>
+        
+        <Form className=''>
+          <div className='grid grid-cols-3 gap-3'>
            <FormItem label="Client">
     <Field component={Input} type="text" name="client" size='sm' />
     <ErrorMessage name="client" component="div" className=' text-red-600' />
@@ -203,11 +207,12 @@ const project_type = queryParams.get('project_type');
   <Field component={Input} type="number" name="terrace_and_balcony_area_in_sft" size='sm' />
   <ErrorMessage name="terrace_and_balcony_area_in_sft" component="div" className=' text-red-600' />
 </FormItem>)}
-<button type="submit" disabled={isSubmitting}>
+</div>
+<Button type="submit" disabled={isSubmitting} variant='solid'>
   Submit
-</button>
+</Button>
 </Form>
-      )}
+</>  )}
     </Formik>
   );
 };

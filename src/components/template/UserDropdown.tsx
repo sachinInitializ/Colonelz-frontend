@@ -8,6 +8,7 @@ import classNames from 'classnames'
 import { HiOutlineUser, HiOutlineCog, HiOutlineLogout } from 'react-icons/hi'
 import { FiActivity } from 'react-icons/fi'
 import type { CommonProps } from '@/@types/common'
+import { AiOutlineUserAdd } from 'react-icons/ai'
 
 type DropdownList = {
     label: string
@@ -16,6 +17,12 @@ type DropdownList = {
 }
 
 const dropdownItemList: DropdownList[] = [
+    {
+    label:"Add Member to project",
+    path:"/app/crm/addmember",
+    icon:<AiOutlineUserAdd/>
+
+    },
     {
         label: 'Register',
         path: '/app/crm/register',

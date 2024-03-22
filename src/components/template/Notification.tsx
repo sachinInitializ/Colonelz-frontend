@@ -73,7 +73,7 @@ const Notification1 = () => {
         </Dropdown.Item>
         <div className="ltr: rtl: text-sm overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
           <div className="overflow-y-auto h-[250px] pb-8" style={{ scrollbarWidth: 'none' }}>
-            {notificationData.slice().map((notification) => (
+            {notificationData.slice().reverse().map((notification) => (
               <div
                 key={notification._id}
                 className={`px-6 py-3 border-b border-gray-200 cursor-pointer ${notification.status ? 'read' : 'unread'}`}

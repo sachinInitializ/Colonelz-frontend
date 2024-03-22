@@ -14,8 +14,6 @@ const Index = () => {
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
   const [selectedType, setSelectedType] = useState("Internal");
   const [selectedUsername, setSelectedUsername] = useState("");
-  const [clientName, setClientName] = useState("");
-  const [clientEmail, setClientEmail] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [clientNameError, setClientNameError] = useState("");
   const [clientEmailError, setClientEmailError] = useState("");
@@ -57,6 +55,10 @@ const Index = () => {
   const openDialog = () => {
       setIsOpen(true)
   }
+
+  const onDialogClose = () => {
+    setIsOpen(false)
+}
   const openDialog1 = () => {
       setIsOpen1(true)
   }
@@ -64,9 +66,7 @@ const Index = () => {
       setIsOpen1(false)
   }
 
-  const onDialogClose = () => {
-      setIsOpen(false)
-  }
+  
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -144,10 +144,7 @@ const Index = () => {
     
   }
 
-  const options = [
-    { value: 'Internal', label: 'Internal' },
-    { value: 'Client', label: 'Client' }
-  ];
+
 
  const handleShareFileForApproval = async () => {
     if(selectedFiles.length===0){
@@ -158,20 +155,14 @@ const Index = () => {
       )
       return;
     }
-    if (selectedType === 'Client' && (clientName === '' || clientEmail === '')) {
-      setClientNameError('Client Name is mandatory for Client');
-      setClientEmailError('Client Email is mandatory for Client');
-      return;
-    }
+  
 
     const postData = {
       user_name:  selectedUsername,
-      type: selectedType,
+      type: 'Internal',
       file_id: selectedFiles[0], 
       folder_name: 'quotation',
       project_id: leadId,
-      client_name: clientName,
-      client_email: clientEmail, 
     };
     try{
       const response=await apiGetCrmProjectShareQuotation(postData);
@@ -388,20 +379,8 @@ const Index = () => {
 
             >
               <h3 className='mb-5'>Share Files For Approval</h3>
-               <div className=' gap-3 grid'>
-               <Select
-    defaultValue={options[0]}
-    size='sm'
-    options={options}
-    onChange={(selectedOption) => {
-      setSelectedType(selectedOption.value);
-      if (selectedOption.value === 'Internal' && selectedUsername === '') {
-        setUsernameError('Username is mandatory for internal type');
-      } else {
-        setUsernameError('');
-      }
-    }}
-  />
+               <div className=' '>
+              
   
               <CreatableSelect
                options={usernames.map((username) => ({ label: username, value: username }))}
@@ -424,33 +403,6 @@ const Index = () => {
                   />
                   {usernameError && <div className=" text-red-600">{usernameError}</div>}
 
-<Input
-    type="text"
-    placeholder="Client Name"
-    value={clientName}
-    onChange={(e) => {
-      setClientName(e.target.value);
-      if (selectedType === 'Client' && e.target.value === '') {
-        setClientNameError('Client Name is mandatory for Client');
-      } else {
-        setClientNameError('');
-      }
-    }}
-  />
- {clientNameError && <div className=" text-red-600">{clientNameError}</div>}
-<Input
-    type="email"
-    placeholder="Client Email"
-    value={clientEmail}
-    onChange={(e) => {
-      setClientEmail(e.target.value);
-      if (selectedType === 'Client' && e.target.value === '') {
-        setClientEmailError('Client Email is mandatory for Client');
-      } else {
-        setClientEmailError('');
-      }
-    }}
-  />
     
  
   {clientEmailError && <div className=" text-red-600">{clientEmailError}</div>}

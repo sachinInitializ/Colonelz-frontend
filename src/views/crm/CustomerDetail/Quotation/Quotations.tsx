@@ -12,10 +12,10 @@ import Checkbox from '@/components/ui/Checkbox'
 import type { ChangeEvent } from 'react'
 import type { CheckboxProps } from '@/components/ui/Checkbox'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Button, Dialog, Input, Notification, toast } from '@/components/ui'
+import { Button, Dialog, FormItem, Input, Notification, Select, toast } from '@/components/ui'
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { apiGetCrmProjectShareQuotationApproval } from '@/services/CrmService'
+import { apiGetCrmProjectShareQuotation, apiGetCrmProjectShareQuotationApproval } from '@/services/CrmService'
 import { use } from 'i18next'
 import { useLocation } from 'react-router-dom'
 
@@ -62,6 +62,7 @@ type FileItem = {
    file_name:string,
    files:Files[],
    itemId:string,
+   remark:string
 }
 type Files = {
     fileUrl:string,
@@ -96,9 +97,8 @@ const Quotations=(data : FileItemProps )=> {
     const projectId=queryParams.get('project_id')
     const [fileId,setFileId]=useState('')
 
-    const openDialog = (file_id:string) => {
+    const openDialog = () => {
         setIsOpen(true)
-        setFileId(file_id)
     }
 
     const onDialogClose = () => {
@@ -173,6 +173,21 @@ const Quotations=(data : FileItemProps )=> {
                     cell:({row})=>{
                         const fileId=row.original.itemId;
                         const status=row.original.admin_status;
+                        const [dialogIsOpen, setIsOpen] = useState(false)
+                       
+
+                        const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+                            setRemark(event.target.value);
+                        };
+
+                        const openDialog1 = (fileId:string) => {
+                            setIsOpen(true)
+                        }
+                    
+                        const onDialogClose1 = () => {
+                            setIsOpen(false)
+                        }
+                    
                         return(
                             status==='approved'?(
                                 <div>Approved</div>
@@ -181,15 +196,95 @@ const Quotations=(data : FileItemProps )=> {
                             ):status==='pending'?(
                                 <div className='flex gap-1'>
                                 <Button variant='solid' size='sm' onClick={()=>Approval(fileId,'approved')}>Accept</Button>
-                                <Button variant='solid' color='red-600' size='sm' onClick={()=>openDialog(fileId)}>Reject</Button>
+                                <Button variant='solid' color='red-600' size='sm' onClick={()=>openDialog1(fileId)}>Reject</Button>
+                                <Dialog
+                isOpen={dialogIsOpen}
+                onClose={onDialogClose1}
+                onRequestClose={onDialogClose1 }
+            >
+               <h3 className='mb-4'> Reject Remarks</h3>
+               <Formik
+    initialValues={{ project_id:projectId ,
+        file_id: fileId,
+        status: 'rejected', remark: '' }}
+    validationSchema={Yup.object({
+        remark: Yup.string().required('Required'),
+    
+    })}
+    onSubmit={async (values, { setSubmitting }) => {
+        const response = await apiGetCrmProjectShareQuotationApproval(values);
+        const respoonseData=await response.json();
+        if(response.status===200){
+            toast.push(
+                <Notification closable type='success' duration={2000}>
+                    {respoonseData.message}
+                </Notification>
+            )
+            window.location.reload();
+        }
+        else{
+            toast.push(
+                <Notification closable type='danger' duration={2000}>
+                    {respoonseData.errorMessage}
+                </Notification>
+            )
+        }
+        
+        setSubmitting(false);
+    }}
+>
+    <Form>
+        <FormItem label="Remark">
+        <Field name="remark" as="textarea" component={Input}  />
+        </FormItem>
+        <div className='flex justify-end'>
+        <Button type="submit" variant='solid'>Submit</Button>
+        </div>
+    </Form>
+</Formik>
+            </Dialog>
                                 </div>
                             ):(
                                 <div>Not Sent</div>
                             )
                         )
                     }
-                }
-              
+                },
+              {
+                header: 'Remark',
+                accessorKey: 'remark',
+                cell:({row})=>{
+                    const Remark=row.original.remark;
+                    const admin_status=row.original.admin_status;
+                    const [dialogIsOpen, setIsOpen] = useState(false)
+
+                    const openDialog = () => {
+                        setIsOpen(true)
+                    }
+                
+                    const onDialogClose = () => {
+                        setIsOpen(false)
+                    }
+                
+                    const onDialogOk = (e: MouseEvent) => {
+                        console.log('onDialogOk', e)
+                        setIsOpen(false)
+                    }
+                    return(<> 
+                    {admin_status==='rejected' &&        
+                      <div><Button size='sm' variant='solid' onClick={()=>openDialog()}>Remark</Button></div>}
+                      <Dialog
+                isOpen={dialogIsOpen}
+                onClose={onDialogClose}
+                onRequestClose={onDialogClose}
+            >
+         <h3 className='mb-4'>Remarks</h3>
+         <p>{Remark}</p>
+                      </Dialog>
+                      </>
+
+                    )
+              }}
             ]
         },
         [])
@@ -206,10 +301,78 @@ const Quotations=(data : FileItemProps )=> {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+  console.log(data.data);
+  
+    interface FormValues {
+        client_name: string;
+        client_email: string;
+        file_id: string;
+        type:string
+        project_id:string |null
+        folder_name:string
+    }
+    interface Option {
+        value: string ;
+        label: string;
+    }
+    
+    interface SelectFieldProps {
+        options: Option[];
+        field: any;
+        form: any;
+    }
+    const handleShareFileForApproval = async () => {
+        if(selectedFiles.length===0){
+          toast.push(
+            <Notification closable type="warning" duration={2000}>
+              Please select a file to share
+            </Notification>,{placement:'top-center'}
+          )
+          return;
+        }
+      
+    
+        const postData = {
+          type: 'Internal',
+          file_id: selectedFileIds[0], 
+          folder_name: 'quotation',
+          project_id: projectId,
+        };
+        try{
+          const response=await apiGetCrmProjectShareQuotation(postData);
+          const responseJson=await response.json()
+          if (response.ok) {
+            toast.push(
+              <Notification closable type="success" duration={2000}>
+                File shared successfully
+              </Notification>,{placement:'top-center'}
+            )
+          }
+        }
+        catch(error){
+          console.error('Error sharing files:', error);
+        }
+     }
+
+     const SelectField: React.FC<SelectFieldProps> = ({ options, field, form }) => (
+        <Select
+            options={options}
+            name={field.name}
+            value={options ? options.find(option => option.value === field.value) : ''}
+            onChange={(option) => form.setFieldValue(field.name, option.value)}
+        />
+    );
+    const handleSubmit = async (values:FormValues) => {
+        const response=await apiGetCrmProjectShareQuotation(values);
+        const responseData=  await response.json();
+        console.log(responseData);
+      };
+     const approvedFiles = data.data.filter(file => file.admin_status === 'approved').map(file => ({ value: file.itemId, label: file.file_name }));
 
     return (
         <div>
         <div className=' flex justify-end mb-4'>
+            <Button variant='solid' size='sm' onClick={()=>openDialog()} >Share to Client</Button>
     </div>
             <Table>
                 <THead>
@@ -251,25 +414,44 @@ const Quotations=(data : FileItemProps )=> {
                 </TBody>
             </Table>
 
-            <Dialog
+          
+<Dialog
                 isOpen={dialogIsOpen}
                 onClose={onDialogClose}
                 onRequestClose={onDialogClose}
                 className={`pb-3`}>
-                    <div className='h-[100%] overflow-auto pb-3' style={{scrollbarWidth:'none'}}>
-                    <h3 className='mb-5'>Remark</h3>
-                    <Input
-  textArea
-  value={remark}
-  onChange={(e) => setRemark(e.target.value)}
-/>
-                    <div className='flex justify-end'>
-                        <Button variant='solid' size='sm' onClick={()=>Approval(fileId,'rejected')}>Submit</Button>
-                    </div>
-                    
-    </div>
-                    
+                  <h3 className='mb-4'>Share To Client</h3>
+
+                 <Formik
+                 initialValues={{ client_name: '', client_email: '', file_id: '',type:'Client',project_id:projectId,folder_name:'quotation' }}
+                 validationSchema={Yup.object({
+                     client_name: Yup.string().required('Required'),
+                     client_email: Yup.string().email('Invalid email address').required('Required'),
+                     file_id: Yup.string().required('Required'),
+                 })}
+                 onSubmit={(values, { setSubmitting }) => {
+                        handleSubmit(values);
+                        setSubmitting(false);
+                 }}
+                 >
+                    <Form>
+                 <FormItem label='Client Name'>
+                 <Field name="client_name" type="text" component={Input}/>
+                 </FormItem>
+                    <FormItem label='Client Email'>
+                    <Field name="client_email" type="text" component={Input}/>
+                    </FormItem>
+                    <FormItem label='File'>
+                    <Field name="file_id" component={SelectField} options={approvedFiles}/>
+                    </FormItem>
+                    <Button type='submit'> Submit</Button>
+                 </Form>  
+                 </Formik>
+                 
             </Dialog>
+                
+                    
+        
         </div>
     )
 }

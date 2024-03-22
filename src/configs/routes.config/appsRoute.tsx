@@ -17,6 +17,12 @@ const appsRoute: Routes = [
         authority: [],
     },
     {
+        key: 'appsCrm.addmember',
+        path: `${APP_PREFIX_PATH}/crm/addmember`,
+        component: lazy(() => import('@/views/crm/AddMemberToProject/index')),
+        authority: [],
+    },
+    {
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager`,
         component: lazy(() => import('@/views/crm/FileManager')),

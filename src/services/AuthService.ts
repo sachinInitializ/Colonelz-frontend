@@ -33,6 +33,21 @@ export async function apiSignIn(data: SignInCredential): Promise<SignInResponse>
         return responseData;
 }
 
+export async function apiAddMember(data:any) {
+    data.id=userId;
+    
+        const response = await fetch(`${apiPrefix}admin/add/member`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+
+       
+        return response;
+}
 export async function apiSignUp(data: SignUpCredential) {
     const Data:SignUpCredential={
         id:userId,
@@ -89,12 +104,16 @@ export async function apiForgotPassword(data: ForgotPassword) {
         return response.json();
 }
 export async function apiOtpVerify(data: OtpVerify) {
+    const Data={
+        email:data.email.toLowerCase(),
+        otp:data.otp
+    }
         const response = await fetch(`${apiPrefix}users/verifyotp/forget/password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(Data)
         });
         const responseData = await response.json();
         return responseData;
