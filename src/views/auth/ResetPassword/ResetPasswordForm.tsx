@@ -19,7 +19,7 @@ interface ResetPasswordFormProps extends CommonProps {
 }
 
 type ResetPasswordFormSchema = {
-    email: string| null
+    email: string
     token: string 
     password: string
 }

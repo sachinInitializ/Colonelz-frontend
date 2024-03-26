@@ -35,6 +35,17 @@ export async function apiGetUsers() {
     const data = await response.json();
     return data;
 }
+export async function addMemberToProject(Data: any) {
+    const response = await fetch(`${apiPrefix}admin/add/member`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(Data)
+    });
+
+    return response;}
 export async function apiPutNotificationUpdate(notificationId: string,type:string) {
     const response = await fetch(`${apiPrefix}admin/update/notification`, {
         method: 'PUT',

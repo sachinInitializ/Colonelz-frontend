@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import axios from 'axios';
-import { FormItem, Input, Select } from '@/components/ui';
+import { Button, FormItem, Input, Select } from '@/components/ui';
 import { apiAddMember } from '@/services/AuthService';
 import { apiGetUsers } from '@/services/CommonService';
 
@@ -79,7 +79,7 @@ const Index = () => {
             <Field id="project_id" name="project_id" component={Input} />
           </FormItem>
 
-          <button type="submit">Submit</button>
+          <Button type="submit" variant='solid'>Submit</Button>
         </Form>
       )}
     </Formik>

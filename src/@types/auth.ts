@@ -32,6 +32,6 @@ export type OtpVerify = {
 
 export type ResetPassword = {
     password: string
-    email: string | null
+    email: string 
     token: string
 }

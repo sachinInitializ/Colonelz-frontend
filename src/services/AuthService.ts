@@ -121,13 +121,19 @@ export async function apiOtpVerify(data: OtpVerify) {
 }
 
 export async function apiResetPassword(data: ResetPassword) {
+    const Data={
+        email:data.email.toLowerCase(),
+        password:data.password,
+        token:data.token
+    }
+      
     try {
         const response = await fetch(`${apiPrefix}users/reset/password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(Data)
         });
 
         const responseData = await response.json();
