@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import axios from 'axios';
-import { Button, FormItem, Input, Select } from '@/components/ui';
+import { Button, FormItem, Input, Notification, Select, toast } from '@/components/ui';
 import { apiAddMember } from '@/services/AuthService';
 import { apiGetUsers } from '@/services/CommonService';
 
@@ -45,6 +45,26 @@ const Index = () => {
   const handleSubmit = async (values: FormValues) => {
     const response=await apiAddMember(values);
     const responseData=  await response.json();
+    if(response.status===200){
+     
+      toast.push(
+        <Notification closable type="success" duration={0}>
+            Member Added Successfully
+        </Notification>
+    
+     )
+      
+    }
+    else{
+      toast.push(
+        <Notification closable type="danger" duration={0}>
+            {responseData.errorMessage}
+        </Notification>
+    
+     )
+      console.log(responseData);
+      
+    }
     console.log(responseData);
   };
 

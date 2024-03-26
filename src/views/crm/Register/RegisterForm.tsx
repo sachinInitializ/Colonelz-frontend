@@ -150,17 +150,18 @@ const SignUpForm = (props: SignUpFormProps) => {
                                 </Field>
                                 </FormItem>
                           
+                          
                             <Button
                                 block
                                 loading={isSubmitting}
                                 variant="solid"
                                 type="submit"
+                                className='w-1/2'
                             >
                                 {isSubmitting
                                     ? 'Creating Account...'
                                     : 'Register'}
                             </Button>
-                          
                         </FormContainer>
                     </Form>
                 )}
