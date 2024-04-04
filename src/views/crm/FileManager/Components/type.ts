@@ -24,7 +24,7 @@ export type FileItem = {
   };
   
   export type ProjectDataItem = {
-    project_Name: string;
+    project_name: string;
     project_id: string;
     files: FolderItem[];
   };

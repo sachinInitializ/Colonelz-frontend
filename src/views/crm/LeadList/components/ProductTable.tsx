@@ -1,47 +1,52 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import DataTable from '@/components/shared/DataTable'
-import { HiOutlineEye } from 'react-icons/hi'
+
+import { useMemo, useState, useEffect } from 'react'
+import Table from '@/components/ui/Table'
+import Input from '@/components/ui/Input'
 import {
-    getProducts,
-    setTableData,
-    setSelectedProduct,
-    toggleDeleteConfirmation,
-    useAppDispatch,
-    useAppSelector,
-} from '../store'
-import useThemeClass from '@/utils/hooks/useThemeClass'
-import ProductDeleteConfirmation from './ProductDeleteConfirmation'
-import { useNavigate } from 'react-router-dom'
-import cloneDeep from 'lodash/cloneDeep'
-import type {
-    DataTableResetHandle,
-    OnSortParam,
-    ColumnDef,
-} from '@/components/shared/DataTable'
-import { use } from 'i18next'
+    useReactTable,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
+    getFacetedMinMaxValues,
+    getPaginationRowModel,
+    getSortedRowModel,
+    flexRender,
+} from '@tanstack/react-table'
+import { rankItem } from '@tanstack/match-sorter-utils'
+import type { Product } from '../store/productListSlice'
+import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
+import type { InputHTMLAttributes } from 'react'
 import { apiGetCrmLeads } from '@/services/CrmService'
+import { Link, useNavigate } from 'react-router-dom'
+import { Button, Pagination, Select } from '@/components/ui'
+import { HiOutlineEye, HiPlusCircle } from 'react-icons/hi'
+import useThemeClass from '@/utils/hooks/useThemeClass'
+
+interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
+    value: string | number
+    onChange: (value: string | number) => void
+    debounce?: number
+}
+const data=await apiGetCrmLeads()
+const responseData=data.data
+const { Tr, Th, Td, THead, TBody, Sorter } = Table
+const totalData = responseData.length
 
 
-
-
-const ActionColumn = ({ row }: { row: Product }) => {
-    const dispatch = useAppDispatch()
-    const { textTheme } = useThemeClass()
+const pageSizeOption = [
+    { value: 10, label: '10 / page' },
+    { value: 20, label: '20 / page' },
+    { value: 30, label: '30 / page' },
+    { value: 40, label: '40 / page' },
+    { value: 50, label: '50 / page' },
+]
+const ActionColumn = ({ row }: { row: Product}) => {
     const navigate = useNavigate()
-
+    const { textTheme } = useThemeClass()
     const onEdit = () => {
-
         navigate(`/app/crm/lead/?id=${row.lead_id}`)
     }
-
-    const onDelete = () => {
-        dispatch(toggleDeleteConfirmation(true))
-        dispatch(setSelectedProduct(row.id))
-    }
-
-  
-    
-
     return (
         <div className="flex justify-end text-lg">
             <span
@@ -50,167 +55,219 @@ const ActionColumn = ({ row }: { row: Product }) => {
             >
                 <HiOutlineEye />
             </span>
-            {/* <span
-                className="cursor-pointer p-2 hover:text-red-500"
-                onClick={onDelete}
-            >
-                <HiOutlineTrash />
-            </span> */}
         </div>
     )
 }
 
-
-
-const ProductTable = () => {
-    const tableRef = useRef<DataTableResetHandle>(null)
-
-    const dispatch = useAppDispatch()
-
-    const { pageIndex, pageSize, sort, query, total } = useAppSelector(
-        (state) => state.salesProductList.data.tableData
-    )
-
-    const filterData = useAppSelector(
-        (state) => state.salesProductList.data.filterData
-    )
-
-    const loading = useAppSelector(
-        (state) => state.salesProductList.data.loading
-    )
-
-   const [data,setData] = useState([])
-   useEffect(() => {
-    const fetchData=async()=>{
-        const response = await apiGetCrmLeads();
-        const data = response.data;
-        console.log('Received response from server:', data);
-        setData(data);
-    
-   }
-fetchData()},[])
+function DebouncedInput({
+    value: initialValue,
+    onChange,
+    debounce = 500,
+    ...props
+}: DebouncedInputProps) {
+    const [value, setValue] = useState(initialValue)
 
     useEffect(() => {
-        fetchData()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pageIndex, pageSize, sort])
+        setValue(initialValue)
+    }, [initialValue])
 
     useEffect(() => {
-        if (tableRef) {
-            tableRef.current?.resetSorting()
-        }
-    }, [filterData])
+        const timeout = setTimeout(() => {
+            onChange(value)
+        }, debounce)
 
-    const tableData = useMemo(
-        () => ({ pageIndex, pageSize, sort, query, total }),
-        [pageIndex, pageSize, sort, query, total]
+        return () => clearTimeout(timeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value])
+
+    return (
+        <div className="flex justify-between md:flex-col lg:flex-row">
+            <h3>Leads</h3>
+            <div className="flex items-center mb-4 gap-3">
+                <Input
+                size='sm'
+                    {...props}
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                />
+                  <Link
+                className="block lg:inline-block md:mb-0 mb-4"
+                to="/app/crm/lead-new"
+            >
+                <Button block variant="solid" size="sm" icon={<HiPlusCircle />}>
+                    Add Lead
+                </Button>
+            </Link>
+            </div>
+        </div>
     )
+}
 
-    const fetchData = () => {
-        dispatch(getProducts({ pageIndex, pageSize, sort, query, filterData }))
-    }
- 
-    const columns: ColumnDef<Product>[] = useMemo(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+    // Rank the item
+    const itemRank = rankItem(row.getValue(columnId), value)
+
+    // Store the itemRank info
+    addMeta({
+        itemRank,
+    })
+
+    // Return if the item should be filtered in/out
+    return itemRank.passed
+}
+
+const Filtering = () => {
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [globalFilter, setGlobalFilter] = useState('')
+    const navigate = useNavigate()
+
+    const columns = useMemo<ColumnDef<Product>[]>(
         () => [
-            {
-                header: 'Name',
-                accessorKey: 'name',
-               
-            },
-            {
-                header: 'Email',
-                accessorKey: 'email',
-                cell: (props) => {
-                    const row = props.row.original
-                    return <span className="capitalize">{row.email}</span>
-                },
-            },
-            {
-                header: 'Lead Date',
-                accessorKey: 'createdAt',
-                cell: (props) => {
-                    const row = props.row.original;
-                    const date = new Date(row.createdAt);
-                    const formattedDate = date.toISOString().split('T')[0];
-                    return formattedDate;
-                },
-            },
-            {
-                header: 'Status',
-                accessorKey: 'status',
-                // cell: (props) => {
-                //     const { status } = props.row.original
-                //     return (
-                //         <div className="flex items-center gap-2">
-                //             <Badge
-                //                 className={
-                //                     inventoryStatusColor[status].dotClass
-                //                 }
-                //             />
-                //             <span
-                //                 className={`capitalize font-semibold ${inventoryStatusColor[status].textClass}`}
-                //             >
-                //                 {inventoryStatusColor[status].label}
-                //             </span>
-                //         </div>
-                //     )
-                // },
-            },
-            {
-                header: 'Phone',
-                accessorKey: 'phone',
-                sortable: true,
-            },
-            {
-                header: '',
-                id: 'action',
-                cell: (props) => <ActionColumn row={props.row.original} />,
-            },
+            { header: 'Name', accessorKey: 'name',
+        cell: ({row}) => {
+            const name=row.original.name
+            return <Link to={`/app/crm/lead/?id=${row.original.lead_id}`}>{name}</Link>
+        }},
+            { header: 'Email', accessorKey: 'email' },
+            { header: 'Lead date', accessorKey: 'date',
+            cell: ({row}) => {
+                const date=row.original.createdAt
+                return new Date(date).toISOString().split('T')[0]  
+
+                    }},
+            { header: 'Phone', accessorKey: 'phone' },
+            { header: 'Status', accessorKey: 'status' },
+            {   id:"action",
+            filterable: false,
+            cell: (props) => <ActionColumn row={props.row.original} />,
+            header: () => null,
+        },
         ],
         []
     )
 
+
+    const table = useReactTable({
+        data:responseData,
+        columns,
+        filterFns: {
+            fuzzy: fuzzyFilter,
+        },
+        state: {
+            columnFilters,
+            globalFilter,
+        },
+        onColumnFiltersChange: setColumnFilters,
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: fuzzyFilter,
+        getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getFacetedRowModel: getFacetedRowModel(),
+        getFacetedUniqueValues: getFacetedUniqueValues(),
+        getFacetedMinMaxValues: getFacetedMinMaxValues(),
+        debugHeaders: true,
+        debugColumns: false,
+    })
     const onPaginationChange = (page: number) => {
-        const newTableData = cloneDeep(tableData)
-        newTableData.pageIndex = page
-        dispatch(setTableData(newTableData))
+        table.setPageIndex(page - 1)
     }
 
-    const onSelectChange = (value: number) => {
-        const newTableData = cloneDeep(tableData)
-        newTableData.pageSize = Number(value)
-        newTableData.pageIndex = 1
-        dispatch(setTableData(newTableData))
+    const onSelectChange = (value = 0) => {
+        table.setPageSize(Number(value))
     }
-
-    const onSort = (sort: OnSortParam) => {
-        const newTableData = cloneDeep(tableData)
-        newTableData.sort = sort
-        dispatch(setTableData(newTableData))
-    }
-
-   
     return (
         <>
-            <DataTable
-                ref={tableRef}
-                columns={columns}
-                data={data}
-                skeletonAvatarColumns={[0]}
-                skeletonAvatarProps={{ className: 'rounded-md' }}
-                
-                pagingData={{
-                    total: tableData.total as number,
-                    pageIndex: tableData.pageIndex as number,
-                    pageSize: tableData.pageSize as number,
-                }}
-                onPaginationChange={onPaginationChange}
-                onSelectChange={onSelectChange}
-                onSort={onSort}
+            <DebouncedInput
+                value={globalFilter ?? ''}
+                className="p-2 font-lg shadow border border-block"
+                placeholder="Search all columns..."
+                onChange={(value) => setGlobalFilter(String(value))}
             />
-            <ProductDeleteConfirmation />
+            <Table>
+                <THead>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <Tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                    <Th
+                                        key={header.id}
+                                        colSpan={header.colSpan}
+                                    >
+                                        {header.isPlaceholder ? null : (
+                                            <div
+                                                {...{
+                                                    className:
+                                                        header.column.getCanSort()
+                                                            ? 'cursor-pointer select-none'
+                                                            : '',
+                                                    onClick:
+                                                        header.column.getToggleSortingHandler(),
+                                                }}
+                                            >
+                                                {flexRender(
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
+                                                {
+                                                    <Sorter
+                                                        sort={header.column.getIsSorted()}
+                                                    />
+                                                }
+                                            </div>
+                                        )}
+                                    </Th>
+                                )
+                            })}
+                        </Tr>
+                    ))}
+                </THead>
+                <TBody>
+                    {table.getRowModel().rows.map((row) => {
+                        return (
+                            <Tr key={row.id}>
+                                {row.getVisibleCells().map((cell) => {
+                                    return (
+                                        <Td key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </Td>
+                                    )
+                                })}
+                            </Tr>
+                        )
+                    })}
+                </TBody>
+            </Table>
+            <div className="flex items-center justify-between mt-4">
+                <Pagination
+                    pageSize={table.getState().pagination.pageSize}
+                    currentPage={table.getState().pagination.pageIndex + 1}
+                    total={totalData}
+                    onChange={onPaginationChange}
+                />
+                <div style={{ minWidth: 130 }}>
+                    <Select
+                        size="sm"
+                        isSearchable={false}
+                        value={pageSizeOption.filter(
+                            (option) =>
+                                option.value ===
+                                table.getState().pagination.pageSize
+                        )}
+                        options={pageSizeOption}
+                        onChange={(option) => onSelectChange(option?.value)}
+                    />
+                </div>
+            </div>
         </>
     )
 }
 
-export default ProductTable
+export default Filtering
+

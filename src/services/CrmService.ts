@@ -265,7 +265,6 @@ export async function apiGetCrmLeads() {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    console.log('Received response from server:', data);
     return data;
 }
 export async function apiGetCrmLeadsDetails(leadId:string | null) {

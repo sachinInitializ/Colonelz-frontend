@@ -123,10 +123,10 @@ const LeadForm: React.FC = () => {
                         formDataToSend.append(key, formData[key])
                     }
                 }
-             
-
                 const response = await apiGetCrmCreateLead(formDataToSend)
                 const errorMessage = await response.json()
+                console.log(errorMessage.errorMessage);
+                
                 if (response.ok) {
                     closeAfter2000ms('success','Lead added successfully')
                     navigate('/app/leads')
@@ -178,8 +178,13 @@ const LeadForm: React.FC = () => {
                             size="sm"
                             type="text"
                             value={formData.phone}
-                            onChange={(e) =>
-                                handleInputChange('phone', e.target.value)
+                            maxLength={10}
+                            onChange={(e) =>{
+                                const onlyNums = e.target.value.replace(/[^0-9]/g, '');
+                                if (onlyNums.length <= 10) {
+                                    handleInputChange('phone', onlyNums);
+                                }
+                            }
                             }
                         />
                     </FormItem>

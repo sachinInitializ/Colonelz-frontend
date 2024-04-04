@@ -186,6 +186,9 @@ const YourFormComponent: React.FC = () => {
             const response = await fetch(
                 'https://col-u3yp.onrender.com/v1/api/admin/create/mom/',
                 {
+                    headers:{
+                        Authorization: `Bearer ${localStorage.getItem('auth')}`
+                    },
                     method: 'POST',
                     body: formDataToSend,
                 },
@@ -326,6 +329,7 @@ const YourFormComponent: React.FC = () => {
                         </FormItem>
                         <FormItem label="Remark">
                             <Input
+                            textArea
                                 name="remark"
                                 value={formData.remark}
                                 onChange={(e) =>
@@ -335,7 +339,7 @@ const YourFormComponent: React.FC = () => {
                         </FormItem>
 
                         <FormItem label="File">
-                            <Upload
+                            <Upload multiple
                                 onChange={(files) => handleFileChange(files)}
                             >
                                 <Button

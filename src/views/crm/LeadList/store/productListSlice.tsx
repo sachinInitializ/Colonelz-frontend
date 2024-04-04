@@ -7,7 +7,7 @@ import type { TableQueries } from '@/@types/common'
 
 
 
-type Product = {
+export type Product = {
     lead_id: string
     name: string
     createdAt: string

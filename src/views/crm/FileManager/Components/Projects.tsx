@@ -115,12 +115,12 @@ const Filtering = () => {
             },
             {
                 header: 'Project Name',
-                accessorKey: 'project_Name',
+                accessorKey: 'project_name',
                 cell: (props) => {
                     const row = props.row.original;
                     return (
                         <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}`)}>
-                            {row.project_Name}
+                            {row.project_name}
                         </div>
                     )
                   }},

@@ -191,7 +191,7 @@ const App: React.FC = () => {
               </div>
               <div className="my-4 text-left grid grid-cols-8 gap-3">
                 {item.files.map((item) => (
-                  <a href={item} target="_blank">
+                  <a href={item.fileUrl} target="_blank">
                     <Button variant="solid">File</Button>
                   </a>
                 ))}

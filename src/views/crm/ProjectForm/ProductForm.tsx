@@ -91,7 +91,6 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     { value: 'residential', label: 'Residential' },
   ];
   const projectStatusOptions = [
-    { value: 'completed', label: 'Completed' },
     { value: 'designing', label: 'Designing' },
     { value: 'executing', label: 'Executing' },
   ];
@@ -121,7 +120,15 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name==='client_contact'){
+      const onlyNums = value.replace(/[^0-9]/g, '');
+      if (onlyNums.length <= 10) {
+          setFormData({ ...formData, [name]: onlyNums });
+      }
+    }
+    else {
+      setFormData({ ...formData, [name]: value });
+  }
     setErrors({
       ...errors,
       [name]: '',

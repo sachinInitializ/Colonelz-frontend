@@ -50,12 +50,12 @@ function DebouncedInput({
         }, debounce)
 
         return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
    const navigate=useNavigate()
     return (
         <div className="flex justify-between ">
 
+                <h3>Minutes of Meeting </h3>
             <div className="flex items-center mb-4">
                 <Input
                     {...props}

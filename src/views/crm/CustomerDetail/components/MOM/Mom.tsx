@@ -57,8 +57,7 @@ function ReactTable({
                         ) : null}
                     </>
                 ),
-                // We can override the cell renderer with a SubCell to be used with an expanded row
-                subCell: () => null, // No expander on an expanded row
+                subCell: () => null, 
             },
             {
                 header: 'MOM Id',
@@ -299,7 +298,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
             <div className="grid grid-cols-10 ">
                 {files.map((item) => (
                     <div  key={item}>
-                        <a href={item} target="_blank"  rel="noreferrer">
+                        <a href={item.fileUrl} target="_blank"  rel="noreferrer">
                             <Button variant="solid" className=" capitalize">
                                 File
                             </Button>
