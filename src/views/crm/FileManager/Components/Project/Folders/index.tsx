@@ -164,10 +164,10 @@ const Index = () => {
       folder_name: 'quotation',
       project_id: leadId,
     };
-    try{
+    
       const response=await apiGetCrmProjectShareQuotation(postData);
       const responseJson=await response.json()
-      if (response.ok) {
+      if (responseJson.code===200) {
         toast.push(
           <Notification closable type="success" duration={2000}>
             File shared successfully
@@ -175,10 +175,13 @@ const Index = () => {
         )
         setIsOpen1(false)
       }
-    }
-    catch(error){
-      console.error('Error sharing files:', error);
-    }
+      else{
+        toast.push(
+          <Notification closable type="danger" duration={2000}>
+            {responseJson.errorMessage}
+          </Notification>,{placement:'top-center'}
+        )
+      }
  }
   const handleShareFiles = async () => {
 

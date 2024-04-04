@@ -134,7 +134,7 @@ const Quotations=(data : FileItemProps )=> {
         }
     }
     
-
+    const role = localStorage.getItem('role');
     const columns =
         useMemo <ColumnDef <FileItem >[] >
         (() => {
@@ -167,7 +167,7 @@ const Quotations=(data : FileItemProps )=> {
                     }
                     
                 },
-                {
+               {
                     header: 'Admin Status',
                     accessorKey: 'itemId',
                     cell:({row})=>{
@@ -193,64 +193,65 @@ const Quotations=(data : FileItemProps )=> {
                                 <div>Approved</div>
                             ):status==='rejected'?(
                                 <div>Rejected</div>
-                            ):status==='pending'?(
-                                <div className='flex gap-1'>
-                                <Button variant='solid' size='sm' onClick={()=>Approval(fileId,'approved')}>Accept</Button>
-                                <Button variant='solid' color='red-600' size='sm' onClick={()=>openDialog1(fileId)}>Reject</Button>
-                                <Dialog
-                isOpen={dialogIsOpen}
-                onClose={onDialogClose1}
-                onRequestClose={onDialogClose1 }
-            >
-               <h3 className='mb-4'> Reject Remarks</h3>
-               <Formik
-    initialValues={{ project_id:projectId ,
-        file_id: fileId,
-        status: 'rejected', remark: '' }}
-    validationSchema={Yup.object({
-        remark: Yup.string().required('Required'),
-    
-    })}
-    onSubmit={async (values, { setSubmitting }) => {
-        const response = await apiGetCrmProjectShareQuotationApproval(values);
-        const respoonseData=await response.json();
-        if(response.status===200){
-            toast.push(
-                <Notification closable type='success' duration={2000}>
-                    {respoonseData.message}
-                </Notification>
-            )
-            window.location.reload();
-        }
-        else{
-            toast.push(
-                <Notification closable type='danger' duration={2000}>
-                    {respoonseData.errorMessage}
-                </Notification>
-            )
-        }
-        
-        setSubmitting(false);
-    }}
->
-    <Form>
-        <FormItem label="Remark">
-        <Field name="remark" as="textarea" component={Input}  />
-        </FormItem>
-        <div className='flex justify-end'>
-        <Button type="submit" variant='solid'>Submit</Button>
-        </div>
-    </Form>
-</Formik>
-            </Dialog>
-                                </div>
+                            ):status==='pending'?
+                            (
+                                role === 'designer' ? (
+                                    <div>Pending</div>
+                                ) : (
+                                    <div className='flex gap-1'>
+                                        <Button variant='solid' size='sm' onClick={()=>Approval(fileId,'approved')}>Accept</Button>
+                                        <Button variant='solid' color='red-600' size='sm' onClick={()=>openDialog1(fileId)}>Reject</Button>
+                                        <Dialog
+                                            isOpen={dialogIsOpen}
+                                            onClose={onDialogClose1}
+                                            onRequestClose={onDialogClose1}
+                                        >
+                                            <h3 className='mb-4'> Reject Remarks</h3>
+                                            <Formik
+                                                initialValues={{ project_id:projectId , file_id: fileId, status: 'rejected', remark: '' }}
+                                                validationSchema={Yup.object({ remark: Yup.string().required('Required') })}
+                                                onSubmit={async (values, { setSubmitting }) => {
+                                                    const response = await apiGetCrmProjectShareQuotationApproval(values);
+                                                    const responseData=await response.json();
+                                                    if(response.status===200){
+                                                        toast.push(
+                                                            <Notification closable type='success' duration={2000}>
+                                                                {responseData.message}
+                                                            </Notification>
+                                                        )
+                                                        window.location.reload();
+                                                    }
+                                                    else{
+                                                        toast.push(
+                                                            <Notification closable type='danger' duration={2000}>
+                                                                {responseData.errorMessage}
+                                                            </Notification>
+                                                        )
+                                                    }
+                                                    
+                                                    setSubmitting(false);
+                                                }}
+                                            >
+                                                <Form>
+                                                    <FormItem label="Remark">
+                                                        <Field name="remark" as="textarea" component={Input}  />
+                                                    </FormItem>
+                                                    <div className='flex justify-end'>
+                                                        <Button type="submit" variant='solid'>Submit</Button>
+                                                    </div>
+                                                </Form>
+                                            </Formik>
+                                        </Dialog>
+                                    </div>
+                                )
                             ):(
                                 <div>Not Sent</div>
                             )
                         )
                     }
-                },
-              {
+               }
+                ,
+                ...(role !== 'designer' ? [{
                 header: 'Remark',
                 accessorKey: 'remark',
                 cell:({row})=>{
@@ -284,7 +285,8 @@ const Quotations=(data : FileItemProps )=> {
                       </>
 
                     )
-              }}
+              }
+            }] : [])
             ]
         },
         [])
@@ -444,7 +446,7 @@ const Quotations=(data : FileItemProps )=> {
                     <FormItem label='File'>
                     <Field name="file_id" component={SelectField} options={approvedFiles}/>
                     </FormItem>
-                    <Button type='submit'> Submit</Button>
+                    <Button type='submit' variant='solid'> Submit</Button>
                  </Form>  
                  </Formik>
                  

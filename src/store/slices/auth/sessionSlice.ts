@@ -5,18 +5,21 @@ import Cookies from 'js-cookie'
 export interface SessionState {
     signedIn: boolean
     token: string | null
-    userId: string | null 
+    userId: string | null
+    role:string | null 
 }
 
 const initialState: SessionState = {
     signedIn: false,
     token: null,
     userId: Cookies.get('userId') || null, 
+    role:Cookies.get('role') || null
 }
 
 interface SignInPayload {
     token: string;
     userId: string;
+    role:string
 }
 
 const sessionSlice = createSlice({
@@ -29,6 +32,7 @@ const sessionSlice = createSlice({
             state.userId = action.payload.userId; 
             localStorage.setItem('auth', action.payload.token);
   localStorage.setItem('userId', action.payload.userId);
+  localStorage.setItem('role', action.payload.role);
 },
         signOutSuccess(state) {
             state.signedIn = false;

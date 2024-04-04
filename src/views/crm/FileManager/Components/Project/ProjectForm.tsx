@@ -38,11 +38,10 @@ const YourFormComponent: React.FC<Data> = (data) => {
       : [];
 
     // Trim spaces from the selected value
-    const trimmedValue = selectedValues.length > 0 ? selectedValues[0].trim() : '';
-
+    const lowerCaseValue = selectedValues.length > 0 ? selectedValues[0].toLowerCase().trim() : '';
     setFormData({
       ...formData,
-      [fieldName]: trimmedValue,
+      [fieldName]: lowerCaseValue,
     });
   };
   
@@ -87,22 +86,19 @@ function closeAfter2000ms(data:string,type:string) {
     postData.append('files', file),
 )
 
-    try {
+    
       const response = await apiGetCrmFileManagerCreateProjectFolder(postData);
       const responseData = await response.json(); 
       console.log('Response Data:', responseData);
   
-      if (response.ok) {
+      if (responseData.code===200) {
         closeAfter2000ms('File uploaded successfully.','success');
       
         window.location.reload();
       } else {
-        closeAfter2000ms(`Error: ${responseData.message}`,'warning');
+        closeAfter2000ms(`Error: ${responseData.errorMessage}`,'warning');
       }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      closeAfter2000ms('An error occurred while submitting the form.','warning');
-    }
+  
   };
 
 const uniqueFolderNames = Array.from(

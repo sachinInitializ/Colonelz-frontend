@@ -33,7 +33,7 @@ function useAuth() {
             if (resp.code===200) {
                 const { token } = resp.data
                 console.log('token',resp.data.role);
-                dispatch(signInSuccess({ token, userId: resp.data.userID }))
+                dispatch(signInSuccess({ token, userId: resp.data.userID,role:resp.data.role }))
                 if (resp.data) {
                     dispatch(
                         setUser(
