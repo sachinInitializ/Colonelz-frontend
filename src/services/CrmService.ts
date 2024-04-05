@@ -45,7 +45,7 @@ export async function apiGetCrmProjects() {
     return data;
 }
 export async function apiGetCrmProjectMakeContract(formData: any) {
-    const response = await fetch(`${apiPrefix}admin/send/contract`, {
+    const response = await fetch(`http://localhost:8000/v1/api/admin/view/contract`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
