@@ -9,7 +9,7 @@ const Contract = () => {
   const project_type = queryParams.get('project_type');
   return (
     <div className='flex justify-end'>
-      <Button variant='solid' onClick={()=>navigate(`/app/crm/contract?project_type=${project_type}`)}>Contract</Button>
+      <Button variant='solid' onClick={()=>navigate(`/app/crm/contract`)}>Contract</Button>
     </div>
   )
 }

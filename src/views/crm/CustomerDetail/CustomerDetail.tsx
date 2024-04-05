@@ -86,7 +86,6 @@ const CustomerDetail = () => {
             <TabList>
                 <TabNav value="tab1">Details</TabNav>
                 <TabNav value="tab2">Quotation</TabNav>
-                <TabNav value="contract">Contract</TabNav>
                 <TabNav value="mom">MOM</TabNav>
                 <TabNav value="tab5">All MOM</TabNav>
             </TabList>
@@ -98,9 +97,6 @@ const CustomerDetail = () => {
                 </TabContent>
                 <TabContent value="tab2">
                    <Index data={fileData}/>
-                </TabContent>
-                <TabContent value="contract">
-                  <Contract/>
                 </TabContent>
                 <TabContent value="mom">
                   <MOM data={details} />

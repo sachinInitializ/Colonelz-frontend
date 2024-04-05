@@ -69,7 +69,7 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: 'nav.appsSales.productList',
                         icon: 'lead',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: [],
+                        authority: ["ADMIN"],
                         subMenu: [],
                     },
                     

@@ -75,9 +75,10 @@ const validationSchema = Yup.object().shape({
 })
 
 const Index = () => {
-    const location = useLocation()
-    const queryParams = new URLSearchParams(location.search)
-    const type = queryParams.get('project_type')
+    const typeOptions = [
+      { value: 'commercial', label: 'Commercial' },
+      { value: 'residential', label: 'Residential' },
+  ]
     const handleSubmit = async (values: FormValues) => {
         console.log(values)
 
@@ -100,7 +101,7 @@ const Index = () => {
                 site_address: '',
                 date: '',
                 city: '',
-                type: type || '',
+                type:  '',
                 franchises: '',
                 quotation: '',
                 cost: 0,
@@ -114,7 +115,7 @@ const Index = () => {
             validateOnChange={true}
             validateOnBlur={true}
         >
-            {({ isSubmitting }) => (
+            {({ isSubmitting,values }) => (
                 <>
                     <h3 className="mb-4">Contract</h3>
 
@@ -227,6 +228,28 @@ const Index = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
+                            <FormItem label="Type">
+                              <Field name="type">
+                                  {({ field, form }: FieldProps) => (
+                                      <Select
+                                          options={typeOptions}
+                                          value={typeOptions.find(option => option.value === field.value)}
+                                          onChange={(option) => {
+                                              if (option) {
+                                                  form.setFieldValue(field.name, option.value);
+                                              } else {
+                                                  form.setFieldValue(field.name, '');
+                                              }
+                                          }}
+                                      />
+                                  )}
+                              </Field>
+                              <ErrorMessage
+                                  name="type"
+                                  component="div"
+                                  className=" text-red-600"
+                              />
+                          </FormItem>
                             <FormItem label="Site Address">
                                 <Field
                                     component={Input}
@@ -292,6 +315,7 @@ const Index = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
+                            
                             <FormItem label="Cost">
                                 <Field
                                     component={Input}
@@ -305,66 +329,63 @@ const Index = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
-                            {type === 'residential' && (
-                                <FormItem label="Design Charges per SFT">
-                                    <Field
-                                        component={Input}
-                                        type="number"
-                                        name="design_charges_per_sft"
-                                        size="sm"
-                                    />
-                                    <ErrorMessage
-                                        name="design_charges_per_sft"
-                                        component="div"
-                                        className=" text-red-600"
-                                    />
-                                </FormItem>
-                            )}
-                            {type === 'residential' && (
-                                <FormItem label="Cover Area in SFT">
-                                    <Field
-                                        component={Input}
-                                        type="number"
-                                        name="cover_area_in_sft"
-                                        size="sm"
-                                    />
-                                    <ErrorMessage
-                                        name="cover_area_in_sft"
-                                        component="div"
-                                        className=" text-red-600"
-                                    />
-                                </FormItem>
-                            )}
-                            {type === 'residential' && (
-                                <FormItem label="Terrace and Balcony Charges per SFT">
-                                    <Field
-                                        component={Input}
-                                        type="number"
-                                        name="terrace_and_balcony_charges_per_sft"
-                                        size="sm"
-                                    />
-                                    <ErrorMessage
-                                        name="terrace_and_balcony_charges_per_sft"
-                                        component="div"
-                                        className=" text-red-600"
-                                    />
-                                </FormItem>
-                            )}
-                            {type === 'residential' && (
-                                <FormItem label="Terrace and Balcony Area in SFT">
-                                    <Field
-                                        component={Input}
-                                        type="number"
-                                        name="terrace_and_balcony_area_in_sft"
-                                        size="sm"
-                                    />
-                                    <ErrorMessage
-                                        name="terrace_and_balcony_area_in_sft"
-                                        component="div"
-                                        className=" text-red-600"
-                                    />
-                                </FormItem>
-                            )}
+                           
+            {values.type === 'residential' && (
+                <>
+                  <FormItem label="Design Charges per SFT">
+                    <Field
+                        component={Input}
+                        type="number"
+                        name="design_charges_per_sft"
+                        size="sm"
+                    />
+                    <ErrorMessage
+                        name="design_charges_per_sft"
+                        component="div"
+                        className=" text-red-600"
+                    />
+                </FormItem>
+                <FormItem label="Cover Area in SFT">
+                    <Field
+                        component={Input}
+                        type="number"
+                        name="cover_area_in_sft"
+                        size="sm"
+                    />
+                    <ErrorMessage
+                        name="cover_area_in_sft"
+                        component="div"
+                        className=" text-red-600"
+                    />
+                </FormItem>
+                <FormItem label="Terrace and Balcony Charges per SFT">
+                    <Field
+                        component={Input}
+                        type="number"
+                        name="terrace_and_balcony_charges_per_sft"
+                        size="sm"
+                    />
+                    <ErrorMessage
+                        name="terrace_and_balcony_charges_per_sft"
+                        component="div"
+                        className=" text-red-600"
+                    />
+                </FormItem>
+                <FormItem label="Terrace and Balcony Area in SFT">
+                    <Field
+                        component={Input}
+                        type="number"
+                        name="terrace_and_balcony_area_in_sft"
+                        size="sm"
+                    />
+                    <ErrorMessage
+                        name="terrace_and_balcony_area_in_sft"
+                        component="div"
+                        className=" text-red-600"
+                    />
+                </FormItem>
+                </>
+            )}
                         </div>
                         <Button
                             type="submit"

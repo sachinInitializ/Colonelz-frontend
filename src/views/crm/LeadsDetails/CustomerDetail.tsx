@@ -3,10 +3,14 @@ import Container from '@/components/shared/Container'
 import reducer, { getCustomer, useAppDispatch } from './store'
 import { injectReducer } from '@/store'
 import useQuery from '@/utils/hooks/useQuery'
-import MOM from './components/LeadForm'
-import { Card } from '@/components/ui'
+import LeadForm from './components/LeadForm'
+import { Card, Tabs } from '@/components/ui'
 import CustomerProfile from './components/LeadProfile'
 import { apiGetCrmLeadsDetails } from '@/services/CrmService'
+import TabList from '@/components/ui/Tabs/TabList'
+import TabNav from '@/components/ui/Tabs/TabNav'
+import TabContent from '@/components/ui/Tabs/TabContent'
+import Contract from '../CustomerDetail/components/Contract'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -42,12 +46,39 @@ const CustomerDetail = () => {
     }, [myParam]);
     const lead = details?.data?.[0];
       return (
-          <Container className="h-full">
-                       <CustomerProfile data={lead}/>
-                  <Card className='mt-5' >
-                       <MOM data={lead}/>
+        <>    
+          <Tabs defaultValue="Details">
+                <TabList>
+                    <TabNav value="Details">
+                        Lead Details
+                    </TabNav>
+                    <TabNav value="Actions" >
+                        Actions
+                    </TabNav>
+                    <TabNav value="Contract" >
+                        Contract
+                    </TabNav>
+                </TabList>
+                <div className="p-4">
+                    <TabContent value="Details">
+                    <CustomerProfile data={lead}/>
+                    </TabContent>
+                    <TabContent value="Actions">
+                    <Card className='mt-5' >
+                       <LeadForm data={lead}/>
                        </Card>
+                    </TabContent>
+                    <TabContent value="Contract">
+                        <Contract/>
+                    </TabContent>
+                    </div>
+                </Tabs>
+              <Container className="h-full">
+                      
+              
           </Container>
+          </>
+
       );
  
 };

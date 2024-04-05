@@ -8,7 +8,7 @@ export type AppConfig = {
 }
 
 const appConfig: AppConfig = {
-    apiPrefix: 'https://col-back.onrender.com/v1/api/',
+    apiPrefix: 'https://col-back-2.onrender.com/v1/api/',
     authenticatedEntryPath: '/app/crm/dashboard',
     unAuthenticatedEntryPath: '/sign-in',
     tourPath: '/app/account/kyc-form',

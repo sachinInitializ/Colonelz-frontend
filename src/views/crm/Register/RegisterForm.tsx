@@ -33,7 +33,7 @@ const validationSchema = Yup.object().shape({
 
 const SignUpForm = (props: SignUpFormProps) => {
     const { disableSubmit = false, className, signInUrl = '/sign-in' } = props
-
+    const id=localStorage.getItem('userId')
     const { signUp } = useAuth()
 
     const [message, setMessage] = useTimeOutMessage()
@@ -43,10 +43,9 @@ const SignUpForm = (props: SignUpFormProps) => {
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
         const { id,user_name, role, email } = values
+        
         setSubmitting(true)
         const result = await signUp({ id,user_name, role, email })
-       
-        console.log('signup', result)
         if (result.code===200) {
           toast.push(
             <Notification closable type="success" duration={2000}>
@@ -79,7 +78,7 @@ const SignUpForm = (props: SignUpFormProps) => {
             )}
             <Formik
                 initialValues={{
-                    id:'',
+                    id:id,
                     user_name: '',
                     email: '',
                     role:'',
@@ -95,8 +94,8 @@ const SignUpForm = (props: SignUpFormProps) => {
                 }}
             >
                 {({values, touched, errors, isSubmitting }) => (
-                    <Form>
-                        <FormContainer>
+                    <Form className='w-2/5'>
+                     
                             <FormItem
                                 label="User Name"
                                 invalid={errors.user_name && touched.user_name}
@@ -156,13 +155,12 @@ const SignUpForm = (props: SignUpFormProps) => {
                                 loading={isSubmitting}
                                 variant="solid"
                                 type="submit"
-                                className='w-1/2'
                             >
                                 {isSubmitting
                                     ? 'Creating Account...'
                                     : 'Register'}
                             </Button>
-                        </FormContainer>
+                 
                     </Form>
                 )}
             </Formik>
