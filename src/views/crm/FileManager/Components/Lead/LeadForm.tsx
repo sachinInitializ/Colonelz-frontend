@@ -39,7 +39,7 @@ const YourFormComponent: React.FC<Data> = (leadData) => {
       : [];
 
     // Trim spaces from the selected value
-    const trimmedValue = selectedValues.length > 0 ? selectedValues[0].trim() : '';
+    const trimmedValue = selectedValues.length > 0 ? selectedValues[0].toLowerCase().trim() : '';
 
     setFormData({
       ...formData,
@@ -98,7 +98,7 @@ function closeAfter2000ms(data:string,type:string) {
 
     if (responseData.status===true) {
       closeAfter2000ms('File uploaded successfully.','success');
-      // window.location.reload();
+      window.location.reload();
     } else {
       closeAfter2000ms(`Error: ${responseData.message}`,'warning');
     }

@@ -37,7 +37,6 @@ const YourFormComponent: React.FC<Data> = (data) => {
       ? [selectedOption.value]
       : [];
 
-    // Trim spaces from the selected value
     const lowerCaseValue = selectedValues.length > 0 ? selectedValues[0].toLowerCase().trim() : '';
     setFormData({
       ...formData,

@@ -11,13 +11,13 @@ interface Notification {
   status: boolean;
   message: string;
 }
+const userId=localStorage.getItem('userId');
+const userDetailData = await apiGetNotification(userId);
 const Notification1 = () => {
   const [notificationData, setNotificationData] = useState<Notification[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const userId=localStorage.getItem('userId');
-      const userDetailData = await apiGetNotification(userId);
       setNotificationData(userDetailData.data.NotificationData);
     };
     fetchData();

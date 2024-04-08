@@ -47,14 +47,15 @@ console.log('apiData',crmDashboardData.statisticData);
             growShrink: 2.6,
         },
     ]
-    
+    const role=localStorage.getItem('role');
     return (
         <div className="flex flex-col gap-4 h-full">
                     <Statistic data={data} />
                 <div className="grid grid-cols-1 xl:grid-cols-7 gap-4">
                 </div>
                 <Project />
-                <Leads  />
+                {role==='ADMIN' && <Leads  />}
+                
           
         </div>
     )

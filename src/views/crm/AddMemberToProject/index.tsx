@@ -4,6 +4,9 @@ import axios from 'axios';
 import { Button, FormItem, Input, Notification, Select, toast } from '@/components/ui';
 import { apiAddMember } from '@/services/AuthService';
 import { apiGetUsers } from '@/services/CommonService';
+import { apiGetProjectList } from '@/services/ProjectService';
+import { apiGetCrmProjects } from '@/services/CrmService';
+import { set } from 'lodash';
 
 interface FormValues {
   role: string;
@@ -15,30 +18,38 @@ interface User {
   username: string;
   role: string;
 }
-
+interface Projects {
+  project_id: string;
+  project_name: string;
+}
+const response = await apiGetUsers();
+const projects = await apiGetCrmProjects();
 const Index = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<Projects[]>([]);
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
   const Options = [
-    { value: 'admin', label: 'Admin' },
+    { value: 'ADMIN', label: 'Admin' },
     { value: 'designer', label: 'Designer' },
   ];
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await apiGetUsers();
       setUsers(response.data);
+      setSelectedProject(projects.data.projects);
     };
 
     fetchUsers();
-  }, []);
-
-
+  },[]);
   useEffect(() => {
     setFilteredUsers(
       users.filter((user) => user.role === selectedRole)
+    );
+    setFilteredProjects(
+      projects.data.projects
     );
   }, [selectedRole, users]);
 
@@ -48,7 +59,7 @@ const Index = () => {
     if(response.status===200){
      
       toast.push(
-        <Notification closable type="success" duration={0}>
+        <Notification closable type="success" duration={2000}>
             Member Added Successfully
         </Notification>
     
@@ -57,7 +68,7 @@ const Index = () => {
     }
     else{
       toast.push(
-        <Notification closable type="danger" duration={0}>
+        <Notification closable type="danger" duration={2000}>
             {responseData.errorMessage}
         </Notification>
     
@@ -95,8 +106,11 @@ const Index = () => {
               onChange={(option) => setFieldValue('user_name', option?.value || '')}
             />
           </FormItem>
-          <FormItem label="Project Id">
-            <Field id="project_id" name="project_id" component={Input} />
+          <FormItem label="Project">
+          <Select
+              options={filteredProjects.map((project) => ({ value: project.project_id, label: project.project_name }))}
+              onChange={(option) => setFieldValue('project_id', option?.value || '')}
+            />
           </FormItem>
 
           <Button type="submit" variant='solid'>Submit</Button>

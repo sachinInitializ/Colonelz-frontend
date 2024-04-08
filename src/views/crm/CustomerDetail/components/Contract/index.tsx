@@ -315,7 +315,7 @@ const Index = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
-                            
+                            {values.type === 'commercial' && (
                             <FormItem label="Cost">
                                 <Field
                                     component={Input}
@@ -328,7 +328,7 @@ const Index = () => {
                                     component="div"
                                     className=" text-red-600"
                                 />
-                            </FormItem>
+                            </FormItem>)}
                            
             {values.type === 'residential' && (
                 <>

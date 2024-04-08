@@ -9,6 +9,7 @@ import { HiOutlineUser, HiOutlineCog, HiOutlineLogout } from 'react-icons/hi'
 import { FiActivity } from 'react-icons/fi'
 import type { CommonProps } from '@/@types/common'
 import { AiOutlineUserAdd } from 'react-icons/ai'
+import { FaUser } from 'react-icons/fa'
 
 type DropdownList = {
     label: string
@@ -40,7 +41,7 @@ const _UserDropdown = ({ className }: CommonProps) => {
 
     const UserAvatar = (
         <div className={classNames(className, 'flex items-center gap-2')}>
-            <Avatar size={32} shape="circle" src={avatar} />
+           <FaUser className=' text-lg'/>
             <div className="hidden md:block">
                 <div className="text-xs capitalize">
                     {authority?.[0] || 'guest'}
@@ -59,7 +60,7 @@ const _UserDropdown = ({ className }: CommonProps) => {
             >
                 <Dropdown.Item variant="header">
                     <div className="py-2 px-3 flex items-center gap-2">
-                        <Avatar shape="circle" src={avatar} />
+                  
                         <div>
                             <div className="font-bold text-gray-900 dark:text-gray-100">
                                 {userName}

@@ -1,13 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchLeadData } from '../data';
-import { Button, Checkbox, Dialog, Input, Notification, Segment, toast } from '@/components/ui';
+import { Button, Checkbox, Dialog, FormItem, Input, Notification, Segment, Select, toast } from '@/components/ui';
 import { StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn } from 'react-icons/ci';
 import LeadDataContext from '../LeadDataContext';
-import { apiDeleteFileManagerFiles, apiGetCrmFileManagerLeads, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
-
+import { apiDeleteFileManagerFiles, apiGetCrmFileManagerLeads, apiGetCrmFileManagerShareContractFile, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { apiGetUsers } from '@/services/CommonService';
+interface User {
+  username: string;
+  role:string
+}
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
@@ -18,7 +24,23 @@ const Index = () => {
   const queryParams = new URLSearchParams(location.search);
   const leadId = queryParams.get('lead_id');
   const folderName = queryParams.get('folder_name');
+   const [users, setUsers] = useState<User[]>([]);
+  useEffect(() => {
+    const fetchDataAndLog = async () => {
+      try {
+        const usersData = await apiGetUsers();
+        setUsers(usersData?.data);
+      } catch (error) {
+        console.error('Error fetching users', error);
+      }
+    };
+
+    fetchDataAndLog();
+  }, []);
+  const adminUsers = users.filter(user => user.role === 'ADMIN');
+  
   const navigate=useNavigate()
+  
 
   const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSubject(e.target.value);
@@ -38,11 +60,22 @@ const Index = () => {
       
       setIsOpen(false)
   }
+  const [dialogIsOpen1, setIsOpen1] = useState(false)
+
+  const openDialog1 = () => {
+      setIsOpen1(true)
+  }
+
+  const onDialogClose1 = () => {
+      
+      setIsOpen1(false)
+  }
+
+  
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
         const leadData = await apiGetCrmFileManagerLeads(leadId);
-        console.log(leadData);
         const folderData = leadData?.data[0]?.files;
         const selectedFolder = folderData.find((folder) => folder.folder_name === folderName);
 
@@ -56,18 +89,21 @@ const Index = () => {
 
     fetchDataAndLog();
   }, [leadId, folderName]);
-  console.log(leadData);
+
+
   
 
   const handleFileSelect = (fileId: string) => {
-    const updatedSelectedFiles = selectedFiles.includes(fileId)
-      ? selectedFiles.filter((id) => id !== fileId)
-      : [...selectedFiles, fileId];
+    let updatedSelectedFiles;
+    if (folderName === 'contract') {
+      updatedSelectedFiles = [fileId];
+    } else {
+      updatedSelectedFiles = selectedFiles.includes(fileId)
+        ? selectedFiles.filter((id) => id !== fileId)
+        : [...selectedFiles, fileId];
+    }
     setSelectedFiles(updatedSelectedFiles);
-
   };
-
-  console.log(selectedFiles);
   const deleteFiles = async () => {
     function warn(text:string) {
       toast.push(
@@ -138,13 +174,10 @@ const Index = () => {
   
     try {
       const response = await apiGetCrmFileManagerShareFiles(postData);
-  
       if (!response.ok) {
         console.error('Error sharing files:', response.statusText);
         return;
       }
-      
-
       const responseData = await response.json();
       console.log('Files shared successfully:', responseData);
       setSelectedFiles([]);
@@ -215,6 +248,7 @@ const Index = () => {
         stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
       >
         <div className="md:flex items-center">
+        
           <Button
             size="sm"
             className="ltr:mr-3 rtl:ml-3"
@@ -225,9 +259,76 @@ const Index = () => {
           >
             Back
           </Button>
+          {
+            folderName==='contract' &&(
+              <Button variant='solid' size='sm'  onClick={() => openDialog1()}>
+                Share For Approval
+              </Button>
+            )
+          }
           
         </div>
       </StickyFooter>
+      <Dialog
+                isOpen={dialogIsOpen1}
+                style={{}}
+                className='max-h-[300px]'
+                onClose={onDialogClose1} 
+                onRequestClose={onDialogClose1}
+            >
+ <Formik
+  initialValues={{
+    lead_id: leadId,
+    folder_name: folderName,
+    file_id: selectedFiles[0],
+    user_name: '',
+    type: "Internal",
+  }}
+  validationSchema={Yup.object({
+    lead_id: Yup.string().required('Required'),
+    folder_name: Yup.string().required('Required'),
+    file_id: Yup.string().required('Required'),
+    user_name: Yup.string().required('Required'),
+    type: Yup.string().required('Required'),
+  })}
+  onSubmit={async(values, { setSubmitting }) => {
+    const response = await apiGetCrmFileManagerShareContractFile(values)
+    const responseData = await response.json()
+    if(responseData.code===200){
+      toast.push(
+        <Notification closable type="success" duration={2000}>
+          Shared for approval successfully
+        </Notification>,{placement:'top-center'}
+      )
+    }
+    else{
+      toast.push(
+        <Notification closable type="danger" duration={2000}>
+          {responseData.errorMessage}
+        </Notification>,{placement:'top-center'}
+      )
+    }
+  }}
+>
+  {({ handleChange, handleBlur, values }) => (
+    <Form>
+      <h3 className='mb-5'>Share For Approval</h3>
+      <FormItem label='Username'>
+        
+      <Select
+  options={adminUsers.map(user => ({ value: user.username, label: user.username })) as any}
+  onChange={(option: any) => handleChange('user_name')(option ? option.value : '')}
+  value={adminUsers.find(user => user.username === values.user_name) ? { value: values.user_name, label: values.user_name } : null}
+/>
+        
+      
+      </FormItem>
+
+      <button type="submit">Submit</button>
+    </Form>
+  )}
+</Formik>
+            </Dialog>
       <Dialog
                 isOpen={dialogIsOpen}
                 style={{}}

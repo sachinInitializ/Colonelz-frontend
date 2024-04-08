@@ -146,7 +146,7 @@ interface ProjectUpdateData {
           />
         </FormItem>
           <br />
-          <FormItem label='Project Buget'>
+          <FormItem label='Project Budget'>
             
             <Input
               type="text"
@@ -155,7 +155,7 @@ interface ProjectUpdateData {
               onChange={handleInputChange}
             />
           </FormItem>
-          <FormItem label='Project Incharnge'>
+          <FormItem label='Project Incharge'>
             
             <Input
               type="text"
@@ -227,9 +227,6 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
             </Button>
                     </div>
                 </div>
-                
-                   
-                   
                 <Dialog
                 isOpen={dialogIsOpen}
                 onClose={onDialogClose}

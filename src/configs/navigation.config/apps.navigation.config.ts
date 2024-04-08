@@ -40,15 +40,7 @@ const appsNavigationConfig: NavigationTree[] = [
                                     subMenu: [],
                                 },
                   
-                    {
-                        key: 'appsCrm.inventory',
-                        title: 'Inventory',
-                        translateKey: 'nav.appsCrm.inventory',
-                        icon: 'inventory',
-                        type: NAV_ITEM_TYPE_ITEM,
-                        authority: [],
-                        subMenu: [],
-                    },
+                  
                    
               
                 
