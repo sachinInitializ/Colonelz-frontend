@@ -15,9 +15,10 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Button, Dialog, FormItem, Input, Notification, Select, toast } from '@/components/ui'
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { apiGetCrmProjectShareQuotation, apiGetCrmProjectShareQuotationApproval } from '@/services/CrmService'
+import { apiGetCrmFileManagerShareContractFile, apiGetCrmProjectShareContractApproval, apiGetCrmProjectShareQuotation, apiGetCrmProjectShareQuotationApproval } from '@/services/CrmService'
 import { use } from 'i18next'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import Textarea from '@/views/ui-components/forms/Input/Textarea'
 
 type FormData = {
   user_name: string;
@@ -87,14 +88,14 @@ function IndeterminateCheckbox({
 }
 
 
-const Quotations=(data : FileItemProps )=> {
+const ContractDetails=(data : FileItemProps )=> {
     const [rowSelection, setRowSelection] = useState({})
     const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]); 
     const [dialogIsOpen, setIsOpen] = useState(false)
     const [remark, setRemark] = useState("");
     const location=useLocation()
     const queryParams=new URLSearchParams(location.search)
-    const projectId=queryParams.get('project_id')
+    const leadId=queryParams.get('id')
 
     const openDialog = () => {
         setIsOpen(true)
@@ -107,13 +108,13 @@ const Quotations=(data : FileItemProps )=> {
 
     const Approval=async(fileID:string,status:string)=>{
         const postData = {
-            project_id:projectId ,
+            lead_id:leadId ,
             file_id: fileID,
             status: status,
             remark: remark,
           };
         try{
-            const response=await apiGetCrmProjectShareQuotationApproval(postData);
+            const response=await apiGetCrmProjectShareContractApproval(postData);
             const responseData=await response.json();
             if(response.status===200){
                 toast.push(
@@ -132,6 +133,7 @@ const Quotations=(data : FileItemProps )=> {
             )
         }
     }
+    console.log(data.data);
     
     const role = localStorage.getItem('role');
     const columns =
@@ -140,7 +142,7 @@ const Quotations=(data : FileItemProps )=> {
             return [
                 {
                     header: 'File Name',
-                    accessorKey: 'firstName',
+                    accessorKey: 'fileName',
                     cell:({row})=>{
                         const fileName=row.original.file_name;
                         return(
@@ -149,23 +151,6 @@ const Quotations=(data : FileItemProps )=> {
                     }
                 },
                
-                {
-                    header: 'Client Status',
-                    accessorKey: 'client_status',
-                    cell:({row})=>{
-                        const status=row.original.client_status;
-                        return(
-                            status==='approved'?(
-                                <div>Approved</div>
-                            ):status==='rejected'?(
-                                <div>Rejected</div>
-                            ):status==='pending'?(
-                                <div>Pending</div>
-                            ):(<div>Not Sent</div>)
-                        )
-                    }
-                    
-                },
                {
                     header: 'Admin Status',
                     accessorKey: 'itemId',
@@ -207,10 +192,10 @@ const Quotations=(data : FileItemProps )=> {
                                         >
                                             <h3 className='mb-4'> Reject Remarks</h3>
                                             <Formik
-                                                initialValues={{ project_id:projectId , file_id: fileId, status: 'rejected', remark: '' }}
+                                                initialValues={{ lead_id:leadId , file_id: fileId, status: 'rejected', remark: '' }}
                                                 validationSchema={Yup.object({ remark: Yup.string().required('Required') })}
                                                 onSubmit={async (values, { setSubmitting }) => {
-                                                    const response = await apiGetCrmProjectShareQuotationApproval(values);
+                                                    const response = await apiGetCrmProjectShareContractApproval(values);
                                                     const responseData=await response.json();
                                                     if(response.status===200){
                                                         toast.push(
@@ -233,7 +218,7 @@ const Quotations=(data : FileItemProps )=> {
                                             >
                                                 <Form>
                                                     <FormItem label="Remark">
-                                                        <Field name="remark" as="textarea" component={Input}  />
+                                                        <Field name="remark"  component={Input}  />
                                                     </FormItem>
                                                     <div className='flex justify-end'>
                                                         <Button type="submit" variant='solid'>Submit</Button>
@@ -306,10 +291,10 @@ const Quotations=(data : FileItemProps )=> {
   
     interface FormValues {
         client_name: string;
-        client_email: string;
+        email: string;
         file_id: string;
         type:string
-        project_id:string |null
+        lead_id:string |null
         folder_name:string
     }
     interface Option {
@@ -323,7 +308,7 @@ const Quotations=(data : FileItemProps )=> {
         form: any;
     }
     const handleShareFileForApproval = async () => {
-        if(selectedFiles.length===0){
+        if(selectedFileIds.length===0){
           toast.push(
             <Notification closable type="warning" duration={2000}>
               Please select a file to share
@@ -337,7 +322,7 @@ const Quotations=(data : FileItemProps )=> {
           type: 'Internal',
           file_id: selectedFileIds[0], 
           folder_name: 'quotation',
-          project_id: projectId,
+          lead_id: leadId,
         };
         try{
           const response=await apiGetCrmProjectShareQuotation(postData);
@@ -364,16 +349,18 @@ const Quotations=(data : FileItemProps )=> {
         />
     );
     const handleSubmit = async (values:FormValues) => {
-        const response=await apiGetCrmProjectShareQuotation(values);
+        const response=await apiGetCrmFileManagerShareContractFile(values);
         const responseData=  await response.json();
-        console.log(responseData);
+        
       };
-     const approvedFiles = data.data.filter(file => file.admin_status === 'approved').map(file => ({ value: file.itemId, label: file.file_name }));
-
+     
+    const navigate=useNavigate()
+    const approvedFiles = data.data.filter(file => file.admin_status === 'approved').map(file => ({ value: file.itemId, label: file.file_name }));
     return (
         <div>
-        <div className=' flex justify-end mb-4'>
+        <div className=' flex justify-end mb-4 gap-3'>
             <Button variant='solid' size='sm' onClick={()=>openDialog()} >Share to Client</Button>
+            <Button variant='solid' size='sm' onClick={()=>navigate(`/app/crm/contract`)}>Contract</Button>
     </div>
             <Table>
                 <THead>
@@ -424,10 +411,10 @@ const Quotations=(data : FileItemProps )=> {
                   <h3 className='mb-4'>Share To Client</h3>
 
                  <Formik
-                 initialValues={{ client_name: '', client_email: '', file_id: '',type:'Client',project_id:projectId,folder_name:'quotation' }}
+                 initialValues={{ client_name: '', email: '', file_id: '',type:'Client',lead_id:leadId,folder_name:'contract' }}
                  validationSchema={Yup.object({
                      client_name: Yup.string().required('Required'),
-                     client_email: Yup.string().email('Invalid email address').required('Required'),
+                     email: Yup.string().email('Invalid email address').required('Required'),
                      file_id: Yup.string().required('Required'),
                  })}
                  onSubmit={(values, { setSubmitting }) => {
@@ -440,7 +427,7 @@ const Quotations=(data : FileItemProps )=> {
                  <Field name="client_name" type="text" component={Input}/>
                  </FormItem>
                     <FormItem label='Client Email'>
-                    <Field name="client_email" type="text" component={Input}/>
+                    <Field name="email" type="text" component={Input}/>
                     </FormItem>
                     <FormItem label='File'>
                     <Field name="file_id" component={SelectField} options={approvedFiles}/>
@@ -457,5 +444,5 @@ const Quotations=(data : FileItemProps )=> {
     )
 }
 
-export default Quotations
+export default ContractDetails
 

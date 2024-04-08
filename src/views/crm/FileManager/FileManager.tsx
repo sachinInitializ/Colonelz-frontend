@@ -10,14 +10,15 @@ import Projects from './Components/Projects';
 import Template from './Components/Template';
 
 const FileManager = () => {
-  
+  const role=localStorage.getItem('role')
   return (
     <div>
-    <Tabs defaultValue="tab1">
+    <Tabs defaultValue={role === 'admin' ? 'tab1' : 'tab2'}>
         <TabList>
-            <TabNav value="tab1" icon={<MdManageAccounts />}>
+            {role==='ADMIN' && <TabNav value="tab1" icon={<MdManageAccounts />}>
+           
                 Leads
-            </TabNav>
+            </TabNav>}
             <TabNav value="tab2" icon={<LuFileStack />}>
                 Projects
             </TabNav>

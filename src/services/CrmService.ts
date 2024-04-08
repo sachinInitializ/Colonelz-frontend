@@ -86,6 +86,19 @@ export async function apiGetCrmProjectShareQuotation(formData: any) {
 
     return response;
 }
+export async function apiGetCrmProjectShareContractApproval(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/contract/approval`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+        
+    });
+
+    return response;
+}
 export async function apiGetCrmProjectShareQuotationApproval(formData: any) {
     const response = await fetch(`${apiPrefix}admin/quotation/approval`, {
         method: 'POST',
@@ -235,6 +248,23 @@ export async function apiGetCrmFileManagerLeads(leadId:string | null) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmContractDetails(leadId:string | null) {
+    const response = await fetch(`${apiPrefix}admin/get/contractdata?lead_id=${leadId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    
     console.log('Received response from server:', data);
     return data;
 }

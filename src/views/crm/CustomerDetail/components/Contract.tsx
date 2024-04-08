@@ -1,16 +1,36 @@
 import { Button } from '@/components/ui'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import ContractDetails from './Contract/contractDetail'
+import { apiGetCrmContractDetails } from '@/services/CrmService'
+
+
 
 const Contract = () => {
   const navigate=useNavigate()
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const project_type = queryParams.get('project_type');
+  const lead_id = queryParams.get('id');
+  console.log(lead_id);
+  const [details, setDetails] = useState<any | null>(null);
+ useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiGetCrmContractDetails(lead_id);
+        setDetails(response);
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+    fetchData();},[])
+    
   return (
-    <div className='flex justify-end'>
-      <Button variant='solid' onClick={()=>navigate(`/app/crm/contract`)}>Contract</Button>
+    <>
+    <div>
+    {details && <ContractDetails data={details.data}/>}
     </div>
+    </>
   )
 }
 
