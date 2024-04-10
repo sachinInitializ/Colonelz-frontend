@@ -4,14 +4,14 @@ import Cookies from 'js-cookie'
 
 export interface SessionState {
     signedIn: boolean
-    token: string | null
+    token: string 
     userId: string | null
     role:string | null 
 }
-
+const token=localStorage.getItem('auth');
 const initialState: SessionState = {
     signedIn: false,
-    token: null,
+    token: token || '',
     userId: Cookies.get('userId') || null, 
     role:Cookies.get('role') || null
 }
@@ -40,6 +40,7 @@ const sessionSlice = createSlice({
             state.userId = null; 
             localStorage.removeItem('auth');
             localStorage.removeItem('userId');
+            localStorage.removeItem('role');
             Cookies.remove('userId'); 
         },
     },

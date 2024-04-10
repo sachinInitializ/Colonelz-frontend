@@ -49,14 +49,9 @@ export async function apiAddMember(data:any) {
        
         return response;
 }
-export async function apiSignUp(data: SignUpCredential) {
-    const Data:SignUpCredential={
-        id:userId,
-        email:data.email.toLowerCase(),
-        role:data.role,
-        user_name:data.user_name
-    }
-    console.log(Data);
+export async function apiSignUp(data: SignUpCredential,token:string) {
+   data.email=data.email.toLowerCase();
+ 
     
         const response = await fetch(`${apiPrefix}admin/create/user`, {
             method: 'POST',
@@ -64,7 +59,7 @@ export async function apiSignUp(data: SignUpCredential) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(Data)
+            body: JSON.stringify(data)
         });
 
         const responseData = await response.json();
