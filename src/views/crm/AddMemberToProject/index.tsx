@@ -32,8 +32,11 @@ const Index = () => {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
   const Options = [
-    { value: 'ADMIN', label: 'Admin' },
-    { value: 'designer', label: 'Designer' },
+    { value: '3D Visualizer', label: '3D Visualizer' },
+    { value: 'Jr. Interior Designer', label: 'Jr. Interior Designer' },
+    { label: 'Executive Assistant', value: 'Executive Assistant' },
+    { label: 'Jr. Executive HR & Marketing', value: 'Jr. Executive HR & Marketing' },
+    { label: 'Site Supervisor', value: 'Site Supervisor' }
   ];
 
   useEffect(() => {

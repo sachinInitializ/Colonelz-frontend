@@ -65,8 +65,13 @@ const SignUpForm = (props: SignUpFormProps) => {
 
     const rolesOptions = [
         { label: 'Admin', value: 'ADMIN' },
-        { label: 'Procurement', value: 'PROCUREMENT' },
-        {label:'Designer',value:'designer'}
+        { value: 'Senior Architect', label: 'Senior Architect ' },
+        { value: '3D Visualizer', label: '3D Visualizer' },
+        { value: 'Project Architect', label: 'Project Architect' },
+        { value: 'Jr. Interior Designer', label: 'Jr. Interior Designer' },
+        { label: 'Executive Assistant', value: 'Executive Assistant' },
+        { label: 'Jr. Executive HR & Marketing', value: 'Jr. Executive HR & Marketing' },
+        { label: 'Site Supervisor', value: 'Site Supervisor' }
     ]
 
     return (

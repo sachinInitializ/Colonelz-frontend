@@ -8,25 +8,25 @@ const appsRoute: Routes = [
         key: 'appsCrm.dashboard',
         path: `${APP_PREFIX_PATH}/crm/dashboard`,
         component: lazy(() => import('@/views/crm/CrmDashboard')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant"],
     },
     {
         key: 'appsCrm.register',
         path: `${APP_PREFIX_PATH}/crm/register`,
         component: lazy(() => import('@/views/crm/Register')),
-        authority: [],
+        authority: ["ADMIN"],
     },
     {
         key: 'appsCrm.addmember',
         path: `${APP_PREFIX_PATH}/crm/addmember`,
         component: lazy(() => import('@/views/crm/AddMemberToProject/index')),
-        authority: [],
+        authority: ["ADMIN"],
     },
     {
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager`,
         component: lazy(() => import('@/views/crm/FileManager')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'File Manager',
             headerContainer: true,
@@ -36,7 +36,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/leads`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Lead/index')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -45,7 +45,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/leads/folder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Lead/Folders/index')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -54,7 +54,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/leads/upload`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Lead/Folders/index')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -63,7 +63,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Project/index')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -72,7 +72,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/folder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Project/Folders/index')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -81,7 +81,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/upload`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Project/Folders/index')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -90,7 +90,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/commercial`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Commercial/commercial')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -99,7 +99,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/commercial/subfolder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Commercial/subfolder/index')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -108,7 +108,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/commercial/subfolder/files`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Files')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -117,7 +117,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/residential`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Residential/residential')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -126,7 +126,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/residential/subfolder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Residential/subfolder/index')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -135,7 +135,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/residential/subfolder/files`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Files')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -144,7 +144,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/residential/subfolder/files`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Files')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -153,7 +153,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/miscellaneous/subfolder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Miscellaneous')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -162,7 +162,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/miscellaneous/subfolder/files`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Files')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
          
         },
@@ -171,29 +171,42 @@ const appsRoute: Routes = [
         key: 'appsCrm.project',
         path: `${APP_PREFIX_PATH}/crm/projectslist`,
         component: lazy(() => import('@/views/crm/Customers')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant"],
         meta: {
             
         },
     },
     {
-        key: 'appsCrm.inventory',
-        path: `${APP_PREFIX_PATH}/crm/Inventory`,
-        component: lazy(() => import('@/views/crm/Projects')),
-        authority: [],
+        key: 'appsSales.orderDetails',
+        path: `${APP_PREFIX_PATH}/crm/project-details?id=8`,
+        component: lazy(() => import('@/views/crm/CustomerDetail')),
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant"],
     },
     {
         key: 'appsCrm.form',
         path: `${APP_PREFIX_PATH}/crm/project/momform`,
         component: lazy(() => import('@/views/crm/CustomerDetail/components/MOM/MomForm')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect"],
     },
+    {
+        key: 'appsCrm.mom',
+        path: `${APP_PREFIX_PATH}/crm/MOM`,
+        component: lazy(() => import('@/views/crm/Inventory')),
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect"],
+    },
+    {
+        key: 'appsCrm.inventory',
+        path: `${APP_PREFIX_PATH}/crm/Inventory`,
+        component: lazy(() => import('@/views/crm/Projects')),
+        authority: ["ADMIN","Senior Architect"],
+    },
+  
    
     // {
     //     key: 'appsCrm.customers',
     //     path: `${APP_PREFIX_PATH}/crm/projects`,
     //     component: lazy(() => import('@/views/crm/ProjectList')),
-    //     authority: [],
+    //     authority: ["ADMIN","Senior Architect"],
     //     meta: {
           
     //     },
@@ -202,7 +215,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.customerDetails',
         path: `${APP_PREFIX_PATH}/crm/project-details`,
         component: lazy(() => import('@/views/crm/CustomerDetail')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Project Details',
             headerContainer: true,
@@ -212,26 +225,21 @@ const appsRoute: Routes = [
         key: 'appsCrm.customerDetails',
         path: `${APP_PREFIX_PATH}/crm/contract`,
         component: lazy(() => import('@/views/crm/CustomerDetail/components/Contract/index')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
        
     },
-    {
-        key: 'appsCrm.mom',
-        path: `${APP_PREFIX_PATH}/crm/MOM`,
-        component: lazy(() => import('@/views/crm/Inventory')),
-        authority: [],
-    },
+  
     {
         key: 'appsSales.allmom',
         path: `${APP_PREFIX_PATH}/crm/allmom`,
         component: lazy(() => import('@/views/crm/CustomerDetail/components/MOM/AllMom')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
     {
         key: 'appsCrm.customerDetails',
         path: `${APP_PREFIX_PATH}/crm/lead`,
         component: lazy(() => import('@/views/crm/LeadsDetails')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Lead Details',
             headerContainer: true,
@@ -241,7 +249,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.quotationform',
         path: `${APP_PREFIX_PATH}/crm/project/quotation-form`,
         component: lazy(() => import('@/views/crm/CustomerDetail/components/QuotationForm')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Quotation',
             headerContainer: true,
@@ -251,7 +259,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.mail',
         path: `${APP_PREFIX_PATH}/crm/mail`,
         component: lazy(() => import('@/views/crm/Mail')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             pageContainerType: 'gutterless',
             footer: false,
@@ -261,7 +269,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.mail',
         path: `${APP_PREFIX_PATH}/crm/projectfo`,
         component: lazy(() => import('@/views/crm/CrmDashboard/ProductNew')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             pageContainerType: 'gutterless',
             footer: false,
@@ -271,7 +279,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.mail',
         path: `${APP_PREFIX_PATH}/crm/mail/:category`,
         component: lazy(() => import('@/views/crm/Mail')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             pageContainerType: 'gutterless',
             footer: false,
@@ -281,7 +289,7 @@ const appsRoute: Routes = [
         key: 'appsSales.productNew',
         path: `${APP_PREFIX_PATH}/crm/lead-new`,
         component: lazy(() => import('@/views/crm/CrmDashboard/LeadNew')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Add Lead',
         },
@@ -293,26 +301,26 @@ const appsRoute: Routes = [
         key: 'appsSales.dashboard',
         path: `${APP_PREFIX_PATH}/sales/dashboard`,
         component: lazy(() => import('@/views/sales/SalesDashboard')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
     {
         key: 'appsSales.productList',
         path: `${APP_PREFIX_PATH}/leads`,
         component: lazy(() => import('@/views/crm/LeadList')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
     {
         key: 'appsSales.orders-details',
         path: `${APP_PREFIX_PATH}//sales/orders-details/:orderId`,
         component: lazy(() => import('@/views/sales/OrderDetails')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
    
     {
         key: 'appsSales.productNew',
         path: `${APP_PREFIX_PATH}/crm/projectform`,
         component: lazy(() => import('@/views/crm/ProjectsForm/ProductNew')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Add Project',
         },
@@ -321,7 +329,7 @@ const appsRoute: Routes = [
         key: 'appsSales.productNew',
         path: `${APP_PREFIX_PATH}/crm/lead-project`,
         component: lazy(() => import('@/views/crm/ProjectNew')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Add Project',
         },
@@ -330,26 +338,21 @@ const appsRoute: Routes = [
         key: 'appsSales.orderList',
         path: `${APP_PREFIX_PATH}/sales/order-list`,
         component: lazy(() => import('@/views/crm/Inventory')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
     
-    {
-        key: 'appsSales.orderDetails',
-        path: `${APP_PREFIX_PATH}/crm/project-details?id=8`,
-        component: lazy(() => import('@/views/crm/CustomerDetail')),
-        authority: [],
-    },
+  
     {
         key: 'appsCrypto.dashboard',
         path: `${APP_PREFIX_PATH}/crypto/dashboard`,
         component: lazy(() => import('@/views/crypto/CryptoDashboard')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
     {
         key: 'appsCrypto.portfolio',
         path: `${APP_PREFIX_PATH}/crypto/portfolio`,
         component: lazy(() => import('@/views/crypto/Portfolio')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Portfolio',
         },
@@ -358,7 +361,7 @@ const appsRoute: Routes = [
         key: 'appsCrypto.market',
         path: `${APP_PREFIX_PATH}/crypto/market`,
         component: lazy(() => import('@/views/crypto/Market')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Market',
         },
@@ -367,7 +370,7 @@ const appsRoute: Routes = [
         key: 'appsCrypto.wallets',
         path: `${APP_PREFIX_PATH}/crypto/wallets`,
         component: lazy(() => import('@/views/crypto/Wallets')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Wallets',
         },
@@ -376,7 +379,7 @@ const appsRoute: Routes = [
         key: 'appsknowledgeBase.helpCenter',
         path: `${APP_PREFIX_PATH}/knowledge-base/help-center`,
         component: lazy(() => import('@/views/knowledge-base/HelpCenter')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             pageContainerType: 'gutterless',
         },
@@ -385,13 +388,13 @@ const appsRoute: Routes = [
         key: 'appsknowledgeBase.article',
         path: `${APP_PREFIX_PATH}/knowledge-base/article`,
         component: lazy(() => import('@/views/knowledge-base/Article')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
     {
         key: 'appsknowledgeBase.manageArticles',
         path: `${APP_PREFIX_PATH}/knowledge-base/manage-articles`,
         component: lazy(() => import('@/views/knowledge-base/ManageArticles')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Manage Articles',
             extraHeader: lazy(
@@ -407,13 +410,13 @@ const appsRoute: Routes = [
         key: 'appsknowledgeBase.editArticle',
         path: `${APP_PREFIX_PATH}/knowledge-base/edit-article`,
         component: lazy(() => import('@/views/knowledge-base/EditArticle')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
     {
         key: 'appsAccount.settings',
         path: `${APP_PREFIX_PATH}/account/settings/:tab`,
         component: lazy(() => import('@/views/account/Settings')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
         meta: {
             header: 'Settings',
             headerContainer: true,
@@ -423,19 +426,19 @@ const appsRoute: Routes = [
         key: 'appsAccount.invoice',
         path: `${APP_PREFIX_PATH}/account/invoice/:id`,
         component: lazy(() => import('@/views/account/Invoice')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
     {
         key: 'appsAccount.activityLog',
         path: `${APP_PREFIX_PATH}/account/activity-log`,
         component: lazy(() => import('@/views/account/ActivityLog')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
     {
         key: 'appsAccount.kycForm',
         path: `${APP_PREFIX_PATH}/account/kyc-form`,
         component: lazy(() => import('@/views/account/KycForm')),
-        authority: [],
+        authority: ["ADMIN","Senior Architect"],
     },
 ]
 

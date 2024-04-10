@@ -55,9 +55,10 @@ const SignUpForm = (props: SignUpFormProps) => {
     }
 
     const rolesOptions = [
-        { label: 'Admin', value: 'admin' },
-        { label: 'User', value: 'user' },
-        {label:'Designer',value:'designer'}
+        { label: 'Admin', value: 'ADMIN' },
+        { value: 'Senior Architect', label: 'Senior Architect ' },
+        { value: '3D Visualizer', label: '3D Visualizer' },
+        { value: 'Jr. Interior Designer', label: 'Jr. Interior Designer' },
     ]
 
     return (

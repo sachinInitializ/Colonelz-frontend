@@ -33,6 +33,7 @@ const dropdownItemList: DropdownList[] = [
 ]
 
 const _UserDropdown = ({ className }: CommonProps) => {
+    const role=localStorage.getItem('role')
     const { avatar, userName, authority, email } = useAppSelector(
         (state) => state.auth.user
     )
@@ -70,7 +71,9 @@ const _UserDropdown = ({ className }: CommonProps) => {
                     </div>
                 </Dropdown.Item>
                 <Dropdown.Item variant="divider" />
-                {dropdownItemList.map((item) => (
+
+                {role === 'ADMIN' &&dropdownItemList.map((item) => (
+                    <>
                     <Dropdown.Item
                         key={item.label}
                         eventKey={item.label}
@@ -88,8 +91,9 @@ const _UserDropdown = ({ className }: CommonProps) => {
                             </span>
                         </Link>
                     </Dropdown.Item>
+                    <Dropdown.Item variant="divider" />
+                    </>
                 ))}
-                <Dropdown.Item variant="divider" />
                 <Dropdown.Item
                     eventKey="Sign Out"
                     className="gap-2"

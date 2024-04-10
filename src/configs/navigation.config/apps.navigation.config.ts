@@ -14,7 +14,7 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: 'nav.appsCrm.dashboard',
                         icon: 'dashboard',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: [],
+                        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant"],
                         subMenu: [],
                     },
                     {
@@ -24,7 +24,7 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: 'nav.appsCrm.fileManager',
                         icon: 'files',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: [],
+                        authority: ["ADMIN","Senior Architect"],
                         subMenu: [],
                     },
                   
@@ -36,7 +36,7 @@ const appsNavigationConfig: NavigationTree[] = [
                                     translateKey: 'nav.Crm.project',
                                     icon: 'projects',
                                     type: NAV_ITEM_TYPE_ITEM,
-                                    authority: [],
+                                    authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer",,"Project Architect","Executive Assistant"],
                                     subMenu: [],
                                 },
                   
@@ -51,7 +51,7 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: 'nav.appsCrm.mom',
                         icon: 'mom',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: [],
+                        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer"],
                         subMenu: [],
                     },
                     {
@@ -61,7 +61,7 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: 'nav.appsSales.productList',
                         icon: 'lead',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: ["ADMIN"],
+                        authority: ["ADMIN","Senior Architect","Project Architect"],
                         subMenu: [],
                     },
                     
