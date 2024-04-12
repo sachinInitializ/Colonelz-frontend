@@ -10,6 +10,7 @@ interface Notification {
   _id: string;
   status: boolean;
   message: string;
+  notification_id:string;
 }
 const userId=localStorage.getItem('userId');
 const userDetailData = await apiGetNotification(userId);
@@ -18,7 +19,7 @@ const Notification1 = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setNotificationData(userDetailData.data.NotificationData);
+      setNotificationData(userDetailData.data.NotificationData || []);
     };
     fetchData();
   }, []);
@@ -26,19 +27,20 @@ const Notification1 = () => {
 
   const { larger } = useResponsive();
   const handleUpdate = async (notification: Notification,type:string) => {
-    await apiPutNotificationUpdate(notification._id,type);
+    await apiPutNotificationUpdate(notification.notification_id,type);
     if (type === 'All') {
       setNotificationData((prevData) =>
           prevData.map((item) => ({ ...item, status: true }))
       );}
     setNotificationData((prevData) =>
       prevData.map((item) =>
-        item._id === notification._id ? { ...item, status: true } : item
+        item.notification_id === notification.notification_id ? { ...item, status: true } : item
       )
     );
   };
 
-  const unreadNotifications = notificationData.filter(notification => !notification.status);
+  
+  const unreadNotifications = (notificationData || []).filter(notification => !notification.status);
 
   
 

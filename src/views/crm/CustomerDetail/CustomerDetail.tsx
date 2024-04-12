@@ -42,6 +42,7 @@ const CustomerDetail = () => {
       }
       const [fileData,setFileData]=useState<FileItem[]>();
     const location = useLocation();
+    const role=localStorage.getItem('role');
     const queryParams = new URLSearchParams(location.search);
     const allQueryParams: QueryParams = {
       id: queryParams.get('id') || '',
@@ -85,9 +86,14 @@ const CustomerDetail = () => {
         <Tabs defaultValue={allQueryParams.mom}>
             <TabList>
                 <TabNav value="tab1">Details</TabNav>
-                <TabNav value="tab2">Quotation</TabNav>
-                <TabNav value="mom">MOM</TabNav>
-                <TabNav value="tab5">All MOM</TabNav>
+                {(role === 'ADMIN' || role === 'Senior Architect' || role === 'Executive Assistant') && (
+  <TabNav value="tab2">Quotation</TabNav>
+)}{role !== 'Executive Assistant' && (
+  <>
+    <TabNav value="mom">MOM</TabNav>
+    <TabNav value="tab5">All MOM</TabNav>
+  </>
+)}
             </TabList>
             <div className="p-4">
                 <TabContent value="tab1">

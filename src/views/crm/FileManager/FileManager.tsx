@@ -13,18 +13,24 @@ const FileManager = () => {
   const role=localStorage.getItem('role')
   return (
     <div>
-    <Tabs defaultValue={(role === 'ADMIN' || role==='Senior Architect') ? 'tab1' : 'tab2'}>
+    <Tabs 
+    defaultValue={role === 'Jr. Executive HR & Marketing' ? 'tab3' : (role === 'ADMIN' || role === 'Senior Architect') ? 'tab1' : 'tab2'}
+    >
         <TabList>
             {(role==='ADMIN' || role==='Senior Architect') && <TabNav value="tab1" icon={<MdManageAccounts />}>
            
                 Leads
             </TabNav>}
-            <TabNav value="tab2" icon={<LuFileStack />}>
-                Projects
-            </TabNav>
-            <TabNav value="tab3" icon={<GoRepoTemplate />}>
-                Templates
-            </TabNav>
+            {role !== 'Jr. Executive HR & Marketing' && (
+  <TabNav value="tab2" icon={<LuFileStack />}>
+    Projects
+  </TabNav>
+)}
+         {(role === 'ADMIN' || role === 'Senior Architect' || role === 'Jr. Executive HR & Marketing') && (
+  <TabNav value="tab3" icon={<GoRepoTemplate />}>
+    Company Data
+  </TabNav>
+)}
         </TabList>
         <div className="p-4">
             <TabContent value="tab1">

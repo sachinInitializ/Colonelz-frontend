@@ -18,7 +18,7 @@ const Index = () => {
     const fetchDataAndLog = async () => {
       try {
         const templateData = await getTemplateData();
-        console.log(templateData);
+       
         setTemplateData(templateData);
       } catch (error) {
         console.error('Error fetching lead data', error);
@@ -27,7 +27,6 @@ const Index = () => {
 
     fetchDataAndLog();
   }, []);
-  console.log(templateData);
   
   const navigate = useNavigate();
 
@@ -41,6 +40,9 @@ const Index = () => {
     console.log('onDialogClose', e);
     setIsOpen(false);
   };
+console.log(templateData);
+
+
 
   return (
       <div>
@@ -50,7 +52,7 @@ const Index = () => {
                   Upload
               </Button>
           </div>
-          {templateData.length>0 ? (
+          {templateData && templateData.length>0 ? (
               <p>
                   <div className="grid xl:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-3">
                   {templateData.filter(item => item.files[0].folder_name ===type && item.files[0].sub_folder_name_first === folderName).map((item) => (
@@ -59,7 +61,7 @@ const Index = () => {
                           className=" cursor-pointer"
                           onClick={() =>
                               navigate(
-                                  `/app/crm/fileManager/project/templates/residential/subfolder/files?type=${type}&folder=${folderName}&subfolder=${item.files[0].sub_folder_name_second}&folder_id=${item.files[0].folder_id}`,
+                                  `/app/crm/fileManager/project/templates/miscellaneous/subfolder/files?type=${type}&folder=${folderName}&subfolder=${item.files[0].sub_folder_name_second}&folder_id=${item.files[0].folder_id}`,
                               )
                           }
                       >

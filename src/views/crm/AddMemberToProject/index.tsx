@@ -9,6 +9,7 @@ import { apiGetCrmProjects } from '@/services/CrmService';
 import { set } from 'lodash';
 
 interface FormValues {
+  id: string;
   role: string;
   user_name: string;
   project_id: string;
@@ -24,6 +25,8 @@ interface Projects {
 }
 const response = await apiGetUsers();
 const projects = await apiGetCrmProjects();
+const id=localStorage.getItem('userId');
+const token=localStorage.getItem('auth');
 const Index = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -35,6 +38,7 @@ const Index = () => {
     { value: '3D Visualizer', label: '3D Visualizer' },
     { value: 'Jr. Interior Designer', label: 'Jr. Interior Designer' },
     { label: 'Executive Assistant', value: 'Executive Assistant' },
+    { value: 'Project Architect', label: 'Project Architect' },
     { label: 'Jr. Executive HR & Marketing', value: 'Jr. Executive HR & Marketing' },
     { label: 'Site Supervisor', value: 'Site Supervisor' }
   ];
@@ -57,7 +61,7 @@ const Index = () => {
   }, [selectedRole, users]);
 
   const handleSubmit = async (values: FormValues) => {
-    const response=await apiAddMember(values);
+    const response=await apiAddMember(values,token);
     const responseData=  await response.json();
     if(response.status===200){
      
@@ -85,6 +89,7 @@ const Index = () => {
   return (
     <Formik
       initialValues={{
+        id:id || '',
         role: '',
         user_name: '',
         project_id: '',

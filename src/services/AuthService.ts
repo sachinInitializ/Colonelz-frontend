@@ -34,8 +34,8 @@ export async function apiSignIn(data: SignInCredential): Promise<SignInResponse>
         return responseData;
 }
 
-export async function apiAddMember(data:any) {
-    data.id=userId;
+export async function apiAddMember(data:any,token:string | null) {
+    
     
         const response = await fetch(`${apiPrefix}admin/add/member`, {
             method: 'POST',

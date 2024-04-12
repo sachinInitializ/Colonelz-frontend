@@ -104,13 +104,22 @@ const uniqueFolderNames = Array.from(
     new Set(data.data.map((folderItem) => folderItem.folder_name.trim())),
 )
 
-const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
+const role = localStorage.getItem('role'); // Replace this with how you're getting the role
+
+const clientOptions: Option[] = uniqueFolderNames
+  .filter(folderName => {
+    if (role === 'ADMIN' || role === 'Senior Architect') {
+      return true;
+    } else {
+      return folderName !== 'quotation' && folderName !== 'contract';
+    }
+  })
+  .map((folderName) => ({
     value: folderName,
     label: folderName,
-}))
-
+  }));
   return (
-    <form onSubmit={handleSubmit} className=' overflow-y-auto max-h-[400px]' style={{scrollbarWidth:'none'}}>
+    <form onSubmit={handleSubmit} className=' overflow-y-auto h-[300px] ' style={{scrollbarWidth:'none'}}>
      <h3 className='mb-5'>Project File Upload</h3>
       <div className='mb-5'>
         <CreatableSelect
@@ -119,6 +128,8 @@ const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
           onChange={(selectedOption) =>
             handleSelectChange(selectedOption, 'folder_name')
           }
+          maxMenuHeight={200}
+        
         />
       </div>
 

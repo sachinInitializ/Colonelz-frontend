@@ -26,7 +26,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager`,
         component: lazy(() => import('@/views/crm/FileManager')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing"],
         meta: {
             header: 'File Manager',
             headerContainer: true,
@@ -63,7 +63,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Project/index')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing"],
         meta: {
          
         },
@@ -72,7 +72,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/folder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Project/Folders/index')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing"],
         meta: {
          
         },
@@ -81,7 +81,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/upload`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Project/Folders/index')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing"],
         meta: {
          
         },
@@ -153,7 +153,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/miscellaneous/subfolder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Miscellaneous')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","Jr. Executive HR & Marketing"],
         meta: {
          
         },
@@ -162,7 +162,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/miscellaneous/subfolder/files`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Files')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","Jr. Executive HR & Marketing"],
         meta: {
          
         },
@@ -181,6 +181,16 @@ const appsRoute: Routes = [
         path: `${APP_PREFIX_PATH}/crm/project-details?id=8`,
         component: lazy(() => import('@/views/crm/CustomerDetail')),
         authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant"],
+    },
+    {
+        key: 'appsCrm.customerDetails',
+        path: `${APP_PREFIX_PATH}/crm/project-details`,
+        component: lazy(() => import('@/views/crm/CustomerDetail')),
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant"],
+        meta: {
+            header: 'Project Details',
+            headerContainer: true,
+        },
     },
     {
         key: 'appsCrm.form',
@@ -211,16 +221,7 @@ const appsRoute: Routes = [
           
     //     },
     // },
-    {
-        key: 'appsCrm.customerDetails',
-        path: `${APP_PREFIX_PATH}/crm/project-details`,
-        component: lazy(() => import('@/views/crm/CustomerDetail')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            header: 'Project Details',
-            headerContainer: true,
-        },
-    },
+   
     {
         key: 'appsCrm.customerDetails',
         path: `${APP_PREFIX_PATH}/crm/contract`,

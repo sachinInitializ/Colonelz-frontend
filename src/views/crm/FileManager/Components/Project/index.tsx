@@ -26,9 +26,8 @@ const Index = () => {
     fetchDataAndLog();
   }, []);
   const navigate = useNavigate();
-
+const role=localStorage.getItem('role');
   const [dialogIsOpen, setIsOpen] = useState(false);
-
   const openDialog = () => {
     setIsOpen(true);
   };
@@ -52,26 +51,30 @@ const Index = () => {
               </p>
           ) : (
               <div className="grid xl:grid-cols-5 sm:grid-cols-4 grid-cols-2 gap-5">
-                  {projectData.map((item) => (
-                      <div
-                          key={item.folder_name}
-                          className=" cursor-pointer"
-                          onClick={() =>
-                              navigate(
-                                  `/app/crm/fileManager/project/folder?project_id=${projectId}&folder_name=${item.folder_name}`,
-                              )
-                          }
-                      >
-                          <div className="flex flex-col justify-center items-center ">
-                              <div className={` text-2xl mr-3 text-yellow-500`}>
-                                  <FaFolder />
-                              </div>
-                              <p className="capitalize text-wrap overflow-hidden overflow-ellipsis whitespace-nowrap" style={{maxWidth: '150px'}}>
-    {item.folder_name}
-</p>
-                          </div>
-                      </div>
-                  ))}
+        {projectData.map((item) => {
+  if (role === 'ADMIN' || role === 'Senior Architect' || (item.folder_name !== 'quotation' && item.folder_name !== 'contract')) {
+    return (
+      <div
+        key={item.folder_name}
+        className=" cursor-pointer"
+        onClick={() =>
+          navigate(
+            `/app/crm/fileManager/project/folder?project_id=${projectId}&folder_name=${item.folder_name}`,
+          )
+        }
+      >
+        <div className="flex flex-col justify-center items-center ">
+          <div className={` text-2xl mr-3 text-yellow-500`}>
+            <FaFolder />
+          </div>
+          <p className="capitalize text-wrap overflow-hidden overflow-ellipsis whitespace-nowrap" style={{maxWidth: '150px'}}>
+            {item.folder_name}
+          </p>
+        </div>
+      </div>
+    )
+  }
+})}
               </div>
           )}
           <StickyFooter
@@ -95,6 +98,7 @@ const Index = () => {
               isOpen={dialogIsOpen}
               onClose={onDialogClose}
               onRequestClose={onDialogClose}
+              className={`h-300px`}
           >
               <YourFormComponent data={projectData} />
           </Dialog>

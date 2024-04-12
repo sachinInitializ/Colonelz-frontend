@@ -38,7 +38,7 @@ const RouteAndNav = () => {
                 </p>
                 <SyntaxHighlighter language="js">{`const appConfig: AppConfig = {
     apiPrefix: '/api',
-    authenticatedEntryPath: '/app/crm/dashboard',
+    authenticatedEntryPath: '',
     unAuthenticatedEntryPath: '/sign-in',
     tourPath: '/app/account/kyc-form',
     locale: 'en',
