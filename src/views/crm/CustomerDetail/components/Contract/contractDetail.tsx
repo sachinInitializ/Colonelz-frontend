@@ -264,7 +264,7 @@ const ContractDetails=(data : FileItemProps )=> {
                 onRequestClose={onDialogClose}
             >
          <h3 className='mb-4'>Remarks</h3>
-         <p>{Remark}</p>
+         <p style={{overflowWrap:"break-word"}}>{Remark}</p>
                       </Dialog>
                       </>
 

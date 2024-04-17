@@ -183,11 +183,11 @@ const App: React.FC = () => {
               </div>
               <div className="my-4  text-left">
                 <h5 className="mt-2"> Remarks</h5>
-                <p>{highlightText(item.remark)}</p>
+                <p className='' style={{overflowWrap:"break-word"}}>{highlightText(item.remark)}</p>
               </div>
               <div className="my-4  text-left">
                 <h5 className="mt-2"> Important Notes</h5>
-                <p>{highlightText(item.imaportant_note)}</p>
+                <p className='' style={{overflowWrap:"break-word"}}>{highlightText(item.imaportant_note)}</p>
               </div>
               <div className="my-4 text-left grid grid-cols-8 gap-3">
                 {item.files.map((item) => (

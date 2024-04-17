@@ -292,10 +292,10 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
             </div>
             <div className="mt-4">
                 <h5 className=" mt-3">Remarks</h5>
-                <p>{rowData.remark}</p>
+                <p className=' text-wrap' style={{ width: '65vw', overflowWrap: 'break-word' }}>{rowData.remark}</p>
             </div>
 
-            <div className="grid grid-cols-10 ">
+            <div className="grid grid-cols-10  mt-6">
                 {files.map((item) => (
                     <div  key={item}>
                         <a href={item.fileUrl} target="_blank"  rel="noreferrer">
