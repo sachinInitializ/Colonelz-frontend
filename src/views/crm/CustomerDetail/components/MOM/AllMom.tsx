@@ -151,7 +151,7 @@ const App: React.FC = () => {
                       .split('T')[0]}
                   </span>
                   <a
-                    href={`http://localhost:8000/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${item.mom_id}`} target='_blank'
+                    href={`https://colonelzbackend.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${item.mom_id}`} target='_blank'
                   >
                     <Button size="sm" variant="solid">
                       View MOM

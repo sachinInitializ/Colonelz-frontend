@@ -242,7 +242,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
     const handleShareMOM = async () => {
         try {
             const response = await fetch(
-                `http://localhost:8000/v1/api/admin/send/momdata?project_id=${projectId}&mom_id=${rowData.mom_id}`,
+                `https://colonelzbackend.test.psi.initz.run/v1/api/admin/send/momdata?project_id=${projectId}&mom_id=${rowData.mom_id}`,
                 {
                     method: 'GET',
                 },
@@ -270,7 +270,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
                 </h6>
                 <div className="grid grid-cols-2 gap-2">
                     <a
-                        href={`http://localhost:8000/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`}
+                        href={`https://colonelzbackend.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`}
                         target="_blank" rel="noreferrer"
                     >
                         <Button variant="solid" size="sm">
