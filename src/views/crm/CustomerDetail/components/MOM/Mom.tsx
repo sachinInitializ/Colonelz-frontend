@@ -138,79 +138,54 @@ function ReactTable({
                     Add MOM{' '}
                 </Button>
             </div>
-            <Table>
-                <THead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <Th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                    >
-                                        {header.isPlaceholder ? null : (
-                                            <div
-                                                {...{
-                                                    className:
-                                                        header.column.getCanSort()
-                                                            ? 'cursor-pointer select-none'
-                                                            : '',
-                                                    onClick:
-                                                        header.column.getToggleSortingHandler(),
-                                                }}
-                                            >
-                                                {flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext(),
-                                                )}
-                                                {}
-                                            </div>
-                                        )}
-                                    </Th>
-                                )
-                            })}
-                        </Tr>
+            {table.getRowModel().rows.length > 0 ? (
+    <Table>
+        <THead>
+            {table.getHeaderGroups().map((headerGroup) => (
+                <Tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                        <Th key={header.id} colSpan={header.colSpan}>
+                            {header.isPlaceholder ? null : (
+                                <div
+                                    {...{
+                                        className: header.column.getCanSort()
+                                            ? 'cursor-pointer select-none'
+                                            : '',
+                                        onClick: header.column.getToggleSortingHandler(),
+                                    }}
+                                >
+                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                </div>
+                            )}
+                        </Th>
                     ))}
-                </THead>
-                <TBody>
-                    {table
-                        .getRowModel()
-                        .rows.slice(0, 10)
-                        .map((row) => {
-                            return (
-                                <Fragment key={row.id}>
-                                    <Tr>
-                                        {/* first row is a normal row */}
-                                        {row.getVisibleCells().map((cell) => {
-                                            return (
-                                                <td key={cell.id}>
-                                                    {flexRender(
-                                                        cell.column.columnDef
-                                                            .cell,
-                                                        cell.getContext(),
-                                                    )}
-                                                </td>
-                                            )
-                                        })}
-                                    </Tr>
-                                    {row.getIsExpanded() && (
-                                        <Tr>
-                                            {/* 2nd row is a custom 1 cell row */}
-                                            <Td
-                                                colSpan={
-                                                    row.getVisibleCells().length
-                                                }
-                                            >
-                                                {renderRowSubComponent({ row })}
-                                            </Td>
-                                        </Tr>
-                                    )}
-                                </Fragment>
-                            )
-                        })}
-                </TBody>
-            </Table>
+                </Tr>
+            ))}
+        </THead>
+        <TBody>
+            {table.getRowModel().rows.slice(0, 10).map((row) => (
+                <Fragment key={row.id}>
+                    <Tr>
+                        {row.getVisibleCells().map((cell) => (
+                            <td key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </td>
+                        ))}
+                    </Tr>
+                    {row.getIsExpanded() && (
+                        <Tr>
+                            <Td colSpan={row.getVisibleCells().length}>
+                                {renderRowSubComponent({ row })}
+                            </Td>
+                        </Tr>
+                    )}
+                </Fragment>
+            ))}
+        </TBody>
+    </Table>
+) : (
+    <div style={{ textAlign: 'center' }}>No Mom Data</div>
+)}
         </>
     )
 }

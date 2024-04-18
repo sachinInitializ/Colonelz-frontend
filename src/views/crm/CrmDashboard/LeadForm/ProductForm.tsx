@@ -66,8 +66,6 @@ const LeadForm: React.FC = () => {
 
     const validateForm = () => {
         const newErrors: Partial<FormData> = {}
-
-        // Basic validation for required fields
         if (!formData.name.trim()) newErrors.name = 'Name is required.'
         if (!formData.email.trim()) newErrors.email = 'Email is required.'
         if (!formData.phone.trim())
@@ -77,7 +75,6 @@ const LeadForm: React.FC = () => {
         if (!formData.status) newErrors.status = 'Status is required.'
         if (!formData.date) newErrors.date = 'Date is required.'
 
-        // Email validation
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (
             formData.email.trim() &&
@@ -85,8 +82,6 @@ const LeadForm: React.FC = () => {
         ) {
             newErrors.email = 'Invalid email address.'
         }
-
-        // Phone number validation
         const phonePattern = /^\d{10}$/
         const trimmedPhone = formData.phone.trim()
         if (
@@ -111,13 +106,14 @@ const LeadForm: React.FC = () => {
         )
     }
 
-    const token = Cookies.get('auth')
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-
+        
         if (validateForm()) {
             try {
+                formData.date = formData.date ? new Date(formData.date).toLocaleDateString('en-US') : null
                 const formDataToSend = new FormData()
+                console.log(formData);
                 for (const key in formData) {
                     if (key !== 'files') {
                         formDataToSend.append(key, formData[key])
@@ -241,7 +237,7 @@ const LeadForm: React.FC = () => {
                                 formData.date ? new Date(formData.date) : null
                             }
                             onChange={(date) =>
-                                handleInputChange('date', date?.toISOString())
+                                handleInputChange('date', date ? date.toISOString() : '')
                             }
                         />
                     </FormItem>

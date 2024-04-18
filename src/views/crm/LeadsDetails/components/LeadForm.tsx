@@ -128,7 +128,7 @@ const myParam = queryParams.get('id') || ''
       const response = await apiGetCrmLeadsUpdates(formData)
       const errorMessage = await response.json()
       if (response.ok) {
-          closeAfter2000ms('success','Lead added successfully')
+          closeAfter2000ms('success','Lead Updated successfully')
           window.location.reload()
       } else {
           closeAfter2000ms('danger',errorMessage.errorMessage)

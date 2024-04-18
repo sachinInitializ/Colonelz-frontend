@@ -354,45 +354,34 @@ const Quotations=(data : FileItemProps )=> {
         <div className=' flex justify-end mb-4'>
             <Button variant='solid' size='sm' onClick={()=>openDialog()} >Share to Client</Button>
     </div>
-            <Table>
-                <THead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <Th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                    >
-                                        {flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                    </Th>
-                                )
-                            })}
-                        </Tr>
+    {table.getRowModel().rows.length > 0 ? (
+    <Table>
+        <THead>
+            {table.getHeaderGroups().map((headerGroup) => (
+                <Tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                        <Th key={header.id} colSpan={header.colSpan}>
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                        </Th>
                     ))}
-                </THead>
-                <TBody>
-                    {table.getRowModel().rows.map((row) => {
-                        return (
-                            <Tr key={row.id}>
-                                {row.getVisibleCells().map((cell) => {
-                                    return (
-                                        <Td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </Td>
-                                    )
-                                })}
-                            </Tr>
-                        )
-                    })}
-                </TBody>
-            </Table>
+                </Tr>
+            ))}
+        </THead>
+        <TBody>
+            {table.getRowModel().rows.map((row) => (
+                <Tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                        <Td key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </Td>
+                    ))}
+                </Tr>
+            ))}
+        </TBody>
+    </Table>
+) : (
+    <div style={{ textAlign: 'center'}  }>No Quotation File</div>
+)}
 
           
 <Dialog

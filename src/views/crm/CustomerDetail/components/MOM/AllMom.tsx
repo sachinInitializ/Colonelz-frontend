@@ -96,15 +96,7 @@ const App: React.FC = () => {
     )
   };
   
-  
 
-
-  useEffect(() => {
-    console.log('searchTerm:', searchTerm);
-    console.log('highlightedText:', highlightedText);
-    console.log('filteredMomData:', filteredMomData);
-    // ... rest of the code
-  }, [searchTerm, highlightedText, filteredMomData]);
   
   
   const getNames = (names: string[] | string) => {
@@ -130,7 +122,8 @@ const App: React.FC = () => {
 
       </div>
       <ul>
-        {filteredMomData.map((item: any) => (
+      {filteredMomData.length > 0 ? (
+    filteredMomData.map((item: any) => (
           <div key={item}>
             <Card
               header={
@@ -189,7 +182,9 @@ const App: React.FC = () => {
               </div>
             </Card>
           </div>
-        ))}
+        ))) : (
+          <div style={{ textAlign: 'center' }}>No Mom Data</div>
+      )}
       </ul>
     </div>
   );
