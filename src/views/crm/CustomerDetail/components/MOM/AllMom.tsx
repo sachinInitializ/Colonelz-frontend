@@ -1,14 +1,15 @@
 import { Button, Card, Input } from '@/components/ui';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { MomData, projectId } from './data';
 import { useLocation } from 'react-router-dom';
 import { apiGetCrmProjectsMom } from '@/services/CrmService';
+import { useMomContext } from '../../store/MomContext';
 
 const App: React.FC = () => {
-  const [momData, setMomData] = useState<MomData[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [highlightedText, setHighlightedText] = useState<string>('');
   const [searchInput, setSearchInput] = useState<string>('');
+  const { leadData, client } = useMomContext();
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const term = event.target.value;
@@ -39,25 +40,9 @@ const App: React.FC = () => {
     mom: queryParams.get('type') || '',
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await apiGetCrmProjectsMom(allQueryParams.project_id);
-        setMomData(response.data.mom_data);
-        console.log('Received response from server:', );
-        
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  
-  }, [allQueryParams.project_id]);
-  console.log(momData);
   
 
-  const filteredMomData = momData.filter((item) => {
+  const filteredMomData = leadData.filter((item) => {
     const searchIn = (str: string | undefined): boolean => {
       if (str === undefined) {
         return false;
@@ -151,7 +136,7 @@ const App: React.FC = () => {
                       .split('T')[0]}
                   </span>
                   <a
-                    href={`https://colonelzbackend.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${item.mom_id}`} target='_blank'
+                    href={`https://col-back1.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${item.mom_id}`} target='_blank'
                   >
                     <Button size="sm" variant="solid">
                       View MOM

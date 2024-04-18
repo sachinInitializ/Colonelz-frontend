@@ -1,4 +1,4 @@
-import { useMemo, Fragment, useState, useEffect } from 'react'
+import { useMemo, Fragment, useState, useEffect, useContext } from 'react'
 import Table from '@/components/ui/Table'
 import {
     useReactTable,
@@ -12,8 +12,9 @@ import type { ApiResponse, MomData } from './data'
 import type { ColumnDef, Row, ColumnSort } from '@tanstack/react-table'
 import type { ReactElement } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui'
+import { Button, Notification, toast } from '@/components/ui'
 import { apiGetCrmProjectsMom } from '@/services/CrmService'
+import { useMomContext } from '../../store/MomContext'
 
 type ReactTableProps<T> = {
     renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
@@ -106,28 +107,7 @@ function ReactTable({
     )
 
     const location = useLocation()
-
-    const [leadData, setLeadData] = useState<ApiResponse | null>(null)
-    const [client,setClient]= useState<Data | null>(null)
-    useEffect(() => {
-        const searchParams = new URLSearchParams(location.search)
-        const projectId = searchParams.get('project_id')
-        if (projectId) {
-            const fetchData = async () => {
-                try {
-                    const response = await apiGetCrmProjectsMom(projectId)
-                    const data = response
-                    setLeadData(data.data.mom_data)
-                    setClient(data.data)
-                } catch (error) {
-                    console.error('Error fetching data:', error)
-                }
-            }
-
-            fetchData()
-        }
-    }, [location.search])
-
+    const { leadData, client } = useMomContext();
     const [sorting, setSorting] = useState<ColumnSort[]>([])
     const table = useReactTable({
         data: leadData || [],
@@ -242,16 +222,26 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
     const handleShareMOM = async () => {
         try {
             const response = await fetch(
-                `https://colonelzbackend.test.psi.initz.run/v1/api/admin/send/momdata?project_id=${projectId}&mom_id=${rowData.mom_id}`,
+                `https://col-back1.test.psi.initz.run/v1/api/admin/send/momdata?project_id=${projectId}&mom_id=${rowData.mom_id}`,
                 {
                     method: 'GET',
                 },
             )
-
+            const responseData=response.json()
+            console.log(responseData);
+            
             if (response.ok) {
-                alert('MOM shared successfully!')
+                toast.push(
+                    <Notification closable type="success" duration={2000}>
+                        "MOM shared successfully"
+                    </Notification>
+                )
             } else {
-                alert('Failed to share MOM. Please try again later.')
+                toast.push(
+                    <Notification closable type="danger" duration={2000}>
+                        "MOM shared successfully"
+                    </Notification>
+                )
             }
         } catch (error) {
             console.error('Error sharing MOM:', error)
@@ -270,7 +260,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
                 </h6>
                 <div className="grid grid-cols-2 gap-2">
                     <a
-                        href={`https://colonelzbackend.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`}
+                        href={`https://col-back1.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`}
                         target="_blank" rel="noreferrer"
                     >
                         <Button variant="solid" size="sm">

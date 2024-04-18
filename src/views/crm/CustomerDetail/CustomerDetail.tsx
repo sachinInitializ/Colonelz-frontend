@@ -17,6 +17,7 @@ import Quotations from './Quotation/Quotations'
 import { FileItem } from '../FileManager/Components/Project/data'
 import Index from './Quotation'
 import Contract from './components/Contract'
+import { MomProvider } from './store/MomContext'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -83,6 +84,7 @@ const CustomerDetail = () => {
       
       return (
         <div>
+          <MomProvider>
         <Tabs defaultValue={allQueryParams.mom}>
             <TabList>
                 <TabNav value="tab1">Details</TabNav>
@@ -94,6 +96,7 @@ const CustomerDetail = () => {
     <TabNav value="tab5">All MOM</TabNav>
   </>
 )}
+
             </TabList>
             <div className="p-4">
                 <TabContent value="tab1">
@@ -113,6 +116,7 @@ const CustomerDetail = () => {
                 </TabContent>
             </div>
         </Tabs>
+        </MomProvider>
     </div>
       );
  

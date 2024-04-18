@@ -122,7 +122,7 @@ const Index = () => {
                     <h3 className="mb-4">Contract</h3>
 
                     <Form className="">
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <FormItem label="Client">
                                 <Field
                                     component={Input}

@@ -46,7 +46,7 @@ export async function apiGetCrmProjects() {
 }
 
 export async function apiGetCrmProjectMakeContract(formData: any) {
-    const response = await fetch(`https://colonelzbackend.test.psi.initz.run/v1/api/admin/view/contract`, {
+    const response = await fetch(`https://col-back1.test.psi.initz.run/v1/api/admin/view/contract`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
