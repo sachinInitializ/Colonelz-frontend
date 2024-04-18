@@ -1,5 +1,5 @@
 import { apiGetCrmProjectsMom } from '@/services/CrmService';
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 
 
@@ -7,7 +7,7 @@ const MomContext = createContext({ leadData: null, client: null });
 
 export const useMomContext = () => useContext(MomContext);
 
-export const MomProvider = ({ children }) => {
+export const MomProvider = ({ children }: { children: ReactNode }) => {
   const [leadData, setLeadData] = useState(null);
   const [client, setClient] = useState(null);
   const location = useLocation();

@@ -52,7 +52,7 @@ export default function projectsFakeApi(server: Server, apiPrefix: string) {
         }
     )
 
-    server.get(`https://col-u3yp.onrender.com/v1/api/admin/getall/lead/`, (schema, { queryParams }) => {
+    server.get(`https://col-back1.test.psi.initz.run/v1/api/admin/getall/lead/`, (schema, { queryParams }) => {
         const id = queryParams.id
         const product = schema.db.projectdata.find(id)
         return product

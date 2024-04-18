@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom'
 import {
     Customer, Data, Project,
 } from '../store'
-import { DatePicker, Dialog, FormItem, Input, Select } from '@/components/ui'
+import { DatePicker, Dialog, FormItem, Input, Notification, Select, toast } from '@/components/ui'
 import Cookies from 'js-cookie'
 
 
@@ -104,7 +104,7 @@ interface ProjectUpdateData {
   const token=Cookies.get('auth')
   const handleUpdate = async () => {
     try {
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/update/project/', {
+      const response = await fetch('https://col-back1.test.psi.initz.run/v1/api/admin/update/project/', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -117,14 +117,27 @@ interface ProjectUpdateData {
       });
   
       const data = await response.json();
+      console.log(data);
+      
       if (data.status) {
-        alert("Success")
-        // window.location.reload()
+        toast.push(
+          <Notification closable type="success" duration={2000}>
+              Project data updated successfully
+          </Notification>
+      )
       } else {
-        alert('Error updating project status');
+        toast.push(
+          <Notification closable type="danger" duration={2000}>
+             {data.errorMessage}
+          </Notification>
+      )
       }
     } catch (error) {
-      alert('Error updating project status');
+      toast.push(
+        <Notification closable type="danger" duration={2000}>
+           Error updating project status
+        </Notification>
+    )
     }
   };
   

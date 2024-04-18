@@ -29,18 +29,6 @@ type FormData = {
   type: string;
 };
 
-const validationSchema = Yup.object({
-    user_name: Yup.string().when('type', (type: string, schema) => {
-      return type === 'Internal' ? schema.required('Required') : schema;
-    }),
-    client_name: Yup.string().when('type', (type: string, schema) => {
-      return type === 'External' ? schema.required('Required') : schema;
-    }),
-    client_email: Yup.string().email('Invalid email address').when('type', (type: string, schema) => {
-      return type === 'External'? schema.required('Required') : schema;
-    }),
-    type: Yup.string().required('Required'),
-  });
 
 type CheckBoxChangeEvent = ChangeEvent<HTMLInputElement>
 
@@ -67,8 +55,12 @@ type FileItem = {
 type Files = {
     fileUrl:string,
 }
-
-
+type RowType = {
+    original: {
+      remark: string;
+      admin_status: string;
+    };
+  };
 
 function IndeterminateCheckbox({
     indeterminate,
@@ -253,7 +245,7 @@ const Quotations=(data : FileItemProps )=> {
                 ...(role !== 'designer' ? [{
                 header: 'Remark',
                 accessorKey: 'remark',
-                cell:({row})=>{
+                cell: ({row}: {row: RowType}) => {
                     const Remark=row.original.remark;
                     const admin_status=row.original.admin_status;
                     const [dialogIsOpen, setIsOpen] = useState(false)
@@ -322,50 +314,37 @@ const Quotations=(data : FileItemProps )=> {
         field: any;
         form: any;
     }
-    const handleShareFileForApproval = async () => {
-        if(selectedFiles.length===0){
-          toast.push(
-            <Notification closable type="warning" duration={2000}>
-              Please select a file to share
-            </Notification>,{placement:'top-center'}
-          )
-          return;
-        }
-      
-    
-        const postData = {
-          type: 'Internal',
-          file_id: selectedFileIds[0], 
-          folder_name: 'quotation',
-          project_id: projectId,
-        };
-        try{
-          const response=await apiGetCrmProjectShareQuotation(postData);
-          const responseJson=await response.json()
-          if (response.ok) {
-            toast.push(
-              <Notification closable type="success" duration={2000}>
-                File shared successfully
-              </Notification>,{placement:'top-center'}
-            )
-          }
-        }
-        catch(error){
-          console.error('Error sharing files:', error);
-        }
-     }
+   
 
      const SelectField: React.FC<SelectFieldProps> = ({ options, field, form }) => (
         <Select
             options={options}
             name={field.name}
             value={options ? options.find(option => option.value === field.value) : ''}
-            onChange={(option) => form.setFieldValue(field.name, option.value)}
+            onChange={(option) => {
+                if (option && typeof option !== 'string') {
+                  form.setFieldValue(field.name, option.value);
+                }
+              }}
         />
     );
     const handleSubmit = async (values:FormValues) => {
         const response=await apiGetCrmProjectShareQuotation(values);
         const responseData=  await response.json();
+        if(responseData.code===200){
+            toast.push(
+                <Notification closable type="success" duration={2000}>
+                   {responseData.message}
+                </Notification>
+            )
+        }
+        else{
+            toast.push(
+                <Notification closable type="danger" duration={2000}>
+                   {responseData.errorMessage}
+                </Notification>
+            )
+        }
         console.log(responseData);
       };
      const approvedFiles = data.data.filter(file => file.admin_status === 'approved').map(file => ({ value: file.itemId, label: file.file_name }));

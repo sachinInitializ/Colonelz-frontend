@@ -181,7 +181,7 @@ const FileUploadForm: React.FC = () => {
             })
 
             const response = await fetch(
-                'https://col-u3yp.onrender.com/v1/api/admin/create/project/',
+                'https://col-back1.test.psi.initz.run/v1/api/admin/create/project/',
                 {
                     method: 'POST',
                     body: formDataToSend,

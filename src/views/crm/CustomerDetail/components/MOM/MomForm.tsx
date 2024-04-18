@@ -5,8 +5,10 @@ import {
     FormContainer,
     FormItem,
     Input,
+    Notification,
     Select,
     Upload,
+    toast,
 } from '@/components/ui'
 import CreatableSelect from 'react-select/creatable' // Import CreatableSelect
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -184,7 +186,7 @@ const YourFormComponent: React.FC = () => {
             )
 
             const response = await fetch(
-                'https://col-u3yp.onrender.com/v1/api/admin/create/mom/',
+                'https://col-back1.test.psi.initz.run/v1/api/admin/create/mom/',
                 {
                     headers:{
                         Authorization: `Bearer ${localStorage.getItem('auth')}`
@@ -193,14 +195,22 @@ const YourFormComponent: React.FC = () => {
                     body: formDataToSend,
                 },
             )
-
+            const responseData=await response.json()
             if (response.ok) {
-                alert('MOM created successfully')
+                toast.push(
+                    <Notification closable type="success" duration={2000}>
+                        Mom Created Successfully
+                    </Notification>
+                )
                 window.location.reload()
                 navigate(-1)
                 // Redirect to home page or any other page after successful creation
             } else {
-                alert('Failed to create MOM')
+                toast.push(
+                    <Notification closable type="success" duration={2000}>
+                        {responseData.errorMessage}
+                    </Notification>
+                )
             }
         } catch (error) {
             console.error('Error:', error)
@@ -215,7 +225,7 @@ const YourFormComponent: React.FC = () => {
                 <FormContainer>
                     <div className="grid grid-cols-3 gap-5">
                         <FormItem label="Client's Name">
-                            {/* Use CreatableSelect to allow selecting or creating a new client name */}
+                            
                             <CreatableSelect
                                 isMulti
                                 options={clientOptions}
@@ -251,7 +261,6 @@ const YourFormComponent: React.FC = () => {
                             )}
                         </FormItem>
                         <FormItem label="Designer's Name">
-                            {/* Use CreatableSelect to allow selecting or creating a new client name */}
                             <CreatableSelect
                                 isMulti
                                 options={architectOptions}

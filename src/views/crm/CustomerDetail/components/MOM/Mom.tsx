@@ -35,7 +35,7 @@ function ReactTable({
     renderRowSubComponent,
     getRowCanExpand,
     
-}: ReactTableProps<ApiResponse>) {
+}: ReactTableProps<MomData>) {
     const columns = useMemo<ColumnDef<MomData>[]>(
         () => [
             {
@@ -79,7 +79,6 @@ function ReactTable({
                     return <span>{clientNames.join(', ')}</span>
                 },
             },
-
             {
                 header: 'Meeting Date',
                 accessorKey: 'meetingdate',
@@ -227,7 +226,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
                     method: 'GET',
                 },
             )
-            const responseData=response.json()
+            const responseData=await response.json()
             console.log(responseData);
             
             if (response.ok) {
@@ -239,7 +238,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
             } else {
                 toast.push(
                     <Notification closable type="danger" duration={2000}>
-                        "MOM shared successfully"
+                        {responseData.errorMessage}
                     </Notification>
                 )
             }

@@ -3,7 +3,7 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import { Formik, Field, Form, ErrorMessage, FieldProps } from 'formik'
 import * as Yup from 'yup'
-import { Button, FormItem, Input } from '@/components/ui'
+import { Button, DatePicker, FormItem, Input } from '@/components/ui'
 import { useLocation } from 'react-router-dom'
 import { apiGetCrmProjectMakeContract } from '@/services/CrmService'
 import CreatableSelect from 'react-select/creatable'
@@ -83,7 +83,11 @@ const Index = () => {
   ]
     const handleSubmit = async (values: FormValues) => {
         console.log(values)
-
+      console.log(values.date);
+      values.date = new Date(values.date).toISOString().split('T')[0]
+      console.log(values.date);
+      
+        
         const response = await apiGetCrmProjectMakeContract(values)
         const responseData = await response.json()
         window.open(responseData.data, '_blank')
@@ -122,7 +126,7 @@ const Index = () => {
                     <h3 className="mb-4">Contract</h3>
 
                     <Form className="">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                             <FormItem label="Client">
                                 <Field
                                     component={Input}
@@ -266,12 +270,29 @@ const Index = () => {
                                 />
                             </FormItem>
                             <FormItem label="Date">
-                                <Field
-                                    component={Input}
-                                    type="date"
-                                    name="date"
-                                    size="sm"
+                            <Field
+                            component={({ field, form }: FieldProps) => (
+                                <DatePicker
+                                field={field}
+                                form={form}
+                                value={field.value}
+                                placeholder="Select Date"
+                                onChange={(date) => {
+                                    if (date) {
+                                        const istDate = new Date(date.getTime() + (330 * 60 * 1000));
+                                        const dateString = `${istDate.getUTCFullYear()}-${String(istDate.getUTCMonth() + 1).padStart(2, '0')}-${String(istDate.getUTCDate()).padStart(2, '0')}`;
+                                        
+                                        const finalDate = new Date(dateString);
+                                        
+                                        form.setFieldValue(field.name, finalDate);
+                                    }
+                                  }}
                                 />
+                            )}
+                            type="date"
+                            name="date"
+                            size="sm"
+                            />
                                 <ErrorMessage
                                     name="date"
                                     component="div"

@@ -92,7 +92,7 @@ const projectId = searchParams.get('project_id');
 useEffect(() => {
   const fetchData = async () => {
     try {
-      const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/get/quotation/?project_id=${projectId}`);
+      const response = await fetch(`https://col-back1.test.psi.initz.run/v1/api/admin/get/quotation/?project_id=${projectId}`);
       const data: ApiResponse = await response.json();
       if (data.status && data.data && data.data.main_quotation) {
         setQuotationData(data.data.main_quotation);

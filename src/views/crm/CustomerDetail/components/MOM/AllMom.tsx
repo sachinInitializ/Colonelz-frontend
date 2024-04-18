@@ -29,6 +29,10 @@ const App: React.FC = () => {
     project_id: string;
     mom: string;
   }
+  type Files={
+      fileUrl: string;
+    }
+  
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -42,24 +46,26 @@ const App: React.FC = () => {
 
   
 
-  const filteredMomData = leadData.filter((item) => {
-    const searchIn = (str: string | undefined): boolean => {
-      if (str === undefined) {
-        return false;
-      }
-      return str.toLowerCase().includes(searchTerm.toLowerCase());
-    };
-    
-    return (
-      searchIn(item.mom_id) ||
-      searchIn(item.meetingdate) ||
-      searchIn(item.location) ||
-      (Array.isArray(item.attendees.client_name) && searchIn(item.attendees.client_name.join(', '))) ||
-      searchIn(item.remark) ||
-      searchIn(item.imaportant_note) ||
-      (item.attendees && Object.entries(item.attendees).some(([key, value]) => searchIn(value)))
-    );
-  });
+  const filteredMomData = leadData
+  ? leadData.filter((item) => {
+      const searchIn = (str: string | undefined): boolean => {
+        if (str === undefined) {
+          return false;
+        }
+        return str.toLowerCase().includes(searchTerm.toLowerCase());
+      };
+
+      return (
+        searchIn(item.mom_id) ||
+        searchIn(item.meetingdate) ||
+        searchIn(item.location) ||
+        (Array.isArray(item.attendees.client_name) && searchIn(item.attendees.client_name.join(', '))) ||
+        searchIn(item.remark) ||
+        searchIn(item.imaportant_note) ||
+        (item.attendees && Object.entries(item.attendees).some(([key, value]) => searchIn(value)))
+      );
+    })
+  : [];
 
 
   const highlightText = (text: string, isDate: boolean = false): JSX.Element => {
@@ -175,7 +181,7 @@ const App: React.FC = () => {
                 <p className='' style={{overflowWrap:"break-word"}}>{highlightText(item.imaportant_note)}</p>
               </div>
               <div className="my-4 text-left grid grid-cols-8 gap-3">
-                {item.files.map((item) => (
+                {item.files.map((item: Files) => (
                   <a href={item.fileUrl} target="_blank">
                     <Button variant="solid">File</Button>
                   </a>
