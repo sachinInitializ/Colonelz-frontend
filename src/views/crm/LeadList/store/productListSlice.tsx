@@ -14,6 +14,7 @@ export type Product = {
     email: string
     phone: string
     status: string
+    date:string
 }
 
 type Products = Product[]

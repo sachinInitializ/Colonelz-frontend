@@ -47,10 +47,11 @@ const CustomerDetail = () => {
     const lead = details?.data?.[0];
       return (
         <>    
+        <h3 className='pb-5'>Lead-{`${lead?.name}`}</h3>
           <Tabs defaultValue="Details">
                 <TabList>
                     <TabNav value="Details">
-                        Lead Details
+                        Details
                     </TabNav>
                     <TabNav value="Actions" >
                         Actions

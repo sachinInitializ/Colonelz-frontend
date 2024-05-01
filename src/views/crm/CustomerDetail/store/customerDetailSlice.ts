@@ -63,10 +63,14 @@ export type Project = {
 export type Data = {
     data:Customer
 }
+type Client = {
+    client_name:string
 
+}
 export type Customer = {
     id: string
     designer:string
+    client:Client[]
     project_name: string
     project_id:string
     project_type:string
@@ -137,7 +141,20 @@ export const putCustomer = createAsyncThunk(
 
 const initialState: CustomerDetailState = {
     loading: true,
-    profileData: {},
+    profileData: {
+        id: '',
+        project_name: '',
+        project_id: '',
+        project_type:'',
+        project_status:'',
+        project_start_date:'',
+        timeline_date:'',
+        project_budget:'',
+        description:'',
+        notes: { content: '' },
+        mom:[],
+        designer:''
+    },
     subscriptionData: [],
     paymentHistoryData: [],
     paymentMethodData: [],

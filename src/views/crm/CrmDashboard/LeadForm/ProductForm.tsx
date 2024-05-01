@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import Select from 'react-select'
 import DatePicker from '@/components/ui/DatePicker/DatePicker'
-import { Button, FormItem, Input, Notification, toast } from '@/components/ui'
+import { Button, FormItem, Input, Notification, Select, toast } from '@/components/ui'
 import { useNavigate } from 'react-router-dom'
 import { StickyFooter } from '@/components/shared'
-import Cookies from 'js-cookie'
-import { apiGetCrmCreateLead, apiGetCrmLeadsToProject } from '@/services/CrmService'
+import { apiGetCrmCreateLead } from '@/services/CrmService'
+import { format, isValid, parse } from 'date-fns'
+import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
 
 const options = [
     { value: 'Follow Up', label: 'Follow Up' },
@@ -50,6 +50,9 @@ const LeadForm: React.FC = () => {
         date: null,
         
     })
+    interface FormData {
+        [key: string]: any;
+    }
 
     const [errors, setErrors] = useState<Partial<FormData>>({})
 
@@ -64,7 +67,18 @@ const LeadForm: React.FC = () => {
         })
     }
 
+    const handleDateChange = (date: Date | null) => {
+        console.log(date);
+        
+        setFormData({ ...formData, date });
+        setErrors({
+          ...errors,
+          date: '',
+        });
+      };
+
     const validateForm = () => {
+        
         const newErrors: Partial<FormData> = {}
         if (!formData.name.trim()) newErrors.name = 'Name is required.'
         if (!formData.email.trim()) newErrors.email = 'Email is required.'
@@ -74,6 +88,8 @@ const LeadForm: React.FC = () => {
             newErrors.location = 'Location is required.'
         if (!formData.status) newErrors.status = 'Status is required.'
         if (!formData.date) newErrors.date = 'Date is required.'
+        if (!formData.lead_manager) newErrors.lead_manager = 'Lead Manager is required.'
+
 
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (
@@ -108,10 +124,10 @@ const LeadForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        
+        const userId=localStorage.getItem('userId')
         if (validateForm()) {
             try {
-                formData.date = formData.date ? new Date(formData.date).toLocaleDateString('en-US') : null
+                
                 const formDataToSend = new FormData()
                 console.log(formData);
                 for (const key in formData) {
@@ -119,6 +135,10 @@ const LeadForm: React.FC = () => {
                         formDataToSend.append(key, formData[key])
                     }
                 }
+                formDataToSend.append('userId', userId);
+                
+                console.log(formData);
+                
                 const response = await apiGetCrmCreateLead(formDataToSend)
                 const errorMessage = await response.json()
                 console.log(errorMessage.errorMessage);
@@ -131,19 +151,19 @@ const LeadForm: React.FC = () => {
                     closeAfter2000ms('danger',errorMessage.errorMessage)
                 }
             } catch (error) {
-              closeAfter2000ms('danger',`Error: ${error.message}`)
+              closeAfter2000ms('danger',`Error: ${error}`)
             }
         }
         else {
             closeAfter2000ms('warning','Please check all the required fields')
         } 
     }
-
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     return (
         <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 xl:grid-cols-3 sm:grid-cols-2 gap-5">
                 <div>
-                    <FormItem label="Name">
+                    <FormItem label="Lead Name">
                         <Input
                             size="sm"
                             type="text"
@@ -152,8 +172,8 @@ const LeadForm: React.FC = () => {
                                 handleInputChange('name', e.target.value)
                             }
                         />
-                    </FormItem>
                     <span className=" text-red-600">{errors.name}</span>
+                    </FormItem>
                 </div>
                 <div>
                     <FormItem label="Email">
@@ -165,8 +185,8 @@ const LeadForm: React.FC = () => {
                                 handleInputChange('email', e.target.value)
                             }
                         />
-                    </FormItem>
                     <span className=" text-red-600">{errors.email}</span>
+                    </FormItem>
                 </div>
                 <div>
                     <FormItem label="Phone">
@@ -183,8 +203,8 @@ const LeadForm: React.FC = () => {
                             }
                             }
                         />
-                    </FormItem>
                     <span className=" text-red-600">{errors.phone}</span>
+                    </FormItem>
                 </div>
                 <div>
                     <FormItem label="Location">
@@ -195,8 +215,8 @@ const LeadForm: React.FC = () => {
                                 handleInputChange('location', e.target.value)
                             }
                         />
-                    </FormItem>
                     <span className=" text-red-600">{errors.location}</span>
+                    </FormItem>
                 </div>
                 <div>
                     <FormItem label="Lead Manager">
@@ -210,54 +230,52 @@ const LeadForm: React.FC = () => {
                                 )
                             }
                         />
-                    </FormItem>
                     <span className=" text-red-600">{errors.lead_manager}</span>
+                    </FormItem>
                 </div>
                 <div>
-                    <FormItem label="Status">
+                    <FormItem label="Lead Status">
                         <Select
                             options={options}
                             value={options.find(
                                 (option) => option.value === formData.status,
                             )}
                             onChange={(selectedOption) =>
-                                handleInputChange(
+                              selectedOption && handleInputChange(
                                     'status',
                                     selectedOption.value,
                                 )
                             }
                         />
-                    </FormItem>
                     <span className=" text-red-600">{errors.status}</span>
+                    </FormItem>
                 </div>
                 <div>
-                    <FormItem label="Date">
-                        <DatePicker 
-                            selected={
-                                formData.date ? new Date(formData.date) : null
-                            }
-                            onChange={(date) =>
-                                handleInputChange('date', date ? date.toISOString() : '')
-                            }
-                        />
-                    </FormItem>
-                    <span className=" text-red-600">{errors.date}</span>
+                <FormItem label="Created Date">
+                <DateTimepicker
+    size='md'
+    value={formData.date}
+    format="DD-MM-YYYY HH:mm"
+    onChange={handleDateChange}
+/>
+    <span className=" text-red-600">{errors.date}</span>
+</FormItem>
                 </div>
                 <div>
-                    <FormItem label="Source">
-                        <Select 
-                            options={optionsSource}
-                            value={optionsSource.find(
-                                (option) => option.value === formData.source,
-                            )}
-                            onChange={(selectedOption) =>
-                                handleInputChange(
-                                    'source',
-                                    selectedOption.value,
-                                )
-                            }
-                        />
-                    </FormItem>
+                <FormItem label="Source">
+                    <Select
+                        options={optionsSource}
+                        value={optionsSource.find(
+                            (option) => option.value === formData.source,
+                        )}
+                        onChange={(selectedOption) =>
+                            selectedOption && handleInputChange(
+                                'source',
+                                selectedOption.value,
+                            )
+                        }
+                    />
+                </FormItem>
                 </div>
                 
                 <div>

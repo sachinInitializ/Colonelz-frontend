@@ -46,7 +46,7 @@ export async function apiGetCrmProjects() {
 }
 
 export async function apiGetCrmProjectMakeContract(formData: any) {
-    const response = await fetch(`https://col-back1.test.psi.initz.run/v1/api/admin/view/contract`, {
+    const response = await fetch(`${apiPrefix}admin/view/contract`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -121,7 +121,6 @@ export async function apiGetCrmSingleProjects(projectId:string ) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}` 
         },
-        
     });
 
     if (!response.ok) {
@@ -131,6 +130,18 @@ export async function apiGetCrmSingleProjects(projectId:string ) {
     return data;
 }
 
+export async function apiGetCrmSingleProjectEdit(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/update/project/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({
+          ...formData,
+        }),
+      });
+    return response;}
 export async function apiGetCrmProjectsMom(projectId:string) {
     const response = await fetch(`${apiPrefix}admin/getall/mom/?project_id=${projectId}`, {
         method: 'GET',
@@ -192,6 +203,23 @@ export async function apiGetCrmFileManagerCreateLeadFolder(formData: any) {
         body: formData
         
     });
+
+    return response;
+}
+
+export async function apiDeleteFileManagerFolders(postData: any) {     
+    const response = await fetch(`${apiPrefix}admin/delete/folder`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(postData)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
     return response;
 }

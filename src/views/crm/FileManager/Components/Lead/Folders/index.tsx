@@ -1,15 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchLeadData } from '../data';
-import { Button, Checkbox, Dialog, FormItem, Input, Notification, Segment, Select, toast } from '@/components/ui';
+import { Button, Checkbox, Dialog, Dropdown, FormItem, Input, Notification, Segment, Select, toast } from '@/components/ui';
 import { StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
-import { CiFileOn } from 'react-icons/ci';
+import { CiFileOn, CiImageOn } from 'react-icons/ci';
 import LeadDataContext from '../LeadDataContext';
 import { apiDeleteFileManagerFiles, apiGetCrmFileManagerLeads, apiGetCrmFileManagerShareContractFile, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { apiGetUsers } from '@/services/CommonService';
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { HiShare, HiTrash } from 'react-icons/hi';
 interface User {
   username: string;
   role:string
@@ -52,8 +54,11 @@ const Index = () => {
 
   const [dialogIsOpen, setIsOpen] = useState(false)
 
-  const openDialog = () => {
+  const openDialog = (fileId:string) => {
       setIsOpen(true)
+      setSelectedFiles([fileId])
+      console.log(fileId);
+      
   }
 
   const onDialogClose = () => {
@@ -76,11 +81,15 @@ const Index = () => {
     const fetchDataAndLog = async () => {
       try {
         const leadData = await apiGetCrmFileManagerLeads(leadId);
-        const folderData = leadData?.data[0]?.files;
-        const selectedFolder = folderData.find((folder) => folder.folder_name === folderName);
+        const folderData = leadData?.data
+        console.log(folderData);
+        
+        const selectedFolder = folderData.find((folder:any) => folder.folder_name === folderName);
 
         if (selectedFolder) {
           setLeadData(selectedFolder.files);
+          console.log(selectedFolder.files);
+          
         }
       } catch (error) {
         console.error('Error fetching lead data', error);
@@ -90,21 +99,23 @@ const Index = () => {
     fetchDataAndLog();
   }, [leadId, folderName]);
 
+console.log(leadData);
 
   
 
-  const handleFileSelect = (fileId: string) => {
-    let updatedSelectedFiles;
-    if (folderName === 'contract') {
-      updatedSelectedFiles = [fileId];
-    } else {
-      updatedSelectedFiles = selectedFiles.includes(fileId)
-        ? selectedFiles.filter((id) => id !== fileId)
-        : [...selectedFiles, fileId];
-    }
-    setSelectedFiles(updatedSelectedFiles);
-  };
-  const deleteFiles = async () => {
+  // const handleFileSelect = (fileId: string) => {
+  //   let updatedSelectedFiles;
+  //   if (folderName === 'contract') {
+  //     updatedSelectedFiles = [fileId];
+  //   } else {
+  //     updatedSelectedFiles = selectedFiles.includes(fileId)
+  //       ? selectedFiles.filter((id) => id !== fileId)
+  //       : [...selectedFiles, fileId];
+  //   }
+  //   setSelectedFiles(updatedSelectedFiles);
+  // };
+  const deleteFiles = async (fileId:string) => {
+    selectedFiles.push(fileId)
     function warn(text:string) {
       toast.push(
           <Notification closable type="warning" duration={2000}>
@@ -112,7 +123,7 @@ const Index = () => {
           </Notification>,{placement:'top-center'}
       )
   }
-    if (selectedFiles.length === 0) {
+    if (fileId.length === 0) {
       warn('No files selected for deletion.')
       return;
     }
@@ -186,6 +197,7 @@ const Index = () => {
       setBody('')
       onDialogClose()
       closeAfter2000ms('Successfully Shared')
+      
       const updatedLeadData = leadData.map((file) => ({ ...file, active: false }));
       setLeadData(updatedLeadData);
     } catch (error) {
@@ -193,55 +205,162 @@ const Index = () => {
     }
   };
   
+  const getFileIcon = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'ico'];
+    if (imageExtensions.includes(extension as string)) {
+      return <CiImageOn className='text-xl' />;
+    }
+    switch (extension) {
+      case 'docx':
+        return <CiFileOn className='text-xl' />;
+      case 'png':
+        return <CiImageOn className='text-xl' />;
+      case 'pptx':
+        return <CiFileOn className='text-xl' />;
+      default:
+        return <CiFileOn className='text-xl' />;
+    }
+  };
+  const getFileType = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase() || '';
+    const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'ico'];
+    const documentExtensions = ['docx', 'doc', 'txt', 'pdf'];
+    const presentationExtensions = ['pptx', 'ppt'];
+    const spreadsheetExtensions = ['xlsx', 'xls', 'csv'];
+    const audioExtensions = ['mp3', 'wav', 'ogg'];
+    const videoExtensions = ['mp4', 'avi', 'mov'];
+  
+    if (imageExtensions.includes(extension)) {
+      return 'Image';
+    } else if (documentExtensions.includes(extension)) {
+      return 'Document';
+    } else if (presentationExtensions.includes(extension)) {
+      return 'Presentation';
+    } else if (spreadsheetExtensions.includes(extension)) {
+      return 'Spreadsheet';
+    } else if (audioExtensions.includes(extension)) {
+      return 'Audio';
+    } else if (videoExtensions.includes(extension)) {
+      return 'Video';
+    } else {
+      return 'File';
+    }
+  };
 
+
+function formatDate(dateString:string) {
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
+function formatFileSize(fileSizeInKB: string | undefined): string {
+  if (!fileSizeInKB) {
+    return '-';
+  }
+
+  const size = Number(fileSizeInKB.split(' ')[0]);
+  if (size < 1024) {
+    return `${size.toFixed(2)} KB`;
+  } else {
+    return `${(size / 1024).toFixed(2)} MB`;
+  }
+}
+
+
+  
   return (
     <div>
        <div className='flex justify-between'>
       <h3 className='mb-5'>Files</h3>
       <div>
-        <Button variant='solid' color='red-600' className='mr-3' onClick={()=>deleteFiles()}>Delete</Button>
-      <Button
-       variant='solid'
-       onClick={() => openDialog()}
-      >Share</Button>
+  
       </div>
       </div>
       {leadData && leadData.length > 0 ? (
-        <div  className='grid grid-cols-2 xl:grid-cols-6 sm:grid-cols-4 gap-4'>
-          {leadData.map((file) => {
-          if (!file || typeof file.fileName !== 'string') {
-            return null; 
-          }
-  
-          const fileExtension = file.fileName.split('.').pop().toLowerCase();
-  
-          return (
-            <a href={file.fileUrl} target='_blank' rel='noreferrer' key={file.fileId}>
-             <div
-                key={file.fileId}
-                className='min-h-[200px] max-h-[250px] flex justify-between'
-              >
-                <Checkbox 
-                  checked={selectedFiles.includes(file.fileId)}
-                  onChange={() => handleFileSelect(file.fileId)}
-                />
-                <div className='flex items-center flex-col justify-center'>
-                  {['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension) ? (
-                    <img src={file.fileUrl} alt={file.fileName} className='h-auto w-auto max-h-[140px]' />
-                  ) : (
-                    <span  ><CiFileOn className=' text-8xl'/></span>
-                  )}
-                  <p className=' capitalize text-wrap overflow-hidden overflow-ellipsis whitespace-nowrap' style={{overflowWrap:"anywhere"}}>
-                  {file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName}
-                  </p>
+      <div className="h-screen w-full">
+      <div className="flex-1 p-4">
+      <div className="flex items-center mb-4">
+  <nav className="flex">
+    <ol className="flex items-center space-x-2">
+      <li>
+        <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</Link>
+      </li>
+      <li>
+        <span className="mx-2">/</span>
+      </li>
+      <li>
+        <Link to={`/app/crm/fileManager/leads?lead_id=${leadId}`} className="text-blue-600 dark:text-blue-400 hover:underline">Leads</Link>
+      </li>
+      <li>
+        <span className="mx-2">/</span>
+      </li>
+    
+      <li className="text-gray-500">{folderName}</li>
+    </ol>
+  </nav>
+</div>
+
+        <div className="border rounded-lg shadow-sm dark:border-gray-700">
+          <div className="relative w-full overflow-auto">
+            <table className="w-full caption-bottom text-sm">
+              <thead className="[&amp;_tr]:border-b">
+                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                    Name
+                  </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                    Type
+                  </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                    Size
+                  </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                    Modified
+                  </th>
+                  <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 ">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+          <tbody className="[&amp;_tr:last-child]:border-0">
+          {leadData.map((item) => (
+            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                <div className="flex items-center gap-2">
+                {getFileIcon(item.fileName)}
+                  <a className="font-medium cursor-pointer" href={item.fileUrl} target='_blank'>
+                    {item.fileName}
+                  </a>
                 </div>
-              </div>
-            </a>
-          );
-        })}
+              </td>
+              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+              {getFileType(item.fileName)}
+            </td>
+              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatFileSize(item.fileSize)}</td>
+              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatDate(item.date)}</td>
+              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
+                <div className=' flex justify-center gap-3'> 
+
+                  <HiTrash className='text-xl cursor-pointer' onClick={()=>deleteFiles(item.fileId)} />
+                  <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(item.fileId)}/>  
+                  </div>
+
+              </td>
+            </tr>))}
+          
+          </tbody>
+
+            </table>
+          </div>
+        </div>
       </div>
+    </div>
          ) : (
-          <p>No files</p>
+          <p className='h-[65vh]'>No files</p>
         )}
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
@@ -280,7 +399,7 @@ const Index = () => {
   initialValues={{
     lead_id: leadId,
     folder_name: folderName,
-    file_id: selectedFiles[0],
+    file_id:"" ,
     user_name: '',
     type: "Internal",
   }}
@@ -313,18 +432,25 @@ const Index = () => {
   {({ handleChange, handleBlur, values }) => (
     <Form>
       <h3 className='mb-5'>Share For Approval</h3>
-      <FormItem label='Username'>
-        
+      <FormItem label='Username' className=''>
       <Select
   options={adminUsers.map(user => ({ value: user.username, label: user.username })) as any}
   onChange={(option: any) => handleChange('user_name')(option ? option.value : '')}
   value={adminUsers.find(user => user.username === values.user_name) ? { value: values.user_name, label: values.user_name } : null}
 />
+
+<FormItem label='File' className='mt-4'>
+  <Select
+    options={leadData.map(file => ({ value: file.fileId, label: file.fileName })) as any}
+    onChange={(option: any) => handleChange('file_id')(option ? option.value : '')}
+    value={leadData.find(file => file.fileId === values.file_id) ? { value: values.file_id, label: values.file_id } : null}
+  />
+</FormItem>
         
       
       </FormItem>
 
-      <button type="submit">Submit</button>
+      <Button type="submit" variant='solid'>Share</Button>
     </Form>
   )}
 </Formik>
@@ -337,6 +463,8 @@ const Index = () => {
                 onRequestClose={onDialogClose}
             >
               <h3 className='mb-5'>Share Files</h3>
+
+    
 
           <CreatableSelect
           
@@ -353,6 +481,8 @@ const Index = () => {
       setSelectedEmails(newEmails);
     }}
   />
+
+
 
 <div className='mt-4'>
           <label className='block text-sm font-medium text-gray-700'>Subject</label>

@@ -23,6 +23,7 @@ import { getLeadData } from './data'
 import { Select } from '@/components/ui'
 import { GoProjectRoadmap } from 'react-icons/go'
 import { FaUser } from 'react-icons/fa'
+import { useData } from '../FileManagerContext/FIleContext'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -38,6 +39,7 @@ function DebouncedInput({
     debounce = 500,
     ...props
 }: DebouncedInputProps) {
+    
     const [value, setValue] = useState(initialValue)
 
     useEffect(() => {
@@ -50,7 +52,6 @@ function DebouncedInput({
         }, debounce)
 
         return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     return (
@@ -92,7 +93,9 @@ const pageSizeOption = [
     { value: 40, label: '40 / page' },
     { value: 50, label: '50 / page' },
 ]
-const totalData=getLeadData.length
+
+console.log(getLeadData);
+
 const Filtering = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
@@ -100,20 +103,7 @@ const Filtering = () => {
 
     const columns = useMemo<ColumnDef<LeadDataItem>[]>(
         () => [
-            {
-                header: 'Lead ID',
-                accessorKey: 'lead_id',
-                cell: (prop) => {
-                    const row = prop.row.original;
-                    return (
-                        <div className='flex items-center gap-2 cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/leads?lead_id=${row.lead_id}`)}>
-                          <span className=' text-lg'><FaUser/></span>
-                            {row.lead_id}
-                        </div>
-                    )
-                  },
-               
-            },
+           
             {
                 header: 'Lead name',
                 accessorKey: 'lead_name',
@@ -125,26 +115,52 @@ const Filtering = () => {
                         </div>
                     )
                   }},
+                  {
+                    header: 'Lead Status',
+                    accessorKey: 'lead_status',
+                    cell: (props) => {
+                        const row = props.row.original;
+                        return (
+                            <div>
+                                {row.lead_status}
+                            </div>
+                        )
+                      }
+                  },
+                  {
+                    header: 'Email',
+                    accessorKey: 'lead_email',
+                    cell: (props) => {
+                        const row = props.row.original;
+                        return (
+                            <div>
+                                {row.lead_email}
+                            </div>
+                        )
+                      }
+                  }
+                  ,
+                  {
+                    header: 'Created Date',
+                    accessorKey: 'lead_date',
+                    cell: ({row}) => {
+                        const date = row.original.lead_date;
+                        const [year, month, day] = new Date(date).toISOString().split('T')[0].split('-');
+                return `${day}-${month}-${year}`;
+                       
+                      }
+                  }
             
         ],
+
         []
     )
+    const { leadData } = useData(); 
+    
 
-    const [leadData, setLeadData] = useState<LeadDataItem[]>([]);
-
-    useEffect(() => {
-      const fetchDataAndLog = async () => {
-        try {
-          const projectData = await getLeadData();
-          console.log(projectData);
-          setLeadData(projectData);
-        } catch (error) {
-          console.error('Error fetching lead data', error);
-        }
-      };
-  
-      fetchDataAndLog();
-    }, []);
+    const totalData = leadData.length
+    
+    
     
     const table = useReactTable({
         data:leadData,

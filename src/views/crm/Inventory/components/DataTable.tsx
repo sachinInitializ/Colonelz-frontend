@@ -166,21 +166,13 @@ const Filtering = () => {
                   )
               },
             },
-            {
-                
-                
-                id:"action",
-                filterable: false,
-                cell: (props) => <ActionColumn row={props.row.original} />,
-                header: () => null,
-            
-            },
+           
         ],
         []
     )
 
     const [data,setData] = useState(() => ordersData)
-
+    const navigate = useNavigate()
 console.log(ordersData);
 
 
@@ -269,9 +261,9 @@ console.log(ordersData);
                     ))}
                 </THead>
                 <TBody>
-                    {table.getRowModel().rows.map((row) => {
+                    {table.getRowModel().rows.map((row) => {  
                         return (
-                            <Tr key={row.id} className=' capitalize'>
+                            <Tr key={row.id} className=' capitalize cursor-pointer' onClick={() => navigate(`/app/crm/project-details?project_id=${row.original.project_id}&id=65c32e19e0f36d8e1f30955c&type=mom`)}>
                                 {row.getVisibleCells().map((cell) => {
                                     return (
                                         <Td key={cell.id}>

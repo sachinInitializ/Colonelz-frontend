@@ -38,23 +38,19 @@ const YourFormComponent: React.FC = () => {
       try {
         const templateData = await getTemplateData();
         console.log(templateData);
-  
-        // Filter folders based on query parameters
         const filteredFolders = templateData.filter((folder) => {
           return (
-            folder.files[0].folder_name === type &&
-            folder.files[0].sub_folder_name_first === folderName
+            folder.files[0]?.folder_name === type &&
+            folder.files[0]?.sub_folder_name_first === folderName
           );
         });
   console.log(filteredFolders);
   
         if (filteredFolders.length > 0) {
-          setLeadData(filteredFolders[0].files);
+          setLeadData(filteredFolders.map((folder) => folder.files[0]));
         } else {
           console.warn('No matching folder found.');
-          // Handle case where no matching folder is found based on query parameters
         }
-  
         console.log(leadData);
         
       } catch (error) {
@@ -75,7 +71,6 @@ const YourFormComponent: React.FC = () => {
       ? [selectedOption.value]
       : [];
 
-    // Trim spaces from the selected value
     const trimmedValue = selectedValues.length > 0 ? selectedValues[0].trim() : '';
 
     setFormData({
@@ -85,7 +80,7 @@ const YourFormComponent: React.FC = () => {
   };
   
 
-  const handleFileChange = (files: FileList | null) => {
+  const handleFileChange = (files: File[] | null) => {
     if (files) {
         setFormData((prevFormData) => ({
             ...prevFormData,
@@ -117,8 +112,8 @@ function closeAfter2000ms(data:string,type:string) {
     const postData = new FormData();
     
     postData.append('sub_folder_name_second', formData.sub_folder_name_second);
-    postData.append('folder_name', formData.folder_name);
-    postData.append('sub_folder_name_first', formData.sub_folder_name_first);
+    postData.append('folder_name', formData.folder_name || '');
+    postData.append('sub_folder_name_first', formData.sub_folder_name_first || '');
     postData.append('type', formData.type);
 
     formData.files.forEach((file) =>
@@ -148,6 +143,7 @@ function closeAfter2000ms(data:string,type:string) {
 const uniqueFolderNames = Array.from(
     new Set(leadData.map((folderItem) => folderItem.sub_folder_name_second.trim())),
 )
+console.log(uniqueFolderNames);
 
 const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
     value: folderName,

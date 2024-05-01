@@ -18,6 +18,7 @@ import { FileItem } from '../FileManager/Components/Project/data'
 import Index from './Quotation'
 import Contract from './components/Contract'
 import { MomProvider } from './store/MomContext'
+import { ProjectProvider } from '../Customers/store/ProjectContext'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -65,14 +66,13 @@ const CustomerDetail = () => {
             }
         };
         fetchData();
-    }, [allQueryParams.id]);
+    }, []);
 
     useEffect(() => {
         const fetchDataAndLog = async () => {
           try {
             const leadData = await apiGetCrmSingleProjectQuotation(allQueryParams.project_id);
             console.log(leadData.data);
-            
            setFileData(leadData.data)
           } catch (error) {
             console.error('Error fetching lead data', error);
@@ -80,23 +80,25 @@ const CustomerDetail = () => {
         };
     
         fetchDataAndLog();
-      }, [allQueryParams.project_id]);
+      }, []);
       
       return (
+        <>
+        <h3 className='pb-5'>Project-{details?details.project_name:""}</h3>
         <div>
+          <ProjectProvider>
           <MomProvider>
         <Tabs defaultValue={allQueryParams.mom}>
             <TabList>
                 <TabNav value="tab1">Details</TabNav>
                 {(role === 'ADMIN' || role === 'Senior Architect' || role === 'Executive Assistant') && (
-  <TabNav value="tab2">Quotation</TabNav>
-)}{role !== 'Executive Assistant' && (
-  <>
-    <TabNav value="mom">MOM</TabNav>
-    <TabNav value="tab5">All MOM</TabNav>
-  </>
-)}
-
+                  <TabNav value="tab2">Quotation</TabNav>
+                )}{role !== 'Executive Assistant' && (
+                  <>
+                    <TabNav value="mom">MOM</TabNav>
+                    <TabNav value="tab5">All MOM</TabNav>
+                  </>
+                )}
             </TabList>
             <div className="p-4">
                 <TabContent value="tab1">
@@ -105,7 +107,7 @@ const CustomerDetail = () => {
                     </Container>
                 </TabContent>
                 <TabContent value="tab2">
-                   <Index data={fileData}/>
+                  <Index data={fileData }/>
                 </TabContent>
                 <TabContent value="mom">
                   <MOM data={details} />
@@ -117,8 +119,9 @@ const CustomerDetail = () => {
             </div>
         </Tabs>
         </MomProvider>
+        </ProjectProvider>
     </div>
-      );
+    </>);
  
 };
 

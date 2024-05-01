@@ -58,11 +58,6 @@ const ActionColumn = ({ row }: { row: Product }) => {
         navigate(`/app/crm/lead/?id=${row.lead_id}`)
     }
 
-    const onDelete = () => {
-        dispatch(toggleDeleteConfirmation(true))
-        dispatch(setSelectedProduct(row.id))
-    }
-
   
     
 
@@ -74,12 +69,7 @@ const ActionColumn = ({ row }: { row: Product }) => {
             >
                 <HiOutlineEye />
             </span>
-            {/* <span
-                className="cursor-pointer p-2 hover:text-red-500"
-                onClick={onDelete}
-            >
-                <HiOutlineTrash />
-            </span> */}
+          
         </div>
     )
 }

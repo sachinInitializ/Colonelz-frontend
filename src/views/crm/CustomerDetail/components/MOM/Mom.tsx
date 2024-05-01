@@ -12,9 +12,11 @@ import type { ApiResponse, MomData } from './data'
 import type { ColumnDef, Row, ColumnSort } from '@tanstack/react-table'
 import type { ReactElement } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Button, Notification, toast } from '@/components/ui'
+import { Button, Dropdown, Notification, toast } from '@/components/ui'
 import { apiGetCrmProjectsMom } from '@/services/CrmService'
 import { useMomContext } from '../../store/MomContext'
+import appConfig from '@/configs/app.config'
+import { BsThreeDotsVertical } from 'react-icons/bs'
 
 type ReactTableProps<T> = {
     renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
@@ -39,9 +41,8 @@ function ReactTable({
     const columns = useMemo<ColumnDef<MomData>[]>(
         () => [
             {
-                // Make an expander cell
-                header: () => null, // No header
-                id: 'expander', // It needs an ID
+                header: () => null, 
+                id: 'expander', 
                 cell: ({ row }) => (
                     <>
                         {row.getCanExpand() ? (
@@ -84,15 +85,12 @@ function ReactTable({
                 accessorKey: 'meetingdate',
                 cell: (props) => {
                     const row = props.row.original
-                    const originalDate = new Date(row.meetingdate)
-
-                    // Formatting the date in dd-mm-yyyy format
-                    const formattedDate = `${originalDate
-                        .getDate()
-                        .toString()
-                        .padStart(2, '0')}-${(originalDate.getMonth() + 1)
-                        .toString()
-                        .padStart(2, '0')}-${originalDate.getFullYear()}`
+                    const date = new Date(row.meetingdate)
+                    const day = String(date.getUTCDate()).padStart(2, '0')
+                    const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Months are 0-based in JavaScript
+                    const year = date.getUTCFullYear()
+                
+                    const formattedDate= `${day}-${month}-${year}`
 
                     return <div>{formattedDate}</div>
                 },
@@ -139,6 +137,7 @@ function ReactTable({
                 </Button>
             </div>
             {table.getRowModel().rows.length > 0 ? (
+                <>
     <Table>
         <THead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -183,6 +182,8 @@ function ReactTable({
             ))}
         </TBody>
     </Table>
+      
+</>
 ) : (
     <div style={{ textAlign: 'center' }}>No Mom Data</div>
 )}
@@ -191,16 +192,59 @@ function ReactTable({
 }
 
 const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
+
     const rowData = row.original
     const files = Array.isArray(rowData.files) ? rowData.files : []
+    const viewMom = async() => {
+       try{
+        const response=await fetch(`https://colonelz.test.psi.initz.run/v1/api/admin/get/momdata?project_id=${projectId}&mom_id=${rowData.mom_id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/pdf',
+                Authorization: `Bearer ${localStorage.getItem('auth')}`,
+            },
+        })
+        if (!response.ok) {
+            throw new Error('Failed to fetch MOM data');
+        }
+
+        // Read the response as blob (Binary Large Object)
+        
+        const pdfBlob = await response.blob();
+        console.log(pdfBlob)
+
+        // Create a URL for the PDF blob
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+
+        // Open the PDF in a new tab
+        window.open(pdfUrl, '_blank');
+       }
+       catch(error){
+              console.error('Error viewing MOM:', error)
+              alert(
+                'An error occurred while viewing MOM. Please try again later.',
+              )
+         }
+    }
     const handleShareMOM = async () => {
         try {
+            const project_id:any = projectId;
+            const momId = rowData.mom_id;
+            
             const response = await fetch(
-                `https://col-back1.test.psi.initz.run/v1/api/admin/send/momdata?project_id=${projectId}&mom_id=${rowData.mom_id}`,
-                {
-                    method: 'GET',
+              `https://colonelz.test.psi.initz.run/v1/api/admin/send/momdata`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${localStorage.getItem('auth')}`,
                 },
-            )
+                body: JSON.stringify({
+                  project_id: projectId,
+                  mom_id: momId,
+                }),
+              }
+            );
             const responseData=await response.json()
             console.log(responseData);
             
@@ -224,52 +268,87 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
             )
         }
     }
-
+    const { apiPrefix } = appConfig
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString)
+        const day = String(date.getUTCDate()).padStart(2, '0')
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Months are 0-based in JavaScript
+        const year = date.getUTCFullYear()
+    
+        return `${day}-${month}-${year}`
+    }
+    const Toggle=<BsThreeDotsVertical className='font-semibold text-xl'/>
+    
     return (
         <div>
-            <div className="flex justify-between items-center">
-                <h6>
-                    Date:{' '}
-                    {new Date(rowData.meetingdate).toISOString().split('T')[0]}
-                </h6>
-                <div className="grid grid-cols-2 gap-2">
-                    <a
-                        href={`https://col-back1.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`}
-                        target="_blank" rel="noreferrer"
+             <main className="pb-10 ">
+        <div className=" dark:bg-gray-950 rounded-lg p-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold">Meeting Details</h2>
+              <span>
+              <Dropdown renderTitle={Toggle} placement='bottom-end'>
+              <a href={`https://colonelz.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`} target='_blank' rel='noreferrer' 
+                        
                     >
-                        <Button variant="solid" size="sm">
-                            View MOM
-                        </Button>
-                    </a>
-                    <Button variant="solid" size="sm" onClick={handleShareMOM}>
-                        Share MOM
-                    </Button>
-                </div>
+                        
+                <Dropdown.Item eventKey="a" >View MOM</Dropdown.Item></a>
+                <Dropdown.Item eventKey="b" onClick={()=>handleShareMOM()}>Share MOM</Dropdown.Item>
+               
+            </Dropdown></span>
             </div>
-            <h6 className=" capitalize">Location: {rowData.location}</h6>
-            <div className="mt-4">
-                <h5 className=" mt-3">Meeting attendees</h5>
-                <p>Client's Name: {rowData.attendees.client_name}</p>
-                <p>Oraganised By: {rowData.attendees.organisor}</p>
-                <p>Designer: {rowData.attendees.designer}</p>
-                <p>attendees: {rowData.attendees.attendees}</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-gray-500 dark:text-gray-400 font-semibold">Location</p>
+                <p>{rowData.location}</p>
+                <p className="text-gray-500 dark:text-gray-400 font-semibold">Date</p>
+                <p>{formatDate(rowData.meetingdate)}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 dark:text-gray-400 font-semibold">Attendees</p>
+                <ul className="space-y-1">
+                  <li><span className='font-semibold'>Client:</span> {rowData.attendees.client_name} </li>
+                  <li><span className='font-semibold'>Organizer:</span> {rowData.attendees.organisor} </li>
+                  <li><span className='font-semibold'>Designer:</span> {rowData.attendees.designer} </li>
+                  <li><span className='font-semibold'>Others:</span> {rowData.attendees.attendees} </li>
+                </ul>
+              </div>
             </div>
-            <div className="mt-4">
-                <h5 className=" mt-3">Remarks</h5>
-                <p className=' text-wrap' style={{ width: '65vw', overflowWrap: 'break-word' }}>{rowData.remark}</p>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400 font-semibold">Remarks</p>
+              <p>
+                {rowData.remark}
+              </p>
             </div>
-
-            <div className="grid grid-cols-10  mt-6">
-                {files.map((item) => (
-                    <div  key={item}>
-                        <a href={item.fileUrl} target="_blank"  rel="noreferrer">
-                            <Button variant="solid" className=" capitalize">
-                                File
-                            </Button>
-                        </a>
-                    </div>
-                ))}
+            <div>
+              <p className="text-gray-500 dark:text-gray-400 font-semibold">Files</p>
+              <div className="space-y-2">
+                {files.map((file)=>(
+                <a className="flex items-center gap-2 text-blue-600 hover:underline" href={file.fileUrl} target='_blank'>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5"
+                  >
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  {file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName}
+                </a>))}
+             
+              </div>
             </div>
+          </div>
+        </div>
+      </main>
+    
         </div>
     )
 }

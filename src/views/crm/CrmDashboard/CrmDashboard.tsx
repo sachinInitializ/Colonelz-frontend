@@ -5,6 +5,7 @@ import { Data } from "../CustomerDetail/components/MOM/data";
 import { crmDashboardData } from "@/mock/data/crmData";
 import Statistic from "./components/Statistic";
 import Leads from "./components/Leads";
+import { ProjectProvider } from "../Customers/store/ProjectContext";
 
 interface Data{
     Execution_Phase:string,
@@ -53,7 +54,9 @@ console.log('apiData',crmDashboardData.statisticData);
                     <Statistic data={data} />
                 <div className="grid grid-cols-1 xl:grid-cols-7 gap-4">
                 </div>
+                <ProjectProvider>
                 <Project />
+                </ProjectProvider>
                 {(role === 'ADMIN' || role === 'Senior Architect') && <Leads />}
                 
           

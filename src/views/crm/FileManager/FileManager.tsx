@@ -8,6 +8,7 @@ import { LuFileStack } from "react-icons/lu";
 import Leads from './Components/Leads';
 import Projects from './Components/Projects';
 import Template from './Components/Template';
+import { DataProvider } from './FileManagerContext/FIleContext';
 
 const FileManager = () => {
   const role=localStorage.getItem('role')
@@ -33,6 +34,7 @@ const FileManager = () => {
 )}
         </TabList>
         <div className="p-4">
+          <DataProvider>
             <TabContent value="tab1">
                <Leads/>
             </TabContent>
@@ -42,6 +44,7 @@ const FileManager = () => {
             <TabContent value="tab3">
                 <Template/>
             </TabContent>
+            </DataProvider>
         </div>
     </Tabs>
 </div>

@@ -8,6 +8,7 @@ import { apiGetCrmLeadsUpdates } from '@/services/CrmService';
 import { useLocation } from 'react-router-dom';
 
 interface FormData {
+  userId: string;
   lead_id: string | null;
   status: string;
   date: Date | null;
@@ -51,6 +52,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
 const queryParams = new URLSearchParams(location.search)
 const myParam = queryParams.get('id') || ''
   const initialFormData: FormData = {
+    userId: localStorage.getItem('userId') || '',
     lead_id: myParam,
     status: '',
     date: null,
@@ -82,6 +84,8 @@ const myParam = queryParams.get('id') || ''
   };
 
   const handleDateChange = (date: Date | null) => {
+    console.log(date);
+    
     setFormData({ ...formData, date });
     setErrors({
       ...errors,
@@ -173,7 +177,7 @@ const myParam = queryParams.get('id') || ''
         <FormContainer>
           <div className='grid grid-cols-3 gap-5'>
             <FormItem>
-              Status:
+             Lead Status:
               <Select
                 value={selectedStatus}
                 options={statusOptions}
@@ -185,17 +189,17 @@ const myParam = queryParams.get('id') || ''
             <FormItem>
               Date:
               <DateTimepicker
-                size='md'
-                selected={formData.date}
-                dateFormat="MM/dd/yyyy"
-                onChange={handleDateChange}
-              />
+    size='md'
+    value={formData.date}
+    format="DD-MM-YYYY HH:mm"
+    onChange={handleDateChange}
+/>
               {errors.date && <span className="text-red-500">{errors.date}</span>}
             </FormItem>
           </div>
           <div className='flex justify-between items-center '>
             <FormItem
-              label="Today's Update"
+              label="Description:"
               labelClass="!justify-start"
               className='w-2/3'
             >
@@ -230,8 +234,10 @@ const myParam = queryParams.get('id') || ''
             <div key={note._id} className='mb-4 mr-4'>
               <Card>
                 <div className='flex flex-row justify-between items-center mb-4 '>
-                  <CustomerInfoField title="Date" value={note.date}/>
-                  <CustomerInfoField title="Status" value={note.status} />
+                  <CustomerInfoField title="Date"
+                    value={note?.date ? new Date(note.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-') : ''}
+                   />
+                  <CustomerInfoField title="Lead Status" value={note.status} />
                 </div>
                 <div>
                   <p>Description</p>

@@ -6,10 +6,13 @@ export interface FileItem {
   fileUrl: string;
   fileId: string;
   fileName:string
+  fileSize:string
 }
 
 export interface FolderItem {
   folder_name: string;
+  total_files:string;
+  updated_date:string;
   files: FileItem[];
 }
   export interface Data {
@@ -37,7 +40,7 @@ export interface ApiResponse {
 
   
 
-  export const fetchProjectData = async (projectId: string  ): Promise<ProjectDataItem[]> => {
+  export const fetchProjectData = async (projectId: string | null  ): Promise<FolderItem[]> => {
     try {
       const response = await apiGetCrmFileManagerProjects(projectId);
       const data=response

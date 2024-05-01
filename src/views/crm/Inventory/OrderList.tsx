@@ -10,7 +10,6 @@ const OrderList = () => {
     return (
         <AdaptableCard className="h-full" bodyClass="h-full">
             <Filtering />
-            <OrderDeleteConfirmation />
         </AdaptableCard>
     )
 }

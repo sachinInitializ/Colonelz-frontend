@@ -98,7 +98,7 @@ const Index = () => {
     >
       {({ setFieldValue }) => (
         <Form className='w-2/5'>
-          <h3 className='mb-4'>Add Member To Project</h3>
+          <h3 className='mb-4'>Add User To Project</h3>
           <FormItem label="Role">
             <Select
               options={Options}

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Checkbox, Dialog, Notification, toast } from '@/components/ui';
+import { Button, Checkbox, Dialog, Input, Notification, toast } from '@/components/ui';
 import { StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
-import { CiFileOn } from 'react-icons/ci';
+import { CiFileOn, CiImageOn } from 'react-icons/ci';
 import { getTemplateData } from '../data';
 import {  FileItem } from '../type';
 import { apiDeleteFileManagerFiles, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
+import { HiShare, HiTrash } from 'react-icons/hi';
+import { format, parseISO } from 'date-fns';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
@@ -33,9 +35,12 @@ const Index = () => {
 
   const [dialogIsOpen, setIsOpen] = useState(false)
 
-  const openDialog = () => {
-      setIsOpen(true)
-  }
+  const openDialog = (fileId:string) => {
+    setIsOpen(true)
+    setSelectedFiles([fileId])
+    console.log(fileId);
+    
+}
 
   const onDialogClose = () => {
       setIsOpen(false)
@@ -49,16 +54,20 @@ const Index = () => {
   
         // Filter folders based on query parameters
         const filteredFolders = templateData.filter((folder) => {
+         if(folder.files[0]?.sub_folder_name_second){
+          
           return (
-            folder.files[0].folder_name === type &&
-            folder.files[0].sub_folder_name_first === folderName &&
-            folder.files[0].sub_folder_name_second === subfolder
-          );
+            folder.files[0]?.folder_name === type &&
+            folder.files[0]?.sub_folder_name_first === folderName &&
+            folder.files[0]?.sub_folder_name_second === subfolder
+          );}
         });
-  console.log(filteredFolders);
+
   
         if (filteredFolders.length > 0) {
           setLeadData(filteredFolders[0].files[0].files);
+          console.log(filteredFolders[0].files[0].files);
+          
         } else {
           console.warn('No matching folder found.');
           // Handle case where no matching folder is found based on query parameters
@@ -75,6 +84,7 @@ const Index = () => {
   }, [type, folderName, subfolder]);
 
   const handleFileSelect = (fileId: string) => {
+  
     const updatedSelectedFiles = selectedFiles.includes(fileId)
       ? selectedFiles.filter((id) => id !== fileId)
       : [...selectedFiles, fileId];
@@ -82,7 +92,8 @@ const Index = () => {
 
   };
 
-  const deleteFiles = async () => {
+  const deleteFiles = async (fileId:string) => {
+    selectedFiles.push(fileId)
     function warn(text:string) {
       toast.push(
           <Notification closable type="warning" duration={2000}>
@@ -185,56 +196,170 @@ const Index = () => {
     }
   };
 
+  const getFileIcon = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'ico'];
+    if (imageExtensions.includes(extension as string)) {
+      return <CiImageOn className='text-xl' />;
+    }
+    switch (extension) {
+      case 'docx':
+        return <CiFileOn className='text-xl' />;
+      case 'png':
+        return <CiImageOn className='text-xl' />;
+      case 'pptx':
+        return <CiFileOn className='text-xl' />;
+      default:
+        return <CiFileOn className='text-xl' />;
+    }
+  };
+  const getFileType = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase() || '';
+    const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'ico'];
+    const documentExtensions = ['docx', 'doc', 'txt', 'pdf'];
+    const presentationExtensions = ['pptx', 'ppt'];
+    const spreadsheetExtensions = ['xlsx', 'xls', 'csv'];
+    const audioExtensions = ['mp3', 'wav', 'ogg'];
+    const videoExtensions = ['mp4', 'avi', 'mov'];
+  
+    if (imageExtensions.includes(extension)) {
+      return 'Image';
+    } else if (documentExtensions.includes(extension)) {
+      return 'Document';
+    } else if (presentationExtensions.includes(extension)) {
+      return 'Presentation';
+    } else if (spreadsheetExtensions.includes(extension)) {
+      return 'Spreadsheet';
+    } else if (audioExtensions.includes(extension)) {
+      return 'Audio';
+    } else if (videoExtensions.includes(extension)) {
+      return 'Video';
+    } else {
+      return 'File';
+    }
+  };
 
+  function formatFileSize(fileSizeInKB: string | undefined): string {
+    if (!fileSizeInKB) {
+      return '-';
+    }
+  
+    const size = Number(fileSizeInKB.split(' ')[0]);
+    if (size < 1024) {
+      return `${size.toFixed(2)} KB`;
+    } else {
+      return `${(size / 1024).toFixed(2)} MB`;
+    }
+  }
 
   return (
     <div>
         <div className='flex justify-between'>
       <h3 className='mb-5'>Files</h3>
       <div>
-        <Button variant='solid' color='red-600' className='mr-3' type='button' onClick={()=>deleteFiles()}>Delete</Button>
-      <Button
-       variant='solid'
-       onClick={() => openDialog()}
-      >Share</Button>
+      
       </div>
       </div>
       {leadData && leadData.length > 0 ? (
-        <div className='grid grid-cols-2 xl:grid-cols-6 sm:grid-cols-4  gap-4'>
-          {leadData.map((file) => {
+        
+        <div className="h-screen w-full">
+        <div className="flex-1 p-4">
+        <div className="flex items-center mb-4">
+    <nav className="flex">
+      <ol className="flex items-center space-x-2">
+        <li>
+          <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</a>
+        </li>
+        <li>
+          <span className="mx-2">/</span>
+        </li>
+        <li>
+          <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Company Data</a>
+        </li>
+        <li>
+          <span className="mx-2">/</span>
+        </li>
+        <li>
+          <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">{type}</a>
+        </li>
+        <li>
+          <span className="mx-2">/</span>
+        </li>
+        <li>
+          <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">{folderName}</a>
+        </li>
+        <li>
+          <span className="mx-2">/</span>
+        </li>
+      
+        <li className="text-gray-500">{subfolder}</li>
+      </ol>
+    </nav>
+  </div>
+  
+          <div className="border rounded-lg shadow-sm dark:border-gray-700">
+            <div className="relative w-full overflow-auto">
+              <table className="w-full caption-bottom text-sm">
+                <thead className="[&amp;_tr]:border-b">
+                  <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                      Name
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                      Type
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                      Size
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                      Modified
+                    </th>
+                    <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 ">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+            <tbody className="[&amp;_tr:last-child]:border-0">
+            {leadData.map((file) => {
           if (!file || typeof file.fileName !== 'string') {
+            console.log(file);
+            
             return null; 
           }
+          return(
+              <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                  <div className="flex items-center gap-2">
+                  {getFileIcon(file.fileName)}
+                    <a className="font-medium cursor-pointer" href={file.fileUrl} target='_blank'>
+                      {file.fileName}
+                    </a>
+                  </div>
+                </td>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                {getFileType(file.fileName)}
+              </td>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatFileSize(file.fileSize)}</td>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{format(parseISO(file.date),'dd-MM-yyyy')}</td>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
+                  <div className=' flex justify-center gap-3'> 
   
-          const fileExtension = file.fileName.split('.').pop().toLowerCase();
+                    <HiTrash className='text-xl cursor-pointer' onClick={()=>deleteFiles(file.fileId)} />
+                    <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(file.fileId)}/>  
+                    </div>
   
-          return (
-            <a key={file.fileId} href={file.fileUrl} target='_blank' rel='noreferrer' >
-              <div
-                key={file.fileId}
-                className='min-h-[200px] max-h-[250px] flex justify-between'
-              >
-                <Checkbox
-                  checked={selectedFiles.includes(file.fileId)}
-                  onChange={() => handleFileSelect(file.fileId)}
-                />
-                <div className='flex items-center flex-col justify-center'>
-                  {['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension) ? (
-                    <img src={file.fileUrl} alt={file.fileName} className='h-auto w-auto max-h-[140px]' />
-                  ) : (
-                    <span  ><CiFileOn className=' text-8xl'/></span>
-                  )}
-                   <p className='capitalize text-wrap overflow-hidden overflow-ellipsis whitespace-nowrap' style={{ overflowWrap: "anywhere" }}>
-    {file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName}
-  </p>
-                </div>
-              </div>
-            </a>
-          );
-        })}
+                </td>
+              </tr>)})}
+            
+            </tbody>
+  
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
          ) : (
-          <p>Add files</p>
+          <p>No files</p>
         )}
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
@@ -295,9 +420,10 @@ const Index = () => {
 
         <div className='mt-4'>
           <label className='block text-sm font-medium text-gray-700'>Body</label>
-          <textarea
+          <Input
             className='mt-1 p-2 w-full border rounded-md'
             value={body}
+            textArea
             placeholder='Enter body...'
             onChange={handleBodyChange}
           />

@@ -91,7 +91,6 @@ const pageSizeOption = [
     { value: 40, label: '40 / page' },
     { value: 50, label: '50 / page' },
 ]
-const totalData=getProjectData.length
 const Filtering = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
@@ -99,20 +98,7 @@ const Filtering = () => {
 
     const columns = useMemo<ColumnDef<ProjectDataItem>[]>(
         () => [
-            {
-                header: 'Project ID',
-                accessorKey: 'proejct_id',
-                cell: (prop) => {
-                    const row = prop.row.original;
-                    return (
-                        <div className='flex items-center gap-2 cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}`)}>
-                          <span className=' text-lg'><GoProjectRoadmap/></span>
-                            {row.project_id}
-                        </div>
-                    )
-                  },
-               
-            },
+           
             {
                 header: 'Project Name',
                 accessorKey: 'project_name',
@@ -121,6 +107,39 @@ const Filtering = () => {
                     return (
                         <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}`)}>
                             {row.project_name}
+                        </div>
+                    )
+                  }},
+            {
+                header: 'Project Type',
+                accessorKey: 'project_type',
+                cell: (props) => {
+                    const row = props.row.original;
+                    return (
+                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}`)}>
+                            {row.project_type}
+                        </div>
+                    )
+                  }},
+            {
+                header: 'Project Status',
+                accessorKey: 'project_status',
+                cell: (props) => {
+                    const row = props.row.original;
+                    return (
+                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}`)}>
+                            {row.project_status}
+                        </div>
+                    )
+                  }},
+            {
+                header: 'Client Name',
+                accessorKey: 'client_name',
+                cell: (props) => {
+                    const row = props.row.original;
+                    return (
+                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}`)}>
+                            {row.client_name}
                         </div>
                     )
                   }},
@@ -144,6 +163,7 @@ const Filtering = () => {
   
       fetchDataAndLog();
     }, []);
+    const totalData=projectData.length
     
     const table = useReactTable({
         data:projectData,

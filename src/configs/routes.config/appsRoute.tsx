@@ -188,8 +188,7 @@ const appsRoute: Routes = [
         component: lazy(() => import('@/views/crm/CustomerDetail')),
         authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant"],
         meta: {
-            header: 'Project Details',
-            headerContainer: true,
+          
         },
     },
     {
@@ -242,8 +241,8 @@ const appsRoute: Routes = [
         component: lazy(() => import('@/views/crm/LeadsDetails')),
         authority: ["ADMIN","Senior Architect"],
         meta: {
-            header: 'Lead Details',
-            headerContainer: true,
+           
+            
         },
     },
     {

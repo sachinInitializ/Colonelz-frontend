@@ -7,6 +7,7 @@ import {
 } from '../store'
 import { DatePicker, Dialog, FormItem, Input, Notification, Select, toast } from '@/components/ui'
 import Cookies from 'js-cookie'
+import { apiGetCrmSingleProjectEdit } from '@/services/CrmService'
 
 
 type CustomerInfoFieldProps = {
@@ -20,13 +21,13 @@ type CustomerProfileProps = {
 }
 
 const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return ''
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0') // Months are 0-based in JavaScript
+  const year = date.getFullYear()
 
-
-    const date = new Date(dateString)
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' }
-
-    return new Intl.DateTimeFormat('en-GB', options).format(date)
+  return `${day}-${month}-${year}`
 }
 
 const CustomerInfoField = ({
@@ -63,6 +64,7 @@ const CustomerInfoField = ({
 
 
 interface ProjectUpdateData {
+  user_id: string | null;
     project_id: string | null;
     timeline_date: string;
     project_budget: string;
@@ -73,7 +75,9 @@ interface ProjectUpdateData {
     const location=useLocation()
     const searchParams = new URLSearchParams(location.search);
     const projectId = searchParams.get('project_id');
+    const userId = searchParams.get('id');
     const [formData, setFormData] = useState<ProjectUpdateData>({
+      user_id:"66165c25e3a558d03a48cbb2",
       project_id: projectId,
       timeline_date: new Date(data.data.timeline_date).toISOString().split('T')[0],
       project_budget: data.data.project_budget,
@@ -101,30 +105,21 @@ interface ProjectUpdateData {
     }
   };
   
-  const token=Cookies.get('auth')
+
   const handleUpdate = async () => {
     try {
-      const response = await fetch('https://col-back1.test.psi.initz.run/v1/api/admin/update/project/', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify({
-         
-          ...formData,
-        }),
-      });
-  
-      const data = await response.json();
+      const response = await apiGetCrmSingleProjectEdit(formData);
+      const data=await response.json()
       console.log(data);
       
-      if (data.status) {
+      console.log(data.code===200);
+      if (data.code===200) {
         toast.push(
           <Notification closable type="success" duration={2000}>
               Project data updated successfully
           </Notification>
       )
+      window.location.reload()
       } else {
         toast.push(
           <Notification closable type="danger" duration={2000}>
@@ -253,11 +248,18 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                         title="Project Type"
                         value={data?.project_type}
                     />
-
+                      <CustomerInfoField
+                        title="Client Name"
+                        value={data?.client[0]?.client_name}
+                    />
                     <CustomerInfoField
                         title="Project status"
                         value={data?.project_status}
                     />
+                  
+                  
+
+                  
                     <CustomerInfoField
                         title="Project Start Date"
                         value={formatDate(data?.project_start_date)}

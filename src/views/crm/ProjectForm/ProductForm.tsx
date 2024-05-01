@@ -292,7 +292,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
 
             <FormItem label="Project Start Date">
     <DatePicker
-        size="sm"
+        size="md"
         selected={
             formData.project_start_date
                 ? new Date(formData.project_start_date)
@@ -311,7 +311,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
 </FormItem>
 <FormItem label="Timeline Date">
     <DatePicker
-        size="sm"
+        size="md"
         selected={
             formData.timeline_date
                 ? new Date(formData.timeline_date)

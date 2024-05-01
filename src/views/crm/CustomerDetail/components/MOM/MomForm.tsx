@@ -109,6 +109,8 @@ const YourFormComponent: React.FC = () => {
     }
 
     const handleFileChange = (files: FileList | null) => {
+        console.log(files);
+        
         if (files) {
             setFormData((prevFormData) => ({
                 ...prevFormData,
@@ -186,7 +188,7 @@ const YourFormComponent: React.FC = () => {
             )
 
             const response = await fetch(
-                'https://col-back1.test.psi.initz.run/v1/api/admin/create/mom/',
+                'https://colonelz.test.psi.initz.run/v1/api/admin/create/mom/',
                 {
                     headers:{
                         Authorization: `Bearer ${localStorage.getItem('auth')}`
@@ -277,7 +279,7 @@ const YourFormComponent: React.FC = () => {
                                 </span>
                             )}
                         </FormItem>
-                        <FormItem label="Attendees">
+                        <FormItem label="Others">
                             {/* Use CreatableSelect to allow selecting or creating a new client name */}
                             <CreatableSelect
                                 isMulti

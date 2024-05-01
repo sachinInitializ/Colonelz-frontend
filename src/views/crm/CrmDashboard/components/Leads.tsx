@@ -1,18 +1,10 @@
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Table from '@/components/ui/Table'
-import Tag from '@/components/ui/Tag'
-import {
-    useReactTable,
-    getCoreRowModel,
-    createColumnHelper,
-} from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import type { Lead } from '../store'
 import { useEffect, useState } from 'react'
-import { HiOutlineEye } from 'react-icons/hi'
-import useThemeClass from '@/utils/hooks/useThemeClass'
 import { apiGetCrmLeads } from '@/services/CrmService'
 
 
@@ -33,78 +25,14 @@ const NameColumn = ({ row }: { row: Lead }) => {
     )
 }
 
-const LeadStatus = ({ projectType }: { projectType: number }) => {
-    switch (projectType) {
-        case 0:
-            return <Tag className="rounded-md">New</Tag>
-        case 1:
-            return (
-                <Tag className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100  border-0 rounded">
-                    Commercial
-                </Tag>
-            )
-        case 2:
-            return (
-                <Tag className="text-amber-600 bg-amber-100 dark:text-amber-100 dark:bg-amber-500/20  border-0 rounded">
-                    Not Interested
-                </Tag>
-            )
-        case 3:
-            return (
-                <Tag className="bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded">
-                    Residential
-                </Tag>
-            )
-        default:
-            return <></>
-    }
-}
 
-const columnHelper = createColumnHelper<Lead>()
 
-const columns = [
-    columnHelper.accessor('name', {
-        header: 'Prjocet Name',
-        cell: (props) => {
-            const row = props.row.original
-            return <NameColumn row={row} />
-        },
-    }),
-    columnHelper.accessor('projectType', {
-        header: 'Project Type',
-        cell: (props) => {
-            const row = props.row.original
-            return <LeadStatus projectType={row.projectType} />
-        },
-    }),
-    columnHelper.accessor('phase', {
-        header: 'Phase',
-    }),
-    columnHelper.accessor('clientName', {
-        header: 'Client Name',
-        
-    }),
-    columnHelper.accessor('estimatedCompletion', {
-        header: 'Timeline',
-      
-    }),
-]
 
 const Leads = ({ data = [], className }: LeadsProps) => {
     const navigate = useNavigate()
-    const { textTheme } = useThemeClass()
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-    })
 
     const onNavigate = () => {
         navigate('/app/leads')
-    }
-
-    interface client{
-        client_name:string
     }
     interface Data {
        name:string
@@ -113,9 +41,7 @@ const Leads = ({ data = [], className }: LeadsProps) => {
        date:string
        phone:string
        lead_id:string
-      }
-      interface ApiResponse {
-        data: Data[];
+       email:string
       }
      
 
@@ -124,13 +50,20 @@ const Leads = ({ data = [], className }: LeadsProps) => {
     useEffect(() => {
       const fetchData = async () => {
         const response = await apiGetCrmLeads();
-        const data = response.data
+        const data = response.data.leads
         console.log('Received response from server:', data);
         setApiData(data.slice(0,5));
     };
     fetchData();
     }, []);
- 
+
+    const statusColors: { [key: string]: string } = {
+        'Follow Up': 'bg-green-200 text-green-700',
+        'Interested': 'bg-blue-200 text-blue-700',
+        'No Response': 'bg-red-200 text-red-700',
+        'Not Interested': 'bg-red-200 text-red-700',
+    };
+
 
    
 
@@ -148,22 +81,25 @@ const Leads = ({ data = [], className }: LeadsProps) => {
             <Th>Lead Name</Th>
             <Th>Lead Status</Th>
             <Th>Location</Th>
-            <Th>Lead Date</Th>
             <Th>Phone</Th>
-            <Th></Th>
+            <Th>Email</Th>
+            <Th>Created Date</Th>
           </Tr>
         </THead>
         <TBody>
           {apiData.map((item, index) => (
-            <Tr key={index}>
+            <Tr key={index} onClick={()=>navigate(`/app/crm/lead/?id=${item.lead_id}`)} className=' cursor-pointer'>
               <Td className=' capitalize'>{item.name}</Td>
-              <Td className=' capitalize'>{item.status}</Td>
+              <Td className={`capitalize`}>
+    <span className={`${statusColors[item.status]} px-2 py-1 rounded-sm text-xs font-semibold`}>{item.status}</span>
+</Td>
               <Td className="capitalize">{item.location}</Td>
-              <Td>{dayjs(item.date).format('DD-MM-YYYY')}</Td>
               <Td  >
                {item.phone}
               </Td>
-              <Td className={`cursor-pointer p-2 hover:${textTheme} text-lg`}><HiOutlineEye onClick={()=>navigate(`/app/crm/lead/?id=${item.lead_id}`)} /></Td>
+              <Td>{item.email}</Td>
+              <Td>{dayjs(item.date).format('DD-MM-YYYY')}</Td>
+              
             </Tr>
           ))}
         </TBody>

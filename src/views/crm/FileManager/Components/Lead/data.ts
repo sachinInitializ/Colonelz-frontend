@@ -4,11 +4,15 @@ export interface FileItem {
     fileUrl: string;
     fileId: string;
     fileName:string
+    date:string
+    fileSize:string
   }
   
   export interface FolderItem {
     folder_name: string;
     files: FileItem[];
+    updated_date:"string"
+    total_files:string
   }
   export interface Data {
     data:FolderItem[]

@@ -99,12 +99,13 @@ const Filtering = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [selectedStatus] = useState<string>('');
     const [globalFilter, setGlobalFilter] = useState('')
+    const userId=localStorage.getItem('userId')
     const navigate=useNavigate()
     const ActionColumn = ({ row }: { row: Project }) => {
         const navigate = useNavigate()
         const { textTheme } = useThemeClass()
         const onEdit = () => {
-            navigate(`/app/crm/project-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&project_type=${row.project_type}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
+            navigate(`/app/crm/project-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&project_type=${row.project_type}&id=&type=tab1`)
         }
         return (
             <div className="flex justify-end text-lg">
@@ -134,7 +135,7 @@ const Filtering = () => {
                     'text-red-500': dateDifference <= 1 && row.project_status !== 'completed',
                 });
                 return (
-                    <span className={`${cellClassName} flex gap-2 items-center cursor-pointer` } onClick={()=>navigate(`/app/crm/project-details?project_id=${row.project_id}&client_name=${row.client[0].client_name}&project_type=${row.project_type}&id=65c32e19e0f36d8e1f30955c&type=tab1`)}>
+                    <span className={`${cellClassName} flex gap-2 items-center cursor-pointer` } onClick={()=>navigate(`/app/crm/project-details?project_id=${row.project_id}&id=${userId}&type=tab1`)}>
                         {projectName} {dateDifference <= 1 && row.project_status!=='completed' && <BiSolidBellRing/>}
                     </span>
                 );
@@ -176,7 +177,7 @@ const Filtering = () => {
             },
         },
         {
-            header: 'Status',
+            header: 'Project Status',
             accessorKey: 'project_status',
         },
         {
@@ -187,19 +188,14 @@ const Filtering = () => {
                 const dateObject = new Date(row.timeline_date);
                 const istFormattedDate = dateObject.toLocaleDateString('en-IN', {
                     timeZone: 'Asia/Kolkata',
-                    year: 'numeric',
-                    month: '2-digit',
                     day: '2-digit',
-                });
+                    month: '2-digit',
+                    year: 'numeric',
+                }).replace(/\//g, '-');
                 return istFormattedDate
             },
         },
-        {
-            id:"action",
-            filterable: false,
-            cell: (props) => <ActionColumn row={props.row.original} />,
-            header: () => null,
-        },
+       
     ], [navigate])
 
     const [data,setData] = useState(() => projects)
@@ -309,12 +305,14 @@ const Filtering = () => {
                     onClick={() => handleStatusChange('Completed Projects')}
                 />
             </div>
+            <div className='flex justify-end'>
             <DebouncedInput
                 value={globalFilter ?? ''}
                 className="p-2 font-lg shadow border border-block"
                 placeholder="Search ..."
                 onChange={(value) => setGlobalFilter(String(value))}
             />
+            </div>
             <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (

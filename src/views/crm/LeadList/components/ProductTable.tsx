@@ -29,7 +29,9 @@ interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>
     debounce?: number
 }
 const data=await apiGetCrmLeads()
-const responseData=data.data
+const responseData=data.data.leads
+console.log(responseData);
+
 const { Tr, Th, Td, THead, TBody, Sorter } = Table
 const totalData = responseData.length
 
@@ -77,7 +79,6 @@ function DebouncedInput({
         }, debounce)
 
         return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     return (
@@ -103,19 +104,20 @@ function DebouncedInput({
     )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    // Rank the item
+    
     const itemRank = rankItem(row.getValue(columnId), value)
-
-    // Store the itemRank info
     addMeta({
         itemRank,
     })
-
-    // Return if the item should be filtered in/out
     return itemRank.passed
 }
+const statusColors: { [key: string]: string } = {
+    'Follow Up': 'bg-green-200 text-green-700',
+    'Interested': 'bg-blue-200 text-blue-700',
+    'No Response': 'bg-red-200 text-red-700',
+    'Not Interested': 'bg-red-200 text-red-700',
+};
 
 const Filtering = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -124,25 +126,34 @@ const Filtering = () => {
 
     const columns = useMemo<ColumnDef<Product>[]>(
         () => [
-            { header: 'Name', accessorKey: 'name',
+            { header: 'Lead Name', accessorKey: 'name',
         cell: ({row}) => {
             const name=row.original.name
-            return <Link to={`/app/crm/lead/?id=${row.original.lead_id}`}>{name}</Link>
+            return <Link to={`/app/crm/lead/?id=${row.original.lead_id}`} className=' capitalize'>{name}</Link>
         }},
+        { header: 'Lead Status', accessorKey: 'status',
+            cell: ({ row }) => {
+                const status = row.original.status
+                return (
+                    <span
+                        className={`px-2 py-1 rounded-sm text-xs font-semibold ${statusColors[status]}`}
+                    >
+                        {status}
+                    </span>
+                )
+            }
+         },
+        {header:'Location',accessorKey:'location'},
+        
             { header: 'Email', accessorKey: 'email' },
-            { header: 'Lead date', accessorKey: 'date',
+            { header: 'Created date', accessorKey: 'date',
             cell: ({row}) => {
-                const date=row.original.createdAt
-                return new Date(date).toISOString().split('T')[0]  
-
-                    }},
-            { header: 'Phone', accessorKey: 'phone' },
-            { header: 'Status', accessorKey: 'status' },
-            {   id:"action",
-            filterable: false,
-            cell: (props) => <ActionColumn row={props.row.original} />,
-            header: () => null,
-        },
+                const date = row.original.date;
+                const [year, month, day] = new Date(date).toISOString().split('T')[0].split('-');
+                return `${day}-${month}-${year}`;
+            }},
+            
+           
         ],
         []
     )
@@ -183,7 +194,7 @@ const Filtering = () => {
             <DebouncedInput
                 value={globalFilter ?? ''}
                 className="p-2 font-lg shadow border border-block"
-                placeholder="Search all columns..."
+                placeholder="Search..."
                 onChange={(value) => setGlobalFilter(String(value))}
             />
             <Table>
@@ -228,7 +239,7 @@ const Filtering = () => {
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (
-                            <Tr key={row.id}>
+                            <Tr key={row.id} onClick={()=>navigate(`/app/crm/lead/?id=${row.original.lead_id}`)} className=' cursor-pointer'>
                                 {row.getVisibleCells().map((cell) => {
                                     return (
                                         <Td key={cell.id}>
