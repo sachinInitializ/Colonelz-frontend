@@ -395,7 +395,7 @@ const Index = () => {
               <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
                 <div className=' flex justify-center gap-3'> 
 
-                  <HiTrash className='text-xl cursor-pointer' onClick={()=>deleteFiles(item.fileId)} />
+                  <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>deleteFiles(item.fileId)} />
                   <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(item.fileId)}/>  
                   </div>
 

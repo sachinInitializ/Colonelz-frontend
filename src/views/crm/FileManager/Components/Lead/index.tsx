@@ -178,7 +178,7 @@ function formatDate(dateString:string) {
               <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
                 <div className=' flex justify-center cursor-pointer' onClick={()=>deleteFolders(item.folder_name
                 )}>
-              <HiTrash className=' text-xl text-center'/>
+              <HiTrash className=' text-xl text-center hover:text-red-500'/>
               </div>
               </td>
             </tr>))}

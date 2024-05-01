@@ -147,7 +147,7 @@ const Index = () => {
                       <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatDate(item.files[0].updated_date)}</td>
                       <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
                         <div className=' flex justify-center'>
-                      <HiTrash className=' text-xl text-center'/>
+                      <HiTrash className=' text-xl text-center hover:text-red-500'/>
                       </div>
                       </td>
                     </tr>):null))}
