@@ -20,6 +20,21 @@ export async function apiGetNotification(userId: string | null) {
     
     return response.json();
 }
+export async function apiGetUserData(UserId:string | null) {
+    const response = await fetch(`${apiPrefix}users/getdata?userId=${userId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+}
 export async function apiGetUsers() {
     const response = await fetch(`${apiPrefix}admin/get/alluser`, {
         method: 'GET',

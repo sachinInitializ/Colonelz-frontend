@@ -26,7 +26,7 @@ const FormRow = <T extends Record<string, unknown>>(props: FormRow<T>) => {
     return (
         <div
             className={classNames(
-                'grid md:grid-cols-3 gap-4 py-8',
+                'flex flex-col gap-2',
                 border && 'border-b border-gray-200 dark:border-gray-600',
                 alignCenter && 'items-center'
             )}
@@ -34,7 +34,7 @@ const FormRow = <T extends Record<string, unknown>>(props: FormRow<T>) => {
             <div className="font-semibold">{label}</div>
             <div className="col-span-2">
                 <FormItem
-                    className="mb-0 max-w-[700px]"
+                    className=""
                     invalid={(errors[name] && touched[name]) as boolean}
                     errorMessage={errors[name] as string}
                 >

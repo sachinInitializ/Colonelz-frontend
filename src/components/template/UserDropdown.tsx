@@ -19,6 +19,12 @@ type DropdownList = {
 
 const dropdownItemList: DropdownList[] = [
     {
+        label:"My Profile",
+        path:"/app/crm/profile",
+        icon:<AiOutlineUser/>
+    
+        },
+    {
     label:"Add User to Project",
     path:"/app/crm/addmember",
     icon:<AiOutlineUserAdd/>
@@ -30,12 +36,7 @@ const dropdownItemList: DropdownList[] = [
     icon:<AiOutlineUserAdd/>
 
     },
-    {
-    label:"Users",
-    path:"/app/crm/allusers",
-    icon:<AiOutlineUserSwitch/>
-
-    },
+    
     {
         label: 'Create User',
         path: '/app/crm/register',

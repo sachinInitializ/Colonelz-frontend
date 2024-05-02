@@ -6,7 +6,7 @@ import Select from '@/components/ui/Select'
 import Switcher from '@/components/ui/Switcher'
 import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
-import { FormContainer } from '@/components/ui/Form'
+import { FormContainer, FormItem } from '@/components/ui/Form'
 
 
 import { Field, Form, Formik } from 'formik'
@@ -23,6 +23,9 @@ import * as Yup from 'yup'
 import type { OptionProps, ControlProps } from 'react-select'
 import type { FormikProps, FieldInputProps, FieldProps } from 'formik'
 import FormRow from '@/views/account/Settings/components/FormRow'
+import { use } from 'i18next'
+import { useEffect, useState } from 'react'
+import { apiGetUserData } from '@/services/CommonService'
 
 export type ProfileFormModel = {
     name: string
@@ -42,6 +45,7 @@ type LanguageOption = {
 }
 
 const { Control } = components
+
 
 const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -108,12 +112,7 @@ const CustomControl = ({
 }
     
 const Profile = ({
-    data = {
-        name: '',
-        email: '',
-        title: '',
-        avatar: '',
-    },
+  
 }: ProfileProps) => {
     const onSetFormFile = (
         form: FormikProps<ProfileFormModel>,
@@ -133,6 +132,23 @@ const Profile = ({
         })
         setSubmitting(false)
     }
+
+    const [data, setData] = useState<ProfileProps | undefined>(undefined)
+
+useEffect(() => {
+    const fetchUserData = async () => {
+        try {
+            const userData = await apiGetUserData(localStorage.getItem('userId'));
+            console.log(userData);
+            setData(userData);  
+        } catch (error) {
+            console.error('Error fetching lead data', error);
+        }
+    };
+
+    fetchUserData();
+}
+, []);
 
     return (
         <>
@@ -154,22 +170,11 @@ const Profile = ({
                     <Form>
                         <FormContainer>
                            
-                            <FormRow
-                                name="name"
+                            <FormItem
                                 label="Name"
-                                {...validatorProps}
                             >
-                                <Field
-                                    type="text"
-                                    autoComplete="off"
-                                    name="name"
-                                    placeholder="Name"
-                                    component={Input}
-                                    prefix={
-                                        <HiOutlineUserCircle className="text-xl" />
-                                    }
-                                />
-                            </FormRow>
+                                <Input placeholder='Name' disabled/>
+                            </FormItem>
                             <FormRow
                                 name="email"
                                 label="Email"
