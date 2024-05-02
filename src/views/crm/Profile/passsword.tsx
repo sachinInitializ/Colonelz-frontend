@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button'
 import Tag from '@/components/ui/Tag'
 import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
-import { FormContainer } from '@/components/ui/Form'
+import { FormContainer, FormItem } from '@/components/ui/Form'
 
 import FormRow from '@/views/account/Settings/components/FormRow'
 import { Field, Form, Formik } from 'formik'
@@ -16,6 +16,7 @@ import {
 } from 'react-icons/hi'
 import dayjs from 'dayjs'
 import * as Yup from 'yup'
+import { EditPassword } from '@/services/CommonService'
 
 type LoginHistory = {
     type: string
@@ -25,9 +26,10 @@ type LoginHistory = {
 }
 
 type PasswordFormModel = {
-    password: string
-    newPassword: string
-    confirmNewPassword: string
+    userId: string
+    old_password: string
+    new_password: string
+    confirm_new_password: string
 }
 
 const LoginHistoryIcon = ({ type }: { type: string }) => {
@@ -44,36 +46,54 @@ const LoginHistoryIcon = ({ type }: { type: string }) => {
 }
 
 const validationSchema = Yup.object().shape({
-    password: Yup.string().required('Password Required'),
-    newPassword: Yup.string()
-        .required('Enter your new password')
-        .min(8, 'Too Short!')
-        .matches(/^[A-Za-z0-9_-]*$/, 'Only Letters & Numbers Allowed'),
-    confirmNewPassword: Yup.string().oneOf(
-        [Yup.ref('newPassword'), ''],
+    old_password: Yup.string().required('Password Required'),
+    new_password: Yup.string().required('Please enter your password').matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+        "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+      ),
+    confirm_new_password: Yup.string().oneOf(
+        [Yup.ref('new_password'), ''],
         'Password not match'
     ),
 })
 
 const Password = ({ data }: { data?: LoginHistory[] }) => {
-    const onFormSubmit = (
+    const onFormSubmit = async (
         values: PasswordFormModel,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
-        toast.push(<Notification title={'Password updated'} type="success" />, {
-            placement: 'top-center',
-        })
-        setSubmitting(false)
-        console.log('values', values)
+        // Prepare data for the API
+        const data = {
+            userId: localStorage.getItem('userId'),
+            old_password: values.old_password,
+            new_password: values.new_password,
+            confirm_new_password: values.confirm_new_password,
+        };
+    
+        const response = await EditPassword(data);
+        const responseData= await response.json();
+        if (responseData.code===200) {
+            toast.push(<Notification title={'Password updated'} type="success" />, {
+                placement: 'top-center',
+            });
+        } else {
+            toast.push(<Notification title={'Error updating password'} type="danger" />, {
+                placement: 'top-center',
+            });
+        }
+    
+        setSubmitting(false);
+        console.log('values', values);
     }
 
     return (
         <>
             <Formik
                 initialValues={{
-                    password: '',
-                    newPassword: '',
-                    confirmNewPassword: '',
+                    userId: localStorage.getItem('userId'),
+                    old_password: '',
+                    new_password: '',
+                    confirm_new_password: '',
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values, { setSubmitting }) => {
@@ -86,48 +106,54 @@ const Password = ({ data }: { data?: LoginHistory[] }) => {
                 {({ touched, errors, isSubmitting, resetForm }) => {
                     const validatorProps = { touched, errors }
                     return (
-                        <Form>
+                        <Form className='w-full sm:w-3/5 lg:w-2/5'>
                             <FormContainer>
                              
-                                <FormRow
-                                    name="password"
-                                    label="Current Password"
-                                    {...validatorProps}
-                                >
-                                    <Field
-                                        type="password"
-                                        autoComplete="off"
-                                        name="password"
-                                        placeholder="Current Password"
-                                        component={Input}
-                                    />
-                                </FormRow>
-                                <FormRow
-                                    name="newPassword"
-                                    label="New Password"
-                                    {...validatorProps}
-                                >
-                                    <Field
-                                        type="password"
-                                        autoComplete="off"
-                                        name="newPassword"
-                                        placeholder="New Password"
-                                        component={Input}
-                                    />
-                                </FormRow>
-                                <FormRow
-                                    name="confirmNewPassword"
-                                    label="Confirm Password"
-                                    {...validatorProps}
-                                >
-                                    <Field
-                                        type="password"
-                                        autoComplete="off"
-                                        name="confirmNewPassword"
-                                        placeholder="Confirm Password"
-                                        component={Input}
-                                    />
-                                </FormRow>
+                            <FormItem
+                            label="Current Password"
+                            {...validatorProps}
+                        >
+                            <Field
+                                type="password"
+                                autoComplete="off"
+                                name="old_password"
+                                placeholder="Current Password"
+                                component={Input}
+                            />
+                            {touched.old_password && errors.old_password ? (
+                                <div className="error">{errors.old_password}</div>
+                            ) : null}
+                        </FormItem>
+                        <FormItem
+                            label="New Password"
+                            {...validatorProps}
+                        >
+                            <Field
+                                type="password"
+                                autoComplete="off"
+                                name="new_password"
+                                placeholder="New Password"
+                                component={Input}
+                            />
+                            {touched.new_password && errors.new_password ? (
+                                <div className="error">{errors.new_password}</div>
+                            ) : null}
+                        </FormItem>
+                        <FormItem
+                            label="Confirm Password"
+                            {...validatorProps}
+                        >
+                            <Field
+                                type="password"
+                                autoComplete="off"
+                                name="confirm_new_password"
+                                placeholder="Confirm Password"
+                                component={Input}
+                            />
+                            {touched.confirm_new_password && errors.confirm_new_password ? (
+                                <div className="error">{errors.confirm_new_password}</div>
+                            ) : null}
+                        </FormItem>
                                 <div className="mt-4 ltr:text-right">
                                     <Button
                                         className="ltr:mr-2 rtl:ml-2"
@@ -151,50 +177,7 @@ const Password = ({ data }: { data?: LoginHistory[] }) => {
                     )
                 }}
             </Formik>
-            <div className="mt-6">
-              
-                {data && (
-                    <div className="rounded-lg border border-gray-200 dark:border-gray-600 mt-6">
-                        {data.map((log, index) => (
-                            <div
-                                key={log.deviceName}
-                                className={classNames(
-                                    'flex items-center px-4 py-6',
-                                    !isLastChild(data, index) &&
-                                        'border-b border-gray-200 dark:border-gray-600'
-                                )}
-                            >
-                                <div className="flex items-center">
-                                    <div className="text-3xl">
-                                        <LoginHistoryIcon type={log.type} />
-                                    </div>
-                                    <div className="ml-3 rtl:mr-3">
-                                        <div className="flex items-center">
-                                            <div className="text-gray-900 dark:text-gray-100 font-semibold">
-                                                {log.deviceName}
-                                            </div>
-                                            {index === 0 && (
-                                                <Tag className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 rounded-md border-0 mx-2">
-                                                    <span className="capitalize">
-                                                        {' '}
-                                                        Current{' '}
-                                                    </span>
-                                                </Tag>
-                                            )}
-                                        </div>
-                                        <span>
-                                            {log.location} •{' '}
-                                            {dayjs
-                                                .unix(log.time)
-                                                .format('DD-MMM-YYYY, hh:mm A')}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+           
         </>
     )
 }

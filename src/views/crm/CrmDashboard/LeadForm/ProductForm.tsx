@@ -165,7 +165,7 @@ const LeadForm: React.FC = () => {
                 <div>
                     <FormItem label="Lead Name">
                         <Input
-                            size="sm"
+                            size="md"
                             type="text"
                             value={formData.name}
                             onChange={(e) =>
@@ -178,7 +178,7 @@ const LeadForm: React.FC = () => {
                 <div>
                     <FormItem label="Email">
                         <Input
-                            size="sm"
+                            size="md"
                             type="email"
                             value={formData.email}
                             onChange={(e) =>
@@ -191,7 +191,7 @@ const LeadForm: React.FC = () => {
                 <div>
                     <FormItem label="Phone">
                         <Input
-                            size="sm"
+                            size="md"
                             type="text"
                             value={formData.phone}
                             maxLength={10}

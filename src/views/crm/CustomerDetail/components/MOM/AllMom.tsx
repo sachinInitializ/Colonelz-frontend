@@ -139,7 +139,7 @@ const App: React.FC = () => {
     return `${day}-${month}-${year}`
 }
 
-const Toggle= <BsThreeDotsVertical className='font-semibold text-xl'/>
+const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-pointer'/>
   return (
     <div className="">
       <div className="flex justify-between ">

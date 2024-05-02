@@ -277,7 +277,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
     
         return `${day}-${month}-${year}`
     }
-    const Toggle=<BsThreeDotsVertical className='font-semibold text-xl'/>
+    const Toggle=<BsThreeDotsVertical className='font-semibold text-xl cursor-pointer'/>
     
     return (
         <div>

@@ -27,7 +27,7 @@ const FormRow = <T extends Record<string, unknown>>(props: FormRow<T>) => {
         <div
             className={classNames(
                 'flex flex-col gap-2',
-                border && 'border-b border-gray-200 dark:border-gray-600',
+                border && '',
                 alignCenter && 'items-center'
             )}
         >

@@ -20,6 +20,7 @@ export async function apiGetNotification(userId: string | null) {
     
     return response.json();
 }
+
 export async function apiGetUserData(UserId:string | null) {
     const response = await fetch(`${apiPrefix}users/getdata?userId=${userId}`, {
         method: 'GET',
@@ -35,6 +36,32 @@ export async function apiGetUserData(UserId:string | null) {
     const data = await response.json();
     return data;
 }
+
+
+
+export async function addProfilePhoto(Data: any) {
+    const response = await fetch(`${apiPrefix}users/profileurl`, {
+        method: 'POST',
+        headers: {
+           
+            'Authorization': `Bearer ${token}`
+        },
+        body: Data
+    });
+
+    return response;}
+
+export async function EditPassword(Data: any) {
+    const response = await fetch(`${apiPrefix}users/change/password`, {
+        method: 'POST',
+        headers: {
+           'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(Data)
+    });
+
+    return response;}
 export async function apiGetUsers() {
     const response = await fetch(`${apiPrefix}admin/get/alluser`, {
         method: 'GET',

@@ -25,12 +25,17 @@ import type { FormikProps, FieldInputProps, FieldProps } from 'formik'
 import FormRow from '@/views/account/Settings/components/FormRow'
 import { use } from 'i18next'
 import { useEffect, useState } from 'react'
-import { apiGetUserData } from '@/services/CommonService'
+import { addProfilePhoto, apiGetUserData } from '@/services/CommonService'
+import { RiEdit2Line } from 'react-icons/ri'
 
 export type ProfileFormModel = {
-    name: string
+    username: string
     email: string
     role: string
+    avatar: string
+}
+export type ProfileUpdate = {
+    userId: string
     avatar: string
 }
 
@@ -48,16 +53,9 @@ const { Control } = components
 
 
 const validationSchema = Yup.object().shape({
-    name: Yup.string()
-        .min(3, 'Too Short!')
-        .max(12, 'Too Long!')
-        .required('User Name Required'),
-    email: Yup.string().email('Invalid email').required('Email Required'),
-    title: Yup.string(),
+  
     avatar: Yup.string(),
-    lang: Yup.string(),
-    timeZone: Yup.string(),
-    syncData: Yup.bool(),
+  
 })
 
 const langOptions: LanguageOption[] = [
@@ -114,50 +112,69 @@ const CustomControl = ({
 const Profile = ({
   
 }: ProfileProps) => {
+
+    const [data, setData] = useState<ProfileFormModel>()
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const userData = await apiGetUserData(localStorage.getItem('userId'));
+                console.log(userData);
+                setData(userData.data);  
+            } catch (error) {
+                console.error('Error fetching lead data', error);
+            }
+        };
+    
+        fetchUserData();
+    }, []);
+    const [avatarUrl, setAvatarUrl] = useState<string | undefined>(data?.avatar);
     const onSetFormFile = (
         form: FormikProps<ProfileFormModel>,
         field: FieldInputProps<ProfileFormModel>,
         file: File[]
     ) => {
-        form.setFieldValue(field.name, URL.createObjectURL(file[0]))
+        const url = URL.createObjectURL(file[0]);
+        form.setFieldValue('avatarUrl', url);
+        form.setFieldValue(field.name, file[0]);
+        setAvatarUrl(url);
     }
 
-    const onFormSubmit = (
-        values: ProfileFormModel,
+    const onFormSubmit = async (
+        values: ProfileUpdate,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
-        console.log('values', values)
+        const formData = new FormData();
+        formData.append('userId', values.userId);
+        formData.append('file', values.avatar); 
+    
+        const response = await addProfilePhoto(formData); 
+        console.log('response', response);
+        setAvatarUrl(data?.avatar);
         toast.push(<Notification title={'Profile updated'} type="success" />, {
             placement: 'top-center',
-        })
-        setSubmitting(false)
+        });
+        setSubmitting(false);
     }
 
-    const [data, setData] = useState<ProfileProps | undefined>(undefined)
 
-useEffect(() => {
-    const fetchUserData = async () => {
-        try {
-            const userData = await apiGetUserData(localStorage.getItem('userId'));
-            console.log(userData);
-            setData(userData);  
-        } catch (error) {
-            console.error('Error fetching lead data', error);
-        }
-    };
 
-    fetchUserData();
-}
-, []);
 
     return (
         <>
       
         <Formik
             enableReinitialize
-            initialValues={data}
+            initialValues={{
+                userId: localStorage.getItem('userId'),
+                avatar: data?.avatar,
+            } as ProfileUpdate
+            }
+            
             validationSchema={validationSchema}
             onSubmit={(values, { setSubmitting }) => {
+                console.log(values);
+                
                 setSubmitting(true)
                 setTimeout(() => {
                     onFormSubmit(values, setSubmitting)
@@ -167,99 +184,74 @@ useEffect(() => {
             {({ values, touched, errors, isSubmitting, resetForm }) => {
                 const validatorProps = { touched, errors }
                 return (
-                    <Form>
+                    <Form className='w-full sm:w-3/5 lg:w-2/5'>
                         <FormContainer>
-                           
-                            <FormItem
-                                label="Name"
-                            >
-                                <Input placeholder='Name' disabled/>
-                            </FormItem>
-                            <FormRow
-                                name="email"
-                                label="Email"
-                                {...validatorProps}
-                            >
-                                <Field
-                                    type="email"
-                                    autoComplete="off"
-                                    name="email"
-                                    placeholder="Email"
-                                    component={Input}
-                                    prefix={
-                                        <HiOutlineMail className="text-xl" />
-                                    }
-                                />
-                            </FormRow>
-                            <FormRow
+
+                        <FormRow
                                 name="avatar"
                                 label="Avatar"
                                 {...validatorProps}
                             >
-                                <Field name="avatar">
-                                    {({ field, form }: FieldProps) => {
-                                        const avatarProps = field.value
-                                            ? { src: field.value }
-                                            : {}
-                                        return (
-                                            <Upload
-                                                className="cursor-pointer"
-                                                showList={false}
-                                                uploadLimit={1}
-                                                onChange={(files) =>
-                                                    onSetFormFile(
-                                                        form,
-                                                        field,
-                                                        files
-                                                    )
-                                                }
-                                                onFileRemove={(files) =>
-                                                    onSetFormFile(
-                                                        form,
-                                                        field,
-                                                        files
-                                                    )
-                                                }
-                                            >
-                                                <Avatar
-                                                    className="border-2 border-white dark:border-gray-800 shadow-lg"
-                                                    size={60}
-                                                    shape="circle"
-                                                    icon={<HiOutlineUser />}
-                                                    {...avatarProps}
-                                                />
-                                            </Upload>
-                                        )
-                                    }}
-                                </Field>
+                               <Field name="avatar">
+                                {({ field, form }: FieldProps) => {
+                                    const avatarProps = avatarUrl
+                                        ? { src: avatarUrl }
+                                        : data?.avatar
+                                        ? { src: data.avatar }
+                                        : {}
+                                    return (
+                                        <Upload
+                                            className="cursor-pointer"
+                                            showList={false}
+                                            uploadLimit={1}
+                                            onChange={(files) => {
+                                                const url = URL.createObjectURL(files[0]);
+                                                form.setFieldValue('avatarUrl', url);
+                                                form.setFieldValue(field.name, files[0]);
+                                                setAvatarUrl(url);  
+                                            }}
+                                            onFileRemove={(files) => {
+                                                form.setFieldValue('avatarUrl', '');
+                                                form.setFieldValue(field.name, files);
+                                                setAvatarUrl('');  
+                                            }}
+                                        >
+                                            <Avatar
+                                                className="border-2 border-white dark:border-gray-800 shadow-lg"
+                                                size={60}
+                                                shape="circle"
+                                                icon={<HiOutlineUser />}
+                                                {...avatarProps}
+                                            />
+                                        </Upload>
+                                    )
+                                }}
+                            </Field>
                             </FormRow>
-                            <FormRow
-                                name="title"
-                                label="Title"
-                                {...validatorProps}
-                                border={false}
+                             
+                           
+                            <FormItem
+                                label="Username"
                             >
-                                <Field
-                                    type="text"
-                                    autoComplete="off"
-                                    name="title"
-                                    placeholder="Title"
-                                    component={Input}
-                                    prefix={
-                                        <HiOutlineBriefcase className="text-xl" />
-                                    }
-                                />
-                            </FormRow>
+                                <Input placeholder={`${data?.username}`} disabled/>
+                            </FormItem>
+                            <FormItem
+                                label="Email"
+                            >
+                                <Input placeholder={`${data?.email}`} disabled/>
+                            </FormItem>
+                            <FormItem
+                                label="Role"
+                            >
+                                <Input placeholder='Role' disabled/>
+                            </FormItem>
+                            
+                           
+                           
                            
 
-                            <div className="mt-4 ltr:text-right">
-                                <Button
-                                    className="ltr:mr-2 rtl:ml-2"
-                                    type="button"
-                                    onClick={() => resetForm()}
-                                >
-                                    Reset
-                                </Button>
+                            <div className="mt-4 ">
+                               
                                 <Button
                                     variant="solid"
                                     loading={isSubmitting}
