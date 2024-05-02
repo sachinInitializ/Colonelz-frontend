@@ -229,6 +229,7 @@ const YourFormComponent: React.FC = () => {
                         <FormItem label="Client's Name">
                             
                             <CreatableSelect
+                            
                                 isMulti
                                 options={clientOptions}
                                 onChange={(selectedOption) =>
@@ -300,6 +301,7 @@ const YourFormComponent: React.FC = () => {
                         {/* Add similar FormItem and Select components for other fields */}
                         <FormItem label="Date">
                             <DatePicker
+                            size='sm'
                                 selected={
                                     formData.meetingDate
                                         ? new Date(formData.meetingDate)
@@ -320,6 +322,7 @@ const YourFormComponent: React.FC = () => {
                         </FormItem>
                         <FormItem label="Location">
                             <Select
+                            size='sm'
                                 options={optionsSource}
                                 value={optionsSource.find(
                                     (option) =>
