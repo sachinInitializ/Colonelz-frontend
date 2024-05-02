@@ -8,13 +8,14 @@ import Password from './passsword'
 import Users from '../users'
 
 const Index = () => {
+    const userRole=localStorage.getItem('role')
   return (<div className='px-4'>
     <h3 className='mb-5'>My Profile</h3>
     <Tabs defaultValue="tab1">
     <TabList>
         <TabNav value="tab1">Profile</TabNav>
         <TabNav value="tab2">Password</TabNav>
-        <TabNav value="tab3">Users</TabNav>
+        {userRole === 'ADMIN' && <TabNav value="tab3">Users</TabNav>}
     </TabList>
     <div className="p-4">
         <TabContent value="tab1">

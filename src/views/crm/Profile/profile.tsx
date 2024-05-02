@@ -31,7 +31,7 @@ import { RiEdit2Line } from 'react-icons/ri'
 export type ProfileFormModel = {
     username: string
     email: string
-    role: string
+    title: string
     avatar: string
 }
 export type ProfileUpdate = {
@@ -154,6 +154,7 @@ const Profile = ({
         toast.push(<Notification title={'Profile updated'} type="success" />, {
             placement: 'top-center',
         });
+        window.location.reload();
         setSubmitting(false);
     }
 
@@ -188,46 +189,49 @@ const Profile = ({
                         <FormContainer>
 
                         <FormRow
-                                name="avatar"
-                                label="Avatar"
-                                {...validatorProps}
-                            >
-                               <Field name="avatar">
-                                {({ field, form }: FieldProps) => {
-                                    const avatarProps = avatarUrl
-                                        ? { src: avatarUrl }
-                                        : data?.avatar
-                                        ? { src: data.avatar }
-                                        : {}
-                                    return (
-                                        <Upload
-                                            className="cursor-pointer"
-                                            showList={false}
-                                            uploadLimit={1}
-                                            onChange={(files) => {
-                                                const url = URL.createObjectURL(files[0]);
-                                                form.setFieldValue('avatarUrl', url);
-                                                form.setFieldValue(field.name, files[0]);
-                                                setAvatarUrl(url);  
-                                            }}
-                                            onFileRemove={(files) => {
-                                                form.setFieldValue('avatarUrl', '');
-                                                form.setFieldValue(field.name, files);
-                                                setAvatarUrl('');  
-                                            }}
-                                        >
-                                            <Avatar
-                                                className="border-2 border-white dark:border-gray-800 shadow-lg"
-                                                size={60}
-                                                shape="circle"
-                                                icon={<HiOutlineUser />}
-                                                {...avatarProps}
-                                            />
-                                        </Upload>
-                                    )
-                                }}
-                            </Field>
-                            </FormRow>
+    name="avatar"
+    label="Avatar"
+    {...validatorProps}
+>
+    <Field name="avatar">
+        {({ field, form }: FieldProps) => {
+            const avatarProps = avatarUrl
+                ? { src: avatarUrl }
+                : data?.avatar
+                ? { src: data.avatar }
+                : {}
+            return (
+                <div 
+                    className="relative group cursor-pointer"
+                    onClick={() => document.getElementById('avatarInput')?.click()}
+                >
+                    <input 
+                        type="file" 
+                        id="avatarInput" 
+                        style={{ display: 'none' }} 
+                        onChange={(event) => {
+                            const file = event.target.files[0];
+                            const url = URL.createObjectURL(file);
+                            form.setFieldValue('avatarUrl', url);
+                            form.setFieldValue(field.name, file);
+                            setAvatarUrl(url);
+                        }}
+                    />
+                    <Avatar
+                        className="border-2 border-white dark:border-gray-800 shadow-lg transition-all duration-300 group-hover:blur"
+                        size={60}
+                        shape="circle"
+                        icon={<HiOutlineUser />}
+                        {...avatarProps}
+                    />
+                    <div className="absolute inset-0 bg-black rounded-full bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        <span className="text-white">Edit</span>
+                    </div>
+                </div>
+            )
+        }}
+    </Field>
+</FormRow>
                              
                            
                             <FormItem
@@ -243,7 +247,7 @@ const Profile = ({
                             <FormItem
                                 label="Role"
                             >
-                                <Input placeholder='Role' disabled/>
+                                <Input placeholder={`${data?.title}`} disabled/>
                             </FormItem>
                             
                            
