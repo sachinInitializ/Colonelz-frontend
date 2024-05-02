@@ -59,6 +59,7 @@ const Project = ({  className }: LeadsProps) => {
                         <Th>Project Type</Th>
                         <Th>Client Name</Th>
                         <Th>Project Status</Th>
+                        <Th>Project Incharge</Th>
                         <Th>Project End Date</Th>
                         <Th></Th>
                     </Tr>
@@ -88,6 +89,7 @@ const Project = ({  className }: LeadsProps) => {
                             </div>
                         </Dropdown></Td>
                                 <Td className=' capitalize'>{item.project_status}</Td>
+                                <Td className=' capitalize'>{item?.project_updated_by[0]?.designer}</Td>
                                 <Td>{dayjs(item.timeline_date).format('DD-MM-YYYY')}</Td>
                             </Tr>
                         )
