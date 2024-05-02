@@ -49,6 +49,21 @@ export async function apiAddMember(data:any,token:string | null) {
        
         return response;
 }
+export async function apiAddMemberToLead(data:any,token:string | null) {
+    
+    
+        const response = await fetch(`${apiPrefix}admin/add/member/lead`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+
+       
+        return response;
+}
 export async function apiSignUp(data: SignUpCredential,token:string) {
    data.email=data.email.toLowerCase();
  

@@ -25,6 +25,7 @@ const Index = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const leadId = queryParams.get('lead_id');
+  const leadName = queryParams.get('lead_name');
   const folderName = queryParams.get('folder_name');
    const [users, setUsers] = useState<User[]>([]);
   useEffect(() => {
@@ -275,7 +276,7 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
   return (
     <div>
        <div className='flex justify-between'>
-      <h3 className='mb-5'>Files</h3>
+      <h3 className='mb-5'>Lead-{leadName}</h3>
       <div>
   
       </div>
@@ -293,7 +294,13 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
         <span className="mx-2">/</span>
       </li>
       <li>
-        <Link to={`/app/crm/fileManager/leads?lead_id=${leadId}`} className="text-blue-600 dark:text-blue-400 hover:underline">Leads</Link>
+        <Link to={`/app/crm/fileManager/leads?lead_id=${leadId}&lead_name=${leadName}`} className="text-blue-600 dark:text-blue-400 hover:underline">Leads</Link>
+      </li>
+      <li>
+        <span className="mx-2">/</span>
+      </li>
+      <li>
+        <Link to={`/app/crm/fileManager/leads?lead_id=${leadId}&lead_name=${leadName}`} className="text-blue-600 dark:text-blue-400 hover:underline">{leadName}</Link>
       </li>
       <li>
         <span className="mx-2">/</span>

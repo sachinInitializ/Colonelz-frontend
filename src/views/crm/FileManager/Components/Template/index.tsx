@@ -5,7 +5,7 @@ import { FaFolder } from 'react-icons/fa'
 const index = () => {
   return (
     <div>
-      <h3 className='mb-4'>Folder</h3>
+      <h3 className='mb-4'>Company Data</h3>
     <div className='grid grid-cols-3 gap-4'>
      <Card>
       <div className='flex justify-between text-lg'>

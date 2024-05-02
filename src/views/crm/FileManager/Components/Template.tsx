@@ -28,7 +28,7 @@ const Template = () => {
     </Card>
   </>
 )}
-      <Card onClick={()=>navigate('/app/crm/fileManager/project/templates/miscellaneous/subfolder?type=miscellaneous&folder=miscellaneous')}>  <div className='flex gap-4'>
+      <Card onClick={()=>navigate('/app/crm/fileManager/project/templates/miscellaneous/subfolder?type=company data&folder=company policies')}>  <div className='flex gap-4'>
           <div className=' text-lg ' ><FaRegFolderOpen/></div>
        <p> Company Policies</p>
         </div></Card>

@@ -19,6 +19,7 @@ const Index = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const leadId = queryParams.get('lead_id');
+    const leadName = queryParams.get('lead_name');
     useEffect(() => {
       const fetchDataAndLog = async () => {
         try {
@@ -58,7 +59,7 @@ const Index = () => {
             Folder deleted successfully
           </Notification>,{placement:'top-center'}
         )
-        // window.location.reload()
+        window.location.reload()
       } catch (error) {
         toast.push(
           <Notification closable type="danger" duration={2000}>
@@ -96,7 +97,7 @@ function formatDate(dateString:string) {
   return (
       <div>
           <div className=" mb-5 flex justify-between">
-              <h3 className="">Leads</h3>
+              <h3 className="">Lead-{leadName}</h3>
               <Button variant="solid" size="sm" onClick={() => openDialog()}>
                   Upload
               </Button>
@@ -114,8 +115,11 @@ function formatDate(dateString:string) {
       <li>
         <span className="mx-2">/</span>
       </li>
-    
       <li className="text-gray-500">Leads</li>
+      <li>
+        <span className="mx-2">/</span>
+      </li>
+      <li className="text-gray-500">{leadName}</li>
     </ol>
   </nav>
 </div>
@@ -164,7 +168,7 @@ function formatDate(dateString:string) {
                     <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
                   </svg>
                   <a className="font-medium cursor-pointer" onClick={()=> navigate(
-                              `/app/crm/fileManager/leads/folder?lead_id=${leadId}&folder_name=${item.folder_name}`,
+                              `/app/crm/fileManager/leads/folder?lead_id=${leadId}&lead_name=${leadName}&folder_name=${item.folder_name}`,
                           )}>
                     {item.folder_name}
                   </a>

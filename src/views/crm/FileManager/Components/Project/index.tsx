@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FolderItem, fetchProjectData } from './data';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Dialog, Notification, toast } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import YourFormComponent from './ProjectForm';
@@ -14,6 +14,7 @@ const Index = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get('project_id');
+  const projectName = queryParams.get('project_name');
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
@@ -66,7 +67,7 @@ const deleteFolders = async (folder_name:string) => {
         Folder deleted successfully
       </Notification>,{placement:'top-center'}
     )
-    // window.location.reload()
+    window.location.reload()
   } catch (error) {
     toast.push(
       <Notification closable type="danger" duration={2000}>
@@ -91,7 +92,7 @@ function formatDate(dateString:string) {
   return (
       <div>
           <div className=" mb-5 flex justify-between">
-              <h3 className="">Folder</h3>
+              <h3 className=" capitalize">Project-{projectName}</h3>
               <Button variant="solid" size="sm" onClick={() => openDialog()}>
                   Upload
               </Button>
@@ -107,17 +108,22 @@ function formatDate(dateString:string) {
         <nav className="flex">
           <ol className="flex items-center space-x-2">
             <li>
-              <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</a>
+              <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</Link>
+            </li>
+            <li>
+              <span className="mx-2">/</span>
+            </li>
+            <li>
+            <li className="text-gray-500">Projects</li>
             </li>
             <li>
               <span className="mx-2">/</span>
             </li>
           
-            <li className="text-gray-500">Projects</li>
+            <li className="text-gray-500">{projectName}</li>
           </ol>
         </nav>
       </div>
-      
               <div className="border rounded-lg shadow-sm dark:border-gray-700">
                 <div className="relative w-full overflow-auto">
                   <table className="w-full caption-bottom text-sm">
@@ -140,8 +146,6 @@ function formatDate(dateString:string) {
                         </th>
                       </tr>
                     </thead>
-                 
-                  
                 <tbody className="[&amp;_tr:last-child]:border-0">
                 {projectData.map((item) => {
                     if (role === 'ADMIN' || role === 'Senior Architect' || (item.folder_name !== 'quotation' && item.folder_name !== 'contract')) {
@@ -164,7 +168,7 @@ function formatDate(dateString:string) {
                           <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
                         </svg>
                         <a className="font-medium cursor-pointer" onClick={()=> navigate(
-                                     `/app/crm/fileManager/project/folder?project_id=${projectId}&folder_name=${item.folder_name}`,
+                                     `/app/crm/fileManager/project/folder?project_id=${projectId}&project_name=${projectName}&folder_name=${item.folder_name}`,
                                 )}>
                           {item.folder_name}
                         </a>

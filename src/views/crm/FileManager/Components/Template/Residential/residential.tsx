@@ -61,6 +61,15 @@ const Residential = () => {
       fetchDataAndLog();
     }, []);
     console.log(data);
+
+    function formatDate(dateString:string) {
+      if(dateString=="-") return "-"
+      const date = new Date(dateString);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
   return (
     <>
     <div>
@@ -134,8 +143,8 @@ const Residential = () => {
                       </div>
                     </td>
                     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Folder</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{Number(data[0]?.total_unique_sub_folder_name_second)>0?`${data[0]?.total_unique_sub_folder_name_second} items`:`${data[0]?.total_unique_sub_folder_name_second} item`}</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatDate(data[0]?.updated_date)}</td>
+                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{data[0]?.total_unique_sub_folder_name_second?Number(data[0]?.total_unique_sub_folder_name_second)>0?`${data[0]?.total_unique_sub_folder_name_second} items`:`${data[0]?.total_unique_sub_folder_name_second} item`:"-"}</td>
+                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatDate(data[0]?.updated_date?data[0]?.updated_date:"-")}</td>
                     
                   </tr>
                   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
@@ -161,8 +170,8 @@ const Residential = () => {
                       </div>
                     </td>
                     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Folder</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{Number(data[1]?.total_unique_sub_folder_name_second)>1?`${data[1]?.total_unique_sub_folder_name_second} items`:`${data[1]?.total_unique_sub_folder_name_second} item`}</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatDate(data[1]?.updated_date)}</td>
+                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{data[1]?.total_unique_sub_folder_name_second?Number(data[1]?.total_unique_sub_folder_name_second)>1?`${data[1]?.total_unique_sub_folder_name_second} items`:`${data[1]?.total_unique_sub_folder_name_second} item`:"-"}</td>
+                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatDate(data[1]?.updated_date?data[1]?.updated_date:"-")}</td>
                     
                   </tr>
                 

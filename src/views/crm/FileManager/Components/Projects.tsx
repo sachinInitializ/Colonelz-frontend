@@ -105,7 +105,7 @@ const Filtering = () => {
                 cell: (props) => {
                     const row = props.row.original;
                     return (
-                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}`)}>
+                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}&project_name=${row.project_name}`)}>
                             {row.project_name}
                         </div>
                     )
@@ -116,7 +116,7 @@ const Filtering = () => {
                 cell: (props) => {
                     const row = props.row.original;
                     return (
-                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}`)}>
+                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}&project_name=${row.project_name}`)}>
                             {row.project_type}
                         </div>
                     )
@@ -127,7 +127,7 @@ const Filtering = () => {
                 cell: (props) => {
                     const row = props.row.original;
                     return (
-                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}`)}>
+                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}&project_name=${row.project_name}`)}>
                             {row.project_status}
                         </div>
                     )
@@ -138,7 +138,7 @@ const Filtering = () => {
                 cell: (props) => {
                     const row = props.row.original;
                     return (
-                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}`)}>
+                        <div className=' cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/project?project_id=${row.project_id}&project_name=${row.project_name}`)}>
                             {row.client_name}
                         </div>
                     )

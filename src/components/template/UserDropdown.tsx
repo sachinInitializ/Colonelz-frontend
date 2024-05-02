@@ -8,7 +8,7 @@ import classNames from 'classnames'
 import { HiOutlineUser, HiOutlineCog, HiOutlineLogout } from 'react-icons/hi'
 import { FiActivity } from 'react-icons/fi'
 import type { CommonProps } from '@/@types/common'
-import { AiOutlineUserAdd } from 'react-icons/ai'
+import { AiOutlineUser, AiOutlineUserAdd, AiOutlineUserSwitch } from 'react-icons/ai'
 import { FaUser } from 'react-icons/fa'
 
 type DropdownList = {
@@ -26,8 +26,14 @@ const dropdownItemList: DropdownList[] = [
     },
     {
     label:"Add User to Lead",
-    path:"/app/crm/addmember",
+    path:"/app/crm/addUserToLead",
     icon:<AiOutlineUserAdd/>
+
+    },
+    {
+    label:"Users",
+    path:"/app/crm/allusers",
+    icon:<AiOutlineUserSwitch/>
 
     },
     {

@@ -12,6 +12,12 @@ const appsRoute: Routes = [
     },
     {
         key: 'appsCrm.register',
+        path: `${APP_PREFIX_PATH}/crm/profile`,
+        component: lazy(() => import('@/views/crm/Profile/index')),
+        authority: ["ADMIN"],
+    },
+    {
+        key: 'appsCrm.register',
         path: `${APP_PREFIX_PATH}/crm/register`,
         component: lazy(() => import('@/views/crm/Register')),
         authority: ["ADMIN"],
@@ -20,6 +26,18 @@ const appsRoute: Routes = [
         key: 'appsCrm.addmember',
         path: `${APP_PREFIX_PATH}/crm/addmember`,
         component: lazy(() => import('@/views/crm/AddMemberToProject/index')),
+        authority: ["ADMIN"],
+    },
+    {
+        key: 'appsCrm.addmember',
+        path: `${APP_PREFIX_PATH}/crm/addUserToLead`,
+        component: lazy(() => import('@/views/crm/AddUserToLead/index')),
+        authority: ["ADMIN"],
+    },
+    {
+        key: 'appsCrm.addmember',
+        path: `${APP_PREFIX_PATH}/crm/allusers`,
+        component: lazy(() => import('@/views/crm/users/index')),
         authority: ["ADMIN"],
     },
     {

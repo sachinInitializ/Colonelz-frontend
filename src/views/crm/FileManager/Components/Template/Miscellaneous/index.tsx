@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {  getTemplateData } from '../../../Components/data';
 import {  TemplateDataItem } from '../../../Components/type';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Card, Dialog } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import YourFormComponent from '../TemplateForm';
@@ -12,8 +12,8 @@ const Index = () => {
   const [templateData, setTemplateData] = useState<TemplateDataItem[]>([]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const folderName = queryParams.get('folder');
-  const type='miscellaneous'
+  const folderName = "company policies";
+  const type='company data'
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
@@ -42,6 +42,14 @@ const Index = () => {
     setIsOpen(false);
   };
 
+  const formateDate = (dateString:string) => {
+    const date = new Date(dateString);
+    const day=date.getDate().toString().padStart(2, '0');
+    const month=(date.getMonth() + 1).toString().padStart(2, '0');
+    const year=date.getFullYear();
+    return `${day}-${month}-${year}`;
+    }
+
   return (
       <div>
           <div className=" mb-5 flex justify-between">
@@ -57,14 +65,20 @@ const Index = () => {
           <nav className="flex">
             <ol className="flex items-center space-x-2">
               <li>
-                <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</a>
+                <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</Link>
+              </li>
+              <li>
+                <span className="mx-2">/</span>
+              </li>
+              <li>
+              <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">Comapny Data</Link>
               </li>
               <li>
                 <span className="mx-2">/</span>
               </li>
              
             
-              <li className="text-gray-500">Company Data</li>
+              <li className="text-gray-500">{folderName}</li>
             </ol>
           </nav>
         </div>
@@ -81,7 +95,7 @@ const Index = () => {
                             Type
                           </th>
                           <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                            Size
+                            Files
                           </th>
                           <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
                             Modified
@@ -124,8 +138,8 @@ const Index = () => {
                         </div>
                       </td>
                       <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Folder</td>
-                      <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">-</td>
-                      <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Apr 28, 2024</td>
+                      <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{Number(item.files[0].total_files)>1?`${item.files[0].total_files} items`:`${item.files[0].total_files} item`}</td>
+                      <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formateDate(item.files[0].updated_date)}</td>
                       <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
                         <div className=' flex justify-center'>
                       <HiTrash className=' text-xl text-center hover:text-red-500'/>

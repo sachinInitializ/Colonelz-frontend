@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { FaFolder } from 'react-icons/fa'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Footer from '../../../Footer'
 import { HiTrash } from 'react-icons/hi'
 import { TemplateDataItem } from '../../type'
@@ -90,13 +90,13 @@ const Commercial = () => {
         <nav className="flex">
           <ol className="flex items-center space-x-2">
             <li>
-              <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</a>
+              <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</Link>
             </li>
             <li>
               <span className="mx-2">/</span>
             </li>
             <li>
-              <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Company Data</a>
+              <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">Company Data</Link>
             </li>
             <li>
               <span className="mx-2">/</span>

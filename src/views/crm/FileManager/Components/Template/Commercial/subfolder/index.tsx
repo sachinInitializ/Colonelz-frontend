@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {  getTemplateData } from '../../../data';
 import {  TemplateDataItem } from '../../../type';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Card, Dialog } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import YourFormComponent from '../../TemplateForm';
@@ -53,7 +53,7 @@ const Index = () => {
   return (
       <div>
           <div className=" mb-5 flex justify-between">
-              <h3 className="">Folder</h3>
+              <h3 className="">Company Data</h3>
               <Button variant="solid" size="sm" onClick={() => openDialog()}>
                   Upload
               </Button>
@@ -64,20 +64,20 @@ const Index = () => {
               <div className="flex items-center mb-4">
           <nav className="flex">
             <ol className="flex items-center space-x-2">
+            <li>
+              <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</Link>
+            </li>
+            <li>
+              <span className="mx-2">/</span>
+            </li>
+            <li>
+              <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">Company Data</Link>
+            </li>
+            <li>
+              <span className="mx-2">/</span>
+            </li>
               <li>
-                <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</a>
-              </li>
-              <li>
-                <span className="mx-2">/</span>
-              </li>
-              <li>
-                <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Company Data</a>
-              </li>
-              <li>
-                <span className="mx-2">/</span>
-              </li>
-              <li>
-                <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Commercial</a>
+                <Link to={`/app/crm/fileManager/project/templates/commercial`} className="text-blue-600 dark:text-blue-400 hover:underline">Commercial</Link>
               </li>
               <li>
                 <span className="mx-2">/</span>
@@ -150,7 +150,7 @@ const Index = () => {
                       <HiTrash className=' text-xl text-center hover:text-red-500'/>
                       </div>
                       </td>
-                    </tr>):null))}
+                    </tr>):"No folder"))}
                   
                   </tbody>
         

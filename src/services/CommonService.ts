@@ -35,6 +35,19 @@ export async function apiGetUsers() {
     const data = await response.json();
     return data;
 }
+
+export async function apiDeleteUsers(userId: string) {
+    const response=await fetch(`${apiPrefix}admin/delete/user?userId=${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId: userId })
+    });
+    return response;
+}
+    
 export async function addMemberToProject(Data: any) {
     const response = await fetch(`${apiPrefix}admin/add/member`, {
         method: 'POST',

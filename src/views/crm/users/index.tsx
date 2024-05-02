@@ -14,52 +14,34 @@ import {
     flexRender,
 } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import type { Product } from '../store/productListSlice'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
-import { apiGetCrmLeads } from '@/services/CrmService'
-import { Link, useNavigate } from 'react-router-dom'
-import { Button, Pagination, Select } from '@/components/ui'
-import { HiOutlineEye, HiPlusCircle } from 'react-icons/hi'
-import useThemeClass from '@/utils/hooks/useThemeClass'
+import { apiDeleteUsers, apiGetUsers } from '@/services/CommonService'
+import { BiTrash } from 'react-icons/bi'
+import { Notification, Pagination, Select, toast } from '@/components/ui'
+
+type User = {
+    username: string;
+    role: string;
+    email: string;
+    UserId: string;
+  };
+  
+  type ApiResponse = {
+    message: string;
+    status: boolean;
+    errorMessage: string;
+    code: number;
+    data: User[];
+  };
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
     onChange: (value: string | number) => void
     debounce?: number
 }
-const data=await apiGetCrmLeads()
-const responseData=data.data.leads
-console.log(responseData);
 
 const { Tr, Th, Td, THead, TBody, Sorter } = Table
-const totalData = responseData.length
-
-
-const pageSizeOption = [
-    { value: 10, label: '10 / page' },
-    { value: 20, label: '20 / page' },
-    { value: 30, label: '30 / page' },
-    { value: 40, label: '40 / page' },
-    { value: 50, label: '50 / page' },
-]
-const ActionColumn = ({ row }: { row: Product}) => {
-    const navigate = useNavigate()
-    const { textTheme } = useThemeClass()
-    const onEdit = () => {
-        navigate(`/app/crm/lead/?id=${row.lead_id}`)
-    }
-    return (
-        <div className="flex justify-end text-lg">
-            <span
-                className={`cursor-pointer p-2 hover:${textTheme}`}
-                onClick={onEdit}
-            >
-                <HiOutlineEye />
-            </span>
-        </div>
-    )
-}
 
 function DebouncedInput({
     value: initialValue,
@@ -79,89 +61,106 @@ function DebouncedInput({
         }, debounce)
 
         return () => clearTimeout(timeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     return (
-        <div className="flex justify-between md:flex-col lg:flex-row">
-            <h3>Leads</h3>
-            <div className="flex items-center mb-4 gap-3">
+        <div className="flex justify-end">
+            <div className="flex items-center mb-4">
+                <span className="mr-2">Search:</span>
                 <Input
-                size='sm'
                     {...props}
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                 />
-                  <Link
-                className="block lg:inline-block md:mb-0 mb-4"
-                to="/app/crm/lead-new"
-            >
-                <Button block variant="solid" size="sm" icon={<HiPlusCircle />}>
-                    Add Lead
-                </Button>
-            </Link>
             </div>
         </div>
     )
 }
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    
+
     const itemRank = rankItem(row.getValue(columnId), value)
     addMeta({
         itemRank,
     })
     return itemRank.passed
 }
-const statusColors: { [key: string]: string } = {
-    'Follow Up': 'bg-green-200 text-green-700',
-    'Interested': 'bg-blue-200 text-blue-700',
-    'No Response': 'bg-red-200 text-red-700',
-    'Not Interested': 'bg-red-200 text-red-700',
-};
 
-const Filtering = () => {
+
+const pageSizeOption = [
+    { value: 10, label: '10 / page' },
+    { value: 20, label: '20 / page' },
+    { value: 30, label: '30 / page' },
+    { value: 40, label: '40 / page' },
+    { value: 50, label: '50 / page' },
+]
+
+const Users = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
-    const navigate = useNavigate()
+    const [data, setData] = useState<User[]>([]); // initialize data as an empty array
 
-    const columns = useMemo<ColumnDef<Product>[]>(
-        () => [
-            { header: 'Lead Name', accessorKey: 'name',
-        cell: ({row}) => {
-            const name=row.original.name
-            return <Link to={`/app/crm/lead/?id=${row.original.lead_id}`} className=' capitalize'>{name}</Link>
-        }},
-        { header: 'Lead Status', accessorKey: 'status',
-            cell: ({ row }) => {
-                const status = row.original.status
-                return (
-                    <span
-                        className={`px-2 py-1 rounded-sm text-xs font-semibold ${statusColors[status]}`}
-                    >
-                        {status}
-                    </span>
-                )
-            }
-         },
-        {header:'Location',accessorKey:'location'},
+    useEffect(() => {
+      const fetchData = async () => {
+        const response = await apiGetUsers(); 
+        const data: ApiResponse =  response
+        setData(data.data);
+      };
+     
+  
+      fetchData();
+    }, []);
+
+    const deleteuser=async(UserId:string)=>{
+        const response=await apiDeleteUsers(UserId);
+        console.log(response);
+        const data=await response.json()
+        console.log(data);
         
+        if(data.code===200){
+            toast.push(
+                <Notification closable type="success" duration={2000}>
+                    {data.message}
+                </Notification>
+
+            )
+            window.location.reload();
+        }
+        else{
+            toast.push(
+                <Notification closable type="danger" duration={2000}>
+                    {data.errorMessage}
+                </Notification>
+            )
+        }
+
+
+      }
+
+    const columns = useMemo<ColumnDef<User>[]>(
+        () => [
+            { header: 'Username', accessorKey: 'username' },
+            { header: 'Role', accessorKey: 'role' },
             { header: 'Email', accessorKey: 'email' },
-            { header: 'Phone', accessorKey: 'phone' },
-            { header: 'Created date', accessorKey: 'date',
+            { header: 'Action',id:"action",
             cell: ({row}) => {
-                const date = row.original.date;
-                const [year, month, day] = new Date(date).toISOString().split('T')[0].split('-');
-                return `${day}-${month}-${year}`;
-            }},
-            
-           
+                return (
+                    <div className="">
+                       
+                        <p className=" text-xl hover:text-red-500" onClick={()=>deleteuser(row.original.UserId)}><BiTrash/></p>
+                    </div>
+                )
+            },
+        }
         ],
         []
     )
 
+    const [datas] = useState(() => data)
 
     const table = useReactTable({
-        data:responseData,
+        data,
         columns,
         filterFns: {
             fuzzy: fuzzyFilter,
@@ -183,6 +182,7 @@ const Filtering = () => {
         debugHeaders: true,
         debugColumns: false,
     })
+
     const onPaginationChange = (page: number) => {
         table.setPageIndex(page - 1)
     }
@@ -190,14 +190,22 @@ const Filtering = () => {
     const onSelectChange = (value = 0) => {
         table.setPageSize(Number(value))
     }
+
+
+const totalData=data.length;
+console.log(data.length);
+
     return (
         <>
+        <div className='flex flex-col sm:flex-row gap-5 justify-between mb-5'>
+        <h3>Users</h3>
             <DebouncedInput
                 value={globalFilter ?? ''}
                 className="p-2 font-lg shadow border border-block"
-                placeholder="Search..."
+                placeholder="Search ..."
                 onChange={(value) => setGlobalFilter(String(value))}
             />
+            </div>
             <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -216,7 +224,7 @@ const Filtering = () => {
                                                             ? 'cursor-pointer select-none'
                                                             : '',
                                                     onClick:
-                                                        header.column.getToggleSortingHandler(),
+                                                    header.column.id !== 'action' ? header.column.getToggleSortingHandler() : undefined,
                                                 }}
                                             >
                                                 {flexRender(
@@ -225,9 +233,9 @@ const Filtering = () => {
                                                     header.getContext()
                                                 )}
                                                 {
-                                                    <Sorter
-                                                        sort={header.column.getIsSorted()}
-                                                    />
+                                                    header.column.id !== 'action' && <Sorter
+                                                    sort={header.column.getIsSorted()}
+                                                />
                                                 }
                                             </div>
                                         )}
@@ -240,7 +248,7 @@ const Filtering = () => {
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (
-                            <Tr key={row.id} onClick={()=>navigate(`/app/crm/lead/?id=${row.original.lead_id}`)} className=' cursor-pointer'>
+                            <Tr key={row.id}>
                                 {row.getVisibleCells().map((cell) => {
                                     return (
                                         <Td key={cell.id}>
@@ -281,5 +289,5 @@ const Filtering = () => {
     )
 }
 
-export default Filtering
+export default Users
 

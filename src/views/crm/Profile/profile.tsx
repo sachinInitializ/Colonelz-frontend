@@ -7,8 +7,8 @@ import Switcher from '@/components/ui/Switcher'
 import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
 import { FormContainer } from '@/components/ui/Form'
-import FormDesription from './FormDesription'
-import FormRow from './FormRow'
+
+
 import { Field, Form, Formik } from 'formik'
 import { components } from 'react-select'
 import {
@@ -22,15 +22,13 @@ import {
 import * as Yup from 'yup'
 import type { OptionProps, ControlProps } from 'react-select'
 import type { FormikProps, FieldInputProps, FieldProps } from 'formik'
+import FormRow from '@/views/account/Settings/components/FormRow'
 
 export type ProfileFormModel = {
     name: string
     email: string
-    title: string
+    role: string
     avatar: string
-    timeZone: string
-    lang: string
-    syncData: boolean
 }
 
 type ProfileProps = {
@@ -115,9 +113,6 @@ const Profile = ({
         email: '',
         title: '',
         avatar: '',
-        timeZone: '',
-        lang: '',
-        syncData: false,
     },
 }: ProfileProps) => {
     const onSetFormFile = (
@@ -140,6 +135,8 @@ const Profile = ({
     }
 
     return (
+        <>
+      
         <Formik
             enableReinitialize
             initialValues={data}
@@ -156,10 +153,7 @@ const Profile = ({
                 return (
                     <Form>
                         <FormContainer>
-                            <FormDesription
-                                title="General"
-                                desc="Basic info, like your name and address that will displayed in public"
-                            />
+                           
                             <FormRow
                                 name="name"
                                 label="Name"
@@ -251,66 +245,8 @@ const Profile = ({
                                     }
                                 />
                             </FormRow>
-                            <FormDesription
-                                className="mt-8"
-                                title="Preferences"
-                                desc="Your personalized preference displayed in your account"
-                            />
-                            <FormRow
-                                name="lang"
-                                label="Language"
-                                {...validatorProps}
-                            >
-                                <Field name="lang">
-                                    {({ field, form }: FieldProps) => (
-                                        <Select<LanguageOption>
-                                            field={field}
-                                            form={form}
-                                            options={langOptions}
-                                            components={{
-                                                Option: CustomSelectOption,
-                                                Control: CustomControl,
-                                            }}
-                                            value={langOptions.filter(
-                                                (option) =>
-                                                    option.value ===
-                                                    values?.lang
-                                            )}
-                                            onChange={(option) =>
-                                                form.setFieldValue(
-                                                    field.name,
-                                                    option?.value
-                                                )
-                                            }
-                                        />
-                                    )}
-                                </Field>
-                            </FormRow>
-                            <FormRow
-                                name="timeZone"
-                                label="Time Zone"
-                                {...validatorProps}
-                            >
-                                <Field
-                                    readOnly
-                                    type="text"
-                                    autoComplete="off"
-                                    name="timeZone"
-                                    placeholder="Time Zone"
-                                    component={Input}
-                                    prefix={
-                                        <HiOutlineGlobeAlt className="text-xl" />
-                                    }
-                                />
-                            </FormRow>
-                            <FormRow
-                                name="syncData"
-                                label="Sync Data"
-                                {...validatorProps}
-                                border={false}
-                            >
-                                <Field name="syncData" component={Switcher} />
-                            </FormRow>
+                           
+
                             <div className="mt-4 ltr:text-right">
                                 <Button
                                     className="ltr:mr-2 rtl:ml-2"
@@ -332,6 +268,7 @@ const Profile = ({
                 )
             }}
         </Formik>
+        </>
     )
 }
 

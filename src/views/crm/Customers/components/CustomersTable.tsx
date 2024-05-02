@@ -181,6 +181,10 @@ const Filtering = () => {
             accessorKey: 'project_status',
         },
         {
+            header: 'Project Incharge',
+            accessorKey: 'designer',
+        },
+        {
             header: 'Project End Date',
             accessorKey: 'timeline_date',
             cell: (props) => {

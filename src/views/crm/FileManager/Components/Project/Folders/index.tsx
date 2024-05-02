@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchProjectData } from '../data';
 import { Button, Checkbox, Dialog, Input, Notification, Segment, Select, toast } from '@/components/ui';
 import { StickyFooter } from '@/components/shared';
@@ -25,6 +25,7 @@ const Index = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const leadId = queryParams.get('project_id');
+  const ProjectName = queryParams.get('project_name');
   const folderName = queryParams.get('folder_name'); // Assuming folder_name is in the query params
   const navigate=useNavigate()
   const [usernames, setUsernames] = useState<string[]>([]);
@@ -323,7 +324,7 @@ const Index = () => {
   return (
     <div>
         <div className='flex justify-between'>
-      <h3 className='mb-5'>Files</h3>
+      <h3 className='mb-5 capitalize'>Project-{ProjectName}</h3>
       <div>
   
       </div>
@@ -335,13 +336,19 @@ const Index = () => {
   <nav className="flex">
     <ol className="flex items-center space-x-2">
       <li>
-        <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</a>
+      <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</Link>
       </li>
       <li>
         <span className="mx-2">/</span>
       </li>
       <li>
-        <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Projects</a>
+        <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">Projects</Link>
+      </li>
+      <li>
+        <span className="mx-2">/</span>
+      </li>
+      <li>
+        <Link to={`/app/crm/fileManager/project?project_id=${leadId}&project_name=${ProjectName}`} className="text-blue-600 dark:text-blue-400 hover:underline">{ProjectName}</Link>
       </li>
       <li>
         <span className="mx-2">/</span>

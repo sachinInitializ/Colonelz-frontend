@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Dialog, Input, Notification, toast } from '@/components/ui';
 import { StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
@@ -51,8 +51,6 @@ const Index = () => {
       try {
         const templateData = await getTemplateData();
         console.log(templateData);
-  
-        // Filter folders based on query parameters
         const filteredFolders = templateData.filter((folder) => {
          if(folder.files[0]?.sub_folder_name_second){
           
@@ -137,7 +135,6 @@ const Index = () => {
     }
     
   }
-
   const handleShareFiles = async () => {
 
     if (selectedFiles.length === 0 || selectedEmails.length === 0) {
@@ -171,6 +168,8 @@ const Index = () => {
           )
       }
 
+
+
     try {
       const response = await apiGetCrmFileManagerShareFiles(postData);
   
@@ -189,6 +188,8 @@ const Index = () => {
       setBody('')
       onDialogClose()
       closeAfter2000ms()
+     
+      
       const updatedLeadData = leadData.map((file) => ({ ...file, active: false }));
       setLeadData(updatedLeadData);
     } catch (error) {
@@ -255,7 +256,7 @@ const Index = () => {
   return (
     <div>
         <div className='flex justify-between'>
-      <h3 className='mb-5'>Files</h3>
+      <h3 className='mb-5'>Company Data</h3>
       <div>
       
       </div>
@@ -267,26 +268,29 @@ const Index = () => {
         <div className="flex items-center mb-4">
     <nav className="flex">
       <ol className="flex items-center space-x-2">
+      <li>
+              <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</Link>
+            </li>
+            <li>
+              <span className="mx-2">/</span>
+            </li>
+            <li>
+              <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">Company Data</Link>
+            </li>
+            <li>
+              <span className="mx-2">/</span>
+            </li>
+            {type !== 'company data' && (
+              <>
+            <li>
+              <Link to={`/app/crm/fileManager/project/templates/${type}`} className="text-blue-600 dark:text-blue-400 hover:underline">{type}</Link>
+            </li>
+          
+          <li>
+            <span className="mx-2">/</span>
+          </li></>)}
         <li>
-          <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</a>
-        </li>
-        <li>
-          <span className="mx-2">/</span>
-        </li>
-        <li>
-          <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Company Data</a>
-        </li>
-        <li>
-          <span className="mx-2">/</span>
-        </li>
-        <li>
-          <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">{type}</a>
-        </li>
-        <li>
-          <span className="mx-2">/</span>
-        </li>
-        <li>
-          <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">{folderName}</a>
+          <Link to={`/app/crm/fileManager/project/templates/${type==="company data"?"miscellaneous":`${type}`}/subfolder?type=${type}&folder=${folderName}`} className="text-blue-600 dark:text-blue-400 hover:underline">{folderName}</Link>
         </li>
         <li>
           <span className="mx-2">/</span>
@@ -327,7 +331,7 @@ const Index = () => {
             return null; 
           }
           return(
-              <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+              <tr key={file.fileId} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                 <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                   <div className="flex items-center gap-2">
                   {getFileIcon(file.fileName)}
