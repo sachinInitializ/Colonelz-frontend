@@ -161,62 +161,73 @@ const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-point
       <main className="pb-10 ">
       <div className=" dark:bg-gray-950 rounded-lg p-6">
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">Meeting Details</h2>
-            <span>
-            <Dropdown renderTitle={Toggle} placement='bottom-end'>
-            <a href={`https://colonelz.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`} target='_blank' rel='noreferrer' 
+        <div className="flex justify-between mb-8">
+              <h2 className="text-2xl font-bold">Meeting Details</h2>
+              <span>
+              <Dropdown renderTitle={Toggle} placement='bottom-end'>
+              <a href={`https://colonelz.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`} target='_blank' rel='noreferrer' 
                         
-                        >
-                <Dropdown.Item eventKey="a">View MOM</Dropdown.Item>
-                </a>
+                    >
+                        
+                <Dropdown.Item eventKey="a" >View MOM</Dropdown.Item></a>
+               
             </Dropdown></span>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-gray-500 dark:text-gray-400 font-semibold">Location</p>
-              <p>{highlightText(rowData.location)}</p>
-              <p className="text-gray-500 dark:text-gray-400 font-semibold">Date</p>
-              <p>{highlightText(formatDate(rowData.meetingdate))}</p>
             </div>
-            <div>
-              <p className="text-gray-500 dark:text-gray-400 font-semibold">Attendees</p>
-              <ul className="space-y-1">
-                <li><span className='font-semibold'>Client:</span> {highlightText(getNames(rowData.attendees.client_name))} </li>
-                <li><span className='font-semibold'>Organizer:</span> {highlightText(getNames(rowData.attendees.organisor))} </li>
-                <li><span className='font-semibold'>Designer:</span> {highlightText(getNames(rowData.attendees.designer))} </li>
-                <li><span className='font-semibold'>Others:</span> {highlightText(getNames(rowData.attendees.attendees))} </li>
-              </ul>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <div className='flex gap-1 items-center'>
+                <p className="text-gray-500 dark:text-gray-400 font-semibold text-lg">Location: </p>
+                <p className=' text-base'>{rowData.location}</p>
+                </div>
+                <div className='flex gap-1 items-center'>
+                <p className="text-gray-500 dark:text-gray-400 font-semibold text-lg">Date: </p>
+                <p className=' text-base'>{formatDate(rowData.meetingdate)}</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl">Attendees</p>
+                <ul className="space-y-1">
+                  <li className=' text-base'><span className='font-semibold text-lg'>Client:</span> {rowData.attendees.client_name?rowData.attendees.client_name:"-"} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Organizer:</span> {rowData.attendees.organisor?rowData.attendees.organisor:"-"} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Designer:</span> {rowData.attendees.designer?rowData.attendees.designer:"-"} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Others:</span> {rowData.attendees.attendees?rowData.attendees.attendees:"-"} </li>
+                </ul>
+              </div>
             </div>
-          </div>
+            <div className='mb-6'>
+              <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl ">Remarks</p>
+              <p>
+                {rowData.remark?rowData.remark:"-"}
+              </p>
+            </div>
           <div>
-            <p className="text-gray-500 dark:text-gray-400 font-semibold">Remarks</p>
-            <p>
-              {highlightText(rowData.remark)}
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-500 dark:text-gray-400 font-semibold">Files</p>
+          <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl">Files</p>
             <div className="space-y-2">
-              {rowData.files.map((file:File)=>(
-              <a className="flex items-center gap-2 text-blue-600 hover:underline" href={file.fileUrl} target='_blank'>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
-                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                </svg>
-                {file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName}
-              </a>))}
+              
+            {rowData.files.length > 0 ? (
+  rowData.files.map((file: File) => (
+    <a className="flex items-center gap-2 text-blue-600 hover:underline" href={file.fileUrl} target='_blank'>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-5 w-5"
+      >
+        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+      </svg>
+      {file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName}
+    </a>
+  ))
+) : (
+  <p>No files</p>
+)}
            
             </div>
           </div>

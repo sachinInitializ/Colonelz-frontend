@@ -325,9 +325,10 @@ const Index = () => {
     <div>
         <div className='flex justify-between'>
       <h3 className='mb-5 capitalize'>Project-{ProjectName}</h3>
-      <div>
-  
-      </div>
+      <Button className='' size='sm' variant='solid'>
+        
+        Upload Files
+      </Button>
       </div>
       {leadData && leadData.length > 0 ? (
       <div className="h-screen w-full">
@@ -417,7 +418,7 @@ const Index = () => {
       </div>
     </div>
          ) : (
-          <p>No files</p>
+          <p className='h-[65vh]'>No files</p>
         )}
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"

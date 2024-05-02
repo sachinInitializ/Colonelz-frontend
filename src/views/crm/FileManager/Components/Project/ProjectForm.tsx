@@ -104,7 +104,7 @@ const uniqueFolderNames = Array.from(
     new Set(data.data.map((folderItem) => folderItem.folder_name.trim())),
 )
 
-const role = localStorage.getItem('role'); // Replace this with how you're getting the role
+const role = localStorage.getItem('role');
 
 const clientOptions: Option[] = uniqueFolderNames
   .filter(folderName => {
