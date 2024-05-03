@@ -5,11 +5,14 @@ import useAuth from '@/utils/hooks/useAuth'
 import { useAppSelector } from '@/store'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
-import { HiOutlineUser, HiOutlineCog, HiOutlineLogout } from 'react-icons/hi'
+import { HiOutlineUser, HiOutlineCog, HiOutlineLogout, HiOutlineUserAdd } from 'react-icons/hi'
 import { FiActivity } from 'react-icons/fi'
 import type { CommonProps } from '@/@types/common'
 import { AiOutlineUser, AiOutlineUserAdd, AiOutlineUserSwitch } from 'react-icons/ai'
 import { FaUser } from 'react-icons/fa'
+import { useEffect, useState } from 'react'
+import { apiGetUserData } from '@/services/CommonService'
+import { ProfileFormModel } from '@/views/crm/Profile/profile'
 
 type DropdownList = {
     label: string
@@ -40,13 +43,28 @@ const dropdownItemList: DropdownList[] = [
     {
         label: 'Create User',
         path: '/app/crm/register',
-        icon: <HiOutlineUser />,
+        icon: <HiOutlineUserAdd />,
     },
     
 ]
 
 const _UserDropdown = ({ className }: CommonProps) => {
     const role=localStorage.getItem('role')
+    const [data, setData] = useState<ProfileFormModel>()
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const userData = await apiGetUserData(localStorage.getItem('userId'));
+                console.log(userData);
+                setData(userData.data);  
+            } catch (error) {
+                console.error('Error fetching lead data', error);
+            }
+        };
+    
+        fetchUserData();
+    }, []);
     const { avatar, userName, authority, email } = useAppSelector(
         (state) => state.auth.user
     )
@@ -55,7 +73,7 @@ const _UserDropdown = ({ className }: CommonProps) => {
 
     const UserAvatar = (
         <div className={classNames(className, 'flex items-center gap-2')}>
-           <FaUser className=' text-lg'/>
+           <img src={data?.avatar} className='w-8' alt="" />
             <div className="hidden md:block">
                 <div className="text-xs capitalize">
                     {authority?.[0] || 'guest'}

@@ -1,13 +1,13 @@
 import { FormItem, FormContainer } from '@/components/ui/Form'
 import Input from '@/components/ui/Input'
-import Button from '@/components/ui/Button'
+
 import Alert from '@/components/ui/Alert'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
 import { Field, FieldProps, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import useAuth from '@/utils/hooks/useAuth'
 import type { CommonProps } from '@/@types/common'
-import { Notification, Select, toast } from '@/components/ui'
+import { Notification, Select, toast,Button } from '@/components/ui'
 
 interface SignUpFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -160,6 +160,9 @@ const SignUpForm = (props: SignUpFormProps) => {
                                 loading={isSubmitting}
                                 variant="solid"
                                 type="submit"
+                                className='w-auto'
+                                style={{width:"auto"}}
+
                             >
                                 {isSubmitting
                                     ? 'Creating Account...'

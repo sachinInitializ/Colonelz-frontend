@@ -171,9 +171,17 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
       validationErrors.project_start_date = 'Project Start Date is required';
     }
     
-    // Add validation for timeline_date
     if (!formData.timeline_date) {
       validationErrors.timeline_date = 'Timeline Date is required';
+    }
+
+    if (formData.timeline_date && formData.project_start_date) {
+      const startDate = new Date(formData.project_start_date);
+      const endDate = new Date(formData.timeline_date);
+    
+      if (endDate <= startDate) {
+        validationErrors.timeline_date = 'Timeline Date must be greater than Project Start Date';
+      }
     }
    
   
@@ -208,7 +216,6 @@ console.log(formData);
   return (
     <div>
       <div className='flex justify-between items-center max-sm:flex-col mb-6'>
-        <h5>Basic Information</h5>
       </div>
       <form onSubmit={handleFormSubmit}>
         <FormContainer>

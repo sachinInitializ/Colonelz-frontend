@@ -154,7 +154,7 @@ const Password = ({ data }: { data?: LoginHistory[] }) => {
                                 <div className="error">{errors.confirm_new_password}</div>
                             ) : null}
                         </FormItem>
-                                <div className="mt-4 ltr:text-right">
+                                <div className="mt-4 ">
                                     <Button
                                         className="ltr:mr-2 rtl:ml-2"
                                         type="button"
