@@ -45,7 +45,7 @@ const YourFormComponent: React.FC<Data> = (data) => {
   };
   
 
-  const handleFileChange = (files: FileList | null) => {
+  const handleFileChange = (files: File[] | null) => {
     if (files) {
         setFormData((prevFormData) => ({
             ...prevFormData,
@@ -53,13 +53,6 @@ const YourFormComponent: React.FC<Data> = (data) => {
         }))
       
     }
-}
-function closeAfter2000ms(data:string,type:string) {
-  toast.push(
-      <Notification closable type={type} duration={2000}>
-          {data}
-      </Notification>,{placement:'top-center'}
-  )
 }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -85,19 +78,29 @@ function closeAfter2000ms(data:string,type:string) {
     postData.append('files', file),
 )
 
+    console.log('Post Data:', postData);
     
       const response = await apiGetCrmFileManagerCreateProjectFolder(postData);
       const responseData = await response.json(); 
       console.log('Response Data:', responseData);
   
       if (responseData.code===200) {
-        closeAfter2000ms('File uploaded successfully.','success');
+        toast.push(
+          <Notification closable type="success" duration={3000}>
+            File Uploaded Successfully
+          </Notification>,
+          { placement: 'top-center' }
+        );
       
         window.location.reload();
       } else {
-        closeAfter2000ms(`Error: ${responseData.errorMessage}`,'warning');
+        toast.push(
+          <Notification closable type="danger" duration={3000}>
+            {responseData.errorMessage}
+          </Notification>,
+          { placement: 'top-center' }
+        );
       }
-  
   };
 
 const uniqueFolderNames = Array.from(

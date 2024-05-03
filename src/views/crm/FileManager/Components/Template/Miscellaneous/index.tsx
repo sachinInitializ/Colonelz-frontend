@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {  getTemplateData } from '../../../Components/data';
 import {  TemplateDataItem } from '../../../Components/type';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Card, Dialog } from '@/components/ui';
+import { Button, Card, Dialog, Notification, toast } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import YourFormComponent from '../TemplateForm';
 import Footer from '@/views/crm/FileManager/Footer';
 import { HiTrash } from 'react-icons/hi';
+import { apiDeleteFileManagerFolders } from '@/services/CrmService';
+import { ConfirmDialog } from '@/components/shared';
 
 const Index = () => {
   const [templateData, setTemplateData] = useState<TemplateDataItem[]>([]);
@@ -41,6 +43,53 @@ const Index = () => {
     console.log('onDialogClose', e);
     setIsOpen(false);
   };
+
+  const [dialogIsOpen2, setIsOpen2] = useState(false)
+  const [folder_Name, setFolderName] = useState<string>('')
+  
+  const openDialog2 = (folder_name:string) => {
+      setIsOpen2(true)
+      setFolderName(folder_name)
+  }
+  
+  const onDialogClose2 = () => {
+      setIsOpen2(false)
+  }
+
+  const deleteFolders = async (folder_name:string) => {
+    function warn(text:string) {
+      toast.push(
+          <Notification closable type="warning" duration={2000}>
+              {text}
+          </Notification>,{placement:'top-center'}
+      )
+  }
+    if (folder_name.length === 0) {
+      warn('No files selected for deletion.')
+      return;
+    }   
+    const postData = {
+      lead_id:"",
+      folder_name: folder_name,
+      type:"template",
+      project_id:""
+    };
+    try {
+      await apiDeleteFileManagerFolders(postData);
+      toast.push(
+        <Notification closable type="success" duration={2000}>
+          Folder deleted successfully
+        </Notification>,{placement:'top-center'}
+      )
+      window.location.reload()
+    } catch (error) {
+      toast.push(
+        <Notification closable type="danger" duration={2000}>
+          Error deleting folder
+        </Notification>,{placement:'top-center'}
+      )
+    }
+  }
 
   const formateDate = (dateString:string) => {
     const date = new Date(dateString);
@@ -141,7 +190,7 @@ const Index = () => {
                       <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{Number(item.files[0].total_files)>1?`${item.files[0].total_files} items`:`${item.files[0].total_files} item`}</td>
                       <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formateDate(item.files[0].updated_date)}</td>
                       <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
-                        <div className=' flex justify-center'>
+                        <div className=' flex justify-center' onClick={()=>openDialog2(item.files[0].sub_folder_name_second)}>
                       <HiTrash className=' text-xl text-center hover:text-red-500'/>
                       </div>
                       </td>
@@ -165,6 +214,18 @@ const Index = () => {
           >
               <YourFormComponent/>
           </Dialog>
+
+          <ConfirmDialog
+          isOpen={dialogIsOpen2}
+          type="danger"
+          onClose={onDialogClose2}
+          confirmButtonColor="red-600"
+          onCancel={onDialogClose2}
+          onConfirm={() => deleteFolders(folder_Name)}
+          title="Delete Folder"
+          onRequestClose={onDialogClose2}>
+            <p> Are you sure you want to delete this folder? </p>            
+        </ConfirmDialog>
       </div>
   )
 };

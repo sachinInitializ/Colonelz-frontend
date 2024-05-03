@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchLeadData } from '../data';
-import { Button, Checkbox, Dialog, Dropdown, FormItem, Input, Notification, Segment, Select, toast } from '@/components/ui';
-import { StickyFooter } from '@/components/shared';
+import { Button, Checkbox, Dialog, Dropdown, FormItem, Input, Notification, Segment, Select, Upload, toast } from '@/components/ui';
+import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn, CiImageOn } from 'react-icons/ci';
 import LeadDataContext from '../LeadDataContext';
-import { apiDeleteFileManagerFiles, apiGetCrmFileManagerLeads, apiGetCrmFileManagerShareContractFile, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
+import { apiDeleteFileManagerFiles, apiGetCrmFileManagerCreateLeadFolder, apiGetCrmFileManagerCreateProjectFolder, apiGetCrmFileManagerLeads, apiGetCrmFileManagerShareContractFile, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { apiGetUsers } from '@/services/CommonService';
@@ -54,18 +54,22 @@ const Index = () => {
   };
 
   const [dialogIsOpen, setIsOpen] = useState(false)
+  const [dialogIsOpen2, setIsOpen2] = useState(false)
+  const [dialogIsOpen3, setIsOpen3] = useState(false)
+  const [fileId, setFileId] = useState<string>('')
+
+
 
   const openDialog = (fileId:string) => {
       setIsOpen(true)
       setSelectedFiles([fileId])
-      console.log(fileId);
-      
+      console.log(fileId);  
   }
-
   const onDialogClose = () => {
-      
       setIsOpen(false)
   }
+
+
   const [dialogIsOpen1, setIsOpen1] = useState(false)
 
   const openDialog1 = () => {
@@ -76,6 +80,23 @@ const Index = () => {
       
       setIsOpen1(false)
   }
+
+  const onDialogClose2 = () => {
+    setIsOpen2(false)
+}
+const openDialog2 = () => {
+    setIsOpen2(true)
+}
+
+const openDialog3 = (file_id:string) => {
+  setIsOpen3(true)
+  setFileId(file_id)
+}
+
+const onDialogClose3 = () => {
+  setIsOpen3(false)
+}
+
 
   
   useEffect(() => {
@@ -102,19 +123,6 @@ const Index = () => {
 
 console.log(leadData);
 
-  
-
-  // const handleFileSelect = (fileId: string) => {
-  //   let updatedSelectedFiles;
-  //   if (folderName === 'contract') {
-  //     updatedSelectedFiles = [fileId];
-  //   } else {
-  //     updatedSelectedFiles = selectedFiles.includes(fileId)
-  //       ? selectedFiles.filter((id) => id !== fileId)
-  //       : [...selectedFiles, fileId];
-  //   }
-  //   setSelectedFiles(updatedSelectedFiles);
-  // };
   const deleteFiles = async (fileId:string) => {
     selectedFiles.push(fileId)
     function warn(text:string) {
@@ -148,11 +156,8 @@ console.log(leadData);
           Error deleting files
         </Notification>,{placement:'top-center'}
       )
-    }
-    
+    } 
   }
-
-
   const handleShareFiles = async () => {
 
     if (selectedFiles.length === 0 || selectedEmails.length === 0) {
@@ -277,12 +282,12 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
     <div>
        <div className='flex justify-between'>
       <h3 className='mb-5'>Lead-{leadName}</h3>
-      <div>
-  
-      </div>
+      <Button className='' size='sm' variant='solid' onClick={()=>openDialog2()}>
+        Upload Files
+      </Button>
       </div>
       {leadData && leadData.length > 0 ? (
-      <div className="h-screen w-full">
+      <div className="w-full">
       <div className="flex-1 p-4">
       <div className="flex items-center mb-4">
   <nav className="flex">
@@ -352,7 +357,7 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
               <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
                 <div className=' flex justify-center gap-3'> 
 
-                  <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>deleteFiles(item.fileId)} />
+                  <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>openDialog3(item.fileId)} />
                   <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(item.fileId)}/>  
                   </div>
 
@@ -453,10 +458,7 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
     value={leadData.find(file => file.fileId === values.file_id) ? { value: values.file_id, label: values.file_id } : null}
   />
 </FormItem>
-        
-      
       </FormItem>
-
       <Button type="submit" variant='solid'>Share</Button>
     </Form>
   )}
@@ -521,6 +523,82 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
           </Button>
           </div>
             </Dialog>
+
+            <Dialog  isOpen={dialogIsOpen2}
+                className='max-h-[300px]'
+                onClose={onDialogClose2} 
+                onRequestClose={onDialogClose2}>
+                    <h3>Upload Files</h3>
+                    <Formik
+                    initialValues={{
+                      lead_id:leadId,
+                      folder_name:folderName,
+                      files:[]}}
+                    onSubmit={async(values) => {
+                      if(values.files.length===0){
+                        toast.push(
+                          <Notification closable type="warning" duration={2000}>
+                              No files selected for upload
+                          </Notification>,{placement:'top-center'}
+                      )}
+                      else{
+                        console.log(values);
+                        let formData = new FormData();
+                        formData.append('lead_id', values.lead_id || '');
+                        formData.append('folder_name', values.folder_name || '');
+                        for (let i = 0; i < values.files.length; i++) {
+                          formData.append('files', values.files[i]);
+                        }
+                        const response=await apiGetCrmFileManagerCreateLeadFolder(formData)
+                        const responseData=await response.json()
+                        console.log(responseData);
+                        
+                        if(responseData.code===200){
+                          toast.push(
+                            <Notification closable type="success" duration={2000}>
+                                Files uploaded successfully
+                            </Notification>,{placement:'top-center'}
+                        )
+                        window.location.reload()
+                      }
+                    else{
+                      toast.push(
+                        <Notification closable type="danger" duration={2000}>
+                            {responseData.errorMessage}
+                        </Notification>,{placement:'top-center'}
+                    )
+                    }}
+                    }}
+                    >
+                      <Form className='mt-4'>
+                        <FormItem label=''>
+                          <Field name='files'>
+                            {({ field, form }: any) => (
+                              <Upload
+                                onChange={(files: File[], fileList: File[]) => {
+                                  form.setFieldValue('files', files);
+                                }}
+                                multiple
+                              />
+                            )}
+                          </Field>
+                        </FormItem>
+                        <Button variant='solid' type='submit'>Submit</Button>
+                      </Form>
+                    </Formik>
+            </Dialog>
+
+            <ConfirmDialog
+          isOpen={dialogIsOpen3}
+          type="danger"
+          onClose={onDialogClose3}
+          confirmButtonColor="red-600"
+          onCancel={onDialogClose3}
+          onConfirm={() => deleteFiles(fileId)}
+          title="Delete Folder"
+          onRequestClose={onDialogClose3}>
+            <p> Are you sure you want to delete this folder? </p>            
+        </ConfirmDialog>
     </div>
   );
 };

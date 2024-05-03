@@ -5,7 +5,7 @@ import { Button, Dialog, Notification, toast } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import YourFormComponent from './ProjectForm';
 import { FaFolder } from 'react-icons/fa';
-import { StickyFooter } from '@/components/shared';
+import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import { HiTrash } from 'react-icons/hi';
 import { apiDeleteFileManagerFolders } from '@/services/CrmService';
 
@@ -40,6 +40,18 @@ const role=localStorage.getItem('role');
     setIsOpen(false);
   };
 console.log(projectData);
+
+const [dialogIsOpen2, setIsOpen2] = useState(false)
+const [folderName, setFolderName] = useState<string>('')
+
+const openDialog2 = (folder_name:string) => {
+    setIsOpen2(true)
+    setFolderName(folder_name)
+}
+
+const onDialogClose2 = () => {
+    setIsOpen2(false)
+}
 
 
 const deleteFolders = async (folder_name:string) => {
@@ -102,7 +114,7 @@ function formatDate(dateString:string) {
                   No folders available. Click the button above to add folders.
               </p>
           ) : (
-            <div className="h-screen w-full">
+            <div className=" w-full">
             <div className="flex-1 p-4">
             <div className="flex items-center mb-4">
         <nav className="flex">
@@ -178,7 +190,7 @@ function formatDate(dateString:string) {
                     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{Number(item.total_files)>1?`${item.total_files} items`:`${item.total_files} item`}</td>
                     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0"> {(item.updated_date)?formatDate(item.updated_date):"-"}</td>
                     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
-                      <div className=' flex justify-center cursor-pointer' onClick={()=>deleteFolders(item.folder_name)}>
+                      <div className=' flex justify-center cursor-pointer' onClick={()=>openDialog2(item.folder_name)}>
                     <HiTrash className=' text-xl text-center hover:text-red-500'/>
                     </div>
                     </td>
@@ -217,6 +229,18 @@ function formatDate(dateString:string) {
           >
               <YourFormComponent data={projectData} />
           </Dialog>
+
+          <ConfirmDialog
+          isOpen={dialogIsOpen2}
+          type="danger"
+          onClose={onDialogClose2}
+          confirmButtonColor="red-600"
+          onCancel={onDialogClose2}
+          onConfirm={() => deleteFolders(folderName)}
+          title="Delete Folder"
+          onRequestClose={onDialogClose2}>
+            <p> Are you sure you want to delete this folder? </p>            
+        </ConfirmDialog>
       </div>
   )
 };

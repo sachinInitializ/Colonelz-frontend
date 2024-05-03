@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Checkbox, Dialog, Input, Notification, toast } from '@/components/ui';
+import { Button, Checkbox, Dialog, FormItem, Input, Notification, Upload, toast } from '@/components/ui';
 import { StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn, CiImageOn } from 'react-icons/ci';
 import { getTemplateData } from '../data';
 import {  FileItem } from '../type';
-import { apiDeleteFileManagerFiles, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
+import { apiDeleteFileManagerFiles, apiGetCrmFileManagerCreateTemplateFolder, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
 import { HiShare, HiTrash } from 'react-icons/hi';
 import { format, parseISO } from 'date-fns';
+import { Field, Form, Formik } from 'formik';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
@@ -34,6 +35,7 @@ const Index = () => {
   };
 
   const [dialogIsOpen, setIsOpen] = useState(false)
+  const [dialogIsOpen2, setIsOpen2] = useState(false)
 
   const openDialog = (fileId:string) => {
     setIsOpen(true)
@@ -45,6 +47,13 @@ const Index = () => {
   const onDialogClose = () => {
       setIsOpen(false)
   }
+
+  const onDialogClose2 = () => {
+    setIsOpen2(false)
+}
+const openDialog2 = () => {
+    setIsOpen2(true)
+}
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -257,9 +266,9 @@ const Index = () => {
     <div>
         <div className='flex justify-between'>
       <h3 className='mb-5'>Company Data</h3>
-      <div>
-      
-      </div>
+      <Button className='' size='sm' variant='solid' onClick={()=>openDialog2()}>
+        Upload Files
+      </Button>
       </div>
       {leadData && leadData.length > 0 ? (
         
@@ -438,6 +447,74 @@ const Index = () => {
             Share
           </Button>
           </div>
+            </Dialog>
+
+            <Dialog  isOpen={dialogIsOpen2}
+                className='max-h-[300px]'
+                onClose={onDialogClose2} 
+                onRequestClose={onDialogClose2}>
+                    <h3 className=''>Upload Files</h3>
+                    <Formik
+                    initialValues={{
+                      type:"template",
+                      folder_name:type,
+                      sub_folder_name_first:folderName,
+                      sub_folder_name_second:subfolder,
+                      files:[]}}
+                    onSubmit={async(values) => {
+                      if(values.files.length===0){
+                        toast.push(
+                          <Notification closable type="warning" duration={2000}>
+                              No files selected for upload
+                          </Notification>,{placement:'top-center'}
+                      )}
+                      else{
+                        console.log(values);
+                        let formData = new FormData();
+                        formData.append('type', values.type || '');
+                        formData.append('folder_name', values.folder_name || '');
+                        formData.append('sub_folder_name_first', values.sub_folder_name_first || '');
+                        formData.append('sub_folder_name_second', values.sub_folder_name_second || '');
+                        for (let i = 0; i < values.files.length; i++) {
+                          formData.append('files', values.files[i]);
+                        }
+                        const response=await apiGetCrmFileManagerCreateTemplateFolder(formData)
+                        const responseData=await response.json()
+                        console.log(responseData);
+                        
+                        if(responseData.code===200){
+                          toast.push(
+                            <Notification closable type="success" duration={2000}>
+                                Files uploaded successfully
+                            </Notification>,{placement:'top-center'}
+                        )
+                        window.location.reload()
+                      }
+                    else{
+                      toast.push(
+                        <Notification closable type="danger" duration={2000}>
+                            {responseData.errorMessage}
+                        </Notification>,{placement:'top-center'}
+                    )
+                    }}
+                    }}
+                    >
+                      <Form className='mt-4'>
+                        <FormItem label=''>
+                          <Field name='files'>
+                            {({ field, form }: any) => (
+                              <Upload
+                                onChange={(files: File[], fileList: File[]) => {
+                                  form.setFieldValue('files', files);
+                                }}
+                                multiple
+                              />
+                            )}
+                          </Field>
+                        </FormItem>
+                        <Button variant='solid' type='submit'>Submit</Button>
+                      </Form>
+                    </Formik>
             </Dialog>
     </div>
   );

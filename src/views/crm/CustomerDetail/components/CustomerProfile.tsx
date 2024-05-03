@@ -119,7 +119,7 @@ interface ProjectUpdateData {
               Project data updated successfully
           </Notification>
       )
-      window.location.reload()
+      // window.location.reload()
       } else {
         toast.push(
           <Notification closable type="danger" duration={2000}>

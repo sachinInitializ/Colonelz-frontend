@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchProjectData } from '../data';
-import { Button, Checkbox, Dialog, Input, Notification, Segment, Select, toast } from '@/components/ui';
-import { StickyFooter } from '@/components/shared';
+import { Button, Checkbox, Dialog, FormItem, Input, Notification, Segment, Select, Upload, toast } from '@/components/ui';
+import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn, CiImageOn } from 'react-icons/ci';
-import { apiDeleteFileManagerFiles, apiGetCrmFileManagerShareFiles, apiGetCrmProjectShareQuotation } from '@/services/CrmService';
+import { apiDeleteFileManagerFiles, apiGetCrmFileManagerCreateProjectFolder, apiGetCrmFileManagerShareFiles, apiGetCrmProjectShareQuotation } from '@/services/CrmService';
 import { apiGetUsers } from '@/services/CommonService';
 import { HiShare, HiTrash } from 'react-icons/hi';
 import { FolderItem } from '../../type';
 import { format, parseISO } from 'date-fns';
+import { Field, Form, Formik } from 'formik';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
@@ -65,14 +66,15 @@ const Index = () => {
 
   const [dialogIsOpen, setIsOpen] = useState(false)
   const [dialogIsOpen1, setIsOpen1] = useState(false)
+  const [dialogIsOpen2, setIsOpen2] = useState(false)
+  const [dialogIsOpen3, setIsOpen3] = useState(false)
+  const [fileId, setFileId] = useState<string>('')
 
   const openDialog = (fileId:string) => {
     setIsOpen(true)
     setSelectedFiles([fileId])
-    console.log(fileId);
-    
+    console.log(fileId);  
 }
-
   const onDialogClose = () => {
     setIsOpen(false)
 }
@@ -82,6 +84,22 @@ const Index = () => {
   const onDialogClose1 = () => {
       setIsOpen1(false)
   }
+  const openDialog2 = () => {
+      setIsOpen2(true)
+  }
+  const onDialogClose2 = () => {
+      setIsOpen2(false)
+  }
+
+  const openDialog3 = (file_id:string) => {
+    setIsOpen3(true)
+    setFileId(file_id)
+  }
+  
+  const onDialogClose3 = () => {
+    setIsOpen3(false)
+  }
+
 
   
 
@@ -321,17 +339,22 @@ const Index = () => {
     }
   }
 
+  const handleUploadFiles=()=>{
+
+  }
+
   return (
     <div>
         <div className='flex justify-between'>
       <h3 className='mb-5 capitalize'>Project-{ProjectName}</h3>
-      <Button className='' size='sm' variant='solid'>
-        
+      
+      <Button className='' size='sm' variant='solid' onClick={()=>openDialog2()}>
         Upload Files
       </Button>
+     
       </div>
       {leadData && leadData.length > 0 ? (
-      <div className="h-screen w-full">
+      <div className="w-full">
       <div className="flex-1 p-4">
       <div className="flex items-center mb-4">
   <nav className="flex">
@@ -403,7 +426,7 @@ const Index = () => {
               <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
                 <div className=' flex justify-center gap-3'> 
 
-                  <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>deleteFiles(item.fileId)} />
+                  <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>openDialog3(item.fileId)} />
                   <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(item.fileId)}/>  
                   </div>
 
@@ -448,6 +471,9 @@ const Index = () => {
           
         </div>
       </StickyFooter>
+
+
+      {/* Sharefiles Dialogbox */}
       <Dialog
                 isOpen={dialogIsOpen}
                 style={{}}
@@ -502,6 +528,9 @@ const Index = () => {
           </Button>
           </div>
             </Dialog>
+
+
+            {/* ShareFiles For Approval */}
       <Dialog
                 isOpen={dialogIsOpen1}
                 style={{}}
@@ -549,6 +578,85 @@ const Index = () => {
           </Button>
           </div>
             </Dialog>
+
+            {/* UploadFiles */}
+
+            <Dialog  isOpen={dialogIsOpen2}
+                className='max-h-[300px]'
+                onClose={onDialogClose2} 
+                onRequestClose={onDialogClose2}>
+                    <h3>Upload Files</h3>
+                    <Formik
+                    initialValues={{
+                      project_id:leadId,
+                      folder_name:folderName,
+                      files:[]}}
+                    onSubmit={async(values) => {
+                      if(values.files.length===0){
+                        toast.push(
+                          <Notification closable type="warning" duration={2000}>
+                              No files selected for upload
+                          </Notification>,{placement:'top-center'}
+                      )}
+                      else{
+                        console.log(values);
+                        let formData = new FormData();
+                        formData.append('project_id', values.project_id || '');
+                        formData.append('folder_name', values.folder_name || '');
+                        for (let i = 0; i < values.files.length; i++) {
+                          formData.append('files', values.files[i]);
+                        }
+                        const response=await apiGetCrmFileManagerCreateProjectFolder(formData)
+                        const responseData=await response.json()
+                        console.log(responseData);
+                        
+                        if(responseData.code===200){
+                          toast.push(
+                            <Notification closable type="success" duration={2000}>
+                                Files uploaded successfully
+                            </Notification>,{placement:'top-center'}
+                        )
+                        window.location.reload()
+                      }
+                    else{
+                      toast.push(
+                        <Notification closable type="danger" duration={2000}>
+                            {responseData.errorMessage}
+                        </Notification>,{placement:'top-center'}
+                    )
+                    }}
+                    }}
+                    >
+                      <Form>
+                        <FormItem label='mt-4'>
+                          <Field name='files'>
+                            {({ field, form }: any) => (
+                              <Upload
+                                onChange={(files: File[], fileList: File[]) => {
+                                  form.setFieldValue('files', files);
+                                }}
+                                multiple
+                              />
+                            )}
+                          </Field>
+                        </FormItem>
+                        <Button variant='solid' type='submit'>Submit</Button>
+                      </Form>
+                    </Formik>
+            </Dialog>
+
+
+            <ConfirmDialog
+          isOpen={dialogIsOpen3}
+          type="danger"
+          onClose={onDialogClose3}
+          confirmButtonColor="red-600"
+          onCancel={onDialogClose3}
+          onConfirm={() => deleteFiles(fileId)}
+          title="Delete Folder"
+          onRequestClose={onDialogClose3}>
+            <p> Are you sure you want to delete this folder? </p>            
+        </ConfirmDialog>
     </div>
   );
 };

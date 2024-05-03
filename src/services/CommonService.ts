@@ -12,12 +12,7 @@ export async function apiGetNotification(userId: string | null) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}` 
         }
-    });
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
+    });    
     return response.json();
 }
 

@@ -82,7 +82,6 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
   };
 
   const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [selectedStatus, setSelectedStatus] = useState<ValueType<{ value: string; label: string }>>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const navigate = useNavigate();
 
@@ -95,22 +94,11 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     { value: 'executing', label: 'Executing' },
   ];
 
-  const handleStatusChange = (selectedOption: ValueType<{ value: string; label: string }>) => {
-    setSelectedStatus(selectedOption);
-    setFormData({
-      ...formData,
-      status: selectedOption ? (selectedOption as { value: string; label: string }).value : '',
-    });
-    setErrors({
-      ...errors,
-      status: '',
-    });
-  };
 
   const handleDateChange = (date: Date | null, fieldName: string) => {
     setFormData({
         ...formData,
-        [fieldName]: date ? format(date, 'MM-dd-yyyy') : null,
+        [fieldName]: date ? `${date}` : null,
     })
     setErrors({
         ...errors,
@@ -196,15 +184,15 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
       setErrors(validationErrors);
       return;
     }
+console.log(formData);
 
     try {
-      // Assuming you have an API endpoint for creating projects
       const response = await apiGetCrmCreateLeadToProject(formData);
 
       if (response.ok) {
         closeAfter2000ms('success', 'Project created successfully');
-        // navigate("/app/crm/projectslist");
-        // window.location.reload()
+        navigate("/app/crm/projectslist");
+        window.location.reload()
       } else {
         const errorResponse = await response.json();
         const errorMessage = errorResponse.errorMessage || 'Unknown error';
@@ -293,12 +281,6 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
             <FormItem label="Project Start Date">
     <DatePicker
         size="md"
-        selected={
-            formData.project_start_date
-                ? new Date(formData.project_start_date)
-                : null
-        }
-        dateFormat="MM/dd/yyyy"
         onChange={(date) =>
             handleDateChange(date, 'project_start_date')
         }
@@ -312,12 +294,6 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
 <FormItem label="Timeline Date">
     <DatePicker
         size="md"
-        selected={
-            formData.timeline_date
-                ? new Date(formData.timeline_date)
-                : null
-        }
-        dateFormat="MM/dd/yyyy"
         onChange={(date) =>
             handleDateChange(date, 'timeline_date')
         }

@@ -28,7 +28,6 @@ interface FormValues {
 }
 
 const validationSchema = Yup.object().shape({
-    client: Yup.string().required('Required'),
     project_name: Yup.string().required('Required'),
     site_address: Yup.string().required('Required'),
     date: Yup.date().required('Required'),
@@ -127,6 +126,29 @@ const Index = () => {
 
                     <Form className="">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <FormItem label="Type">
+                              <Field name="type">
+                                  {({ field, form }: FieldProps) => (
+                                      <Select
+                                          options={typeOptions}
+                                          value={typeOptions.find(option => option.value === field.value)}
+                                          onChange={(option) => {
+                                              if (option) {
+                                                  form.setFieldValue(field.name, option.value);
+                                              } else {
+                                                  form.setFieldValue(field.name, '');
+                                              }
+                                          }}
+                                      />
+                                  )}
+                              </Field>
+                              <ErrorMessage
+                                  name="type"
+                                  component="div"
+                                  className=" text-red-600"
+                              />
+                          </FormItem>
+                          {values.type==="commercial"&&(
                             <FormItem label="Client">
                                 <Field
                                     component={Input}
@@ -139,7 +161,7 @@ const Index = () => {
                                     component="div"
                                     className=" text-red-600"
                                 />
-                            </FormItem>
+                            </FormItem>)}
                             <FormItem label="Client Email">
                                 <Field name="client_email">
                                     {({ field, form }: FieldProps) => (
@@ -234,28 +256,7 @@ const Index = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
-                            <FormItem label="Type">
-                              <Field name="type">
-                                  {({ field, form }: FieldProps) => (
-                                      <Select
-                                          options={typeOptions}
-                                          value={typeOptions.find(option => option.value === field.value)}
-                                          onChange={(option) => {
-                                              if (option) {
-                                                  form.setFieldValue(field.name, option.value);
-                                              } else {
-                                                  form.setFieldValue(field.name, '');
-                                              }
-                                          }}
-                                      />
-                                  )}
-                              </Field>
-                              <ErrorMessage
-                                  name="type"
-                                  component="div"
-                                  className=" text-red-600"
-                              />
-                          </FormItem>
+                           
                             <FormItem label="Site Address">
                                 <Field
                                     component={Input}

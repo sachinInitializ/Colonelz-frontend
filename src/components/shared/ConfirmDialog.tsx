@@ -82,7 +82,7 @@ const ConfirmDialog = (props: ConfirmDialogProps) => {
         onCancel,
         onConfirm,
         cancelText = 'Cancel',
-        confirmText = 'Update',
+        confirmText = 'Confirm',
         confirmButtonColor,
         ...rest
     } = props

@@ -6,13 +6,14 @@ import type { MouseEvent } from 'react'
 import YourFormComponent from './LeadForm';
 import { FaFolder, FaRegFolder } from 'react-icons/fa';
 import { useTheme } from '@emotion/react';
-import { StickyFooter } from '@/components/shared';
+import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import { apiDeleteFileManagerFolders, apiGetCrmFileManagerLeads } from '@/services/CrmService';
 import LeadDataContext from './LeadDataContext';
 import Indexe from './Folders';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { HiTrash } from 'react-icons/hi';
 import { format, isValid, parse, parseISO } from 'date-fns';
+import { CgDanger } from 'react-icons/cg';
 
 const Index = () => {
     const [leadData, setLeadData] = useState<FolderItem[]>([]);
@@ -33,6 +34,18 @@ const Index = () => {
   
       fetchDataAndLog();
     }, []);
+
+    const [dialogIsOpen2, setIsOpen2] = useState(false)
+    const [folderName, setFolderName] = useState<string>('')
+
+    const openDialog2 = (folder_name:string) => {
+        setIsOpen2(true)
+        setFolderName(folder_name)
+    }
+
+    const onDialogClose2 = () => {
+        setIsOpen2(false)
+    }
 
     const deleteFolders = async (folder_name:string) => {
       function warn(text:string) {
@@ -104,7 +117,7 @@ function formatDate(dateString:string) {
           </div>
         
 
-          <div className="h-screen w-full">
+          <div className=" w-full">
       <div className="flex-1 p-4">
       <div className="flex items-center mb-4">
   <nav className="flex">
@@ -180,8 +193,7 @@ function formatDate(dateString:string) {
               {formatDate(item.updated_date)}
                 </td>
               <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
-                <div className=' flex justify-center cursor-pointer' onClick={()=>deleteFolders(item.folder_name
-                )}>
+                <div className=' flex justify-center cursor-pointer' onClick={()=>openDialog2(item.folder_name)}>
               <HiTrash className=' text-xl text-center hover:text-red-500'/>
               </div>
               </td>
@@ -218,6 +230,17 @@ function formatDate(dateString:string) {
           >
               <YourFormComponent data={leadData} />
           </Dialog>
+          <ConfirmDialog
+          isOpen={dialogIsOpen2}
+          type="danger"
+          onClose={onDialogClose2}
+          confirmButtonColor="red-600"
+          onCancel={onDialogClose2}
+          onConfirm={() => deleteFolders(folderName)}
+          title="Delete Folder"
+          onRequestClose={onDialogClose2}>
+            <p> Are you sure you want to delete this folder? </p>            
+        </ConfirmDialog>
           
       </div>
   )
