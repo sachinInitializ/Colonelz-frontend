@@ -164,8 +164,13 @@ function formatDate(dateString:string) {
             
           <tbody className="[&amp;_tr:last-child]:border-0">
           {leadData.map((item) => 
+          {
+            // If the folder is 'contract' and the user is not an admin or senior architect, skip rendering this item
+            if (item.folder_name === 'contract' && (role==='ADMIN' || role==='SENIOR ARCHITECT')) {
+              return null;
+            }
             
-            (
+           return (
             <tr key={item.folder_name} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
               <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                 <div className="flex items-center gap-2">
@@ -201,7 +206,8 @@ function formatDate(dateString:string) {
               <HiTrash className=' text-xl text-center hover:text-red-500'/>
               </div>
               </td>
-            </tr>))}
+            </tr>)
+})}
           
           </tbody>
 
