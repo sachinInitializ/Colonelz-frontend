@@ -3,7 +3,7 @@ import React, { SyntheticEvent, useEffect, useState } from 'react'
 import makeAnimated from 'react-select/animated'
 import { Formik, Field, Form, ErrorMessage, FieldProps, useFormikContext, FormikProps } from 'formik'
 import * as Yup from 'yup'
-import { Button, Checkbox, DatePicker, FormItem, Input, InputGroup, Select } from '@/components/ui'
+import { Button, Checkbox, DatePicker, FormItem, Input, InputGroup, Notification, Select, toast } from '@/components/ui'
 import { useLocation } from 'react-router-dom'
 import { apiGetCrmProjectMakeContract } from '@/services/CrmService'
 import CreatableSelect from 'react-select/creatable'
@@ -89,13 +89,28 @@ const Index = () => {
         
         const response = await apiGetCrmProjectMakeContract(values)
         const responseData = await response.json()
+        if(responseData.code===200){
         window.open(responseData.data, '_blank')
         console.log(responseData)
-        console.log(values)
+        console.log(values)}
+        else{
+            toast.push(
+                <Notification closable type="danger" duration={2000}>
+                    {responseData.errorMessage}
+                </Notification>,{placement:'top-center'}
+            )
+        }
     }
+
+    const location = useLocation()
+    const queryParams = new URLSearchParams(location.search)
+    const lead_id = queryParams.get('lead_id')
+    const userId=localStorage.getItem('userId')
     return (
         <Formik
         initialValues={{
+            lead_id:lead_id,
+            user_id:userId ,
             project_type: '',
             contract_type: '',
             client_email: [],

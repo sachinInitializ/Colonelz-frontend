@@ -191,7 +191,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
 
           
                 const response = await axios.post(
-                    'https://colonelz-back.prod.initz.run/v1/api/admin/create/project/',
+                    'http://localhost:8000/v1/api/admin/create/project/',
                     formData,
                     {
                         headers: {

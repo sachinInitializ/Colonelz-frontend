@@ -203,7 +203,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
             const momId = rowData.mom_id;
             
             const response = await fetch(
-              `https://colonelz-back.prod.initz.run/v1/api/admin/send/momdata`,
+              `http://localhost:8000/v1/api/admin/send/momdata`,
               {
                 method: 'POST',
                 headers: {
@@ -259,7 +259,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
               <h2 className="text-2xl font-bold">Meeting Details</h2>
               <span>
               <Dropdown renderTitle={Toggle} placement='bottom-end'>
-              <a href={`https://colonelz-back.prod.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`} target='_blank' rel='noreferrer' 
+              <a href={`http://localhost:8000/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`} target='_blank' rel='noreferrer' 
                         
                     >
                         

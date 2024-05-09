@@ -107,7 +107,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
       });
   
       const response = await axios.post(
-        'https://colonelz-back.prod.initz.run/v1/api/admin/create/project/',
+        'http://localhost:8000/v1/api/admin/create/project/',
         formDataToSend,
         {
           headers: {

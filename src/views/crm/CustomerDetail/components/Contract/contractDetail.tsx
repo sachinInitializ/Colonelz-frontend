@@ -360,7 +360,7 @@ const ContractDetails=(data : FileItemProps )=> {
         <div>
         <div className=' flex justify-end mb-4 gap-3'>
             <Button variant='solid' size='sm' onClick={()=>openDialog()} >Share to Client</Button>
-            <Button variant='solid' size='sm' onClick={()=>navigate(`/app/crm/contract`)}>Create Contract</Button>
+            <Button variant='solid' size='sm' onClick={()=>navigate(`/app/crm/contract?lead_id=${leadId}`)}>Create Contract</Button>
     </div>
     {table.getRowModel().rows.length > 0 ? (
     <Table>

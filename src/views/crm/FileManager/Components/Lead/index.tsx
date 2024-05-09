@@ -21,6 +21,7 @@ const Index = () => {
     const queryParams = new URLSearchParams(location.search);
     const leadId = queryParams.get('lead_id');
     const leadName = queryParams.get('lead_name');
+    const role=localStorage.getItem('role')
     useEffect(() => {
       const fetchDataAndLog = async () => {
         try {
@@ -162,7 +163,9 @@ function formatDate(dateString:string) {
            
             
           <tbody className="[&amp;_tr:last-child]:border-0">
-          {leadData.map((item) => (
+          {leadData.map((item) => 
+            
+            (
             <tr key={item.folder_name} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
               <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
                 <div className="flex items-center gap-2">
@@ -193,6 +196,7 @@ function formatDate(dateString:string) {
               {formatDate(item.updated_date)}
                 </td>
               <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
+               
                 <div className=' flex justify-center cursor-pointer' onClick={()=>openDialog2(item.folder_name)}>
               <HiTrash className=' text-xl text-center hover:text-red-500'/>
               </div>
