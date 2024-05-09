@@ -8,6 +8,7 @@ import Search from '@/components/template/Search'
 import MobileNav from '@/components/template/MobileNav'
 import HorizontalNav from '@/components/template/HorizontalNav'
 import View from '@/views'
+import { UserDetailsProvider } from '@/views/Context/userdetailsContext'
 
 const HeaderActionsStart = () => {
     return (
@@ -25,7 +26,9 @@ const HeaderActionsEnd = () => {
 
             <Notification />
             <SidePanel />
+            <UserDetailsProvider>
             <UserDropdown hoverable={false} />
+            </UserDetailsProvider>
         </>
     )
 }

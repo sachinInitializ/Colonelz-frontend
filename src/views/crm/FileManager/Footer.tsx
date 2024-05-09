@@ -16,7 +16,7 @@ const Footer = () => {
                       className="ltr:mr-3 rtl:ml-3"
                       type="button"
                       onClick={() => {
-                          navigate(-1)
+                          navigate('/app/crm/fileManager')
                       }}
                   >
                       Back

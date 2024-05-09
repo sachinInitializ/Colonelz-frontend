@@ -453,7 +453,7 @@ const Index = () => {
             className="ltr:mr-3 rtl:ml-3"
             type="button"
             onClick={() => {
-            navigate(-1)
+            navigate(`/app/crm/fileManager/project?project_id=${leadId}&project_name=${ProjectName}`)
             }}
           >
             Back
@@ -484,8 +484,8 @@ const Index = () => {
             >
               <h3 className='mb-5'>Share Files</h3>
 
-          <CreatableSelect
-          
+          <Select
+          componentAs={CreatableSelect}
     isMulti
     value={selectedEmails.map((email) => ({ label: email, value: email }))}
     
@@ -502,7 +502,7 @@ const Index = () => {
 
 <div className='mt-4'>
           <label className='block text-sm font-medium text-gray-700'>Subject</label>
-          <input
+          <Input
             type='text'
             className='mt-1 p-2 w-full border rounded-md'
             value={subject}
@@ -543,7 +543,8 @@ const Index = () => {
                <div className=' '>
               
   
-              <CreatableSelect
+              <Select
+              componentAs={CreatableSelect}
                options={usernames.map((username) => ({ label: username, value: username }))}
                value={selectedUsername ? { label: selectedUsername, value: selectedUsername } : null}
                placeholder="Add a username..."
@@ -628,7 +629,7 @@ const Index = () => {
                     }}
                     >
                       <Form>
-                        <FormItem label='mt-4'>
+                        <FormItem label='Files' className='mt-4'>
                           <Field name='files'>
                             {({ field, form }: any) => (
                               <Upload
@@ -655,7 +656,7 @@ const Index = () => {
           onConfirm={() => deleteFiles(fileId)}
           title="Delete Folder"
           onRequestClose={onDialogClose3}>
-            <p> Are you sure you want to delete this folder? </p>            
+            <p> Are you sure you want to delete this file? </p>            
         </ConfirmDialog>
     </div>
   );

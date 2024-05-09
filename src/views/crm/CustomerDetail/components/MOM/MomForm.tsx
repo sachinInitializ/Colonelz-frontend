@@ -188,7 +188,7 @@ const YourFormComponent: React.FC = () => {
             )
 
             const response = await fetch(
-                'https://colonelz.test.psi.initz.run/v1/api/admin/create/mom/',
+                'https://colonelz-back.prod.initz.run/v1/api/admin/create/mom/',
                 {
                     headers:{
                         Authorization: `Bearer ${localStorage.getItem('auth')}`
@@ -228,9 +228,9 @@ const YourFormComponent: React.FC = () => {
                     <div className="grid grid-cols-3 gap-5">
                         <FormItem label="Client's Name">
                             
-                            <CreatableSelect
-                            
+                            <Select
                                 isMulti
+                                componentAs={CreatableSelect}
                                 options={clientOptions}
                                 onChange={(selectedOption) =>
                                     handleSelectChange(
@@ -247,8 +247,9 @@ const YourFormComponent: React.FC = () => {
                         </FormItem>
                         <FormItem label="Organised By">
                             {/* Use CreatableSelect to allow selecting or creating a new client name */}
-                            <CreatableSelect
+                            <Select
                                 isMulti
+                                componentAs={CreatableSelect}
                                 options={organisorOptions}
                                 onChange={(selectedOption) =>
                                     handleSelectChange(
@@ -264,8 +265,9 @@ const YourFormComponent: React.FC = () => {
                             )}
                         </FormItem>
                         <FormItem label="Designer's Name">
-                            <CreatableSelect
+                            <Select
                                 isMulti
+                                componentAs={CreatableSelect}
                                 options={architectOptions}
                                 onChange={(selectedOption) =>
                                     handleSelectChange(
@@ -282,8 +284,9 @@ const YourFormComponent: React.FC = () => {
                         </FormItem>
                         <FormItem label="Others">
                             {/* Use CreatableSelect to allow selecting or creating a new client name */}
-                            <CreatableSelect
+                            <Select
                                 isMulti
+                                componentAs={CreatableSelect}
                                 options={consultant_nameOptions}
                                 onChange={(selectedOption) =>
                                     handleSelectChange(
@@ -301,7 +304,6 @@ const YourFormComponent: React.FC = () => {
                         {/* Add similar FormItem and Select components for other fields */}
                         <FormItem label="Date">
                             <DatePicker
-                            size='sm'
                                 selected={
                                     formData.meetingDate
                                         ? new Date(formData.meetingDate)
@@ -310,7 +312,8 @@ const YourFormComponent: React.FC = () => {
                                 onChange={(date) =>
                                     handleInputChange(
                                         'meetingDate',
-                                        date.toISOString(),
+                                        date?
+                                        date.toISOString():"",
                                     )
                                 }
                             />
@@ -331,7 +334,7 @@ const YourFormComponent: React.FC = () => {
                                 onChange={(selectedOption) =>
                                     handleInputChange(
                                         'location',
-                                        selectedOption.value,
+                                        selectedOption?selectedOption.value:"",
                                     )
                                 }
                             />

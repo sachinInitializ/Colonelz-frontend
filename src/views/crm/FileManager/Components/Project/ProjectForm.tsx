@@ -1,4 +1,4 @@
-import { Button, FormItem, Notification, Upload, toast } from '@/components/ui';
+import { Button, FormItem, Notification, Select, Upload, toast } from '@/components/ui';
 import React, { useState } from 'react';
 import { HiOutlineCloudUpload } from 'react-icons/hi';
 import { useLocation } from 'react-router-dom';
@@ -125,8 +125,9 @@ const clientOptions: Option[] = uniqueFolderNames
     <form onSubmit={handleSubmit} className=' overflow-y-auto h-[300px] ' style={{scrollbarWidth:'none'}}>
      <h3 className='mb-5'>Project File Upload</h3>
       <div className='mb-5'>
-        <CreatableSelect
+        <Select
         name='folder_name'
+        componentAs={CreatableSelect}
           options={clientOptions}
           onChange={(selectedOption) =>
             handleSelectChange(selectedOption, 'folder_name')

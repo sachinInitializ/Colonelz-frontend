@@ -20,9 +20,7 @@ import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-ta
 import type { InputHTMLAttributes } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getLeadData } from './data'
-import { Select } from '@/components/ui'
-import { GoProjectRoadmap } from 'react-icons/go'
-import { FaUser } from 'react-icons/fa'
+import { Select } from '@/components/ui'    
 import { useData } from '../FileManagerContext/FIleContext'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
@@ -70,15 +68,12 @@ function DebouncedInput({
     )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    // Rank the item
+  
     const itemRank = rankItem(row.getValue(columnId), value)
     addMeta({
         itemRank,
     })
-
-    // Return if the item should be filtered in/out
     return itemRank.passed
 }
 type Option = {

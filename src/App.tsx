@@ -7,6 +7,7 @@ import Layout from '@/components/layouts'
 import mockServer from './mock'
 import appConfig from '@/configs/app.config'
 import './locales'
+import { UserDetailsProvider } from './views/Context/userdetailsContext'
 
 const environment = process.env.NODE_ENV
 
@@ -20,7 +21,9 @@ function App() {
             <PersistGate loading={null} persistor={persistor}>
                 <BrowserRouter>
                     <Theme>
+           
                         <Layout />
+        
                     </Theme>
                 </BrowserRouter>
             </PersistGate>

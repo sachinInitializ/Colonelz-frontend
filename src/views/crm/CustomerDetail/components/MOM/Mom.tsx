@@ -6,7 +6,6 @@ import {
     getExpandedRowModel,
     flexRender,
 } from '@tanstack/react-table'
-import {  projectId } from './data'
 import { HiOutlineChevronRight, HiOutlineChevronDown } from 'react-icons/hi'
 import type { ApiResponse, MomData } from './data'
 import type { ColumnDef, Row, ColumnSort } from '@tanstack/react-table'
@@ -105,6 +104,7 @@ function ReactTable({
 
     const location = useLocation()
     const { leadData, client } = useMomContext();
+    const projectId = new URLSearchParams(location.search).get('project_id')
     const [sorting, setSorting] = useState<ColumnSort[]>([])
     const table = useReactTable({
         data: leadData || [],
@@ -192,47 +192,18 @@ function ReactTable({
 }
 
 const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
+    const location=useLocation()
+    const projectId = new URLSearchParams(location.search).get('project_id')
 
     const rowData = row.original
     const files = Array.isArray(rowData.files) ? rowData.files : []
-    const viewMom = async() => {
-       try{
-        const response=await fetch(`https://colonelz.test.psi.initz.run/v1/api/admin/get/momdata?project_id=${projectId}&mom_id=${rowData.mom_id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/pdf',
-                Authorization: `Bearer ${localStorage.getItem('auth')}`,
-            },
-        })
-        if (!response.ok) {
-            throw new Error('Failed to fetch MOM data');
-        }
-
-        // Read the response as blob (Binary Large Object)
-        
-        const pdfBlob = await response.blob();
-        console.log(pdfBlob)
-
-        // Create a URL for the PDF blob
-        const pdfUrl = URL.createObjectURL(pdfBlob);
-
-        // Open the PDF in a new tab
-        window.open(pdfUrl, '_blank');
-       }
-       catch(error){
-              console.error('Error viewing MOM:', error)
-              alert(
-                'An error occurred while viewing MOM. Please try again later.',
-              )
-         }
-    }
     const handleShareMOM = async () => {
         try {
             const project_id:any = projectId;
             const momId = rowData.mom_id;
             
             const response = await fetch(
-              `https://colonelz.test.psi.initz.run/v1/api/admin/send/momdata`,
+              `https://colonelz-back.prod.initz.run/v1/api/admin/send/momdata`,
               {
                 method: 'POST',
                 headers: {
@@ -288,7 +259,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
               <h2 className="text-2xl font-bold">Meeting Details</h2>
               <span>
               <Dropdown renderTitle={Toggle} placement='bottom-end'>
-              <a href={`https://colonelz.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`} target='_blank' rel='noreferrer' 
+              <a href={`https://colonelz-back.prod.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`} target='_blank' rel='noreferrer' 
                         
                     >
                         

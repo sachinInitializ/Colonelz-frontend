@@ -165,7 +165,7 @@ const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-point
               <h2 className="text-2xl font-bold">Meeting Details</h2>
               <span>
               <Dropdown renderTitle={Toggle} placement='bottom-end'>
-              <a href={`https://colonelz.test.psi.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`} target='_blank' rel='noreferrer' 
+              <a href={`https://colonelz-back.prod.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`} target='_blank' rel='noreferrer' 
                         
                     >
                         
@@ -177,7 +177,7 @@ const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-point
               <div>
                 <div className='flex gap-1 items-center'>
                 <p className="text-gray-500 dark:text-gray-400 font-semibold text-lg">Location: </p>
-                <p className=' text-base'>{rowData.location}</p>
+                <p className=' text-base'>{highlightText(getNames(rowData.location))}</p>
                 </div>
                 <div className='flex gap-1 items-center'>
                 <p className="text-gray-500 dark:text-gray-400 font-semibold text-lg">Date: </p>

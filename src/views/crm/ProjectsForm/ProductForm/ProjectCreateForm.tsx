@@ -181,7 +181,7 @@ const FileUploadForm: React.FC = () => {
             })
 
             const response = await fetch(
-                'https://colonelz.test.psi.initz.run/v1/api/admin/create/project/',
+                'https://colonelz-back.prod.initz.run/v1/api/admin/create/project/',
                 {
                     method: 'POST',
                     body: formDataToSend,

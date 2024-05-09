@@ -7,7 +7,7 @@ import type { MouseEvent } from 'react';
 import YourFormComponent from '../../TemplateForm';
 import Footer from '@/views/crm/FileManager/Footer';
 import { HiTrash } from 'react-icons/hi';
-import { ConfirmDialog } from '@/components/shared';
+import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import { apiDeleteFileManagerFolders } from '@/services/CrmService';
 
 const Index = () => {
@@ -212,7 +212,25 @@ const deleteFolders = async (folder_name:string) => {
           ) : (
              <p>No folders available. Click the button above to add folders.</p>
           )}
-         <Footer/>
+           <StickyFooter
+        className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
+        stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+      >
+        <div className="md:flex items-center">
+          <Button
+            size="sm"
+            className="ltr:mr-3 rtl:ml-3"
+            type="button"
+            onClick={() => {
+            navigate(`/app/crm/fileManager/project/templates/commercial`)
+            }}
+          >
+            Back
+          </Button>
+
+          
+        </div>
+      </StickyFooter>
           <Dialog
               isOpen={dialogIsOpen}
               onClose={onDialogClose}

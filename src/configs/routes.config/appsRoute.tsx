@@ -246,6 +246,27 @@ const appsRoute: Routes = [
         authority: ["ADMIN","Senior Architect"],
        
     },
+    {
+        key: 'appsCrm.customerDetails',
+        path: `${APP_PREFIX_PATH}/crm/pdf`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/Contract/pdf')),
+        authority: ["ADMIN","Senior Architect"],
+       
+    },
+    {
+        key: 'appsCrm.customerDetails',
+        path: `${APP_PREFIX_PATH}/crm/pdf2`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/Contract/pdf')),
+        authority: ["ADMIN","Senior Architect"],
+       
+    },
+    {
+        key: 'appsCrm.customerDetails',
+        path: `${APP_PREFIX_PATH}/crm/pdf1`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/Contract/Mycomponent')),
+        authority: ["ADMIN","Senior Architect"],
+       
+    },
   
     {
         key: 'appsSales.allmom',

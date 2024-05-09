@@ -110,7 +110,7 @@ const Filtering = ( {quotation_type,quotation_id,project_id}) => {
       if (projectId) {
         const fetchData = async () => {
           try {
-            const response = await fetch(`https://colonelz.test.psi.initz.run/v1/api/admin/getsingle/quotation/?project_id=${projectId}&quotation_id=${quotation_id}&type=${quotation_type}`);
+            const response = await fetch(`https://colonelz-back.prod.initz.run/v1/api/admin/getsingle/quotation/?project_id=${projectId}&quotation_id=${quotation_id}&type=${quotation_type}`);
             const data = await response.json();
             setMainQuotationData(data);
           } catch (error) {

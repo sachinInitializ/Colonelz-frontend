@@ -263,18 +263,13 @@ const LeadForm: React.FC = () => {
                 </div>
                 <div>
                 <FormItem label="Source">
-                    <Select
-                        options={optionsSource}
-                        value={optionsSource.find(
-                            (option) => option.value === formData.source,
-                        )}
-                        onChange={(selectedOption) =>
-                            selectedOption && handleInputChange(
-                                'source',
-                                selectedOption.value,
-                            )
-                        }
-                    />
+                  <Input
+                  value={formData.source}
+                  onChange={(e)=>{
+                    handleInputChange('source', e.target.value)
+                  }}/>
+                  
+                    
                 </FormItem>
                 </div>
                 

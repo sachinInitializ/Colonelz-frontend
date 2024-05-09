@@ -12,6 +12,7 @@ export default defineConfig({
       ]
     }
   }),
+  
   dynamicImport()],
   assetsInclude: ['**/*.md'],
   resolve: {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Dialog, FormItem, Input, Notification, Upload, toast } from '@/components/ui';
-import { StickyFooter } from '@/components/shared';
+import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn, CiImageOn } from 'react-icons/ci';
 import { getTemplateData } from '../data';
@@ -36,6 +36,8 @@ const Index = () => {
 
   const [dialogIsOpen, setIsOpen] = useState(false)
   const [dialogIsOpen2, setIsOpen2] = useState(false)
+  const [dialogIsOpen3, setIsOpen3] = useState(false)
+  const [fileId, setFileId] = useState<string>('')
 
   const openDialog = (fileId:string) => {
     setIsOpen(true)
@@ -53,6 +55,15 @@ const Index = () => {
 }
 const openDialog2 = () => {
     setIsOpen2(true)
+}
+
+const openDialog3 = (file_id:string) => {
+  setIsOpen3(true)
+  setFileId(file_id)
+}
+
+const onDialogClose3 = () => {
+  setIsOpen3(false)
 }
 
   useEffect(() => {
@@ -357,7 +368,7 @@ const openDialog2 = () => {
                 <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
                   <div className=' flex justify-center gap-3'> 
   
-                    <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>deleteFiles(file.fileId)} />
+                  <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>openDialog3(file.fileId)} />
                     <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(file.fileId)}/>  
                     </div>
   
@@ -384,7 +395,7 @@ const openDialog2 = () => {
             className="ltr:mr-3 rtl:ml-3"
             type="button"
             onClick={() => {
-            navigate(-1)
+            navigate(`/app/crm/fileManager/project/templates/${type==="company data"?"miscellaneous":`${type}`}/subfolder?type=${type}&folder=${folderName}`)
             }}
           >
             Back
@@ -516,6 +527,19 @@ const openDialog2 = () => {
                       </Form>
                     </Formik>
             </Dialog>
+
+            
+            <ConfirmDialog
+          isOpen={dialogIsOpen3}
+          type="danger"
+          onClose={onDialogClose3}
+          confirmButtonColor="red-600"
+          onCancel={onDialogClose3}
+          onConfirm={() => deleteFiles(fileId)}
+          title="Delete Folder"
+          onRequestClose={onDialogClose3}>
+            <p> Are you sure you want to delete this file? </p>            
+        </ConfirmDialog>
     </div>
   );
 };

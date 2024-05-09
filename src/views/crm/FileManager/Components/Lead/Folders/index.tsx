@@ -385,7 +385,7 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
             className="ltr:mr-3 rtl:ml-3"
             type="button"
             onClick={() => {
-            navigate(-1)
+            navigate(`/app/crm/fileManager/leads?lead_id=${leadId}&lead_name=${leadName}`)
             }}
           >
             Back
@@ -475,11 +475,11 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
 
     
 
-          <CreatableSelect
+          <Select
           
     isMulti
     value={selectedEmails.map((email) => ({ label: email, value: email }))}
-    
+    componentAs={CreatableSelect}
     placeholder="Add email addresses..."
     onChange={(newValues) => {
       const emails = newValues ? newValues.map((option) => option.value) : [];
@@ -495,7 +495,7 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
 
 <div className='mt-4'>
           <label className='block text-sm font-medium text-gray-700'>Subject</label>
-          <input
+          <Input
           required
             type='text'
             className='mt-1 p-2 w-full border rounded-md'
@@ -597,7 +597,7 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
           onConfirm={() => deleteFiles(fileId)}
           title="Delete Folder"
           onRequestClose={onDialogClose3}>
-            <p> Are you sure you want to delete this folder? </p>            
+            <p> Are you sure you want to delete this file? </p>            
         </ConfirmDialog>
     </div>
   );

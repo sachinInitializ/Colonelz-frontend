@@ -10,9 +10,9 @@ import { FiActivity } from 'react-icons/fi'
 import type { CommonProps } from '@/@types/common'
 import { AiOutlineUser, AiOutlineUserAdd, AiOutlineUserSwitch } from 'react-icons/ai'
 import { FaUser } from 'react-icons/fa'
-import { useEffect, useState } from 'react'
-import { apiGetUserData } from '@/services/CommonService'
+import { useContext, useEffect, useState } from 'react'
 import { ProfileFormModel } from '@/views/crm/Profile/profile'
+import { UserDetailsContext } from '@/views/Context/userdetailsContext'
 
 type DropdownList = {
     label: string
@@ -50,24 +50,13 @@ const dropdownItemList: DropdownList[] = [
 
 const _UserDropdown = ({ className }: CommonProps) => {
     const role=localStorage.getItem('role')
-    const [data, setData] = useState<ProfileFormModel>()
+    const data=useContext(UserDetailsContext)
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userData = await apiGetUserData(localStorage.getItem('userId'));
-                console.log(userData);
-                setData(userData.data);  
-            } catch (error) {
-                console.error('Error fetching lead data', error);
-            }
-        };
-    
-        fetchUserData();
-    }, []);
-    const { avatar, userName, authority, email } = useAppSelector(
+
+    const {  authority, email } = useAppSelector(
         (state) => state.auth.user
     )
+console.log(data);
 
     const { signOut } = useAuth()
 
@@ -92,10 +81,8 @@ const _UserDropdown = ({ className }: CommonProps) => {
             >
                 <Dropdown.Item variant="header">
                     <div className="py-2 px-3 flex items-center gap-2">
-                  
                         <div>
                             <div className="font-bold text-gray-900 dark:text-gray-100">
-                                {userName}
                             </div>
                             <div className="text-xs">{email}</div>
                         </div>

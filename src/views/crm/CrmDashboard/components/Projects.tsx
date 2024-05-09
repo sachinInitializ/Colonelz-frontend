@@ -31,6 +31,7 @@ const Project = ({  className }: LeadsProps) => {
         client_name:string
         client_email:string
         client_contact:string
+        designer:string
     }
     interface Data {
        project_name:string
@@ -38,6 +39,7 @@ const Project = ({  className }: LeadsProps) => {
        project_status:string
        project_id:string
        client:client[]
+       project_updated_by:client[]
        timeline_date:string
       }
  

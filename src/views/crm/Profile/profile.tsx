@@ -24,9 +24,10 @@ import type { OptionProps, ControlProps } from 'react-select'
 import type { FormikProps, FieldInputProps, FieldProps } from 'formik'
 import FormRow from '@/views/account/Settings/components/FormRow'
 import { use } from 'i18next'
-import { useEffect, useState } from 'react'
-import { addProfilePhoto, apiGetUserData } from '@/services/CommonService'
+import { useContext, useEffect, useState } from 'react'
+import { addProfilePhoto } from '@/services/CommonService'
 import { RiEdit2Line } from 'react-icons/ri'
+import { UserDetailsContext } from '@/views/Context/userdetailsContext'
 
 export type ProfileFormModel = {
     username: string
@@ -112,22 +113,7 @@ const CustomControl = ({
 const Profile = ({
   
 }: ProfileProps) => {
-
-    const [data, setData] = useState<ProfileFormModel>()
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userData = await apiGetUserData(localStorage.getItem('userId'));
-                console.log(userData);
-                setData(userData.data);  
-            } catch (error) {
-                console.error('Error fetching lead data', error);
-            }
-        };
-    
-        fetchUserData();
-    }, []);
+    const data = useContext(UserDetailsContext);
     const [avatarUrl, setAvatarUrl] = useState<string | undefined>(data?.avatar);
     const onSetFormFile = (
         form: FormikProps<ProfileFormModel>,
@@ -149,7 +135,6 @@ const Profile = ({
         formData.append('file', values.avatar); 
     
         const response = await addProfilePhoto(formData); 
-        console.log('response', response);
         setAvatarUrl(data?.avatar);
         toast.push(<Notification title={'Profile updated'} type="success" />, {
             placement: 'top-center',
@@ -205,18 +190,21 @@ const Profile = ({
                     className="relative group cursor-pointer"
                     onClick={() => document.getElementById('avatarInput')?.click()}
                 >
+                    <label >
                     <input 
                         type="file" 
                         id="avatarInput" 
                         style={{ display: 'none' }} 
+                        aria-label="Upload avatar"
                         onChange={(event) => {
-                            const file = event.target.files[0];
-                            const url = URL.createObjectURL(file);
-                            form.setFieldValue('avatarUrl', url);
-                            form.setFieldValue(field.name, file);
-                            setAvatarUrl(url);
-                        }}
-                    />
+                        const file = event.target.files[0];
+                        const url = URL.createObjectURL(file);
+                        form.setFieldValue('avatarUrl', url);
+                        form.setFieldValue(field.name, file);
+                        setAvatarUrl(url);
+                                }}
+                            />
+                        </label>
                     <Avatar
                         className="border-2 border-white dark:border-gray-800 shadow-lg transition-all duration-300 group-hover:blur"
                         size={60}

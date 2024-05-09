@@ -6,6 +6,7 @@ import React from 'react'
 import Profile from './profile'
 import Password from './passsword'
 import Users from '../users'
+import { UserDetailsProvider } from '@/views/Context/userdetailsContext'
 
 const Index = () => {
     const userRole=localStorage.getItem('role')
@@ -19,8 +20,9 @@ const Index = () => {
     </TabList>
     <div className="p-4">
         <TabContent value="tab1">
-           
+           <UserDetailsProvider>
         <Profile/>
+        </UserDetailsProvider>
         </TabContent>
         <TabContent value="tab2">
             <Password/>
