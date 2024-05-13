@@ -1,36 +1,29 @@
+import React from 'react';
+import ReactToPrint from 'react-to-print';
 
-import { BlobProvider } from '@react-pdf/renderer';
-import MyDocument from './Mycomponent';
+class ComponentToPrint extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello World</h1>
+        <img src='/colonelz-logo.png' alt="" />
+      </div>
+    );
+  }
+}
 
-const App = () => (
-  <BlobProvider document={<MyDocument />}>
-    {({ url, loading, error }) => {
-      if (loading) {
-        return <div>Loading...</div>;
-      }
-      if (error) {
-        return <div>Error: {error.message}</div>;
-      }
-      if (!url) {
-        return <div>PDF not generated</div>;
-      }
-      return (
-        <div>
-          <object data={url} type="application/pdf" width="100%" height="800">
-            <p>Your browser does not support PDFs. Please download the PDF to view it.</p>
-          </object>
-          <a href={url} target="_blank" rel="noopener noreferrer">
-  Open PDF
-</a> 
-          <div>
-            <a href={url} download="meeting_minutes.pdf">
-              Download PDF
-            </a>
-          </div>
-        </div>
-      );
-    }}
-  </BlobProvider>
-);
+class MyComponent extends React.Component {
+  render() {
+    return (
+      <div>
+        <ReactToPrint
+          trigger={() => <button>Print this out!</button>}
+          content={() => this.componentRef}
+        />
+        <ComponentToPrint ref={el => (this.componentRef = el)} />
+      </div>
+    );
+  }
+}
 
-export default App;
+export default MyComponent;
