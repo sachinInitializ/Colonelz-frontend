@@ -6,7 +6,7 @@ class ComponentToPrint extends React.Component {
     return (
       <div>
        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg">
-        <div className='flex justify-center my-12'><img src="/public/Images/logo.png" alt="" className='w-30' style={{width:"100px"}}/></div>
+        <div className='flex justify-center my-12'><img src="/Images/logo.png" alt="" className='w-30' style={{width:"100px"}}/></div>
         <div className="flex items-center justify-between mb-4">
          
           <h1 className="text-2xl font-bold">Minutes of Meeting</h1>
@@ -256,18 +256,18 @@ class ComponentToPrint extends React.Component {
   }
 }
 
-// class MyComponent extends React.Component {
-//   render() {
-//     return (
-//       <div>
-//         <ReactToPrint
-//           trigger={() => <button>Print this out!</button>}
-//           content={() => this.componentRef}
-//         />
-//         <ComponentToPrint ref={el => (this.componentRef = el)} />
-//       </div>
-//     );
-//   }
-// }
+class MyComponent extends React.Component {
+  render() {
+    return (
+      <div>
+        <ReactToPrint
+          trigger={() => <button>Print this out!</button>}
+          content={() => this.componentRef}
+        />
+        <ComponentToPrint ref={el => (this.componentRef = el)} />
+      </div>
+    );
+  }
+}
 
-// export default MyComponent;
+export default MyComponent;

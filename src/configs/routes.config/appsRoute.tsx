@@ -294,17 +294,7 @@ const appsRoute: Routes = [
             headerContainer: true,
         },
     },
- 
-    {
-        key: 'appsCrm.mail',
-        path: `${APP_PREFIX_PATH}/crm/projectfo`,
-        component: lazy(() => import('@/views/crm/CrmDashboard/ProductNew')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            pageContainerType: 'gutterless',
-            footer: false,
-        },
-    },
+    
     {
         key: 'appsSales.productNew',
         path: `${APP_PREFIX_PATH}/crm/lead-new`,
@@ -322,16 +312,6 @@ const appsRoute: Routes = [
         authority: ["ADMIN","Senior Architect"],
     },
    
-   
-    {
-        key: 'appsSales.productNew',
-        path: `${APP_PREFIX_PATH}/crm/projectform`,
-        component: lazy(() => import('@/views/crm/ProjectsForm/ProductNew')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            header: 'Add Project',
-        },
-    },
     {
         key: 'appsSales.productNew',
         path: `${APP_PREFIX_PATH}/crm/lead-project`,

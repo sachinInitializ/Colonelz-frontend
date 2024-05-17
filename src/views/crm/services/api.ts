@@ -13,7 +13,7 @@ interface UserData {
   // Add other properties as needed
 }
 
-const apiBaseUrl = 'http://localhost:8000/v1/api/admin'; // Replace 'YOUR_API_BASE_URL' with the actual base URL of your API
+const apiBaseUrl = 'https://colonelzadmin.prod.initz.run/v1/api/admin'; // Replace 'YOUR_API_BASE_URL' with the actual base URL of your API
 
 // export const fetchData = async (): Promise<UserData[]> => {
 //   try {
@@ -27,12 +27,7 @@ const apiBaseUrl = 'http://localhost:8000/v1/api/admin'; // Replace 'YOUR_API_BA
 
 export const fetchDetails = async (id: string): Promise<UserData> => {
   try {
-    // Assuming your API expects the ID as a query parameter
     const response = await axios.get<UserData>(`${apiBaseUrl}getsingle/lead/?lead_id=${id}`);
-    
-    // Alternatively, if your API expects the ID in the request body, you can use the following:
-    // const response = await axios.post<UserData>(`${apiBaseUrl}/users/details`, { id });
-
     return response.data;
   } catch (error) {
     console.error(`Error fetching details for user ${id}:`, error);
