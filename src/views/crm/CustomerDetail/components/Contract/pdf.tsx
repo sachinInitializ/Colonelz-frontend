@@ -9,7 +9,7 @@ class ComponentToPrint extends React.Component {
         <div className='flex justify-center my-12'><img src="/Images/logo.png" alt="" className='w-30' style={{width:"100px"}}/></div>
         <div className="flex items-center justify-between mb-4">
          
-          <h1 className="text-2xl font-bold">Minutes of Meeting</h1>
+          <h1 className="text-2xl font-bold">Minutes of Meeting </h1>
           <div className="flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
