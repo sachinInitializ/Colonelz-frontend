@@ -294,30 +294,11 @@ const appsRoute: Routes = [
             headerContainer: true,
         },
     },
-    {
-        key: 'appsCrm.mail',
-        path: `${APP_PREFIX_PATH}/crm/mail`,
-        component: lazy(() => import('@/views/crm/Mail')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            pageContainerType: 'gutterless',
-            footer: false,
-        },
-    },
+ 
     {
         key: 'appsCrm.mail',
         path: `${APP_PREFIX_PATH}/crm/projectfo`,
         component: lazy(() => import('@/views/crm/CrmDashboard/ProductNew')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            pageContainerType: 'gutterless',
-            footer: false,
-        },
-    },
-    {
-        key: 'appsCrm.mail',
-        path: `${APP_PREFIX_PATH}/crm/mail/:category`,
-        component: lazy(() => import('@/views/crm/Mail')),
         authority: ["ADMIN","Senior Architect"],
         meta: {
             pageContainerType: 'gutterless',
@@ -334,26 +315,13 @@ const appsRoute: Routes = [
         },
     },
 
-
-
-    {
-        key: 'appsSales.dashboard',
-        path: `${APP_PREFIX_PATH}/sales/dashboard`,
-        component: lazy(() => import('@/views/sales/SalesDashboard')),
-        authority: ["ADMIN","Senior Architect"],
-    },
     {
         key: 'appsSales.productList',
         path: `${APP_PREFIX_PATH}/leads`,
         component: lazy(() => import('@/views/crm/LeadList')),
         authority: ["ADMIN","Senior Architect"],
     },
-    {
-        key: 'appsSales.orders-details',
-        path: `${APP_PREFIX_PATH}//sales/orders-details/:orderId`,
-        component: lazy(() => import('@/views/sales/OrderDetails')),
-        authority: ["ADMIN","Senior Architect"],
-    },
+   
    
     {
         key: 'appsSales.productNew',
@@ -380,105 +348,7 @@ const appsRoute: Routes = [
         authority: ["ADMIN","Senior Architect"],
     },
     
-  
-    {
-        key: 'appsCrypto.dashboard',
-        path: `${APP_PREFIX_PATH}/crypto/dashboard`,
-        component: lazy(() => import('@/views/crypto/CryptoDashboard')),
-        authority: ["ADMIN","Senior Architect"],
-    },
-    {
-        key: 'appsCrypto.portfolio',
-        path: `${APP_PREFIX_PATH}/crypto/portfolio`,
-        component: lazy(() => import('@/views/crypto/Portfolio')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            header: 'Portfolio',
-        },
-    },
-    {
-        key: 'appsCrypto.market',
-        path: `${APP_PREFIX_PATH}/crypto/market`,
-        component: lazy(() => import('@/views/crypto/Market')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            header: 'Market',
-        },
-    },
-    {
-        key: 'appsCrypto.wallets',
-        path: `${APP_PREFIX_PATH}/crypto/wallets`,
-        component: lazy(() => import('@/views/crypto/Wallets')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            header: 'Wallets',
-        },
-    },
-    {
-        key: 'appsknowledgeBase.helpCenter',
-        path: `${APP_PREFIX_PATH}/knowledge-base/help-center`,
-        component: lazy(() => import('@/views/knowledge-base/HelpCenter')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            pageContainerType: 'gutterless',
-        },
-    },
-    {
-        key: 'appsknowledgeBase.article',
-        path: `${APP_PREFIX_PATH}/knowledge-base/article`,
-        component: lazy(() => import('@/views/knowledge-base/Article')),
-        authority: ["ADMIN","Senior Architect"],
-    },
-    {
-        key: 'appsknowledgeBase.manageArticles',
-        path: `${APP_PREFIX_PATH}/knowledge-base/manage-articles`,
-        component: lazy(() => import('@/views/knowledge-base/ManageArticles')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            header: 'Manage Articles',
-            extraHeader: lazy(
-                () =>
-                    import(
-                        '@/views/knowledge-base/ManageArticles/components/PanelHeader'
-                    ),
-            ),
-            headerContainer: true,
-        },
-    },
-    {
-        key: 'appsknowledgeBase.editArticle',
-        path: `${APP_PREFIX_PATH}/knowledge-base/edit-article`,
-        component: lazy(() => import('@/views/knowledge-base/EditArticle')),
-        authority: ["ADMIN","Senior Architect"],
-    },
-    {
-        key: 'appsAccount.settings',
-        path: `${APP_PREFIX_PATH}/account/settings/:tab`,
-        component: lazy(() => import('@/views/account/Settings')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            header: 'Settings',
-            headerContainer: true,
-        },
-    },
-    {
-        key: 'appsAccount.invoice',
-        path: `${APP_PREFIX_PATH}/account/invoice/:id`,
-        component: lazy(() => import('@/views/account/Invoice')),
-        authority: ["ADMIN","Senior Architect"],
-    },
-    {
-        key: 'appsAccount.activityLog',
-        path: `${APP_PREFIX_PATH}/account/activity-log`,
-        component: lazy(() => import('@/views/account/ActivityLog')),
-        authority: ["ADMIN","Senior Architect"],
-    },
-    {
-        key: 'appsAccount.kycForm',
-        path: `${APP_PREFIX_PATH}/account/kyc-form`,
-        component: lazy(() => import('@/views/account/KycForm')),
-        authority: ["ADMIN","Senior Architect"],
-    },
+ 
 ]
 
 export default appsRoute

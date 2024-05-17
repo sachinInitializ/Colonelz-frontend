@@ -1,17 +1,13 @@
-import Avatar from '@/components/ui/Avatar'
 import Dropdown from '@/components/ui/Dropdown'
 import withHeaderItem from '@/utils/hoc/withHeaderItem'
 import useAuth from '@/utils/hooks/useAuth'
 import { useAppSelector } from '@/store'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
-import { HiOutlineUser, HiOutlineCog, HiOutlineLogout, HiOutlineUserAdd } from 'react-icons/hi'
-import { FiActivity } from 'react-icons/fi'
+import {  HiOutlineLogout, HiOutlineUserAdd } from 'react-icons/hi'
 import type { CommonProps } from '@/@types/common'
-import { AiOutlineUser, AiOutlineUserAdd, AiOutlineUserSwitch } from 'react-icons/ai'
-import { FaUser } from 'react-icons/fa'
-import { useContext, useEffect, useState } from 'react'
-import { ProfileFormModel } from '@/views/crm/Profile/profile'
+import { AiOutlineUser, AiOutlineUserAdd, } from 'react-icons/ai'
+import { useContext } from 'react'
 import { UserDetailsContext } from '@/views/Context/userdetailsContext'
 
 type DropdownList = {
@@ -47,7 +43,6 @@ const dropdownItemList: DropdownList[] = [
     },
     
 ]
-
 const _UserDropdown = ({ className }: CommonProps) => {
     const role=localStorage.getItem('role')
     const data=useContext(UserDetailsContext)

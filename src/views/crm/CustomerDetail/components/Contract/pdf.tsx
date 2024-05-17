@@ -5,8 +5,10 @@ class ComponentToPrint extends React.Component {
   render() {
     return (
       <div>
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg">
+       <div className="bg-white dark:bg-gray-900 p-6 rounded-lg">
+        <div className='flex justify-center my-12'><img src="/public/Images/logo.png" alt="" className='w-30' style={{width:"100px"}}/></div>
         <div className="flex items-center justify-between mb-4">
+         
           <h1 className="text-2xl font-bold">Minutes of Meeting</h1>
           <div className="flex items-center gap-2">
             <svg
@@ -149,6 +151,74 @@ class ComponentToPrint extends React.Component {
                 <span className="text-gray-500 dark:text-gray-400">Others: ratnesh</span>
               </li>
             </ul>
+
+            <div className="mt-6">
+          <h2 className="text-lg font-semibold mb-2">Files</h2>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                >
+                  <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                </svg>
+                <span className="text-gray-500 dark:text-gray-400">Layout.pdf</span>
+              </div>
+            </div>
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                >
+                  <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                </svg>
+                <span className="text-gray-500 dark:text-gray-400">Electrical.pdf</span>
+              </div>
+             
+            </div>
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                >
+                  <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                </svg>
+                <span className="text-gray-500 dark:text-gray-400">Plumbing.pdf</span>
+              </div>
+           
+            </div>
+          </div>
+        </div>
           </div>
           <div>
             <h2 className="text-lg font-semibold mb-2">Remarks</h2>
@@ -180,98 +250,24 @@ class ComponentToPrint extends React.Component {
             </ol>
           </div>
         </div>
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold mb-2">Files</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-gray-500 dark:text-gray-400"
-                >
-                  <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
-                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                </svg>
-                <span className="text-gray-500 dark:text-gray-400">Layout.pdf</span>
-              </div>
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                Download
-              </button>
-            </div>
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-gray-500 dark:text-gray-400"
-                >
-                  <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
-                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                </svg>
-                <span className="text-gray-500 dark:text-gray-400">Electrical.pdf</span>
-              </div>
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                Download
-              </button>
-            </div>
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-gray-500 dark:text-gray-400"
-                >
-                  <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
-                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                </svg>
-                <span className="text-gray-500 dark:text-gray-400">Plumbing.pdf</span>
-              </div>
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                Download
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
             </div>
     );
   }
 }
 
-class MyComponent extends React.Component {
-  render() {
-    return (
-      <div>
-        <ReactToPrint
-          trigger={() => <button>Print this out!</button>}
-          content={() => this.componentRef}
-        />
-        <ComponentToPrint ref={el => (this.componentRef = el)} />
-      </div>
-    );
-  }
-}
+// class MyComponent extends React.Component {
+//   render() {
+//     return (
+//       <div>
+//         <ReactToPrint
+//           trigger={() => <button>Print this out!</button>}
+//           content={() => this.componentRef}
+//         />
+//         <ComponentToPrint ref={el => (this.componentRef = el)} />
+//       </div>
+//     );
+//   }
+// }
 
-export default MyComponent;
+// export default MyComponent;

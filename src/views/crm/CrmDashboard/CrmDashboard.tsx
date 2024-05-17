@@ -2,7 +2,6 @@ import { apiGetCrmProjects } from "@/services/CrmService"
 import Project from "./components/Projects";
 import { useEffect, useState } from "react";
 import { Data } from "../CustomerDetail/components/MOM/data";
-import { crmDashboardData } from "@/mock/data/crmData";
 import Statistic from "./components/Statistic";
 import Leads from "./components/Leads";
 import { ProjectProvider } from "../Customers/store/ProjectContext";
@@ -15,8 +14,6 @@ interface Data{
 }
 const CrmDashboard = () => {
     const [apiData, setApiData] = useState<Data>();
-
-console.log('apiData',crmDashboardData.statisticData);
 
     useEffect(() => {
         const fetchData = async () => {
