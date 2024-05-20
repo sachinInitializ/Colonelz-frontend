@@ -13,9 +13,10 @@ const styles = StyleSheet.create({
     fontFamily:"Times-Roman",
   },
   text: {
-    fontSize: 12,
+    fontSize: 14,
     marginBottom: 5,
-    fontFamily: 'Times-Roman'
+    fontFamily: 'Times-Roman',
+    color:"gray"
   },
   header:{
   height: 150,
@@ -34,14 +35,26 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 20,
+    paddingLeft:50,
+    paddingRight:50,
   },
   section: {
     marginBottom: 10,
+    fontFamily: 'Oswald',
+   
+  },
+  section1: {
+    marginBottom: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    alignContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    fontSize: 14,
 
   },
   heading: {
-    fontSize: 20,
+    fontSize: 25,
     marginBottom: 20,
     fontFamily: 'Times-Roman',
     fontWeight: 'bold',
@@ -52,19 +65,29 @@ const styles = StyleSheet.create({
   subheading: {
     fontSize: 18,
     marginBottom: 10,
+    paddingLeft:50,
   },
   subtext: {
-    fontSize: 12,
+    fontSize: 16,
     marginBottom: 10,
-    fontFamily: 'Times-Roman',
+    fontFamily: 'Oswald',
     fontWeight: 'bold',
   },
 
   attendees: {
     marginBottom: 10,
   },
+  attendeeSection1: {
+    paddingLeft: 50,
+    paddingRight: 50,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    
+  },
   attendeeSection: {
     marginBottom: 10,
+    
   },
   attendeeHeading: {
     fontSize: 14,
@@ -79,6 +102,12 @@ const styles = StyleSheet.create({
     width: 90,
     height: 60,
   },
+  remarks:{
+    paddingLeft:50,
+    paddingRight:50,
+    color:"gray",
+    fontSize:12
+  }
 });
 
 const MyDocument = () => (
@@ -94,39 +123,42 @@ const MyDocument = () => (
       <Text style={styles.heading}>Meeting Details</Text>
     </View>
     <View style={styles.subsection}>
-    <View style={styles.section}>
-      <Text style={styles.text}> <Text style={styles.subtext}>Location:</Text> At Client Place</Text>
+    <View style={styles.section1}>
+     <Text style={styles.subtext}>Location:<Text style={styles.text}> At Client Place</Text></Text>   
     </View>
-    <View style={styles.section}>
-      <Text style={styles.text}>Date: 01-03-2024</Text>
+    <View style={styles.section1}>
+    <Text style={styles.subtext}>Date: <Text style={styles.text}> 01-03-2024</Text></Text> 
     </View>
     </View>
     <View style={styles.section}>
       <Text style={styles.subheading}>Attendees</Text>
       <View style={styles.attendees}>
+        <View style={styles.attendeeSection1}>
         <View style={styles.attendeeSection}>
-          <Text style={styles.attendeeHeading}>Client:</Text>
-          <Text style={styles.attendeeName}>Ratnesh Maurya</Text>
-          <Text style={styles.attendeeName}>Hello</Text>
+          <Text style={styles.attendeeHeading}>Client: <Text style={styles.text}>Ratnesh Maurya</Text></Text>
+         
         </View>
         <View style={styles.attendeeSection}>
-          <Text style={styles.attendeeHeading}>Organizer:</Text>
-          <Text style={styles.attendeeName}>Abhishek Singh</Text>
+          <Text style={styles.attendeeHeading}>Organizer:<Text style={styles.text}>Abhishek Singh</Text></Text>
+          
+        </View>
+        </View>
+        <View style={styles.attendeeSection1}>
+        <View style={styles.attendeeSection}>
+          <Text style={styles.attendeeHeading}>Designer:  <Text style={styles.text}>Ravi Singh</Text></Text>
+        
+      
         </View>
         <View style={styles.attendeeSection}>
-          <Text style={styles.attendeeHeading}>Designer:</Text>
-          <Text style={styles.attendeeName}>Ravi Singh</Text>
-          <Text style={styles.attendeeName}>Mavi</Text>
+          <Text style={styles.attendeeHeading}>Others:<Text style={styles.text}>Abhi Singh</Text></Text>
+          
         </View>
-        <View style={styles.attendeeSection}>
-          <Text style={styles.attendeeHeading}>Others:</Text>
-          <Text style={styles.attendeeName}>Abhi Singh</Text>
         </View>
       </View>
     </View>
     <View style={styles.section}>
       <Text style={styles.subheading}>Remarks</Text>
-      <Text style={styles.text}>
+      <Text style={styles.remarks}>
         This code snippet is configuring CORS (Cross-Origin Resource Sharing) for an Express.js application using the cors middleware. It allows requests from specified origins and defines the allowed methods.
       </Text>
     </View>
