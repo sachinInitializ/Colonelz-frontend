@@ -38,7 +38,16 @@ export async function addProfilePhoto(Data: any) {
     const response = await fetch(`${apiPrefix}users/profileurl`, {
         method: 'POST',
         headers: {
-           
+            'Authorization': `Bearer ${token}`
+        },
+        body: Data
+    });
+
+    return response;}
+export async function addcontractinfileManager(Data: any) {
+    const response = await fetch(`${apiPrefix}admin/view/contract`, {
+        method: 'POST',
+        headers: {
             'Authorization': `Bearer ${token}`
         },
         body: Data

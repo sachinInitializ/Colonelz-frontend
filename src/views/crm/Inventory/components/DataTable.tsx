@@ -116,6 +116,15 @@ const Filtering = () => {
             </div>
         )
     }
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString)
+        const day = String(date.getUTCDate()).padStart(2, '0')
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Months are 0-based in JavaScript
+        const year = date.getUTCFullYear()
+      
+        return `${day}-${month}-${year}`
+      }
+
 
     const columns = useMemo<ColumnDef<ProjectMomItem>[]>(
         () => [
@@ -154,15 +163,10 @@ const Filtering = () => {
                 accessorKey: 'meetingdate', 
                 cell: (props) => {
                   const row = props.row.original
-                  const dateObject = new Date(row.meetingDate);
-              const istFormattedDate = dateObject.toLocaleDateString('en-IN', {
-                timeZone: 'Asia/Kolkata',
-                 year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                            });
+                  const FormattedDate=formatDate(row.meetingDate)
+              
                   return (
-                      <span>{istFormattedDate}</span>
+                      <span>{FormattedDate}</span>
                   )
               },
             },

@@ -6,6 +6,233 @@ import { apiGetCrmProjectsMom } from '@/services/CrmService';
 import { useMomContext } from '../../store/MomContext';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 
+
+import { Document, Page, Text, View, Image, BlobProvider, StyleSheet, Font, Link } from '@react-pdf/renderer';
+Font.register({
+  family: 'Poppins',
+  fonts: [
+    {
+      src: "http://fonts.gstatic.com/s/poppins/v1/VIeViZ2fPtYBt3B2fQZplvesZW2xOQ-xsNqO47m55DA.ttf",
+      fontWeight: 300,
+      
+    },
+    {
+      src: "http://fonts.gstatic.com/s/poppins/v1/hlvAxH6aIdOjWlLzgm0jqg.ttf",
+      fontWeight: 400
+    },
+    {
+      src: "http://fonts.gstatic.com/s/poppins/v1/4WGKlFyjcmCFVl8pRsgZ9vesZW2xOQ-xsNqO47m55DA.ttf",
+      fontWeight: 500,
+    },
+    {
+      src: "http://fonts.gstatic.com/s/poppins/v1/-zOABrCWORC3lyDh-ajNnPesZW2xOQ-xsNqO47m55DA.ttf",
+      fontWeight: 600,
+    }
+    ,
+    {
+      src: "http://fonts.gstatic.com/s/poppins/v1/8JitanEsk5aDh7mDYs-fYfesZW2xOQ-xsNqO47m55DA.ttf",
+      fontWeight: 700,
+    }
+  ]
+});
+
+
+const styles = StyleSheet.create({
+  page: {
+    fontFamily:"Times-Roman",
+    paddingBottom:10,
+    paddingTop:20,
+  },
+  text: {
+    fontWeight:300,
+    fontSize: 14,
+    marginBottom: 5,
+    fontFamily: 'Poppins',
+    color:"gray",
+    textTransform: 'capitalize',
+    
+  },
+  header:{
+  height: 130,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  },
+
+  headerText:{
+    fontSize: 24,
+    fontFamily: 'Poppins',
+    fontWeight: 700,
+  },
+
+  subsection:{
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft:50,
+    paddingRight:50,
+  },
+  section: {
+    marginBottom: 10,
+    fontFamily: 'Poppins',
+    fontWeight: 400,
+   
+  },
+  section1: {
+    marginBottom: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    alignContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    fontSize: 14,
+
+  },
+  heading: {
+    fontSize: 25,
+    marginBottom: 20,
+    fontFamily: 'Poppins',
+    fontWeight: 500,
+    textAlign: 'center',
+    marginTop:20,
+
+  },
+  subheading: {
+    fontFamily: 'Poppins',
+    fontWeight: 400,
+    fontSize: 18,
+    marginBottom: 10,
+    paddingLeft:50,
+  },
+  subtext: {
+    fontSize: 16,
+    marginBottom: 10,
+    fontFamily: 'Poppins',
+    fontWeight: 400,
+  },
+
+  attendees: {
+    marginBottom: 10,
+  },
+  attendeeSection1: {
+    paddingLeft: 50,
+    paddingRight: 50,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    
+  },
+  attendeeSection: {
+    marginBottom: 10,
+    
+  },
+  attendeeHeading: {
+    fontFamily: 'Poppins',
+    fontWeight: 400,
+    fontSize: 14,
+    marginBottom: 5,
+  },
+  attendeeName: {
+    fontSize: 12,
+    marginBottom: 3,
+  },
+  image: {
+    margin: 10,
+    width: 90,
+    height: 60,
+  },
+  remarks:{
+    fontFamily: 'Poppins',
+    fontWeight: 400,
+    paddingLeft:50,
+    paddingRight:50,
+    color:"gray",
+    fontSize:12
+  }
+});
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  const day = String(date.getUTCDate()).padStart(2, '0')
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Months are 0-based in JavaScript
+  const year = date.getUTCFullYear()
+
+  return `${day}-${month}-${year}`
+}
+
+const MyDocument = (rowData:any) => (
+  <Document>
+  <Page style={styles.page}>
+    <View style={styles.header}>
+    <Image style={styles.image} src={'/public/Images/logo.png'} />
+      <Text style={styles.headerText}>Devs Project</Text>
+    </View>
+      
+    
+    <View style={styles.section}>
+      <Text style={styles.heading}>Meeting Details</Text>
+    </View>
+    <View style={styles.subsection}>
+    <View style={styles.section1}>
+     <Text style={styles.subtext}>Location:<Text style={styles.text}> {rowData.data.location}</Text></Text>   
+    </View>
+    <View style={styles.section1}>
+    <Text style={styles.subtext}>Date: <Text style={styles.text}>{formatDate(rowData.data.meetingdate)}</Text></Text> 
+    </View>
+    </View>
+    <View style={styles.section}>
+      <Text style={styles.subheading}>Attendees</Text>
+      <View style={styles.attendees}>
+        <View style={styles.attendeeSection1}>
+        <View style={styles.attendeeSection}>
+          <Text style={styles.attendeeHeading}>Client: <Text style={styles.text}>{rowData.data.attendees?.client_name}</Text></Text>
+         
+        </View>
+        <View style={styles.attendeeSection}>
+          <Text style={styles.attendeeHeading}>Organizer:<Text style={styles.text}>{rowData.data.attendees?.organisor}</Text></Text>
+          
+        </View>
+        </View>
+        <View style={styles.attendeeSection1}>
+        <View style={styles.attendeeSection}>
+          <Text style={styles.attendeeHeading}>Designer:  <Text style={styles.text}>{rowData.data.attendees?.designer}</Text></Text>
+        
+      
+        </View>
+        <View style={styles.attendeeSection}>
+          <Text style={styles.attendeeHeading}>Others:<Text style={styles.text}>{rowData.data.attendees?.attendees}</Text></Text>
+          
+        </View>
+        </View>
+      </View>
+    </View>
+    <View style={styles.section}>
+      <Text style={styles.subheading}>Remarks</Text>
+      <Text style={styles.remarks}>
+        {rowData.data.remark?rowData.data.remark:"-"}
+      </Text>
+    </View>
+    <View style={styles.section}>
+    <Text style={styles.subheading}>Files</Text>
+    <View style={styles.attendees}>
+      <View style={styles.attendeeSection1}>
+      <View style={styles.attendeeSection}>
+        {rowData.data.files.length > 0 ? (
+          rowData.data.files.map((file:any) => (
+              <Text style={styles.attendeeHeading}>File: <Text style={styles.text}><Link src={file.fileUrl}>{file.fileName}</Link></Text></Text>
+          ))
+          ) : (
+          <Text>No files</Text>
+          )}
+       
+      </View>
+      </View>
+      </View>
+    </View>
+  </Page>
+</Document>
+);
+
 interface Attendees {
   client_name: string[];
   [key: string]: string | string[];
@@ -139,6 +366,8 @@ const App: React.FC = () => {
     return `${day}-${month}-${year}`
 }
 
+
+
 const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-pointer'/>
   return (
     <div className="">
@@ -163,13 +392,29 @@ const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-point
         <div className="space-y-4">
         <div className="flex justify-between mb-8">
               <h2 className="text-2xl font-bold">Meeting Details</h2>
-              <span>
+              <BlobProvider document={<MyDocument data={rowData} />}>
+        {({ blob, url, loading, error }) => {
+            if (loading) {
+            return <BsThreeDotsVertical className='font-semibold text-xl cursor-pointer'/>;
+            }
+            if (error) {
+            console.error(error);
+            return `Error: ${error.message}`;
+            }
+        
+            return (
+            <div>
+                <span>
               <Dropdown renderTitle={Toggle} placement='bottom-end'>
-              <a href={`https://colonelzadmin.prod.initz.run/v1/api/admin/generate/pdf?project_id=${projectId}&mom_id=${rowData.mom_id}`} target='_blank' rel='noreferrer' >
-                        
+              <a href={url || ""} target='_blank' rel='noreferrer'    
+                    >  
                 <Dropdown.Item eventKey="a" >View MOM</Dropdown.Item></a>
                
             </Dropdown></span>
+            </div>
+            );
+        }}
+        </BlobProvider>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

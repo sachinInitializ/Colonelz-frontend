@@ -9,6 +9,7 @@ import {
 import { useLocation } from 'react-router-dom'
 import type { LayoutType } from '@/@types/theme'
 import type { ComponentType } from 'react'
+import { DataProvider } from '@/views/crm/FileManager/FileManagerContext/FIleContext'
 
 export type AppRouteProps<T> = {
     component: ComponentType<T>
@@ -48,7 +49,7 @@ const AppRoute = <T extends Record<string, unknown>>({
         handleLayoutChange()
     }, [location, handleLayoutChange])
 
-    return <Component {...(props as T)} />
+    return <DataProvider><Component {...(props as T)} /></DataProvider>
 }
 
 export default AppRoute

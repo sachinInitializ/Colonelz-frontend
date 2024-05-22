@@ -119,7 +119,7 @@ const MyForm: React.FC = () => {
     });
 
     try {
-      const response = await fetch('https://colonelzadmin.prod.initz.run/v1/api/admin/create/quotation', {
+      const response = await fetch('http://localhost:8000/v1/api/admin/create/quotation', {
         method: 'POST',
         body: formDataToSend,
       });
