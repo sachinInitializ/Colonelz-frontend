@@ -453,7 +453,7 @@ const date=new Date();
   <Document>
   <Page style={styles.page}>
     <View style={styles.header}>
-    <Image style={styles.image} src={'/public/Images/logo.png'} />
+    <Image style={styles.image} src={'/Images/logo.png'} />
       </View>
     <View>
     <Text style={styles.headerText}>{pdfData.contract_type}</Text>

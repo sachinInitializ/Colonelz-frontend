@@ -172,7 +172,7 @@ const MyDocument = (rowData:any) => (
   <Document>
   <Page style={styles.page}>
     <View style={styles.header}>
-    {/* <Image style={styles.image} src={'/Images/logo.png'} /> */}
+    <Image style={styles.image} src={'/Images/logo.png'} />
       <Text style={styles.headerText}>Devs Project</Text>
     </View>
       
