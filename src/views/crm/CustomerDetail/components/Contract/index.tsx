@@ -1,12 +1,13 @@
-import React, { SyntheticEvent, useEffect, useState } from 'react'
+import React, { SyntheticEvent, createContext, useEffect, useState } from 'react'
 
 import makeAnimated from 'react-select/animated'
 import { Formik, Field, Form, ErrorMessage, FieldProps, useFormikContext, FormikProps } from 'formik'
 import * as Yup from 'yup'
 import { Button, Checkbox, DatePicker, FormItem, Input, InputGroup, Notification, Select, toast } from '@/components/ui'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { apiGetCrmProjectMakeContract } from '@/services/CrmService'
 import CreatableSelect from 'react-select/creatable'
+import MyComponent from './pdf'
 
 interface FormValues {
     project_type: string;
@@ -79,28 +80,47 @@ const validationSchema = Yup.object().shape({
     // ),
 })
 
+export const FormikValuesContext = createContext(null);
+
+const FormComponent = ({ children }:any) => {
+    const { values } = useFormikContext();
+
+    return (
+        <div className=''>
+      <MyComponent data={values}/>
+      </div>
+    );
+  };
+
 const Index = () => {
+  
+
+    
+    const navigate=useNavigate()
     const handleSubmit = async (values: FormValues) => {
-        console.log(values)
-      console.log(values.date);
-      values.date = new Date(values.date).toISOString().split('T')[0]
-      console.log(values.date);
+    //     console.log(values)
+    //   console.log(values.date);
+    //     navigate('/app/crm/pdf')
+
+    //   values.date = new Date(values.date).toISOString().split('T')[0]
+    //   console.log(values.number);
       
         
-        const response = await apiGetCrmProjectMakeContract(values)
-        const responseData = await response.json()
-        if(responseData.code===200){
-        window.open(responseData.data, '_blank')
-        console.log(responseData)
-        console.log(values)}
-        else{
-            toast.push(
-                <Notification closable type="danger" duration={2000}>
-                    {responseData.errorMessage}
-                </Notification>,{placement:'top-center'}
-            )
-        }
+    //     const response = await apiGetCrmProjectMakeContract(values)
+    //     const responseData = await response.json()
+    //     if(responseData.code===200){
+    //     window.open(responseData.data, '_blank')
+    //     console.log(responseData)
+    //     console.log(values)}
+        // else{
+        //     toast.push(
+        //         <Notification closable type="danger" duration={2000}>
+        //             {responseData.errorMessage}
+        //         </Notification>,{placement:'top-center'}
+        //     )
+        // }
     }
+
 
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
@@ -118,7 +138,10 @@ const Index = () => {
             client_phone: [],
             project_name: '',
             site_address: '',
-            date: '',
+            toilet_number: '',
+            bedroom_number: '',
+            balcony_number: '',
+            date: new Date().toISOString().split('T')[0].split('-').reverse().join('-'),
             city: '',
             quotation: '',
             design_stage: [],
@@ -135,11 +158,16 @@ const Index = () => {
             terrace_open_area_in_sft: '',
         }}
             validationSchema={validationSchema}
-            onSubmit={handleSubmit}
+            onSubmit={
+                handleSubmit
+            }
             validateOnChange={true}
             validateOnBlur={true}
         >
+        
         <FormContent />
+      
+       
       </Formik>
     );
   };
@@ -211,6 +239,8 @@ const FormContent = () => {
     return (
   
                 <>
+                
+                
                     <h3 className="mb-4">Contract</h3>
                     <Form className="">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -370,35 +400,6 @@ const FormContent = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
-                            <FormItem label="Date">
-                            <Field
-                            component={({ field, form }: FieldProps) => (
-                                <DatePicker
-                                field={field}
-                                form={form}
-                                value={field.value}
-                                placeholder="Select Date"
-                                onChange={(date) => {
-                                    if (date) {
-                                        const istDate = new Date(date.getTime() + (330 * 60 * 1000));
-                                        const dateString = `${istDate.getUTCFullYear()}-${String(istDate.getUTCMonth() + 1).padStart(2, '0')}-${String(istDate.getUTCDate()).padStart(2, '0')}`;
-                                        const finalDate = new Date(dateString);
-                                        form.setFieldValue(field.name, finalDate);
-                                        console.log(finalDate);
-                                        
-                                    }
-                                  }}
-                                />
-                            )}
-                            type="date"
-                            name="date"
-                            />
-                                <ErrorMessage
-                                    name="date"
-                                    component="div"
-                                    className=" text-red-600"
-                                />
-                            </FormItem>
                             <FormItem label="City">
                                 <Field
                                     component={Input}
@@ -441,56 +442,49 @@ const FormContent = () => {
                             </FormItem>
                       {values.design_stage.includes('Toilets') &&
                             <FormItem label="Toilet No.">
-                                <Field>
-                                {({ field,form }:any) => (
-                                    <Select
-                                    options={numberOption}
-                                    name='toiletnumber'
-                                    onChange={(option)=>
-                                        {
-                                            values.number[2]=option? option.value:''
-                                        }
-                                    }
-                                  />
-                                    )}
-                                </Field>
+                             <Field name="toilet_number">
+                            {({ field, form }: any) => (
+                                <Select
+                                {...field}
+                                options={numberOption}
+                                onChange={(option: { value: any }) => {
+                                    form.setFieldValue(field.name, option?option.value:"");
+                                }}
+                                value={numberOption ? numberOption.find(option => option.value === field.value) : ''}
+                                />
+                            )}
+                            </Field>
                             </FormItem>}
                             {values.design_stage.includes('Bedrooms') &&
                             <FormItem label="Bedroom No.">
-                                <Field>
-                                {({ field,form }:any) => (
-                                    <Select
-                                    options={numberOption}
-                                    name='bedroomnumber'
-                                    onChange={(option)=>{
-                                        values.number[0]=option? option.value:''
-                                        console.log(values.number);
-                                        
-                                    }
-                                        
-                                    }
-                                  />
-                                    )}
-                                </Field>
+                                <Field name="bedroom_number">
+                            {({ field, form }: any) => (
+                                <Select
+                                {...field}
+                                options={numberOption}
+                                onChange={(option: { value: any }) => {
+                                    form.setFieldValue(field.name, option?option.value:"");
+                                }}
+                                value={numberOption ? numberOption.find(option => option.value === field.value) : ''}
+                                />
+                            )}
+                            </Field>
                             </FormItem>
                             }
                             {values.design_stage.includes('Balconies') &&
                             <FormItem label="Balconies No.">
-                                <Field>
-                                {({ field,form }:any) => (
-                                    <Select
-                                    options={numberOption}
-                                    name='bedroomnumber'
-                                    onChange={(option)=>{
-                                        values.number[0]=option? option.value:''
-                                        console.log(values.number);
-                                        
-                                    }
-                                        
-                                    }
-                                  />
-                                    )}
-                                </Field>
+                                <Field name="balcony_number">
+                            {({ field, form }: any) => (
+                                <Select
+                                {...field}
+                                options={numberOption}
+                                onChange={(option: { value: any }) => {
+                                    form.setFieldValue(field.name, option?option.value:"");
+                                }}
+                                value={numberOption ? numberOption.find(option => option.value === field.value) : ''}
+                                />
+                            )}
+                            </Field>
                             </FormItem>
                             }
                             <FormItem label='Design Charges'>
@@ -734,12 +728,7 @@ const FormContent = () => {
                             </Checkbox.Group>
                             </FormItem>
                         */}
-                        <Button
-                            type="submit"
-                            variant="solid"
-                        >
-                            Submit
-                        </Button>
+                        <FormComponent/>
                     </Form>
                 </>
             

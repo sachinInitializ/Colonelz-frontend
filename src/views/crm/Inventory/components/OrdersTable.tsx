@@ -194,6 +194,15 @@ const OrdersTable = () => {
         [pageIndex, pageSize, sort, query, total]
     )
 
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString)
+        const day = String(date.getUTCDate()).padStart(2, '0')
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Months are 0-based in JavaScript
+        const year = date.getUTCFullYear()
+      
+        return `${day}-${month}-${year}`
+      }
+
     const columns: ColumnDef<Order>[] = useMemo(
         () => [
           
@@ -209,12 +218,11 @@ const OrdersTable = () => {
             },
             {
                 header: 'Date',
-                accessorKey: 'meetingdate',
+                accessorKey: 'meeting',
                 cell: (props) => {
                     const row = props.row.original;
-                    const date = new Date(row.meetingdate);
-                    const formattedDate = date.toISOString().split('T')[0];
-                    return formattedDate;
+                    // const formattedDate = formatDate(row.mom[0].meetingdate);
+                    return row.mom[0].meetingdate;
                 },
             },
             {
