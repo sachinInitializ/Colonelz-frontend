@@ -429,7 +429,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
         formData.append('mom_id', rowData.mom_id);
         formData.append('file', blob, 'myDocument1.pdf');
   
-       const response=await fetch('http://localhost:8000/v1/api/admin/send/momdata', {
+       const response=await fetch('https://colonelzadmin.prod.initz.run/v1/api/admin/send/momdata', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('auth')}`,
@@ -437,7 +437,25 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
         body: formData,
       });
       const result = await response.json();
-      console.log(result);
+      if(result.code===200){
+        toast.push(
+          <Notification
+              type='success' duration={2000}
+          >
+              MOM Shared Successfully
+          </Notification>
+        )
+      }
+      else{
+        toast.push(
+          <Notification
+              type='danger' duration={2000}
+          >
+              {result.errorMessage}
+          </Notification>
+        )
+      
+      }
     }
     const { apiPrefix } = appConfig
     const formatDate = (dateString: string) => {
