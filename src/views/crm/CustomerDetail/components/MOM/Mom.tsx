@@ -16,7 +16,7 @@ import { apiGetCrmProjectsMom } from '@/services/CrmService'
 import { useMomContext } from '../../store/MomContext'
 import appConfig from '@/configs/app.config'
 import { BsThreeDotsVertical } from 'react-icons/bs'
-import { Document, Page, Text, View, Image, BlobProvider, StyleSheet, Font, Link } from '@react-pdf/renderer';
+import { Document, Page, Text, View, Image, BlobProvider, StyleSheet, Font, Link, PDFViewer } from '@react-pdf/renderer';
 Font.register({
   family: 'Poppins',
   fonts: [
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     color:"gray",
     textTransform: 'capitalize',
-    
+    width:10,
   },
   header:{
   height: 130,
@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
   },
   attendeeSection: {
     marginBottom: 10,
+    width:230
     
   },
   attendeeHeading: {
@@ -506,10 +507,12 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
             <div>
                 <span>
               <Dropdown renderTitle={Toggle} placement='bottom-end'>
-              <a href={url} target='_blank' rel='noreferrer'    
+              <a href={url || ""} target='_blank' rel='noreferrer'    
                     >  
                 <Dropdown.Item eventKey="a" >View MOM</Dropdown.Item></a>
                 <Dropdown.Item eventKey="b" onClick={()=>handlePost(blob)}>Share MOM</Dropdown.Item>
+                
+
                
             </Dropdown></span>
             </div>
@@ -571,7 +574,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
                 ) : (
                 <p>No files</p>
                 )}
-             
+          
               </div>
             </div>
           </div>

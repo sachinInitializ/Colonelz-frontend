@@ -51,7 +51,6 @@ const Leads = ({ data = [], className }: LeadsProps) => {
       const fetchData = async () => {
         const response = await apiGetCrmLeads();
         const data = response.data.leads
-        console.log('Received response from server:', data);
         setApiData(data.slice(0,5));
     };
     fetchData();

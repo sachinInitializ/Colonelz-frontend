@@ -235,7 +235,7 @@ const myParam = queryParams.get('id') || ''
               <Card>
                 <div className='flex flex-row justify-between items-center mb-4 '>
                   <CustomerInfoField title="Date"
-                    value={note?.date ? new Date(note.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-') : ''}
+                    value={note?.date ? new Date(note.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric',hour:'2-digit',minute:'2-digit' }).replace(/\//g, '-') : ''}
                    />
                   <CustomerInfoField title="Lead Status" value={note.status} />
                 </div>

@@ -1,4 +1,4 @@
-import { apiGetCrmProjects } from "@/services/CrmService"
+import { apiGetCrmProjects } from "@/services/ProjectService"
 import Project from "./components/Projects";
 import { useEffect, useState } from "react";
 import { Data } from "../CustomerDetail/components/MOM/data";
@@ -23,7 +23,6 @@ const CrmDashboard = () => {
         };
         fetchData();
     }, []);
-    console.log(apiData);
 
     const data=[
         {

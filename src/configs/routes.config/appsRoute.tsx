@@ -14,7 +14,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.register',
         path: `${APP_PREFIX_PATH}/crm/profile`,
         component: lazy(() => import('@/views/crm/Profile/index')),
-        authority: ["ADMIN"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant"],
     },
     {
         key: 'appsCrm.register',

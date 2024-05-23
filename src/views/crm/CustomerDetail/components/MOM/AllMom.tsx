@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     color:"gray",
     textTransform: 'capitalize',
-    
+    width:10,
   },
   header:{
   height: 130,
@@ -102,7 +102,15 @@ const styles = StyleSheet.create({
     fontWeight: 400,
     fontSize: 18,
     marginBottom: 10,
-    paddingLeft:50,
+   paddingLeft:50,
+   marginTop:10,
+  },
+  subheading1: {
+    fontFamily: 'Poppins',
+    fontWeight: 400,
+    fontSize: 18,
+    marginBottom: 10,
+  marginTop:10,
   },
   subtext: {
     fontSize: 16,
@@ -124,6 +132,7 @@ const styles = StyleSheet.create({
   },
   attendeeSection: {
     marginBottom: 10,
+    width:230
     
   },
   attendeeHeading: {
@@ -164,7 +173,7 @@ const MyDocument = (rowData:any) => (
   <Document>
   <Page style={styles.page}>
     <View style={styles.header}>
-    <Image style={styles.image} src={'/public/Images/logo.png'} />
+    <Image style={styles.image} src={'/Images/logo.png'} />
       <Text style={styles.headerText}>Devs Project</Text>
     </View>
       
@@ -173,39 +182,48 @@ const MyDocument = (rowData:any) => (
       <Text style={styles.heading}>Meeting Details</Text>
     </View>
     <View style={styles.subsection}>
+      <View>
     <View style={styles.section1}>
      <Text style={styles.subtext}>Location:<Text style={styles.text}> {rowData.data.location}</Text></Text>   
     </View>
-    <View style={styles.section1}>
-    <Text style={styles.subtext}>Date: <Text style={styles.text}>{formatDate(rowData.data.meetingdate)}</Text></Text> 
-    </View>
-    </View>
-    <View style={styles.section}>
-      <Text style={styles.subheading}>Attendees</Text>
-      <View style={styles.attendees}>
-        <View style={styles.attendeeSection1}>
-        <View style={styles.attendeeSection}>
+
+    <Text style={styles.subheading1}>Attendees</Text>
+    <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Client: <Text style={styles.text}>{rowData.data.attendees?.client_name}</Text></Text>
          
         </View>
+
         <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Organizer:<Text style={styles.text}>{rowData.data.attendees?.organisor}</Text></Text>
           
         </View>
+
+       
+
+       
+
         </View>
-        <View style={styles.attendeeSection1}>
-        <View style={styles.attendeeSection}>
+
+    <View>
+    <View style={styles.section1}>
+    <Text style={styles.subtext}>Date: <Text style={styles.text}>{formatDate(rowData.data.meetingdate)}</Text></Text> 
+    </View>
+    <Text style={styles.subheading}> </Text>
+    <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Designer:  <Text style={styles.text}>{rowData.data.attendees?.designer}</Text></Text>
         
       
         </View>
-        <View style={styles.attendeeSection}>
+
+    <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Others:<Text style={styles.text}>{rowData.data.attendees?.attendees}</Text></Text>
           
         </View>
+
         </View>
-      </View>
+
     </View>
+   
     <View style={styles.section}>
       <Text style={styles.subheading}>Remarks</Text>
       <Text style={styles.remarks}>
