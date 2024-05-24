@@ -222,6 +222,12 @@ design:{
     marginBottom: 5,
     textDecoration: 'underline',
   },
+  heading2: {
+    fontWeight: 'bold',
+    fontSize: 14,
+
+    textDecoration: 'underline',
+  },
 
   text: {
     marginBottom: 5,
@@ -815,9 +821,6 @@ fabricate components of the works.</Text></View>
 
     </View>
 
-    <View><Text> </Text></View>
-    <View><Text> </Text></View>
-    <View><Text> </Text></View>
     
 
     <View style={styles.scope1}>
@@ -846,9 +849,9 @@ joint material selection visits will be done as per the following rates:
           </Text>
         </View>
 
-{ pdfData.design_stage.map((item:any, index:number) => {
+{/* { pdfData.design_stage.map((item:any, index:number) => {
   if(item==='Balconies'){
-    return(
+    return( */}
       <>
         <View >
         <View ><Text style={styles.fee} >2. Balconies @ ₹{pdfData.balcony_charges_per_sft}/ Sft x Balcony area @ {pdfData.balcony_area_in_sft} Sft = ₹{Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft)}/-</Text></View>
@@ -858,7 +861,7 @@ joint material selection visits will be done as per the following rates:
           </Text>
         </View>
         </>
-)}})}
+{/* )}})} */}
 
 
 
@@ -903,7 +906,7 @@ finalization.</Text></View>
 
         <View  >
         <View >
-          <Text style={styles.fee7}>7. Note</Text>
+          <Text style={styles.fee7}>7. Note:</Text>
           <Text style={styles.subfee}>a) Billing shall be as per covered area, as per measurement on-site.</Text>
           <Text style={styles.subfee}>b) The covered area includes all internal and external walls.</Text>
           <Text style={styles.subfee}>c) The above fees does not include services such as Landscape design, 
@@ -962,15 +965,10 @@ signed.</Text></View>
 
       <View style={styles.section}>
         <Text style={styles.text}>The Client shall release respective payment installments within 3 days from the date of completion of stage as intimated by the Designer.</Text>
-        <Text style={styles.text}>
-          <View>
-         <View>
-          <Text style={styles.bold}>3. Site Visit. </Text></View>
-          <View>
-          Up to 10 visits to the site, by The Designer’s </View></View><Text style={styles.bold}>Design Team</Text> shall be made to ensure suitable progress, quality, and other checks. However, the Site Supervisor would be on the Site regularly.
-        </Text>
+       
 
-        <View style={styles.design}><Text>3.</Text><Text>Site Visit. Up to 10 visits to the site, by The Designer’s Design Team
+        <View style={styles.design}><Text>3.</Text><Text style={{fontWeight:'bold', textDecoration:'underline'}}>Site Visit</Text></View>
+        <View style={styles.design}><Text> </Text><Text>Up to 10 visits to the site, by The Designer’s Design Team
 shall be made to ensure suitable progress, quality, and other checks.
 However, the Site Supervisor would be on the Site regularly.
 </Text></View>
@@ -978,7 +976,9 @@ However, the Site Supervisor would be on the Site regularly.
 head designer.
 </Text></View>
       
-        <Text style={styles.heading1}>5. Market Visits.</Text>
+
+<View style={styles.design}><Text>5.</Text><Text style={{fontWeight:'bold', textDecoration:'underline'}}>Market Visitsx</Text></View>
+ 
         <View style={styles.list}>
 
         <View style={styles.dothead}>
@@ -1360,9 +1360,9 @@ const MyComponent = (data:any) => {
         );
       }}
     </BlobProvider>
-    {/* <PDFViewer width="100%" height="600">
+    <PDFViewer width="100%" height="600">
       <MyDocument data={data.data}/>
-    </PDFViewer> */}
+    </PDFViewer>
   </div>
 )};
  
