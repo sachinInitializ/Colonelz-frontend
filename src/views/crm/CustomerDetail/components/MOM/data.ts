@@ -1,4 +1,4 @@
-import { apiGetCrmProjectsMom } from "@/services/CrmService";
+import { apiGetCrmProjectsMom } from "@/services/ProjectService";
 
 export type Attendees = {
   client_name: string[] | null;

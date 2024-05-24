@@ -166,7 +166,7 @@ function formatDate(dateString:string) {
           {leadData.map((item) => 
           {
             // If the folder is 'contract' and the user is not an admin or senior architect, skip rendering this item
-            if (item.folder_name === 'contract' && (role==='ADMIN' || role==='SENIOR ARCHITECT')) {
+            if (item.folder_name === 'contract' && (role==="3D Visualizer" || role==="Jr. Interior Designer"|| role==="Project Architect"|| role==="Executive Assistant")) {
               return null;
             }
             

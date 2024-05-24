@@ -7,7 +7,7 @@
 
 // import { useTheme } from '@emotion/react';
 // import { ConfirmDialog, StickyFooter } from '@/components/shared';
-// import { apiDeleteFileManagerFolders, apiGetCrmFileManagerLeads } from '@/services/CrmService';
+// import { apiDeleteFileManagerFolders, apiGetCrmFileManagerLeads } from '@/services/ProjectService';
 
 
 

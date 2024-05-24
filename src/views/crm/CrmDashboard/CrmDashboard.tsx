@@ -1,7 +1,6 @@
 import { apiGetCrmProjects } from "@/services/ProjectService"
 import Project from "./components/Projects";
 import { useEffect, useState } from "react";
-import { Data } from "../CustomerDetail/components/MOM/data";
 import Statistic from "./components/Statistic";
 import Leads from "./components/Leads";
 import { ProjectProvider } from "../Customers/store/ProjectContext";
