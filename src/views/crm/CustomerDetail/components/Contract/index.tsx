@@ -1,13 +1,14 @@
 import React, { SyntheticEvent, createContext, useEffect, useState } from 'react'
 
 import makeAnimated from 'react-select/animated'
-import { Formik, Field, Form, ErrorMessage, FieldProps, useFormikContext, FormikProps } from 'formik'
+import { Formik, Field, Form, ErrorMessage, FieldProps, useFormikContext, FormikProps, FormikValues } from 'formik'
 import * as Yup from 'yup'
 import { Button, Checkbox, DatePicker, FormItem, Input, InputGroup, Notification, Select, toast } from '@/components/ui'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { apiGetCrmProjectMakeContract } from '@/services/CrmService'
 import CreatableSelect from 'react-select/creatable'
-import MyComponent from './pdf'
+import MyComponent from './CommercialPdf'
+import MyComponent1 from './pdf'
 
 interface FormValues {
     project_type: string;
@@ -83,11 +84,12 @@ const validationSchema = Yup.object().shape({
 export const FormikValuesContext = createContext(null);
 
 const FormComponent = ({ children }:any) => {
-    const { values } = useFormikContext();
+    const { values } = useFormikContext<FormValues>();
 
     return (
         <div className=''>
-      <MyComponent data={values}/>
+            {values.project_type==='residential' ? <MyComponent1 data={values}/> : <MyComponent data={values}/>
+            }
       </div>
     );
   };
@@ -130,6 +132,7 @@ const Index = () => {
         <Formik
         initialValues={{
             lead_id:lead_id,
+            company_name: '',
             user_id:userId ,
             project_type: '',
             contract_type: '',
@@ -147,6 +150,7 @@ const Index = () => {
             design_stage: [],
             number: ["","",""],
             design_charges: '0',
+            working_days: '0',
             discount: '0',
             design_charges_per_sft: '0',
             design_cover_area_in_sft: '0',
@@ -288,6 +292,45 @@ const FormContent = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
+                        {values.project_type==='commercial' &&
+                            <FormItem label="Company Name">
+                                <Field
+                                    component={Input}
+                                    type="text"
+                                    name="company_name"
+                                    placeholder="Company Name"
+                                />
+                            </FormItem>
+                        }
+
+<FormItem label="Client Name">
+                                <Field name="client_name">
+                                    {({ field, form }: FieldProps) => (
+                                        <Select
+                                            isMulti
+                                            components={animatedComponents}
+                                            componentAs={CreatableSelect}
+                                            onChange={(value) =>
+                                                form.setFieldValue(
+                                                    field.name,
+                                                    value.map((v:any) => v.value),
+                                                )
+                                            }
+                                            onBlur={() =>
+                                                form.setFieldTouched(
+                                                    field.name,
+                                                    true,
+                                                )
+                                            }
+                                        />
+                                    )}
+                                </Field>
+                                <ErrorMessage
+                                    name="client_name"
+                                    component="div"
+                                    className=" text-red-600"
+                                />
+                            </FormItem>
                             <FormItem label="Client Email">
                                 <Field name="client_email">
                                     {({ field, form }: FieldProps) => (
@@ -317,34 +360,7 @@ const FormContent = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
-                            <FormItem label="Client Name">
-                                <Field name="client_name">
-                                    {({ field, form }: FieldProps) => (
-                                        <Select
-                                            isMulti
-                                            components={animatedComponents}
-                                            componentAs={CreatableSelect}
-                                            onChange={(value) =>
-                                                form.setFieldValue(
-                                                    field.name,
-                                                    value.map((v:any) => v.value),
-                                                )
-                                            }
-                                            onBlur={() =>
-                                                form.setFieldTouched(
-                                                    field.name,
-                                                    true,
-                                                )
-                                            }
-                                        />
-                                    )}
-                                </Field>
-                                <ErrorMessage
-                                    name="client_name"
-                                    component="div"
-                                    className=" text-red-600"
-                                />
-                            </FormItem>
+                       
                             <FormItem label="Client Phone">
                                 <Field name="client_phone">
                                     {({ field, form }: FieldProps) => (
@@ -373,6 +389,7 @@ const FormContent = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
+                         
                             <FormItem label="Project Name">
                                 <Field
                                     component={Input}
@@ -386,6 +403,20 @@ const FormContent = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
+                             <FormItem label="City">
+                             <Field
+                                 component={Input}
+                                 type="text"
+                                 name="city"
+                                 placeholder="City"
+                             />
+                             <ErrorMessage
+                                 name="city"
+                                 component="div"
+                                 className=" text-red-600"
+                             />
+                         </FormItem> 
+                        
                            
                             <FormItem label="Site Address">
                                 <Field
@@ -400,19 +431,7 @@ const FormContent = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
-                            <FormItem label="City">
-                                <Field
-                                    component={Input}
-                                    type="text"
-                                    name="city"
-                                    placeholder="City"
-                                />
-                                <ErrorMessage
-                                    name="city"
-                                    component="div"
-                                    className=" text-red-600"
-                                />
-                            </FormItem> 
+                           
                             <FormItem label="Quotation">
                                 <Field
                                     component={Input}
@@ -426,6 +445,66 @@ const FormContent = () => {
                                     className=" text-red-600"
                                 />
                             </FormItem>
+                            {values.project_type==='commercial' &&
+                            <FormItem label="Working Days">
+                                <Field
+                                    component={Input}
+                                    type="text"
+                                    name="working_days"
+                                    placeholder="Quotation"
+                                />
+                            </FormItem>
+                            }
+
+
+                            <FormItem label='Design Charges'>
+                            <Field name='design_charges'>
+                                    {({ field, form }:any) => (
+                                    <Input
+                                        type='text'
+                                        placeholder='Design Charges'
+                                        size='md'
+                                        onKeyPress={(e) => {
+                                            const charCode = e.which ? e.which : e.keyCode;
+                                            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                                              e.preventDefault();
+                                            }
+                                          }}
+                                        onChange={(e) => {
+                                        const value = e.target.value.replace(/[^0-9]/g, '');
+                                        form.setFieldValue(field.name, value);
+                                        
+                                        }}
+                                    />
+                                    )}
+                                </Field>
+                            </FormItem>
+                            {values.project_type==='residential' &&
+<>                           <FormItem label='Discount(%)'>
+                                <Field name='discount'>
+                                    {({ field, form }: FieldProps) => (
+                                        <Input
+                                            type='text'
+                                            placeholder='Discount(%)'
+                                            
+                                            size='md'
+                                            onKeyPress={(e) => {
+                                                const charCode = e.which ? e.which : e.keyCode;
+                                                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                                                  e.preventDefault();
+                                                }
+                                              }}
+                                              onChange={(e) => {
+                                                const value = e.target.value.replace(/[^0-9]/g, '');
+                                                form.setFieldValue(field.name, value);
+                                                console.log(field.name, value);
+                                              }}
+                                        />
+                                    )}
+                                </Field>
+                            </FormItem>
+
+
                             <FormItem label='Design Stage'>
                             <Field name='design_stage'>
                             {({ field,form }:any) => (
@@ -487,51 +566,8 @@ const FormContent = () => {
                             </Field>
                             </FormItem>
                             }
-                            <FormItem label='Design Charges'>
-                            <Field name='design_charges'>
-                                    {({ field, form }:any) => (
-                                    <Input
-                                        type='text'
-                                        placeholder='Design Charges'
-                                        size='md'
-                                        onKeyPress={(e) => {
-                                            const charCode = e.which ? e.which : e.keyCode;
-                                            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                                              e.preventDefault();
-                                            }
-                                          }}
-                                        onChange={(e) => {
-                                        const value = e.target.value.replace(/[^0-9]/g, '');
-                                        form.setFieldValue(field.name, value);
-                                        
-                                        }}
-                                    />
-                                    )}
-                                </Field>
-                            </FormItem>
-                            <FormItem label='Discount(%)'>
-                                <Field name='discount'>
-                                    {({ field, form }: FieldProps) => (
-                                        <Input
-                                            type='text'
-                                            placeholder='Discount(%)'
-                                            
-                                            size='md'
-                                            onKeyPress={(e) => {
-                                                const charCode = e.which ? e.which : e.keyCode;
-                                                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                                                  e.preventDefault();
-                                                }
-                                              }}
-                                              onChange={(e) => {
-                                                const value = e.target.value.replace(/[^0-9]/g, '');
-                                                form.setFieldValue(field.name, value);
-                                                console.log(field.name, value);
-                                              }}
-                                        />
-                                    )}
-                                </Field>
-                            </FormItem>
+                           
+                           
                             <FormItem label='Design Charges For Covered Area(in Rs)'>
                                 <Field name='design_charges_per_sft'>
                                     {({ field, form }: FieldProps) => (
@@ -708,7 +744,8 @@ const FormContent = () => {
                                     )}
                                 </Field>
                             </FormItem>
-
+                            </>
+                            }
                            
                             </div>
                             {/* <FormItem label="Design Stage">

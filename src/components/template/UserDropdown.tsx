@@ -54,10 +54,12 @@ const _UserDropdown = ({ className }: CommonProps) => {
 console.log(data);
 
     const { signOut } = useAuth()
+  
+    
 
     const UserAvatar = (
         <div className={classNames(className, 'flex items-center gap-2')}>
-            {data?.avatar === null ? <img src="https://ui-avatars.com/api/?name=John+Doe" className='w-8' alt="" />:<HiOutlineUser className=' text-xl'/>}
+            {data?.avatar.length ===0 ? <HiOutlineUser className=' text-xl'/>:<img src={data?data.avatar:""} className='w-8' alt="" />}
            
             <div className="hidden md:block">
                 <div className="text-xs capitalize">

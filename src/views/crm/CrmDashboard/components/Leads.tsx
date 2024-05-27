@@ -3,15 +3,13 @@ import Button from '@/components/ui/Button'
 import Table from '@/components/ui/Table'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
-import type { Lead } from '../store'
 import { useEffect, useState } from 'react'
 import { apiGetCrmLeads } from '@/services/CrmService'
+import { Lead, useLeadContext } from '../../LeadList/store/LeadContext'
+import { Spinner } from '@/components/ui'
 
 
-type LeadsProps = {
-    data?: Lead[]
-    className?: string
-}
+
 
 const { Tr, Td, TBody, THead, Th } = Table
 
@@ -45,16 +43,10 @@ const Leads = ({ data = [], className }: LeadsProps) => {
       }
      
 
-    const [apiData, setApiData] = useState<Data[]>([]);
+    const apiData = useLeadContext()
+    
+    
 
-    useEffect(() => {
-      const fetchData = async () => {
-        const response = await apiGetCrmLeads();
-        const data = response.data.leads
-        setApiData(data.slice(0,5));
-    };
-    fetchData();
-    }, []);
 
     const statusColors: { [key: string]: string } = {
         'Follow Up': 'bg-green-200 text-green-700',
@@ -64,7 +56,6 @@ const Leads = ({ data = [], className }: LeadsProps) => {
     };
 
 
-   
 
     return (
         <Card className={className}>
@@ -86,21 +77,22 @@ const Leads = ({ data = [], className }: LeadsProps) => {
           </Tr>
         </THead>
         <TBody>
-          {apiData.map((item, index) => (
-            <Tr key={index} onClick={()=>navigate(`/app/crm/lead/?id=${item.lead_id}`)} className=' cursor-pointer'>
-              <Td className=' capitalize'>{item.name}</Td>
-              <Td className={`capitalize`}>
-    <span className={`${statusColors[item.status]} px-2 py-1 rounded-sm text-xs font-semibold`}>{item.status}</span>
-</Td>
-              <Td className="capitalize">{item.location}</Td>
-              <Td  >
-               {item.phone}
-              </Td>
-              <Td>{item.email}</Td>
-              <Td>{dayjs(item.date).format('DD-MM-YYYY')}</Td>
-              
-            </Tr>
-          ))}
+        {apiData === null ? (
+        <div className='flex justify-center items-center h-50 w-full'><Spinner size="40px"/></div>
+      ) : (
+        apiData.slice(0, 5).map((item, index) => (
+          <Tr key={index} onClick={()=>navigate(`/app/crm/lead/?id=${item.lead_id}`)} className=' cursor-pointer'>
+            <Td className=' capitalize'>{item.name}</Td>
+            <Td className={`capitalize`}>
+              <span className={`${statusColors[item.status]} px-2 py-1 rounded-sm text-xs font-semibold`}>{item.status}</span>
+            </Td>
+            <Td className="capitalize">{item.location}</Td>
+            <Td>{item.phone}</Td>
+            <Td>{item.email}</Td>
+            <Td>{dayjs(item.date).format('DD-MM-YYYY')}</Td>
+          </Tr>
+        ))
+      )}
         </TBody>
       </Table>
         </Card>

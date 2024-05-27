@@ -33,7 +33,7 @@ const Project = ({  className }: LeadsProps) => {
         client_contact:string
         designer:string
     }
-    interface Data {
+    interface Projects {
        project_name:string
        project_type:string
        project_status:string
@@ -43,9 +43,12 @@ const Project = ({  className }: LeadsProps) => {
        project_updated_by:client[]
        timeline_date:string
       }
+      interface Data {
+        projects:Projects[]
+      }
  
-    const projects:Data[]=useProjectContext();
-    const memoizedProjects = useMemo(() => projects, [projects]);
+    const projects=useProjectContext();
+    const memoizedProjects = useMemo(() => projects.projects, [projects.projects]);
 
     return (
         <Card className={className}>

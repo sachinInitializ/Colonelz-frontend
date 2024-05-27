@@ -1184,9 +1184,7 @@ Execution Advance to the Company.
 </Text></View>
 </View>
 
-<View>
-  <Text>   </Text>
-</View>
+
 
 <View style={styles.terms}>
       <View style={styles.design}><Text style={{fontWeight:"bold"}}>•</Text><Text> W is the day of commencement of Work. Sundays will not be included in 
@@ -1307,7 +1305,6 @@ export const useFormikValues = () => useContext(FormikValuesContext);
 const MyComponent = (data:any) => {
  
   console.log(data);
-  console.log(data.data.number);
   
   
   const [isLoading, setIsLoading] = useState(false);
@@ -1353,7 +1350,7 @@ const MyComponent = (data:any) => {
        
         return (
           <div>
-            <Button variant='solid' onClick={()=>{handlePost(blob)}} loading={isLoading}>Submit</Button>
+            <Button variant='solid' onClick={()=>{handlePost(blob)}} loading={isLoading} type='button'>Submit</Button>
             {/* <a href={url || ""} target="_blank" rel="noopener noreferrer">View PDF</a>
             <a href={url || ""} download="myDocument.pdf">Download PDF</a> */}
           </div>

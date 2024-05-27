@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Button, FormItem, Input, Notification, Select, toast } from '@/components/ui';
 import { apiAddMember } from '@/services/AuthService';
 import { apiGetUsers } from '@/services/CommonService';
-import { apiGetProjectList } from '@/services/ProjectService1';
 import { apiGetCrmProjects } from '@/services/ProjectService';
 import { set } from 'lodash';
 
