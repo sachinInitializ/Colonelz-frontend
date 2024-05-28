@@ -245,7 +245,7 @@ const MyDocument = (rowData:any) => (
       <View style={styles.attendeeSection}>
         {rowData.data.files.length > 0 ? (
           rowData.data.files.map((file:any) => (
-              <Text style={styles.attendeeHeading}>File: <Text style={styles.text}><Link src={file.fileUrl}>{file.fileName}</Link></Text></Text>
+              <Text style={styles.attendeeHeading}>File: <Text style={styles.text}><Link src={file.fileUrl}>{file.fileName.length>20?`${file.fileName.slice(0,20)}...`:file.fileName}</Link></Text></Text>
           ))
           ) : (
           <Text>No files</Text>

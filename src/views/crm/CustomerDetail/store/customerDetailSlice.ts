@@ -81,7 +81,12 @@ export type Customer = {
     description:string
     notes: Notes
     mom:[]
+    project_updated_by:ProjectUpdate[]
     
+}
+ export type ProjectUpdate = {
+    updated_date:string
+    user_name:string
 }
 
 type GetCrmCustomerDetailsResponse = Customer & {
@@ -143,17 +148,21 @@ const initialState: CustomerDetailState = {
     loading: true,
     profileData: {
         id: '',
+        designer:'',
+        client:[],
         project_name: '',
-        project_id: '',
+        project_id:'',
         project_type:'',
         project_status:'',
         project_start_date:'',
         timeline_date:'',
         project_budget:'',
         description:'',
-        notes: { content: '' },
+        notes: {
+            content: '',
+        },
         mom:[],
-        designer:''
+        project_updated_by:[],
     },
     subscriptionData: [],
     paymentHistoryData: [],

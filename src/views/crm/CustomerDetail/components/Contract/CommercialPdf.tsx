@@ -3,6 +3,7 @@ import { useContext, useState } from 'react';
 import { FormikValuesContext } from './index';
 import { addcontractinfileManager } from '@/services/CommonService';
 import { Button, Notification, toast } from '@/components/ui';
+import { useNavigate } from 'react-router-dom';
 
  
 Font.register({
@@ -1196,8 +1197,7 @@ actual.
 export const useFormikValues = () => useContext(FormikValuesContext);
 const MyComponent = (data:any) => {
  
-  console.log(data);
-  console.log(data.data.number);
+  const navigate = useNavigate();
   
   
   const [isLoading, setIsLoading] = useState(false);
@@ -1242,11 +1242,12 @@ const MyComponent = (data:any) => {
         }
        
         return (
-          <div>
-            <Button variant='solid' onClick={()=>{handlePost(blob)}} loading={isLoading} type='button'>Submit</Button>
-            {/* <a href={url || ""} target="_blank" rel="noopener noreferrer">View PDF</a>
-            <a href={url || ""} download="myDocument.pdf">Download PDF</a> */}
-          </div>
+          <div className='mb-6 gap-5 flex'>
+          <Button variant='solid' onClick={()=>{handlePost(blob)}} loading={isLoading} type='button'>Submit</Button>
+          <Button  onClick={()=>navigate(-1)}  type='button'>Discard</Button>
+          {/* <a href={url || ""} target="_blank" rel="noopener noreferrer">View PDF</a>
+          <a href={url || ""} download="myDocument.pdf">Download PDF</a> */}
+        </div>
         );
       }}
     </BlobProvider>

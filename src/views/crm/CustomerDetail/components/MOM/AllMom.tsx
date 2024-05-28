@@ -442,23 +442,23 @@ const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-point
                 </div>
                 <div className='flex gap-1 items-center'>
                 <p className="text-gray-500 dark:text-gray-400 font-semibold text-lg">Date: </p>
-                <p className=' text-base'>{formatDate(rowData.meetingdate)}</p>
+                <p className=' text-base'>{highlightText(formatDate(rowData.meetingdate))}</p>
                 </div>
               </div>
               <div>
                 <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl">Attendees</p>
                 <ul className="space-y-1">
-                  <li className=' text-base'><span className='font-semibold text-lg'>Client:</span> {rowData.attendees.client_name?rowData.attendees.client_name:"-"} </li>
-                  <li className=' text-base'><span className='font-semibold text-lg'>Organizer:</span> {rowData.attendees.organisor?rowData.attendees.organisor:"-"} </li>
-                  <li className=' text-base'><span className='font-semibold text-lg'>Designer:</span> {rowData.attendees.designer?rowData.attendees.designer:"-"} </li>
-                  <li className=' text-base'><span className='font-semibold text-lg'>Others:</span> {rowData.attendees.attendees?rowData.attendees.attendees:"-"} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Client:</span> {highlightText(rowData.attendees.client_name?rowData.attendees.client_name:"-")} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Organizer:</span> {highlightText(rowData.attendees.organisor?rowData.attendees.organisor:"-")} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Designer:</span> {highlightText(rowData.attendees.designer?rowData.attendees.designer:"-")} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Others:</span> {highlightText(rowData.attendees.attendees?rowData.attendees.attendees:"-")} </li>
                 </ul>
               </div>
             </div>
             <div className='mb-6'>
               <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl ">Remarks</p>
               <p>
-                {rowData.remark?rowData.remark:"-"}
+                {highlightText(rowData.remark?rowData.remark:"-")}
               </p>
             </div>
           <div>
@@ -483,7 +483,7 @@ const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-point
         <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
         <polyline points="14 2 14 8 20 8"></polyline>
       </svg>
-      {file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName}
+      {highlightText(getNames(file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName))}
     </a>
   ))
 ) : (

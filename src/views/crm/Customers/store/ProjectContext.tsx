@@ -1,4 +1,4 @@
-import { apiGetCrmProjects } from '@/services/ProjectService';
+import { apiGetCrmProjects } from '@/services/CryptoService';
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 
 interface ProjectContextType {

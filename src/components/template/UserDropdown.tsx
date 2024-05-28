@@ -51,7 +51,6 @@ const _UserDropdown = ({ className }: CommonProps) => {
     const {  authority, email } = useAppSelector(
         (state) => state.auth.user
     )
-console.log(data);
 
     const { signOut } = useAuth()
   

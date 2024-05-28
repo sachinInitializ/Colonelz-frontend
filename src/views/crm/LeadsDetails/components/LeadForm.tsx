@@ -224,7 +224,7 @@ const myParam = queryParams.get('id') || ''
 
       <Dialog
         isOpen={dialogIsOpen}
-        width={1000}
+        width={600}
         height={490}
         onClose={onDialogClose}
         onRequestClose={onDialogClose}
@@ -247,9 +247,9 @@ const myParam = queryParams.get('id') || ''
             </div>
           ))}
           <div className="text-right mt-6 mb-4 mr-[2%]">
-            <Button variant="solid" onClick={onDialogOk}>
+            {/* <Button variant="solid" onClick={onDialogOk}>
               Okay
-            </Button>
+            </Button> */}
           </div>
         </div>
       </Dialog>

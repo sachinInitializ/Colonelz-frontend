@@ -68,6 +68,7 @@ function DebouncedInput({
     ...props
 }: DebouncedInputProps) {
     const [value, setValue] = useState(initialValue)
+    const role=localStorage.getItem('role')
 
     useEffect(() => {
         setValue(initialValue)
@@ -95,9 +96,10 @@ function DebouncedInput({
                 className="block lg:inline-block md:mb-0 mb-4"
                 to="/app/crm/lead-new"
             >
+                {(role==='ADMIN' || role==='Senior Architect') && 
                 <Button block variant="solid" size="sm" icon={<HiPlusCircle />}>
                     Add Lead
-                </Button>
+                </Button>}
             </Link>
             </div>
         </div>
