@@ -149,3 +149,57 @@ export async function apiGetSearchResult<T>(data: { query: string }) {
         data,
     })
 }
+
+
+export async function apiGetCrmProjects() {
+    const response = await fetch(`${apiPrefix}admin/getall/project/?id=${userId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+
+export async function apiGetCrmFileManager() {
+    const response = await fetch(`${apiPrefix}admin/getfile/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+
+export async function apiGetCrmLeads() {
+    const response = await fetch(`${apiPrefix}admin/getall/lead/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+}

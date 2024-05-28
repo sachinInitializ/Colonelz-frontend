@@ -224,7 +224,7 @@ const myParam = queryParams.get('id') || ''
 
       <Dialog
         isOpen={dialogIsOpen}
-        width={1000}
+        width={600}
         height={490}
         onClose={onDialogClose}
         onRequestClose={onDialogClose}
@@ -235,7 +235,7 @@ const myParam = queryParams.get('id') || ''
               <Card>
                 <div className='flex flex-row justify-between items-center mb-4 '>
                   <CustomerInfoField title="Date"
-                    value={note?.date ? new Date(note.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-') : ''}
+                    value={note?.date ? new Date(note.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric',hour:'2-digit',minute:'2-digit' }).replace(/\//g, '-') : ''}
                    />
                   <CustomerInfoField title="Lead Status" value={note.status} />
                 </div>
@@ -247,9 +247,9 @@ const myParam = queryParams.get('id') || ''
             </div>
           ))}
           <div className="text-right mt-6 mb-4 mr-[2%]">
-            <Button variant="solid" onClick={onDialogOk}>
+            {/* <Button variant="solid" onClick={onDialogOk}>
               Okay
-            </Button>
+            </Button> */}
           </div>
         </div>
       </Dialog>

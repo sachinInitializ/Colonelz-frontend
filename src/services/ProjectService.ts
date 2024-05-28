@@ -1,49 +1,27 @@
-import ApiService from './ApiService'
+import appConfig from '@/configs/app.config';
+import Cookies from 'js-cookie';
 
-export async function apiGetProjectDashboardData<T>() {
-    return ApiService.fetchData<T>({
-        url: '/project/dashboard',
-        method: 'get',
-    })
-}
+const { apiPrefix } = appConfig
+const token = localStorage.getItem('auth');
+const userId=localStorage.getItem('userId');
+console.log('token:', token);
 
-export async function apiGetProjectList<T, U extends Record<string, unknown>>(
-    data: U
-) {
-    return ApiService.fetchData<T>({
-        url: '/project/list',
-        method: 'post',
-        data,
-    })
-}
 
-export async function apiPutProjectList<T, U extends Record<string, unknown>>(
-    data: U
-) {
-    return ApiService.fetchData<T>({
-        url: '/project/list/add',
-        method: 'put',
-        data,
-    })
-}
 
-export async function apiGetScrumBoards<T>() {
-    return ApiService.fetchData<T>({
-        url: '/project/scrum-board/boards',
-        method: 'post',
-    })
-}
+export async function apiGetCrmFileManager() {
+    const response = await fetch(`${apiPrefix}admin/getfile/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
 
-export async function apiGetScrumBoardtMembers<T>() {
-    return ApiService.fetchData<T>({
-        url: '/project/scrum-board/members',
-        method: 'post',
-    })
-}
-
-export async function apiGetScrumBoardtTicketDetail<T>() {
-    return ApiService.fetchData<T>({
-        url: '/project/scrum-board/tickets/detail',
-        method: 'get',
-    })
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
 }

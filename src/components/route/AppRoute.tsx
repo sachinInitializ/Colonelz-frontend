@@ -49,7 +49,7 @@ const AppRoute = <T extends Record<string, unknown>>({
         handleLayoutChange()
     }, [location, handleLayoutChange])
 
-    return <DataProvider><Component {...(props as T)} /></DataProvider>
+    return <Component {...(props as T)} />
 }
 
 export default AppRoute

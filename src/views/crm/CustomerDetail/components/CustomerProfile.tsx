@@ -250,7 +250,7 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                     />
                       <CustomerInfoField
                         title="Client Name"
-                        value={data?.client[0]?.client_name}
+                        value={data?.client?data.client[0]?.client_name:""}
                     />
                     <CustomerInfoField
                         title="Project status"
@@ -276,6 +276,15 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                         title="Project Incharge"
                         value={data?.designer}
                     />
+                    {data?.project_updated_by && data.project_updated_by.length>0 &&<>
+                    <CustomerInfoField
+                        title="Updated By"
+                        value={data.project_updated_by.length > 0 ? data.project_updated_by[data.project_updated_by.length-1].user_name : ""}                    />
+                    <CustomerInfoField
+                        title="Updated Date"
+                        value={formatDate(data?.project_updated_by.length>0?data?.project_updated_by[data.project_updated_by.length-1].updated_date:"")}
+                    />
+                    </>}
                 </div>
                     <div  className=' mt-7'>
                       <span>Description</span>

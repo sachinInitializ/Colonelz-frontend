@@ -12,25 +12,25 @@ Font.register({
   family: 'Poppins',
   fonts: [
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/VIeViZ2fPtYBt3B2fQZplvesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/VIeViZ2fPtYBt3B2fQZplvesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 300,
       
     },
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/hlvAxH6aIdOjWlLzgm0jqg.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/hlvAxH6aIdOjWlLzgm0jqg.ttf",
       fontWeight: 400
     },
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/4WGKlFyjcmCFVl8pRsgZ9vesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/4WGKlFyjcmCFVl8pRsgZ9vesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 500,
     },
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/-zOABrCWORC3lyDh-ajNnPesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/-zOABrCWORC3lyDh-ajNnPesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 600,
     }
     ,
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/8JitanEsk5aDh7mDYs-fYfesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/8JitanEsk5aDh7mDYs-fYfesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 700,
     }
   ]
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     color:"gray",
     textTransform: 'capitalize',
-    
+    width:10,
   },
   header:{
   height: 130,
@@ -102,7 +102,15 @@ const styles = StyleSheet.create({
     fontWeight: 400,
     fontSize: 18,
     marginBottom: 10,
-    paddingLeft:50,
+   paddingLeft:50,
+   marginTop:10,
+  },
+  subheading1: {
+    fontFamily: 'Poppins',
+    fontWeight: 400,
+    fontSize: 18,
+    marginBottom: 10,
+  marginTop:10,
   },
   subtext: {
     fontSize: 16,
@@ -124,6 +132,7 @@ const styles = StyleSheet.create({
   },
   attendeeSection: {
     marginBottom: 10,
+    width:230
     
   },
   attendeeHeading: {
@@ -164,7 +173,7 @@ const MyDocument = (rowData:any) => (
   <Document>
   <Page style={styles.page}>
     <View style={styles.header}>
-    <Image style={styles.image} src={'/public/Images/logo.png'} />
+    <Image style={styles.image} src={'/Images/logo.png'} />
       <Text style={styles.headerText}>Devs Project</Text>
     </View>
       
@@ -173,39 +182,48 @@ const MyDocument = (rowData:any) => (
       <Text style={styles.heading}>Meeting Details</Text>
     </View>
     <View style={styles.subsection}>
+      <View>
     <View style={styles.section1}>
      <Text style={styles.subtext}>Location:<Text style={styles.text}> {rowData.data.location}</Text></Text>   
     </View>
-    <View style={styles.section1}>
-    <Text style={styles.subtext}>Date: <Text style={styles.text}>{formatDate(rowData.data.meetingdate)}</Text></Text> 
-    </View>
-    </View>
-    <View style={styles.section}>
-      <Text style={styles.subheading}>Attendees</Text>
-      <View style={styles.attendees}>
-        <View style={styles.attendeeSection1}>
-        <View style={styles.attendeeSection}>
+
+    <Text style={styles.subheading1}>Attendees</Text>
+    <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Client: <Text style={styles.text}>{rowData.data.attendees?.client_name}</Text></Text>
          
         </View>
+
         <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Organizer:<Text style={styles.text}>{rowData.data.attendees?.organisor}</Text></Text>
           
         </View>
+
+       
+
+       
+
         </View>
-        <View style={styles.attendeeSection1}>
-        <View style={styles.attendeeSection}>
+
+    <View>
+    <View style={styles.section1}>
+    <Text style={styles.subtext}>Date: <Text style={styles.text}>{formatDate(rowData.data.meetingdate)}</Text></Text> 
+    </View>
+    <Text style={styles.subheading}> </Text>
+    <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Designer:  <Text style={styles.text}>{rowData.data.attendees?.designer}</Text></Text>
         
       
         </View>
-        <View style={styles.attendeeSection}>
+
+    <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Others:<Text style={styles.text}>{rowData.data.attendees?.attendees}</Text></Text>
           
         </View>
+
         </View>
-      </View>
+
     </View>
+   
     <View style={styles.section}>
       <Text style={styles.subheading}>Remarks</Text>
       <Text style={styles.remarks}>
@@ -424,23 +442,23 @@ const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-point
                 </div>
                 <div className='flex gap-1 items-center'>
                 <p className="text-gray-500 dark:text-gray-400 font-semibold text-lg">Date: </p>
-                <p className=' text-base'>{formatDate(rowData.meetingdate)}</p>
+                <p className=' text-base'>{highlightText(formatDate(rowData.meetingdate))}</p>
                 </div>
               </div>
               <div>
                 <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl">Attendees</p>
                 <ul className="space-y-1">
-                  <li className=' text-base'><span className='font-semibold text-lg'>Client:</span> {rowData.attendees.client_name?rowData.attendees.client_name:"-"} </li>
-                  <li className=' text-base'><span className='font-semibold text-lg'>Organizer:</span> {rowData.attendees.organisor?rowData.attendees.organisor:"-"} </li>
-                  <li className=' text-base'><span className='font-semibold text-lg'>Designer:</span> {rowData.attendees.designer?rowData.attendees.designer:"-"} </li>
-                  <li className=' text-base'><span className='font-semibold text-lg'>Others:</span> {rowData.attendees.attendees?rowData.attendees.attendees:"-"} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Client:</span> {highlightText(rowData.attendees.client_name?rowData.attendees.client_name:"-")} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Organizer:</span> {highlightText(rowData.attendees.organisor?rowData.attendees.organisor:"-")} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Designer:</span> {highlightText(rowData.attendees.designer?rowData.attendees.designer:"-")} </li>
+                  <li className=' text-base'><span className='font-semibold text-lg'>Others:</span> {highlightText(rowData.attendees.attendees?rowData.attendees.attendees:"-")} </li>
                 </ul>
               </div>
             </div>
             <div className='mb-6'>
               <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl ">Remarks</p>
               <p>
-                {rowData.remark?rowData.remark:"-"}
+                {highlightText(rowData.remark?rowData.remark:"-")}
               </p>
             </div>
           <div>
@@ -465,7 +483,7 @@ const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-point
         <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
         <polyline points="14 2 14 8 20 8"></polyline>
       </svg>
-      {file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName}
+      {highlightText(getNames(file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName))}
     </a>
   ))
 ) : (

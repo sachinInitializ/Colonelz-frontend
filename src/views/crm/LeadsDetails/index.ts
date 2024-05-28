@@ -1,3 +1,3 @@
-import CustomerDetail from './CustomerDetail'
+import CustomerDetail from './LeadDetail'
 
 export default CustomerDetail

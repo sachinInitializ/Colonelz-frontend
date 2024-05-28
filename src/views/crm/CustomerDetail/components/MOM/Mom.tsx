@@ -16,30 +16,30 @@ import { apiGetCrmProjectsMom } from '@/services/CrmService'
 import { useMomContext } from '../../store/MomContext'
 import appConfig from '@/configs/app.config'
 import { BsThreeDotsVertical } from 'react-icons/bs'
-import { Document, Page, Text, View, Image, BlobProvider, StyleSheet, Font, Link } from '@react-pdf/renderer';
+import { Document, Page, Text, View, Image, BlobProvider, StyleSheet, Font, Link, PDFViewer } from '@react-pdf/renderer';
 Font.register({
   family: 'Poppins',
   fonts: [
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/VIeViZ2fPtYBt3B2fQZplvesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/VIeViZ2fPtYBt3B2fQZplvesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 300,
       
     },
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/hlvAxH6aIdOjWlLzgm0jqg.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/hlvAxH6aIdOjWlLzgm0jqg.ttf",
       fontWeight: 400
     },
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/4WGKlFyjcmCFVl8pRsgZ9vesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/4WGKlFyjcmCFVl8pRsgZ9vesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 500,
     },
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/-zOABrCWORC3lyDh-ajNnPesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/-zOABrCWORC3lyDh-ajNnPesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 600,
     }
     ,
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/8JitanEsk5aDh7mDYs-fYfesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/8JitanEsk5aDh7mDYs-fYfesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 700,
     }
   ]
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     color:"gray",
     textTransform: 'capitalize',
-    
+    width:10,
   },
   header:{
   height: 130,
@@ -111,7 +111,15 @@ const styles = StyleSheet.create({
     fontWeight: 400,
     fontSize: 18,
     marginBottom: 10,
-    paddingLeft:50,
+   paddingLeft:50,
+   marginTop:10,
+  },
+  subheading1: {
+    fontFamily: 'Poppins',
+    fontWeight: 400,
+    fontSize: 18,
+    marginBottom: 10,
+  marginTop:10,
   },
   subtext: {
     fontSize: 16,
@@ -133,6 +141,7 @@ const styles = StyleSheet.create({
   },
   attendeeSection: {
     marginBottom: 10,
+    width:230
     
   },
   attendeeHeading: {
@@ -172,7 +181,7 @@ const MyDocument = (rowData:any) => (
   <Document>
   <Page style={styles.page}>
     <View style={styles.header}>
-    <Image style={styles.image} src={'/public/Images/logo.png'} />
+    <Image style={styles.image} src={'/Images/logo.png'} />
       <Text style={styles.headerText}>Devs Project</Text>
     </View>
       
@@ -181,39 +190,48 @@ const MyDocument = (rowData:any) => (
       <Text style={styles.heading}>Meeting Details</Text>
     </View>
     <View style={styles.subsection}>
+      <View>
     <View style={styles.section1}>
      <Text style={styles.subtext}>Location:<Text style={styles.text}> {rowData.data.location}</Text></Text>   
     </View>
-    <View style={styles.section1}>
-    <Text style={styles.subtext}>Date: <Text style={styles.text}>{formatDate(rowData.data.meetingdate)}</Text></Text> 
-    </View>
-    </View>
-    <View style={styles.section}>
-      <Text style={styles.subheading}>Attendees</Text>
-      <View style={styles.attendees}>
-        <View style={styles.attendeeSection1}>
-        <View style={styles.attendeeSection}>
+
+    <Text style={styles.subheading1}>Attendees</Text>
+    <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Client: <Text style={styles.text}>{rowData.data.attendees?.client_name}</Text></Text>
          
         </View>
+
         <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Organizer:<Text style={styles.text}>{rowData.data.attendees?.organisor}</Text></Text>
           
         </View>
+
+       
+
+       
+
         </View>
-        <View style={styles.attendeeSection1}>
-        <View style={styles.attendeeSection}>
+
+    <View>
+    <View style={styles.section1}>
+    <Text style={styles.subtext}>Date: <Text style={styles.text}>{formatDate(rowData.data.meetingdate)}</Text></Text> 
+    </View>
+    <Text style={styles.subheading}> </Text>
+    <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Designer:  <Text style={styles.text}>{rowData.data.attendees?.designer}</Text></Text>
         
       
         </View>
-        <View style={styles.attendeeSection}>
+
+    <View style={styles.attendeeSection}>
           <Text style={styles.attendeeHeading}>Others:<Text style={styles.text}>{rowData.data.attendees?.attendees}</Text></Text>
           
         </View>
+
         </View>
-      </View>
+
     </View>
+   
     <View style={styles.section}>
       <Text style={styles.subheading}>Remarks</Text>
       <Text style={styles.remarks}>
@@ -227,7 +245,7 @@ const MyDocument = (rowData:any) => (
       <View style={styles.attendeeSection}>
         {rowData.data.files.length > 0 ? (
           rowData.data.files.map((file:any) => (
-              <Text style={styles.attendeeHeading}>File: <Text style={styles.text}><Link src={file.fileUrl}>{file.fileName}</Link></Text></Text>
+              <Text style={styles.attendeeHeading}>File: <Text style={styles.text}><Link src={file.fileUrl}>{file.fileName.length>20?`${file.fileName.slice(0,20)}...`:file.fileName}</Link></Text></Text>
           ))
           ) : (
           <Text>No files</Text>
@@ -429,7 +447,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
         formData.append('mom_id', rowData.mom_id);
         formData.append('file', blob, 'myDocument1.pdf');
   
-       const response=await fetch('http://localhost:8000/v1/api/admin/send/momdata', {
+       const response=await fetch('https://backend.prod.psi.initz.run/v1/api/admin/send/momdata', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('auth')}`,
@@ -437,7 +455,25 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
         body: formData,
       });
       const result = await response.json();
-      console.log(result);
+      if(result.code===200){
+        toast.push(
+          <Notification
+              type='success' duration={2000}
+          >
+              MOM Shared Successfully
+          </Notification>
+        )
+      }
+      else{
+        toast.push(
+          <Notification
+              type='danger' duration={2000}
+          >
+              {result.errorMessage}
+          </Notification>
+        )
+      
+      }
     }
     const { apiPrefix } = appConfig
     const formatDate = (dateString: string) => {
@@ -471,10 +507,12 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
             <div>
                 <span>
               <Dropdown renderTitle={Toggle} placement='bottom-end'>
-              <a href={url} target='_blank' rel='noreferrer'    
+              <a href={url || ""} target='_blank' rel='noreferrer'    
                     >  
                 <Dropdown.Item eventKey="a" >View MOM</Dropdown.Item></a>
                 <Dropdown.Item eventKey="b" onClick={()=>handlePost(blob)}>Share MOM</Dropdown.Item>
+                
+
                
             </Dropdown></span>
             </div>
@@ -536,7 +574,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
                 ) : (
                 <p>No files</p>
                 )}
-             
+          
               </div>
             </div>
           </div>

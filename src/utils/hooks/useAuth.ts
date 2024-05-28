@@ -39,7 +39,7 @@ function useAuth() {
                         setUser(
                             {
                                 authority: [resp.data.role],
-                                user_name: '',
+                                
                             }
                         )
                     )
@@ -73,9 +73,6 @@ function useAuth() {
         dispatch(signOutSuccess())
         dispatch(
             setUser({
-                avatar: '',
-                userName: '',
-                user_name: '',
                 authority: [],
             })
             )
@@ -83,12 +80,14 @@ function useAuth() {
             window.location.reload()
     }
 
-    const signOut = async () => {  
+    const signOut = async () => {
         await apiSignOut()
         handleSignOut()
     }
-    setTimeout(signOut, 7*24*60*60*1000);
-
+    const tokens=localStorage.getItem('auth')
+    if (tokens) {
+    setTimeout(signOut, 24*60*60*1000);
+    }
     return {
         authenticated: token && signedIn,
         signIn,

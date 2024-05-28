@@ -4,7 +4,7 @@ import useAuth from '@/utils/hooks/useAuth'
 import { useAppSelector } from '@/store'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
-import {  HiOutlineLogout, HiOutlineUserAdd } from 'react-icons/hi'
+import {  HiOutlineLogout, HiOutlineUser, HiOutlineUserAdd, HiUser } from 'react-icons/hi'
 import type { CommonProps } from '@/@types/common'
 import { AiOutlineUser, AiOutlineUserAdd, } from 'react-icons/ai'
 import { useContext } from 'react'
@@ -51,13 +51,15 @@ const _UserDropdown = ({ className }: CommonProps) => {
     const {  authority, email } = useAppSelector(
         (state) => state.auth.user
     )
-console.log(data);
 
     const { signOut } = useAuth()
+  
+    
 
     const UserAvatar = (
         <div className={classNames(className, 'flex items-center gap-2')}>
-           <img src={data?.avatar} className='w-8' alt="" />
+            {data?.avatar.length ===0 ? <HiOutlineUser className=' text-xl'/>:<img src={data?data.avatar:""} className='w-8' alt="" />}
+           
             <div className="hidden md:block">
                 <div className="text-xs capitalize">
                     {authority?.[0] || 'guest'}
@@ -85,28 +87,32 @@ console.log(data);
                 </Dropdown.Item>
                 <Dropdown.Item variant="divider" />
 
-                {role === 'ADMIN' &&dropdownItemList.map((item) => (
-                    <>
-                    <Dropdown.Item
-                        key={item.label}
-                        eventKey={item.label}
-                        className="mb-1 px-0"
-                    >
-                        <Link 
-                            className="flex h-full w-full px-2" 
-                            to={item.path}
-                        >
-                            <span className="flex gap-2 items-center w-full">
+                {dropdownItemList.map((item) => {
+                    if (role==='ADMIN' || !['Add User to Project', 'Add User to Lead', 'Create User'].includes(item.label)) {
+                        return (
+                        <>
+                            <Dropdown.Item
+                            key={item.label}
+                            eventKey={item.label}
+                            className="mb-1 px-0"
+                            >
+                            <Link 
+                                className="flex h-full w-full px-2" 
+                                to={item.path}
+                            >
+                                <span className="flex gap-2 items-center w-full">
                                 <span className="text-xl opacity-50">
                                     {item.icon}
                                 </span>
                                 <span>{item.label}</span>
-                            </span>
-                        </Link>
-                    </Dropdown.Item>
-                    <Dropdown.Item variant="divider" />
-                    </>
-                ))}
+                                </span>
+                            </Link>
+                            </Dropdown.Item>
+                            <Dropdown.Item variant="divider" />
+                        </>
+                        );
+                    }
+                    })}
                 <Dropdown.Item
                     eventKey="Sign Out"
                     className="gap-2"

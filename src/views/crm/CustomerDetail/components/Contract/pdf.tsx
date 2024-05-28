@@ -1,37 +1,38 @@
 import { Document, Page, Text, View, Image, BlobProvider, StyleSheet, Font, PDFViewer } from '@react-pdf/renderer';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { FormikValuesContext } from './index';
 import { addcontractinfileManager } from '@/services/CommonService';
 import { Button, Notification, toast } from '@/components/ui';
+import { useNavigate } from 'react-router-dom';
 
  
 Font.register({
   family: 'Poppins',
   fonts: [
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/VIeViZ2fPtYBt3B2fQZplvesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/VIeViZ2fPtYBt3B2fQZplvesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 300
     },
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/hlvAxH6aIdOjWlLzgm0jqg.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/hlvAxH6aIdOjWlLzgm0jqg.ttf",
       fontWeight: 'normal'
     },
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/hlvAxH6aIdOjWlLzgm0jqg.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/hlvAxH6aIdOjWlLzgm0jqg.ttf",
       fontWeight: 'normal',
       fontStyle: 'italic'
     },
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/4WGKlFyjcmCFVl8pRsgZ9vesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/4WGKlFyjcmCFVl8pRsgZ9vesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 500,
     },
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/-zOABrCWORC3lyDh-ajNnPesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/-zOABrCWORC3lyDh-ajNnPesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 600,
     }
     ,
     {
-      src: "http://fonts.gstatic.com/s/poppins/v1/8JitanEsk5aDh7mDYs-fYfesZW2xOQ-xsNqO47m55DA.ttf",
+      src: "https://fonts.gstatic.com/s/poppins/v1/8JitanEsk5aDh7mDYs-fYfesZW2xOQ-xsNqO47m55DA.ttf",
       fontWeight: 700,
     }
   ]
@@ -136,6 +137,13 @@ dothead11:{
   flexDirection: 'row',
   gap: 10,
 },
+dothead12:{
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 10,
+  marginLeft: 20,
+},
  dot:{
   fontSize: 18,
   fontFamily: 'Poppins',
@@ -208,6 +216,18 @@ design:{
     fontWeight: 'bold',
     fontSize: 14,
     marginBottom: 5,
+  },
+  heading1: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    marginBottom: 5,
+    textDecoration: 'underline',
+  },
+  heading2: {
+    fontWeight: 'bold',
+    fontSize: 14,
+
+    textDecoration: 'underline',
   },
 
   text: {
@@ -453,7 +473,7 @@ const date=new Date();
   <Document>
   <Page style={styles.page}>
     <View style={styles.header}>
-    <Image style={styles.image} src={'/public/Images/logo.png'} />
+    <Image style={styles.image} src={'/Images/logo.png'} />
       </View>
     <View>
     <Text style={styles.headerText}>{pdfData.contract_type}</Text>
@@ -802,9 +822,6 @@ fabricate components of the works.</Text></View>
 
     </View>
 
-    <View><Text> </Text></View>
-    <View><Text> </Text></View>
-    <View><Text> </Text></View>
     
 
     <View style={styles.scope1}>
@@ -833,9 +850,9 @@ joint material selection visits will be done as per the following rates:
           </Text>
         </View>
 
-{ pdfData.design_stage.map((item:any, index:number) => {
+{/* { pdfData.design_stage.map((item:any, index:number) => {
   if(item==='Balconies'){
-    return(
+    return( */}
       <>
         <View >
         <View ><Text style={styles.fee} >2. Balconies @ ₹{pdfData.balcony_charges_per_sft}/ Sft x Balcony area @ {pdfData.balcony_area_in_sft} Sft = ₹{Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft)}/-</Text></View>
@@ -845,7 +862,7 @@ joint material selection visits will be done as per the following rates:
           </Text>
         </View>
         </>
-)}})}
+{/* )}})} */}
 
 
 
@@ -890,7 +907,7 @@ finalization.</Text></View>
 
         <View  >
         <View >
-          <Text style={styles.fee7}>7. Note</Text>
+          <Text style={styles.fee7}>7. Note:</Text>
           <Text style={styles.subfee}>a) Billing shall be as per covered area, as per measurement on-site.</Text>
           <Text style={styles.subfee}>b) The covered area includes all internal and external walls.</Text>
           <Text style={styles.subfee}>c) The above fees does not include services such as Landscape design, 
@@ -949,18 +966,20 @@ signed.</Text></View>
 
       <View style={styles.section}>
         <Text style={styles.text}>The Client shall release respective payment installments within 3 days from the date of completion of stage as intimated by the Designer.</Text>
-        <Text style={styles.text}>
-          <View>
-         <View>
-          <Text style={styles.bold}>3. Site Visit. </Text></View>
-          <View>
-          Up to 10 visits to the site, by The Designer’s </View></View><Text style={styles.bold}>Design Team</Text> shall be made to ensure suitable progress, quality, and other checks. However, the Site Supervisor would be on the Site regularly.
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>4. </Text>
-          Additional Site visits @3000/- visit for the designers, @5000/- visit for the head designer.
-        </Text>
-        <Text style={styles.heading}>5. Market Visits.</Text>
+       
+
+        <View style={styles.design}><Text>3.</Text><Text style={{fontWeight:'bold', textDecoration:'underline'}}>Site Visit</Text></View>
+        <View style={styles.design}><Text> </Text><Text>Up to 10 visits to the site, by The Designer’s Design Team
+shall be made to ensure suitable progress, quality, and other checks.
+However, the Site Supervisor would be on the Site regularly.
+</Text></View>
+        <View style={styles.design}><Text>4.</Text><Text>Additional Site visits @3000/- visit for the designers, @5000/- visit for the 
+head designer.
+</Text></View>
+      
+
+<View style={styles.design}><Text>5.</Text><Text style={{fontWeight:'bold', textDecoration:'underline'}}>Market Visitsx</Text></View>
+ 
         <View style={styles.list}>
 
         <View style={styles.dothead}>
@@ -986,16 +1005,16 @@ signed.</Text></View>
         </View>
 
           <View style={styles.list}>
-          <View style={styles.dothead}>
+          <View style={styles.dothead12}>
         <View ><Text style={styles.dot} >•</Text></View>
-        <View>
-          <Text>In Delhi/Gurgaon - 3hrs, time is allotted</Text>
+        <View >
+          <Text >In Delhi/Gurgaon - 3hrs, time is allotted</Text>
         </View>
         </View>
-          <View style={styles.dothead}>
+          <View style={styles.dothead12}>
         <View ><Text style={styles.dot} >•</Text></View>
-        <View>
-          <Text>Outside Delhi/Gurgaon - 2hrs, time is allotted</Text>
+        <View >
+          <Text >Outside Delhi/Gurgaon - 2hrs, time is allotted</Text>
         </View>
         </View>
         
@@ -1027,7 +1046,12 @@ signed.</Text></View>
         <View> <Text style={styles.part1}>General Terms & Conditions</Text></View>
        
 
-        <View style={styles.design}><Text>1.</Text><Text><Text style={styles.underline}>Scope.</Text> Implementation Work shall be completed by The Designer as per the designs finalised. WII will be the day of commencement of Work. All
+        <View style={{display:'flex' ,gap:10, flexDirection:'row'}}>
+        <View><Text style={styles.part11} >1.</Text></View>
+        <View><Text style={styles.part71}>Scope</Text></View>
+       
+      </View>
+        <View style={styles.design}><Text> </Text><Text> Implementation Work shall be completed by The Designer as per the designs finalised. WII will be the day of commencement of Work. All
         Sundays / Holidays / days when work is not permitted to be done will be
 added to the timeline. A Workday is considered as 8 working hours,
 excluding 1 hour of mandatory lunch & tea breaks, during the day. All
@@ -1037,7 +1061,12 @@ Work Time Plan.
 </Text></View>
 
 
-        <View style={styles.design}><Text>2.</Text><Text><Text style={styles.underline}>Design Finalisation </Text> It is reiterated that once designs are finalised, any 
+<View style={{display:'flex' ,gap:10, flexDirection:'row'}}>
+        <View><Text style={styles.part11} >2.</Text></View>
+        <View><Text style={styles.part71}>Design Finalisation</Text></View>
+       
+      </View>
+        <View style={styles.design}><Text> </Text><Text> It is reiterated that once designs are finalised, any 
 changes requested thereafter, causes restart of the entire design process 
 for that area, all over again. Hence, it is in the interest of both parties that 
 due deliberation is given to finalise the designs and thereafter, restrict the 
@@ -1115,7 +1144,12 @@ hindrances, delay in approving materials, or keeping approvals on hold for
 any reason.
 </Text></View>
 
-<View style={styles.design}><Text>  </Text><Text><Text style={styles.underline}>Supervision of Execution. </Text>Supervision of Execution. The Designer’s team shall do periodic
+<View style={{display:'flex' ,gap:10, flexDirection:'row', marginLeft:14}}>
+       
+        <View><Text style={styles.part71}>Supervision of Execution.</Text></View>
+       
+      </View>
+<View style={styles.design}><Text>  </Text><Text> The Designer’s team shall do periodic
 supervision and provide regular guidance. Supervision till the Original 
 Timeline planned shall be complementary. 10 Days delay beyond the 
 original timeline, shall be acceptable. Beyond that, there will be a 
@@ -1123,8 +1157,13 @@ Supervision cost @ ₹1,000/ per day, till Handover.
 </Text></View>
 
 
-<View style={styles.design}><Text>5.</Text><Text><Text style={styles.underline}>Project Implementation and Completion. 
-</Text> Implementation of Work will
+<View style={{display:'flex' ,gap:10, flexDirection:'row'}}>
+        <View><Text style={styles.part11} >5.</Text></View>
+        <View><Text style={styles.part71}>Project Implementation and Completion.</Text></View>
+       
+      </View>
+
+<View style={styles.design}><Text> </Text><Text>Implementation of Work will
 depend on the finalisation of Design and Plans. Project Implementation is <View  style={{fontFamily:'Poppins',fontWeight:700}}>
 <Text style={{fontFamily:'Poppins',fontWeight:700}}> Phase 2 of the Contract and Commences once the Designs are 
 frozen, i.e. after completion of the DESIGN PHASE, ie Phase I.</Text></View>
@@ -1146,9 +1185,7 @@ Execution Advance to the Company.
 </Text></View>
 </View>
 
-<View>
-  <Text>   </Text>
-</View>
+
 
 <View style={styles.terms}>
       <View style={styles.design}><Text style={{fontWeight:"bold"}}>•</Text><Text> W is the day of commencement of Work. Sundays will not be included in 
@@ -1190,7 +1227,13 @@ earlier than that regularly is not possible, even if society permits.
 </View>
 
 
-<View style={styles.design}><Text>6.</Text><Text><Text style={styles.underline}>Suspension / Termination of Project. </Text> If the Client
+<View style={{display:'flex' ,gap:10, flexDirection:'row'}}>
+        <View><Text style={styles.part11} >6.</Text></View>
+        <View><Text style={styles.part71}>Suspension / Termination of Project.</Text></View>
+       
+      </View>
+
+<View style={styles.design}><Text> </Text><Text>If the Client
 suspends/terminates the work on the project, it will be communicated in 
 writing on mail to biraj@colonelz.com. All payments for the works done
 as per WorkSchedule will be made within two working days, from the date
@@ -1263,17 +1306,21 @@ export const useFormikValues = () => useContext(FormikValuesContext);
 const MyComponent = (data:any) => {
  
   console.log(data);
-  console.log(data.data.number);
+  const navigate=useNavigate()
   
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handlePost = async (blob: any) => {
+    setIsLoading(true); 
+    const formData = new FormData();
+    formData.append('lead_id', data.data.lead_id);
+    formData.append('user_id', localStorage.getItem('userId') || '');
+    formData.append('file', blob, 'Contract.pdf');
   
-  const handlePost=async(blob:any)=>{
-      const formData = new FormData();
-      formData.append('lead_id', data.data.lead_id);
-      formData.append('user_id', localStorage.getItem('userId') || '');
-      formData.append('file', blob, 'Contract.pdf');
- 
-     const response=await addcontractinfileManager(formData)
+    const response = await addcontractinfileManager(formData);
     const result = await response.json();
+  
+    setIsLoading(false);
     if(result.code===200){
       toast.push(
         <Notification type='success' duration={2000}>
@@ -1303,17 +1350,18 @@ const MyComponent = (data:any) => {
         }
        
         return (
-          <div>
-            <Button variant='solid' onClick={()=>{handlePost(blob)}}>Submit</Button>
+          <div className='mb-6 gap-5 flex'>
+            <Button variant='solid' onClick={()=>{handlePost(blob)}} loading={isLoading} type='button'>Submit</Button>
+            <Button  onClick={()=>navigate(-1)}  type='button'>Discard</Button>
             {/* <a href={url || ""} target="_blank" rel="noopener noreferrer">View PDF</a>
             <a href={url || ""} download="myDocument.pdf">Download PDF</a> */}
           </div>
         );
       }}
     </BlobProvider>
-    {/* <PDFViewer width="100%" height="600">
+    <PDFViewer width="100%" height="600">
       <MyDocument data={data.data}/>
-    </PDFViewer> */}
+    </PDFViewer>
   </div>
 )};
  

@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom'
 import { getProjectData } from './data'
 import { Select } from '@/components/ui'
 import { GoProjectRoadmap } from 'react-icons/go'
+import { useData } from '../FileManagerContext/FIleContext'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -148,21 +149,7 @@ const Filtering = () => {
         []
     )
 
-    const [projectData, setProjectData] = useState<ProjectDataItem[]>([]);
-
-    useEffect(() => {
-      const fetchDataAndLog = async () => {
-        try {
-          const projectData = await getProjectData();
-          console.log(projectData);
-          setProjectData(projectData);
-        } catch (error) {
-          console.error('Error fetching lead data', error);
-        }
-      };
-  
-      fetchDataAndLog();
-    }, []);
+    const { projectData } = useData();
     const totalData=projectData.length
     
     const table = useReactTable({
