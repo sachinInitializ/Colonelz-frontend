@@ -63,7 +63,7 @@ const YourMainComponent: React.FC = () => {
     if (projectId) {
       const fetchData = async () => {
         try {
-          const response = await fetch(`https://backend.prod.psi.initz.run/v1/api/admin/get/quotation/?project_id=${projectId}`);
+          const response = await fetch(`https://colonelzadmin.test.initz.run//v1/api/admin/get/quotation/?project_id=${projectId}`);
           const data = await response.json();
           setMainQuotationData(data);
         } catch (error) {
