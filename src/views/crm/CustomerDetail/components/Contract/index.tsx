@@ -132,6 +132,7 @@ const Index = () => {
         <Formik
         initialValues={{
             lead_id:lead_id,
+            file_name:'',
             company_name: '',
             user_id:userId ,
             project_type: '',
@@ -447,16 +448,38 @@ const FormContent = () => {
                             </FormItem>
                             {values.project_type==='commercial' &&
                             <FormItem label="Working Days">
-                                <Field
-                                    component={Input}
-                                    type="text"
-                                    name="working_days"
-                                    placeholder="Quotation"
-                                />
+                                 <Field name='working_days'>
+                                    {({ field, form }: FieldProps) => (
+                                        <Input
+                                            type='text'
+                                            placeholder='Working Days'
+                                            
+                                            size='md'
+                                            onKeyPress={(e) => {
+                                                const charCode = e.which ? e.which : e.keyCode;
+                                                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                                                  e.preventDefault();
+                                                }
+                                              }}
+                                              onChange={(e) => {
+                                                const value = e.target.value.replace(/[^0-9]/g, '');
+                                                form.setFieldValue(field.name, value);
+                                                console.log(field.name, value);
+                                              }}
+                                        />
+                                    )}
+                                </Field>
                             </FormItem>
                             }
 
-
+                            <FormItem label="File Name">
+                                <Field
+                                    component={Input}
+                                    type="text"
+                                    name="file_name"
+                                    placeholder="File Name"
+                                />
+                            </FormItem>
                             <FormItem label='Design Charges'>
                             <Field name='design_charges'>
                                     {({ field, form }:any) => (
@@ -613,6 +636,7 @@ const FormContent = () => {
                                     )}
                                 </Field>
                             </FormItem>
+                            {values.design_stage.includes('Balconies') &&<>
                             <FormItem label='Design Charges For Balcony Area(in Rs)'>
                                 <Field  name='balcony_charges_per_sft'>
                                     {({ field, form }: FieldProps) => (
@@ -656,7 +680,8 @@ const FormContent = () => {
                                         />
                                     )}
                                 </Field>
-                            </FormItem>
+                            </FormItem></>}
+                            {values.design_stage.includes('Terrace') &&<>
                             <FormItem label='Design Charges For Terrace Covered Area(in Rs)'>
                                 <Field name='terrace_covered_charges_per_sft'>
                                     {({ field, form }: FieldProps) => (
@@ -728,7 +753,6 @@ const FormContent = () => {
                                         <Input
                                             type='text'
                                             placeholder='Terrace Open Area (in SQFT)'
-                                            
                                             size='md'
                                             onKeyPress={(e) => {
                                                 const charCode = e.which ? e.which : e.keyCode;
@@ -743,7 +767,7 @@ const FormContent = () => {
                                         />
                                     )}
                                 </Field>
-                            </FormItem>
+                            </FormItem></>}
                             </>
                             }
                            

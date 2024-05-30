@@ -469,6 +469,8 @@ console.log(pdfData.toilet_number);
 
 const date=new Date();
 
+let number=1;
+
   return(
   <Document>
   <Page style={styles.page}>
@@ -842,7 +844,7 @@ joint material selection visits will be done as per the following rates:
 
 
         <View >
-        <View ><Text style={styles.fee} >1. Design charges @ ₹{pdfData.design_charges_per_sft}/ Sft x Covered area @{pdfData.design_cover_area_in_sft} Sft = ₹{Number(pdfData.design_charges_per_sft)*Number(pdfData.design_cover_area_in_sft)}/-</Text></View>
+        <View ><Text style={styles.fee} >{number++}. Design charges @ ₹{pdfData.design_charges_per_sft}/ Sft x Covered area @{pdfData.design_cover_area_in_sft} Sft = ₹{Number(pdfData.design_charges_per_sft)*Number(pdfData.design_cover_area_in_sft)}/-</Text></View>
         </View>
         <View>
           <Text style={styles.subfee} >({numberToWordsString(Number(pdfData.design_charges_per_sft)*Number(pdfData.design_cover_area_in_sft))}) excl. of
@@ -850,43 +852,51 @@ joint material selection visits will be done as per the following rates:
           </Text>
         </View>
 
-{/* { pdfData.design_stage.map((item:any, index:number) => {
+{ pdfData.design_stage.map((item:any, index:number) => {
   if(item==='Balconies'){
-    return( */}
+    return(
       <>
         <View >
-        <View ><Text style={styles.fee} >2. Balconies @ ₹{pdfData.balcony_charges_per_sft}/ Sft x Balcony area @ {pdfData.balcony_area_in_sft} Sft = ₹{Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft)}/-</Text></View>
+        <View ><Text style={styles.fee} >{number++}. Balconies @ ₹{pdfData.balcony_charges_per_sft}/ Sft x Balcony area @ {pdfData.balcony_area_in_sft} Sft = ₹{Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft)}/-</Text></View>
         </View>
         <View>
           <Text style={styles.subfee} >({numberToWordsString(Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft))}) excl. of taxes.
           </Text>
         </View>
         </>
-{/* )}})} */}
+ )}})} 
 
+
+
+{pdfData.design_stage.map((item:any, index:number) => {
+      if(item==='Terrace'){
+        return(
+          <>
+            <View>
+              <View><Text style={styles.fee} >{number++}. Terrace covered area @ ₹{pdfData.terrace_covered_charges_per_sft}/ Sft x Terrace area @ {pdfData.terrace_covered_area_in_sft} Sft = 
+              ₹{Number(pdfData.terrace_covered_area_in_sft)*Number(pdfData.terrace_covered_charges_per_sft)}/-</Text></View>
+            </View>
+            <View>
+              <Text style={styles.subfee} > ({numberToWordsString(Number(pdfData.terrace_covered_area_in_sft)*Number(pdfData.terrace_covered_charges_per_sft))}) excl. of taxes.
+              </Text>
+            </View>
+
+            <View>
+              <View><Text style={styles.fee} >{number++}. Terrace open area @ ₹{pdfData.terrace_open_charges_per_sft}/ Sft x Terrace area @ {pdfData.terrace_open_area_in_sft} Sft = {Number(pdfData.terrace_open_area_in_sft)*Number(pdfData.terrace_open_charges_per_sft)}/-</Text></View>
+            </View>
+            <View>
+              <Text style={styles.subfee} > ({numberToWordsString(Number(pdfData.terrace_open_area_in_sft)*Number(pdfData.terrace_open_charges_per_sft))}) excl. of
+              taxes.
+              </Text>
+            </View>
+          </>
+        )
+      }
+    })}
 
 
         <View >
-        <View ><Text style={styles.fee} >3. Terrace covered area @ ₹{pdfData.terrace_covered_charges_per_sft}/ Sft x Terrace area @ {pdfData.terrace_covered_area_in_sft} Sft = 
-        ₹{Number(pdfData.terrace_covered_area_in_sft)*Number(pdfData.terrace_covered_charges_per_sft)}/-</Text></View>
-        </View>
-        <View>
-          <Text style={styles.subfee} > ({numberToWordsString(Number(pdfData.terrace_covered_area_in_sft)*Number(pdfData.terrace_covered_charges_per_sft))}) excl. of taxes.
-          </Text>
-        </View>
-
-        <View >
-        <View ><Text style={styles.fee} >4. Terrace open area @ ₹{pdfData.terrace_open_charges_per_sft}/ Sft x Terrace area @ {pdfData.terrace_open_area_in_sft} Sft = {Number(pdfData.terrace_open_area_in_sft)*Number(pdfData.terrace_open_charges_per_sft)}/-</Text></View>
-        </View>
-        <View>
-          <Text style={styles.subfee} > ({numberToWordsString(Number(pdfData.terrace_open_area_in_sft)*Number(pdfData.terrace_open_charges_per_sft))}) excl. of
-taxes.
-          </Text>
-        </View>
-
-
-        <View >
-        <View ><Text style={styles.fee} >5. Final Design charges as per the site areas mentioned above are ₹
+        <View ><Text style={styles.fee} >{number++}. Final Design charges as per the site areas mentioned above are ₹
         {Number(pdfData.design_charges_per_sft)*Number(pdfData.design_cover_area_in_sft)}/- (Covered area) + ₹ {Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft)}/- (Balcony area) + ₹ {Number(pdfData.terrace_covered_area_in_sft)*Number(pdfData.terrace_covered_charges_per_sft)}/- (Terrace covered area) ₹ {Number(pdfData.terrace_open_area_in_sft)*Number(pdfData.terrace_open_charges_per_sft)}/- (Terrace open area) = 
 ₹{Number(pdfData.design_charges_per_sft)*Number(pdfData.design_cover_area_in_sft)+Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft)+Number(pdfData.terrace_covered_area_in_sft)*Number(pdfData.terrace_covered_charges_per_sft)+Number(pdfData.terrace_open_area_in_sft)*Number(pdfData.terrace_open_charges_per_sft)}/-</Text></View>
         </View>
@@ -898,7 +908,7 @@ excl. of taxes.
 
 
         <View  >
-        <View ><Text style={styles.fee} >6. The Tentative Project Execution cost will be shared with you as a 
+        <View ><Text style={styles.fee} >{number++}. The Tentative Project Execution cost will be shared with you as a 
 tentative estimate, after our design & scope of work discussion and 
 finalization.</Text></View>
 
@@ -907,7 +917,7 @@ finalization.</Text></View>
 
         <View  >
         <View >
-          <Text style={styles.fee7}>7. Note:</Text>
+          <Text style={styles.fee7}>{number++}. Note:</Text>
           <Text style={styles.subfee}>a) Billing shall be as per covered area, as per measurement on-site.</Text>
           <Text style={styles.subfee}>b) The covered area includes all internal and external walls.</Text>
           <Text style={styles.subfee}>c) The above fees does not include services such as Landscape design, 
@@ -1315,7 +1325,7 @@ const MyComponent = (data:any) => {
     const formData = new FormData();
     formData.append('lead_id', data.data.lead_id);
     formData.append('user_id', localStorage.getItem('userId') || '');
-    formData.append('file', blob, 'Contract.pdf');
+    formData.append('file', blob, `${data.data.file_name}.pdf`);
   
     const response = await addcontractinfileManager(formData);
     const result = await response.json();
