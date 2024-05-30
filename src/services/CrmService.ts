@@ -177,6 +177,23 @@ export async function apiGetCrmFileManager() {
     console.log('Received response from server:', data);
     return data;
 }
+export async function apiGetCrmFileManagerArchive(userId:string | null) {
+    const response = await fetch(`${apiPrefix}admin/get/archive?user_id=${userId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
 
 export async function apiGetCrmFileManagerProjects(projectId:string | null) {
     const response = await fetch(`${apiPrefix}admin/project/getfile/?project_id=${projectId}`, {
