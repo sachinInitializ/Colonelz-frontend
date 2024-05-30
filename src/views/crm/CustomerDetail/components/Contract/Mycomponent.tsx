@@ -493,7 +493,7 @@ const MyComponent = () => {
     formData.append('folder_name', "review");
     formData.append('files', blob, 'myDocument.pdf');
  
-    const response = await fetch('https://colonelzadmin.test.initz.run//v1/api/admin/project/fileupload', {
+    const response = await fetch('https://colonelzadmin.test.initz.run/v1/api/admin/project/fileupload', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('auth')}`,
