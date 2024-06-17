@@ -1,17 +1,92 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchLeadData } from '../data';
 import { Button, Checkbox, Dialog, Dropdown, FormItem, Input, Notification, Segment, Select, Upload, toast } from '@/components/ui';
 import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn, CiImageOn } from 'react-icons/ci';
-import LeadDataContext from '../LeadDataContext';
 import { apiDeleteFileManagerFiles, apiGetCrmFileManagerCreateLeadFolder, apiGetCrmFileManagerCreateProjectFolder, apiGetCrmFileManagerLeads, apiGetCrmFileManagerShareContractFile, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { apiGetUsers } from '@/services/CommonService';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { HiShare, HiTrash } from 'react-icons/hi';
+
+
+import Table from '@/components/ui/Table'
+import {
+    useReactTable,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
+    getFacetedMinMaxValues,
+    getPaginationRowModel,
+    getSortedRowModel,
+    flexRender,
+} from '@tanstack/react-table'
+import { rankItem } from '@tanstack/match-sorter-utils'
+import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
+import type { InputHTMLAttributes } from 'react'
+import { FaFile } from 'react-icons/fa';
+
+interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
+    value: string | number
+    onChange: (value: string | number) => void
+    debounce?: number
+}
+
+const { Tr, Th, Td, THead, TBody, Sorter } = Table
+
+function DebouncedInput({
+    value: initialValue,
+    onChange,
+    debounce = 500,
+    ...props
+}: DebouncedInputProps) {
+    const [value, setValue] = useState(initialValue)
+
+    useEffect(() => {
+        setValue(initialValue)
+    }, [initialValue])
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            onChange(value)
+        }, debounce)
+
+        return () => clearTimeout(timeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value])
+
+    return (
+        <div className="flex justify-end">
+            <div className="flex items-center mb-4">
+                <span className="mr-2">Search:</span>
+                <Input
+                    {...props}
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                />
+            </div>
+        </div>
+    )
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+    // Rank the item
+    const itemRank = rankItem(row.getValue(columnId), value)
+
+    // Store the itemRank info
+    addMeta({
+        itemRank,
+    })
+
+    // Return if the item should be filtered in/out
+    return itemRank.passed
+}
+
 interface User {
   username: string;
   role:string
@@ -212,7 +287,7 @@ console.log(leadData);
   };
   
   const getFileIcon = (fileName: string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase();
+    const extension = fileName.split('.').pop()?.toLowerCase() || '';
     const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'ico'];
     if (imageExtensions.includes(extension as string)) {
       return <CiImageOn className='text-xl' />;
@@ -276,7 +351,70 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
   }
 }
 
+const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+const [globalFilter, setGlobalFilter] = useState('')
 
+const columns = useMemo<ColumnDef<FileItem>[]>(
+    () => [
+        { header: 'Name', accessorKey: 'fileName',
+          cell:({row})=>{
+              const file=row.original
+              const fileName=file.fileName
+              const fileurl=file.fileUrl
+              return <Link to={fileurl} target='_blank'><div className='flex items-center gap-2'>{getFileIcon(row.original.fileName)}{fileName}</div></Link>
+          }
+         },
+
+        { header: 'Type',cell:({row})=>{
+         return <div>{getFileType(row.original.fileName)}</div>
+        } },
+
+
+        { header: 'Size', accessorKey: 'fileSize',
+          cell:({row})=>{
+            return <div>{formatFileSize(row.original.fileSize)}</div>
+          }
+         },
+
+
+        { header: 'Created', accessorKey: 'date',cell:({row})=>{
+          return <div>{formatDate(row.original.date)}</div>
+        } },
+        { header: 'Actions', accessorKey: 'actions',
+        cell:({row})=>{
+          return <div className='flex items-center gap-2'>
+              <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>openDialog3(row.original.fileId)} />
+                  <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(row.original.fileId)}/> 
+          </div>
+        }
+         },
+    ],
+    []
+)
+
+const table = useReactTable({
+    data:leadData,
+    columns,
+    filterFns: {
+        fuzzy: fuzzyFilter,
+    },
+    state: {
+        columnFilters,
+        globalFilter,
+    },
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    debugHeaders: true,
+    debugColumns: false,
+})
   
   return (
     <div>
@@ -288,7 +426,9 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
       </div>
       {leadData && leadData.length > 0 ? (
       <div className="w-full">
-      <div className="flex-1 p-4">
+      <div className="flex-1">
+<>
+        <div className='flex justify-between'>
       <div className="flex items-center mb-4">
   <nav className="flex">
     <ol className="flex items-center space-x-2">
@@ -316,59 +456,74 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
   </nav>
 </div>
 
-        <div className="border rounded-lg shadow-sm dark:border-gray-700">
-          <div className="relative w-full overflow-auto">
-            <table className="w-full caption-bottom text-sm">
-              <thead className="[&amp;_tr]:border-b">
-                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                    Name
-                  </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                    Type
-                  </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                    Size
-                  </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                    Modified
-                  </th>
-                  <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 ">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-          <tbody className="[&amp;_tr:last-child]:border-0">
-          {leadData.map((item) => (
-            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                <div className="flex items-center gap-2">
-                {getFileIcon(item.fileName)}
-                  <a className="font-medium cursor-pointer" href={item.fileUrl} target='_blank'>
-                    {item.fileName}
-                  </a>
-                </div>
-              </td>
-              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-              {getFileType(item.fileName)}
-            </td>
-              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatFileSize(item.fileSize)}</td>
-              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatDate(item.date)}</td>
-              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
-                <div className=' flex justify-center gap-3'> 
+        
 
-                  <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>openDialog3(item.fileId)} />
-                  <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(item.fileId)}/>  
-                  </div>
-
-              </td>
-            </tr>))}
-          
-          </tbody>
-
-            </table>
-          </div>
-        </div>
+        <DebouncedInput
+                value={globalFilter ?? ''}
+                className="p-2 font-lg shadow border border-block"
+                placeholder="Search all columns..."
+                onChange={(value) => setGlobalFilter(String(value))}
+            />
+            </div>
+            <Table>
+                <THead>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <Tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                    <Th
+                                        key={header.id}
+                                        colSpan={header.colSpan}
+                                    >
+                                        {header.isPlaceholder || header.id==='actions' ? null : (
+                                            <div
+                                                {...{
+                                                    className:
+                                                        header.column.getCanSort()
+                                                            ? 'cursor-pointer select-none'
+                                                            : '',
+                                                    onClick:
+                                                        header.column.getToggleSortingHandler(),
+                                                }}
+                                            >
+                                                {flexRender(
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
+                                                {
+                                                    <Sorter
+                                                        sort={header.column.getIsSorted()}
+                                                    />
+                                                }
+                                            </div>
+                                        )}
+                                    </Th>
+                                )
+                            })}
+                        </Tr>
+                    ))}
+                </THead>
+                <TBody>
+                    {table.getRowModel().rows.map((row) => {
+                        return (
+                            <Tr key={row.id}>
+                                {row.getVisibleCells().map((cell) => {
+                                    return (
+                                        <Td key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </Td>
+                                    )
+                                })}
+                            </Tr>
+                        )
+                    })}
+                </TBody>
+            </Table>
+            </>
       </div>
     </div>
          ) : (
@@ -525,7 +680,7 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
             </Dialog>
 
             <Dialog  isOpen={dialogIsOpen2}
-                className='max-h-[300px]'
+                className=' '
                 onClose={onDialogClose2} 
                 onRequestClose={onDialogClose2}>
                     <h3>Upload Files</h3>
@@ -570,7 +725,7 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
                     }}
                     }}
                     >
-                      <Form className='mt-4'>
+                      <Form  className=' overflow-y-auto max-h-[400px] mt-4' style={{scrollbarWidth:'none'}}>
                         <FormItem label=''>
                           <Field name='files'>
                             {({ field, form }: any) => (

@@ -9,6 +9,7 @@ import Footer from '@/views/crm/FileManager/Footer';
 import { HiTrash } from 'react-icons/hi';
 import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import { apiDeleteFileManagerFolders } from '@/services/CrmService';
+import { sub } from 'date-fns';
 
 const Index = () => {
   const [templateData, setTemplateData] = useState<TemplateDataItem[]>([]);
@@ -70,9 +71,11 @@ const deleteFolders = async (folder_name:string) => {
   }   
   const postData = {
     lead_id:"",
-    folder_name: folder_name,
+    folder_name: type,
     type:"template",
-    project_id:""
+    project_id:"",
+    sub_folder_name_first:folderName,
+    sub_folder_name_second:folder_name
   };
   try {
     await apiDeleteFileManagerFolders(postData);

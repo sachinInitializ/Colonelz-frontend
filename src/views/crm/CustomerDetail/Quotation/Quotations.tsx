@@ -153,7 +153,11 @@ const Quotations=(data : FileItemProps )=> {
                                 <div>Rejected</div>
                             ):status==='pending'?(
                                 <div>Pending</div>
-                            ):(<div>Not Sent</div>)
+
+                            ):status==='amended'?(
+                                <div>Amended</div>
+                            ):
+                            (<div>Not Sent</div>)
                         )
                     }
                     

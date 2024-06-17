@@ -190,7 +190,7 @@ const YourFormComponent: React.FC = () => {
             )
 
             const response = await fetch(
-                'https://col-phase2.test.initz.run//v1/api/admin/create/mom/',
+                'http://localhost:8000//v1/api/admin/create/mom/',
                 {
                     headers:{
                         Authorization: `Bearer ${localStorage.getItem('auth')}`

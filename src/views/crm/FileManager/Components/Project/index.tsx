@@ -1,13 +1,87 @@
 import React, { useEffect, useState } from 'react';
 import { FolderItem, fetchProjectData } from './data';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Dialog, Notification, toast } from '@/components/ui';
+import { Button, Dialog, Notification, Skeleton, toast } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import YourFormComponent from './ProjectForm';
 import { FaFolder } from 'react-icons/fa';
 import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import { HiTrash } from 'react-icons/hi';
 import { apiDeleteFileManagerFolders } from '@/services/CrmService';
+import { useMemo} from 'react'
+import Table from '@/components/ui/Table'
+import Input from '@/components/ui/Input'
+import {
+    useReactTable,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
+    getFacetedMinMaxValues,
+    getPaginationRowModel,
+    getSortedRowModel,
+    flexRender,
+} from '@tanstack/react-table'
+import { rankItem } from '@tanstack/match-sorter-utils'
+import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
+import type { InputHTMLAttributes } from 'react'
+
+interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
+    value: string | number
+    onChange: (value: string | number) => void
+    debounce?: number
+}
+
+const { Tr, Th, Td, THead, TBody, Sorter } = Table
+
+function DebouncedInput({
+    value: initialValue,
+    onChange,
+    debounce = 500,
+    ...props
+}: DebouncedInputProps) {
+    const [value, setValue] = useState(initialValue)
+
+    useEffect(() => {
+        setValue(initialValue)
+    }, [initialValue])
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            onChange(value)
+        }, debounce)
+
+        return () => clearTimeout(timeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value])
+
+    return (
+        <div className="flex justify-end">
+            <div className="flex items-center mb-4">
+                <span className="mr-2">Search:</span>
+                <Input
+                    {...props}
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                />
+            </div>
+        </div>
+    )
+}
+
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+    
+    const itemRank = rankItem(row.getValue(columnId), value)
+
+    addMeta({
+        itemRank,
+    })
+    return itemRank.passed
+}
+
+
+
+
 
 const Index = () => {
   const [projectData, setProjectData] = useState<FolderItem[]>([]);
@@ -15,19 +89,23 @@ const Index = () => {
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get('project_id');
   const projectName = queryParams.get('project_name');
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
+        setIsLoading(true);
         const projectData = await fetchProjectData(projectId);
         console.log(projectData);
         setProjectData(projectData);
       } catch (error) {
         console.error('Error fetching lead data', error);
+      } finally {
+        setIsLoading(false);
       }
     };
-
+  
     fetchDataAndLog();
-  }, []);
+  }, [projectId]);
   const navigate = useNavigate();
 const role=localStorage.getItem('role');
   const [dialogIsOpen, setIsOpen] = useState(false);
@@ -99,6 +177,81 @@ function formatDate(dateString:string) {
 }
 
 
+const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+const [globalFilter, setGlobalFilter] = useState('')
+
+const columns = useMemo<ColumnDef<FolderItem>[]>(
+    () => [
+        { header: 'Name', accessorKey: 'folder_name'
+        , cell: ({row}) => {
+            return(
+                <div>
+                <div className="flex items-center gap-2">
+                  <FaFolder/>
+                  <a className="font-medium cursor-pointer" onClick={()=> navigate(
+                              `/app/crm/fileManager/leads/folder?lead_id=${projectId}&lead_name=${projectName}&folder_name=${row.original.folder_name}`,
+                          )}>
+                    {row.original.folder_name}
+                  </a>
+                </div>
+              </div>
+            )
+          }},
+         
+        { header: 'Type', cell: ({row}) => {
+            return(
+                <div>Folder</div>
+            )
+        }},
+        { header: 'Files', accessorKey: 'total_files' },
+        { header: 'Modified', accessorKey: 'updated_date', cell: ({row}) => {
+            const date=row.original.updated_date
+            return(
+                <div>{formatDate(date)}</div>
+            )
+        }
+        },
+
+        {
+            header: 'Actions',
+            id: 'actions',
+            cell: ({row}) => {
+                return(
+                    <div className=' ml-3 cursor-pointer' onClick={()=>openDialog2(row.original.folder_name)}>
+                  <HiTrash className=' text-xl text-center hover:text-red-500'/>
+                  </div>
+                )
+            }
+        },
+    ],
+    []
+)
+
+
+const table = useReactTable({
+    data:projectData,
+    columns,
+    filterFns: {
+        fuzzy: fuzzyFilter,
+    },
+    state: {
+        columnFilters,
+        globalFilter,
+    },
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    debugHeaders: true,
+    debugColumns: false,
+})
+
 
 
   return (
@@ -109,101 +262,101 @@ function formatDate(dateString:string) {
                   Upload
               </Button>
           </div>
-          {projectData.length === 0 ? (
-              <p>
-                  No folders available. Click the button above to add folders.
-              </p>
-          ) : (
-            <div className=" w-full">
-            <div className="flex-1 p-4">
-            <div className="flex items-center mb-4">
-        <nav className="flex">
-          <ol className="flex items-center space-x-2">
-            <li>
-              <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</Link>
-            </li>
-            <li>
-              <span className="mx-2">/</span>
-            </li>
-            <li>
-            <li className="text-gray-500">Projects</li>
-            </li>
-            <li>
-              <span className="mx-2">/</span>
-            </li>
-          
-            <li className="text-gray-500">{projectName}</li>
-          </ol>
-        </nav>
-      </div>
-              <div className="border rounded-lg shadow-sm dark:border-gray-700">
-                <div className="relative w-full overflow-auto">
-                  <table className="w-full caption-bottom text-sm">
-                    <thead className="[&amp;_tr]:border-b">
-                      <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                          Name
-                        </th>
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                          Type
-                        </th>
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                          Files
-                        </th>
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                          Modified
-                        </th>
-                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0  ">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                <tbody className="[&amp;_tr:last-child]:border-0">
-                {projectData.map((item) => {
-                    if (role === 'ADMIN' || role === 'Senior Architect' || (item.folder_name !== 'quotation' && item.folder_name !== 'contract')) {
-                  return(
-                  <tr key={item.folder_name} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                      <div className="flex items-center gap-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          className="h-5 w-5 text-gray-500 dark:text-gray-400"
-                        >
-                          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
-                        </svg>
-                        <a className="font-medium cursor-pointer" onClick={()=> navigate(
-                                     `/app/crm/fileManager/project/folder?project_id=${projectId}&project_name=${projectName}&folder_name=${item.folder_name}`,
-                                )}>
-                          {item.folder_name}
-                        </a>
-                      </div>
-                    </td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Folder</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{Number(item.total_files)>1?`${item.total_files} items`:`${item.total_files} item`}</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0"> {(item.updated_date)?formatDate(item.updated_date):"-"}</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
-                      <div className=' flex justify-center cursor-pointer' onClick={()=>openDialog2(item.folder_name)}>
-                    <HiTrash className=' text-xl text-center hover:text-red-500'/>
-                    </div>
-                    </td>
-                  </tr>)}})}
-                
-                </tbody>
-      
-                  </table>
-                </div>
+            {isLoading ? (
+            <div className="flex items-center gap-4">
+              <div>
+                <Skeleton variant="circle" />
               </div>
+              <Skeleton />
             </div>
-          </div>
+          ) : projectData.length === 0 ? (
+            <div>No Data</div>
+          ) : (
+            <>
+    <div className=' flex justify-between'>
+    <div className="flex items-center mb-4">
+  <nav className="flex">
+    <ol className="flex items-center space-x-2">
+      <li>
+      <Link to={`/app/crm/fileManager`} className="text-blue-600 dark:text-blue-400 hover:underline">FileManager</Link>
+      </li>
+      <li>
+        <span className="mx-2">/</span>
+      </li>
+      <li className="text-gray-500">Leads</li>
+    
+    </ol>
+  </nav>
+</div>
+            <DebouncedInput
+                value={globalFilter ?? ''}
+                className="p-2 font-lg shadow border border-block"
+                placeholder="Search all columns..."
+                onChange={(value) => setGlobalFilter(String(value))}
+            />
+            </div>
+            <Table>
+                <THead>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <Tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                    <Th
+                                        key={header.id}
+                                        colSpan={header.colSpan}
+                                    >
+                                        {header.isPlaceholder  || header.id === 'actions' ? null : (
+                                            <div
+                                                {...{
+                                                    className:
+                                                        header.column.getCanSort()
+                                                            ? 'cursor-pointer select-none'
+                                                            : '',
+                                                    onClick:
+                                                        header.column.getToggleSortingHandler(),
+                                                }}
+                                            >
+                                                {flexRender(
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
+                                                {
+                                                    <Sorter
+                                                        sort={header.column.getIsSorted()}
+                                                    />
+                                                }
+                                            </div>
+                                        )}
+                                    </Th>
+                                )
+                            })}
+                        </Tr>
+                    ))}
+                </THead>
+                <TBody>
+                    {table.getRowModel().rows.map((row) => {
+                        return (
+                            <Tr key={row.id}>
+                                {row.getVisibleCells().map((cell) => {
+                                    return (
+                                        <Td key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </Td>
+                                    )
+                                })}
+                            </Tr>
+                        )
+                    })}
+                </TBody>
+            </Table>
+        </>
           )}
+
+
           <StickyFooter
               className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
               stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"

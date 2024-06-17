@@ -19,6 +19,20 @@ const userId=localStorage.getItem('userId');
 
  const { apiPrefix } = appConfig
 
+export async function QuotationApproval(data:any) {
+        const response = await fetch(`${apiPrefix}users/approval/client`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+
+        const responseData = await response.json();
+        console.log('Received response from server:', responseData);
+        return responseData;
+}
 export async function apiSignIn(data: SignInCredential): Promise<SignInResponse> {
         const response = await fetch(`${apiPrefix}users/login`, {
             method: 'POST',

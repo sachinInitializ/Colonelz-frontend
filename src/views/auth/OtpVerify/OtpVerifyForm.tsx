@@ -20,7 +20,7 @@ interface ForgotPasswordFormProps extends CommonProps {
 }
 
 type OtpVerifyFormSchema = {
-    email: string 
+    email: string
     otp: string
 }
 

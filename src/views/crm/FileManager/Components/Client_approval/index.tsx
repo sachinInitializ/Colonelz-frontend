@@ -1,9 +1,4 @@
 import React from 'react'
+import ClientApproval from './ClietnApproval'
 
-const index = () => {
-  return (
-    <div></div>
-  )
-}
-
-export default index
+export default ClientApproval

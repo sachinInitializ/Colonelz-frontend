@@ -48,7 +48,7 @@ const YourFormComponent: React.FC<Data> = (leadData) => {
   };
   
 
-  const handleFileChange = (files: FileList | null) => {
+  const handleFileChange = (files: File[] | null) => {
     if (files) {
         setFormData((prevFormData) => ({
             ...prevFormData,
@@ -57,7 +57,7 @@ const YourFormComponent: React.FC<Data> = (leadData) => {
       
     }
 }
-function closeAfter2000ms(data:string,type:string) {
+function closeAfter2000ms(data:string,type:any) {
   toast.push(
       <Notification closable type={type} duration={2000}>
           {data}
@@ -122,7 +122,7 @@ const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
 
   return (
     <form  className=' overflow-y-auto max-h-[400px]' style={{scrollbarWidth:'none'}} onSubmit={handleSubmit}>
-     <h3 className='mb-5'>Project File Upload</h3>
+     <h3 className='mb-5'>Lead File Upload</h3>
       <div className='mb-5'>
         <FormItem label='Folder Name'>
         <CreatableSelect

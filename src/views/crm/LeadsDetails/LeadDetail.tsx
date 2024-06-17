@@ -31,6 +31,7 @@ const CustomerDetail = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const myParam = urlParams.get('id');
     const [details, setDetails] = useState<any | null>(null);
+    const role=localStorage.getItem('role')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -56,9 +57,10 @@ const CustomerDetail = () => {
                     <TabNav value="Actions" >
                         Actions
                     </TabNav>
+                    {role!=='Project Architect' &&
                     <TabNav value="Contract" >
                         Contract
-                    </TabNav>
+                    </TabNav>}
                 </TabList>
                 <div className="p-4">
                     <TabContent value="Details">

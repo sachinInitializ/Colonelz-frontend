@@ -29,11 +29,12 @@ const authRoute: Routes = [
         authority: [],
     },
     {
-        key: 'remark',
-        path: `/client-remark`,
-        component: lazy(() => import('@/views/crm/FileManager/Components/Client_approval')),
+        key: 'Organization',
+        path: `/register`,
+        component: lazy(() => import('@/views/auth/Oraganisation')),
         authority: [],
     },
+   
 ]
 
 export default authRoute

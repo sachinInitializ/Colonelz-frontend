@@ -194,13 +194,15 @@ const Filtering = () => {
 
     return (
         <>
-            
+        <div className='flex justify-between'>
+            <div></div>
             <DebouncedInput
                 value={globalFilter ?? ''}
                 className="p-2 font-lg shadow border border-block"
                 placeholder="Search ..."
                 onChange={(value) => setGlobalFilter(String(value))}
             />
+            </div>
             <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (

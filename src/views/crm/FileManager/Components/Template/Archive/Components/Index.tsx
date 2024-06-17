@@ -12,9 +12,14 @@ import {
 } from '@tanstack/react-table'
 import type { ColumnDef } from '@tanstack/react-table'
 import { DataItem } from '../Store/ArchiveSlice'
-import { apiGetCrmFileManagerArchive } from '@/services/CrmService'
+import { apiGetCrmFileManagerArchive, apiGetCrmFileManagerArchiveRestore, apiGetCrmFileManagerDeleteArchiveFiles } from '@/services/CrmService'
 import { FiDelete } from 'react-icons/fi'
 import { MdDeleteOutline } from 'react-icons/md'
+import { useNavigate } from 'react-router-dom'
+import { Notification, Tooltip, toast } from '@/components/ui'
+import { LiaTrashRestoreSolid } from "react-icons/lia";
+import { AiOutlineFile } from 'react-icons/ai'
+import { ConfirmDialog } from '@/components/shared'
 
 type Person = {
     firstName: string
@@ -25,6 +30,11 @@ type Person = {
 type Option = {
     value: number
     label: string
+}
+
+type ArchiveData={
+    delete_type:string
+    
 }
 
 const { Tr, Th, Td, THead, TBody } = Table
@@ -50,21 +60,135 @@ const PaginationTable = () => {
       
         return `${day}-${month}-${year}`
       }
+
+
+      const [deleteData,setDeleteData]=useState({})
+      const [dialogIsOpen2, setIsOpen2] = useState(false)
+      const [folderName, setFolderName] = useState<string>('')
+  
+      const openDialog2 = (file_id:string,lead_id:string,project_id:string,type:string,folder_name:string,sub_folder_name_first:string,sub_folder_name_second:string,delete_type:string) => {
+          setIsOpen2(true)
+          setDeleteData({file_id,lead_id,project_id,type,folder_name,sub_folder_name_first,sub_folder_name_second,delete_type})
+      }
+  
+      const onDialogClose2 = () => {
+          setIsOpen2(false)
+      }
+
+      const deleteArchive = async (deleteData:any) => {
+       
+        
+        function warn(text:string) {
+          toast.push(
+              <Notification closable type="warning" duration={2000}>
+                  {text}
+              </Notification>,{placement:'top-center'}
+          )
+      }
+         
+        const postData = {
+         user_id:localStorage.getItem('userId'),
+         file_id:deleteData.file_id,
+         lead_id:deleteData.lead_id,
+         project_id:deleteData.project_id,
+         type:deleteData.type,
+         folder_name:deleteData.folder_name,
+         sub_folder_name_first:deleteData.sub_folder_name_first,
+         sub_folder_name_second:deleteData.sub_folder_name_second,
+         delete_type:deleteData.delete_type,
+        };
+        console.log(postData);
+        
+        try {
+          await apiGetCrmFileManagerDeleteArchiveFiles(postData);
+          toast.push(
+            <Notification closable type="success" duration={2000}>
+              Folder deleted successfully
+            </Notification>,{placement:'top-center'}
+          )
+        //   window.location.reload()
+        } catch (error) {
+          toast.push(
+            <Notification closable type="danger" duration={2000}>
+              Error deleting folder
+            </Notification>,{placement:'top-center'}
+          )
+        }
+        
+      }
+
+      const Restore=async(file_id:string,lead_id:string,project_id:string,type:string,folder_name:string,sub_folder_name_first:string,sub_folder_name_second:string)=>{
+        const postData = {
+            user_id:localStorage.getItem('userId'),
+            file_id:file_id,
+            lead_id:lead_id,
+            project_id:project_id,
+            type:type,
+            folder_name:folder_name,
+            sub_folder_name_first:sub_folder_name_first,
+            sub_folder_name_second:sub_folder_name_second,
+            restore_type:file_id?'file':'folder'
+           }
+        try {
+           const respone= await apiGetCrmFileManagerArchiveRestore(postData);
+           if(respone.code===200){
+            toast.push(
+                <Notification closable type="success" duration={2000}>
+                  {respone.message}
+                </Notification>,{placement:'top-center'}
+              )
+              window.location.reload()
+           }
+           else{
+            toast.push(
+                <Notification closable type="danger" duration={2000}>
+                  {respone.errorMessage}
+                </Notification>,{placement:'top-center'}
+              )
+           }
+            // window.location.reload()
+          } catch (error) {
+            toast.push(
+              <Notification closable type="danger" duration={2000}>
+                Internal Server error
+              </Notification>,{placement:'top-center'}
+            )
+          }
+      }
     const columns = useMemo<ColumnDef<DataItem>[]>(
         () => [
             {
                 header: 'Name',
-                accessorKey: 'firstName',
+                accessorKey: 'fileName',
                 cell: ({row}) => {
                     const file = row.original.files && row.original.files[0];
+                    const project_name = row.original.project_name;
+                    const lead_name = row.original.lead_name;
                     const fileName = file && file.fileName;
                     const folderName = file && file.folder_name;
                     const subfolderName = file && file.sub_folder_name_second;
+                    const navigate=useNavigate()
                     return(
-                        <div>{(fileName && fileName.length>20?fileName.slice(0,20):fileName) || folderName || subfolderName}</div>
+                        <div>
+                        {
+                            fileName 
+                            ? <a href={file.fileUrl} target="_blank" rel="noopener noreferrer" className='flex items-center gap-2'>{<AiOutlineFile/>}{ fileName.length > 20 ? fileName.slice(0,20) : fileName}</a>
+                            : <div className=' cursor-pointer' onClick={() => navigate(`/app/crm/filemanager/archive/file?folder=${folderName}&${project_name?`project_name=${project_name}`:`lead_name:${lead_name}`}`)}>{folderName || subfolderName}</div>
+                        }
+                    </div>
                     )
                 }
 
+            },
+            {header:"Location",
+            cell:({row})=>{
+                return(
+                    <div className="flex items-center gap-2">
+                        {row.original.lead_name.length>0?`FileManager/Lead/${row.original.lead_name}/${row.original.folder_name}`:row.original.project_name.length>0?`FileManager/Project/${row.original.project_name}/${row.original.folder_name}`:
+                        `FileManager/Company Data/${row.original.folder_name}/${row.original.sub_folder_name_first}/${row.original.sub_folder_name_second}`}
+                    </div>
+                )
+            }
             },
             {
                 header: 'Type',
@@ -88,12 +212,54 @@ const PaginationTable = () => {
             },
             
             {
-                header: 'Action',
+                header: 'Actions',
                 accessorKey: 'age',
                 cell: ({row}) => {
-                    return(
-                        <MdDeleteOutline className=' text-xl'/>
-                    )
+                    const fileId=row.original.files[0].fileId
+                    const leadId=row.original.lead_id
+                    const projectId=row.original.project_id
+                    const type=row.original.type
+                    const folder_name=row.original.folder_name
+                    const sub_folder_name_first = row.original.sub_folder_name_first || '';
+                    const sub_folder_name_second = row.original.sub_folder_name_second || '';
+                    const delete_type = row.original.files[0].folder_name ? 'folder' : 'file';
+                  
+                        return (<div className='flex gap-3  '>
+                                <Tooltip title="Restore">
+                                <span className="cursor-pointer">
+                            <LiaTrashRestoreSolid className='text-xl cursor-pointer hover:text-blue-500' onClick={()=>Restore(
+                                fileId,
+                                leadId,
+                                projectId,
+                                type,
+                                folder_name,
+                                sub_folder_name_first,
+                                sub_folder_name_second,
+                            )}/>
+                            </span>
+                            </Tooltip>
+                             <Tooltip title="Delete">
+                <span className="cursor-pointer">
+                <MdDeleteOutline
+                                className=' text-xl cursor-pointer hover:text-red-500'
+                                onClick={() =>
+                                    openDialog2(
+                                        fileId,
+                                        leadId,
+                                        projectId,
+                                        type,
+                                        folder_name,
+                                        sub_folder_name_first,
+                                        sub_folder_name_second,
+                                        delete_type
+                                    )
+                                }
+                            />
+                </span>
+            </Tooltip>
+                            </div>
+                        );
+                   
                 }
             },
         ],
@@ -193,6 +359,19 @@ const PaginationTable = () => {
                     />
                 </div>
             </div>
+            <ConfirmDialog
+          isOpen={dialogIsOpen2}
+          type="danger"
+          onClose={onDialogClose2}
+          confirmButtonColor="red-600"
+          onCancel={onDialogClose2}
+          onConfirm={() =>  deleteArchive(
+            deleteData
+        )}
+          title="Delete Folder"
+          onRequestClose={onDialogClose2}>
+            <p> Are you sure, delete this {deleteData.delete_type} permanently? </p>            
+        </ConfirmDialog>
         </div>
     )
 }

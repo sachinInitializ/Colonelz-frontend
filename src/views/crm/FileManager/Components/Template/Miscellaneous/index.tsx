@@ -70,9 +70,11 @@ const Index = () => {
     }   
     const postData = {
       lead_id:"",
-      folder_name: folder_name,
+      folder_name: type,
       type:"template",
-      project_id:""
+      project_id:"",
+      sub_folder_name_first: folderName,
+      sub_folder_name_second: folder_name
     };
     try {
       await apiDeleteFileManagerFolders(postData);

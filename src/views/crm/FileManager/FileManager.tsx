@@ -15,10 +15,10 @@ const FileManager = () => {
   return (
     <div>
     <Tabs 
-    defaultValue={role === 'Jr. Executive HR & Marketing' ? 'tab3' : (role === 'ADMIN' || role === 'Senior Architect') ? 'tab1' : 'tab2'}
+    defaultValue={role === 'Jr. Executive HR & Marketing' ? 'tab3' : (role === 'ADMIN' || role === 'Senior Architect' || role==='Site Supervisor' || role==='Project Architect' || role==='Jr. Interior Designer') ? 'tab1' : 'tab2'}
     >
         <TabList>
-            {(role==='ADMIN' || role==='Senior Architect') && <TabNav value="tab1" icon={<MdManageAccounts />}>
+            {(role==='ADMIN' || role==='Senior Architect' || role==='Site Supervisor' || role==='Project Architect' || role==='Jr. Interior Designer' ) && <TabNav value="tab1" icon={<MdManageAccounts />}>
            
                 Leads
             </TabNav>}

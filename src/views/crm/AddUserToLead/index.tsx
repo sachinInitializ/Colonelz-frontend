@@ -36,6 +36,7 @@ const Index = () => {
     { value: 'Jr. Interior Designer', label: 'Jr. Interior Designer' },
     { label: 'Executive Assistant', value: 'Executive Assistant' },
     { value: 'Project Architect', label: 'Project Architect' },
+    { value: 'Site Supervisor', label: 'Site Supervisor' },
   ];
 
   useEffect(() => {

@@ -14,7 +14,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.register',
         path: `${APP_PREFIX_PATH}/crm/profile`,
         component: lazy(() => import('@/views/crm/Profile/index')),
-        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant","Site Supervisor"],
     },
     {
         key: 'appsCrm.register',
@@ -44,7 +44,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager`,
         component: lazy(() => import('@/views/crm/FileManager')),
-        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Site Supervisor"],
         meta: {
             header: 'File Manager',
             headerContainer: true,
@@ -54,7 +54,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/leads`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Lead/index')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","Project Architect"],
         meta: {
          
         },
@@ -194,6 +194,7 @@ const appsRoute: Routes = [
          
         },
     },
+   
     {
         key: 'appsCrm.project',
         path: `${APP_PREFIX_PATH}/crm/projectslist`,
@@ -287,7 +288,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.customerDetails',
         path: `${APP_PREFIX_PATH}/crm/lead`,
         component: lazy(() => import('@/views/crm/LeadsDetails')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","Project Architect"],
         meta: {
            
             
@@ -308,7 +309,7 @@ const appsRoute: Routes = [
         key: 'appsSales.productNew',
         path: `${APP_PREFIX_PATH}/crm/lead-new`,
         component: lazy(() => import('@/views/crm/CrmDashboard/LeadNew')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","Project Architect"],
         meta: {
             header: 'Add Lead',
         },
@@ -318,7 +319,7 @@ const appsRoute: Routes = [
         key: 'appsSales.productList',
         path: `${APP_PREFIX_PATH}/leads`,
         component: lazy(() => import('@/views/crm/LeadList')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","Project Architect"],
     },
    
     {

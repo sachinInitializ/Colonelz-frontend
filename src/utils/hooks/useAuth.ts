@@ -12,11 +12,16 @@ import { useNavigate } from 'react-router-dom'
 import useQuery from './useQuery'
 import type { SignInCredential, SignUpCredential } from '@/@types/auth'
 import { toast } from '@/components/ui'
+import { useEffect } from 'react'
+import socketIOClient from 'socket.io-client';
 
 type Status = 'success' | 'failed'
 
 function useAuth() {
     const dispatch = useAppDispatch()
+    const ENDPOINT = 'http://localhost:8000';
+
+
 
     const navigate = useNavigate()
 
@@ -81,12 +86,13 @@ function useAuth() {
     }
 
     const signOut = async () => {
+
         await apiSignOut()
         handleSignOut()
     }
     const tokens=localStorage.getItem('auth')
     if (tokens) {
-    setTimeout(signOut, 24*60*60*1000);
+    setTimeout(signOut, 60*60*1000);
     }
     return {
         authenticated: token && signedIn,

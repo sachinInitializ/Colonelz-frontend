@@ -24,7 +24,7 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: 'nav.appsCrm.fileManager',
                         icon: 'files',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing"],
+                        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Site Supervisor","Executive Assistant"],
                         subMenu: [],
                     },
                   
@@ -61,7 +61,7 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: 'nav.appsSales.productList',
                         icon: 'lead',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: ["ADMIN","Senior Architect"],
+                        authority: ["ADMIN","Senior Architect","Project Architect"],
                         subMenu: [],
                     },
                     

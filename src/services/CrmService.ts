@@ -195,6 +195,42 @@ export async function apiGetCrmFileManagerArchive(userId:string | null) {
     return data;
 }
 
+export async function apiGetCrmFileManagerArchiveRestore(Formdata:any) {
+    const response = await fetch(`${apiPrefix}admin/restore/file`, {
+        method: 'Post',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(Formdata)
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+}
+export async function apiGetCrmFileManagerDeleteArchiveFiles(postData: any) {
+    const response = await fetch(`${apiPrefix}admin/delete/archive`, {
+        method: 'Delete',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(postData)
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+
 export async function apiGetCrmFileManagerProjects(projectId:string | null) {
     const response = await fetch(`${apiPrefix}admin/project/getfile/?project_id=${projectId}`, {
         method: 'GET',
@@ -211,6 +247,7 @@ export async function apiGetCrmFileManagerProjects(projectId:string | null) {
     const data = await response.json();
     return data;
 }
+
 export async function apiGetCrmFileManagerCreateLeadFolder(formData: any) {
     const response = await fetch(`${apiPrefix}admin/fileupload/`, {
         method: 'POST',
@@ -281,6 +318,8 @@ export async function apiGetCrmFileManagerCreateTemplateFolder(formData: any) {
     return response;
 }
 export async function apiGetCrmFileManagerLeads(leadId:string | null) {
+    console.log('leadId',leadId,token);
+    
     const response = await fetch(`${apiPrefix}admin/lead/getfile/?lead_id=${leadId}`, {
         method: 'GET',
         headers: {

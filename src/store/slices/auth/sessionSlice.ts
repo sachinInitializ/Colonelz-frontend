@@ -36,7 +36,7 @@ const sessionSlice = createSlice({
 },
         signOutSuccess(state) {
             state.signedIn = false;
-            state.token = null;
+            state.token = '';
             state.userId = null; 
             localStorage.removeItem('auth');
             localStorage.removeItem('userId');

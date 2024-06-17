@@ -447,7 +447,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
         formData.append('mom_id', rowData.mom_id);
         formData.append('file', blob, 'myDocument1.pdf');
   
-       const response=await fetch('https://col-phase2.test.initz.run/v1/api/admin/send/momdata', {
+       const response=await fetch('http://localhost:8000/v1/api/admin/send/momdata', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('auth')}`,
