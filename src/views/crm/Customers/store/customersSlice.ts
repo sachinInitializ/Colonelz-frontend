@@ -22,6 +22,7 @@ export type Project = {
   client: Client[];
   project_id: string;
   project_type: string;
+  client_name: string;
   description: string;
   files: Array<string>;
   mom: Array<string>;

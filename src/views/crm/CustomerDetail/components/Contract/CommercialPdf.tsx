@@ -1168,6 +1168,11 @@ actual.
 <View style={styles.design}><Text>4.</Text><Text style={{fontWeight:'bold'}}>Orders once confirmed and closed, cannot be cancelled.
 </Text></View>
 
+<View style={{fontWeight:'bold'}}><Text> </Text></View>
+<View style={{fontWeight:'bold'}}><Text>Additional Note:</Text></View>
+<View ><Text>{pdfData.additional_note}</Text></View>
+
+
 
 
 <View style={styles.header1}>

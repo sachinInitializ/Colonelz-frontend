@@ -68,20 +68,20 @@ interface ProjectUpdateData {
     project_id: string | null;
     timeline_date: string;
     project_budget: string;
-    project_status: string;
+    project_status:string;
     designer:string
   }
   const ProjectUpdate: React.FC<Data> = (data) => {
     const location=useLocation()
     const searchParams = new URLSearchParams(location.search);
     const projectId = searchParams.get('project_id');
-    const userId = searchParams.get('id');
+    const userId = localStorage.getItem('userId');
     const [formData, setFormData] = useState<ProjectUpdateData>({
-      user_id:"66165c25e3a558d03a48cbb2",
+      user_id:userId,
       project_id: projectId,
       timeline_date: new Date(data.data.timeline_date).toISOString().split('T')[0],
       project_budget: data.data.project_budget,
-      project_status: data.data.project_status,
+      project_status:data.data.project_status,
       designer:data.data.designer
     });
   
@@ -113,17 +113,17 @@ interface ProjectUpdateData {
       console.log(data);
       
       console.log(data.code===200);
-      if (data.code===200) {
-        toast.push(
-          <Notification closable type="success" duration={2000}>
-              Project data updated successfully
-          </Notification>
-      )
-      window.location.reload()
-      } else {
+      if (data.errorMessage) {
         toast.push(
           <Notification closable type="danger" duration={2000}>
-             {data.errorMessage}
+              {data.errorMessage}
+          </Notification>
+      )
+      // window.location.reload()
+      } else {
+        toast.push(
+          <Notification closable type="success" duration={2000}>
+             Project Updated Successfully
           </Notification>
       )
       }
@@ -149,7 +149,7 @@ interface ProjectUpdateData {
         <form>
         <FormItem label="Timeline Date">
           <DatePicker
-            selected={new Date(formData.timeline_date)}
+            
             onChange={handleDateChange}
           />
         </FormItem>

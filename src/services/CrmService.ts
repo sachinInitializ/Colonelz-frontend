@@ -131,7 +131,8 @@ export async function apiGetCrmSingleProjects(projectId:string ) {
 }
 
 export async function apiGetCrmSingleProjectEdit(formData: any) {
-    const response = await fetch(`${apiPrefix}admin/update/project/`, {
+    try {
+      const response = await fetch(`${apiPrefix}admin/update/project/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +142,11 @@ export async function apiGetCrmSingleProjectEdit(formData: any) {
           ...formData,
         }),
       });
-    return response;}
+      return response;
+    } catch (error) {
+      console.error('Error in apiGetCrmSingleProjectEdit:', error);
+    }
+  }
 export async function apiGetCrmProjectsMom(projectId:string) {
     const response = await fetch(`${apiPrefix}admin/getall/mom/?project_id=${projectId}`, {
         method: 'GET',
@@ -149,7 +154,6 @@ export async function apiGetCrmProjectsMom(projectId:string) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}` 
         },
-        
     });
 
     if (!response.ok) {

@@ -161,6 +161,7 @@ const Index = () => {
             terrace_covered_area_in_sft: '0',
             terrace_open_charges_per_sft: '0',
             terrace_open_area_in_sft: '0',
+            additional_note:'',
         }}
             validationSchema={validationSchema}
             onSubmit={
@@ -770,6 +771,21 @@ const FormContent = () => {
                             </FormItem></>}
                             </>
                             }
+
+                            <FormItem label="Additional Note">
+                                <Field
+                                    name="additional_note"
+                                    placeholder="File Name"
+                                >
+                                    {({ field, form }: FieldProps) => (
+                                        <Input
+                                            type="text"
+                                            textArea
+                                            {...field}
+                                        />
+                                    )}
+                                </Field>
+                            </FormItem>
                            
                             </div>
                             {/* <FormItem label="Design Stage">

@@ -74,13 +74,20 @@ function DebouncedInput({
 }
 
 const fuzzyFilter: FilterFn<Project> = (row, columnId, value, addMeta) => {
-    const itemRank = rankItem(row.getValue(columnId), value)
+    let itemValue = row.getValue(columnId);
+
+    
+    if (columnId === 'project_end_date') {
+        itemValue = formateDate(itemValue);
+    }
+
+    const itemRank = rankItem(itemValue, value);
     addMeta({
         itemRank,
-    })
+    });
 
-    return itemRank.passed
-}
+    return itemRank.passed;
+};
 type Option = {
     value: number
     label: string
@@ -95,6 +102,13 @@ const pageSizeOption = [
 ]
 const totalData=projects.length
 
+const formateDate = (dateString:string) => {
+    const date = new Date(dateString);
+    const day=date.getDate().toString().padStart(2, '0');
+    const month=(date.getMonth() + 1).toString().padStart(2, '0');
+    const year=date.getFullYear();
+    return `${day}-${month}-${year}`;
+    }
 const Filtering = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [selectedStatus] = useState<string>('');
@@ -165,7 +179,7 @@ const Filtering = () => {
                 const row = props.row.original;
                 return (
                     <div className=' cursor-pointer text-nowrap'>
-                        <Dropdown placement="top-center" renderTitle={<span>{row.client[0].client_name}</span>} className=' cursor-pointer' style={{width:'auto'}}>
+                        <Dropdown placement="top-center" renderTitle={<span>{row.client_name}</span>} className=' cursor-pointer' style={{width:'auto'}}>
                             <div className='px-2'>
                                 <p>Client Name: {row.client[0].client_name}</p>
                                 <p>Client Email: {row.client[0].client_email}</p>
@@ -186,17 +200,13 @@ const Filtering = () => {
         },
         {
             header: 'Project End Date',
-            accessorKey: 'timeline_date',
+            accessorKey: 'project_end_date',
             cell: (props) => {
+                
                 const row = props.row.original;
-                const dateObject = new Date(row.timeline_date);
-                const istFormattedDate = dateObject.toLocaleDateString('en-IN', {
-                    timeZone: 'Asia/Kolkata',
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                }).replace(/\//g, '-');
-                return istFormattedDate
+                console.log('row', row.project_end_date);
+                return formateDate(row.project_end_date);
+                
             },
         },
        
