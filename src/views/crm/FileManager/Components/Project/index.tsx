@@ -189,7 +189,7 @@ const columns = useMemo<ColumnDef<FolderItem>[]>(
                 <div className="flex items-center gap-2">
                   <FaFolder/>
                   <a className="font-medium cursor-pointer" onClick={()=> navigate(
-                              `/app/crm/fileManager/leads/folder?lead_id=${projectId}&lead_name=${projectName}&folder_name=${row.original.folder_name}`,
+                              `/app/crm/fileManager/project/folder?project_id=${projectId}&project_name=${projectName}&folder_name=${row.original.folder_name}`,
                           )}>
                     {row.original.folder_name}
                   </a>
@@ -283,7 +283,7 @@ const table = useReactTable({
       <li>
         <span className="mx-2">/</span>
       </li>
-      <li className="text-gray-500">Leads</li>
+      <li className="text-gray-500">Projects</li>
     
     </ol>
   </nav>
