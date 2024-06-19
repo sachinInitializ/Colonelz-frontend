@@ -10,21 +10,25 @@ import useAuth from '@/utils/hooks/useAuth'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import type { CommonProps } from '@/@types/common'
+import { OrgainisationVerify } from '@/services/AuthService'
+import { useNavigate } from 'react-router-dom'
 
 interface SignInFormProps extends CommonProps {
     disableSubmit?: boolean
+    userData?: any
     forgotPasswordUrl?: string
     signUpUrl?: string
 }
 
 type SignInFormSchema = {
-    user_name: string
+    username: string
     password: string
-    rememberMe: boolean
+    email: string
+    organization:string
 }
 
 const validationSchema = Yup.object().shape({
-    user_name: Yup.string().required('Please enter your user name'),
+    username: Yup.string().required('Please enter your user name'),
     password: Yup.string().required('Please enter your password'),
     rememberMe: Yup.bool(),
 })
@@ -34,26 +38,28 @@ const RegisterForm = (props: SignInFormProps) => {
         disableSubmit = false,
         className,
         forgotPasswordUrl = '/forgot-password',
+        userData,
         // signUpUrl = '/sign-up',
     } = props
 
     const [message, setMessage] = useTimeOutMessage()
-
-    const { signIn } = useAuth()
+    const navigate = useNavigate()
 
     const onSignIn = async (
         values: SignInFormSchema,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
-        const { user_name, password } = values
+        const { username, password,organization,email } = values
+      
         setSubmitting(true)
 
-        const result = await signIn({ user_name, password })
+        const result = await OrgainisationVerify(values)
         console.log('signinform', result);
         
-        if (result?.status === 'failed') {
+        if (result?.code === 200) {
             setSubmitting(false)
-            setMessage(result.message)
+            userData({username,organization,email,password})
+            
         }
 
         setSubmitting(false)
@@ -68,14 +74,16 @@ const RegisterForm = (props: SignInFormProps) => {
             )}
             <Formik
                 initialValues={{
-                    user_name: '',
+                    username: '',
                     password: '',
-                    rememberMe: true,
+                    email:'',
+                    organization:'',
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values, { setSubmitting }) => {
                     if (!disableSubmit) {
                         onSignIn(values, setSubmitting)
+
                     } else {
                         setSubmitting(false)
                     }
@@ -86,27 +94,18 @@ const RegisterForm = (props: SignInFormProps) => {
                         <FormContainer>
                             <FormItem
                                 label="User Name"
-                                invalid={
-                                    (errors.user_name &&
-                                        touched.user_name) as boolean
-                                }
-                                errorMessage={errors.user_name}
                             >
                                 <Field
                                     type="text"
                                     autoComplete="off"
-                                    name="user_name"
+                                    name="username"
                                     placeholder="User Name"
                                     component={Input}
                                 />
                             </FormItem>
                             <FormItem
                                 label="Email"
-                                invalid={
-                                    (errors.user_name &&
-                                        touched.user_name) as boolean
-                                }
-                                errorMessage={errors.user_name}
+                              
                             >
                                 <Field
                                     type="text"
@@ -136,16 +135,12 @@ const RegisterForm = (props: SignInFormProps) => {
 
                             <FormItem
                                 label="Organisation Name"
-                                invalid={
-                                    (errors.user_name &&
-                                        touched.user_name) as boolean
-                                }
-                                errorMessage={errors.user_name}
+                               
                             >
                                 <Field
                                     type="text"
                                     autoComplete="off"
-                                    name="org_name"
+                                    name="organization"
                                     placeholder="Orgainisation Name"
                                     component={Input}
                                 />
@@ -168,7 +163,7 @@ const RegisterForm = (props: SignInFormProps) => {
                                 variant="solid"
                                 type="submit"
                             >
-                                {isSubmitting ? 'Signing in...' : 'Sign In'}
+                                {isSubmitting ? 'Registering...' : 'Register'}
                             </Button>
                            
                         </FormContainer>

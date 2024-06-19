@@ -433,10 +433,9 @@ export async function apiGetCrmCreateLeadToProject(formData: any) {
     const response = await fetch(`${apiPrefix}admin/create/lead/project`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(formData),
+        body: formData,
         
     });
 

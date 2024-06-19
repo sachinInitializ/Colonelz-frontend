@@ -34,6 +34,7 @@ const authRoute: Routes = [
         component: lazy(() => import('@/views/auth/Oraganisation')),
         authority: [],
     },
+  
    
 ]
 

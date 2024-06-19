@@ -76,6 +76,7 @@ export type Customer = {
     project_type:string
     project_status:string
     project_start_date:string
+    project_end_date:string
     timeline_date:string
     project_budget:string
     description:string

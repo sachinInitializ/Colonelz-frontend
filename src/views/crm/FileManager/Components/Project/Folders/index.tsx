@@ -240,6 +240,7 @@ const Index = () => {
       email: selectedEmails,
       subject: subject,
       body: body,
+      user_id:localStorage.getItem('userId')
     };
 
       function closeAfter2000ms() {
@@ -483,8 +484,9 @@ const Index = () => {
 
             >
               <h3 className='mb-5'>Share Files</h3>
-
+              <label className='block text-sm font-medium text-gray-700'>Email</label>
           <Select
+          className='mt-1'
           componentAs={CreatableSelect}
     isMulti
     value={selectedEmails.map((email) => ({ label: email, value: email }))}
@@ -542,7 +544,7 @@ const Index = () => {
               <h3 className='mb-5'>Share Files For Approval</h3>
                <div className=' '>
               
-  
+  <FormItem label="Username" className='mt-4'>
               <Select
               componentAs={CreatableSelect}
                options={usernames.map((username) => ({ label: username, value: username }))}
@@ -563,14 +565,16 @@ const Index = () => {
                  setSelectedUsername(inputValue);
                }}
                   />
+                  </FormItem>
                   {usernameError && <div className=" text-red-600">{usernameError}</div>}
   {clientEmailError && <div className=" text-red-600">{clientEmailError}</div>}
-
-  <Select className='mt-4'
+<FormItem label="File" className=''>
+  <Select className=''
   options={leadData.map(file => ({ value: file.fileId, label: file.fileName }))}
   onChange={(option: any) => handleFileChange(option ? option.value : '')}
   value={leadData.find(file => file.fileId === selectedFileId) ? { value: selectedFileId, label: selectedFileId } : null}
 />
+</FormItem>
                   </div>
               
          <div className='flex justify-end'>

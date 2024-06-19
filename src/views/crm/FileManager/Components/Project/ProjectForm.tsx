@@ -125,6 +125,7 @@ const clientOptions: Option[] = uniqueFolderNames
     <form onSubmit={handleSubmit} className=' overflow-y-auto h-[300px] ' style={{scrollbarWidth:'none'}}>
      <h3 className='mb-5'>Project File Upload</h3>
       <div className='mb-5'>
+        <FormItem label="Folder Name" >
         <Select
         name='folder_name'
         componentAs={CreatableSelect}
@@ -135,6 +136,7 @@ const clientOptions: Option[] = uniqueFolderNames
           maxMenuHeight={200}
         
         />
+        </FormItem>
       </div>
 
       <FormItem label="File">

@@ -19,6 +19,48 @@ const userId=localStorage.getItem('userId');
 
  const { apiPrefix } = appConfig
 
+export async function OrgainisationVerify(data:any) {
+        const response = await fetch(`${apiPrefix}users/send/otp/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+
+        const responseData = await response.json();
+        console.log('Received response from server:', responseData);
+        return responseData;
+}
+export async function orgVerifyOtp(data:any) {
+        const response = await fetch(`${apiPrefix}users/verify/otp`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+
+        const responseData = await response.json();
+        console.log('Received response from server:', responseData);
+        return responseData;
+}
+export async function registerandSignin(data:any) {
+        const response = await fetch(`${apiPrefix}users/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+
+        const responseData = await response.json();
+        console.log('Received response from server:', responseData);
+        return responseData;
+}
 export async function QuotationApproval(data:any) {
         const response = await fetch(`${apiPrefix}users/approval/client`, {
             method: 'POST',

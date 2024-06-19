@@ -247,6 +247,7 @@ console.log(leadData);
       email:  selectedEmails,
       subject: subject,
       body: body,
+      user_id:localStorage.getItem('userId')
     };
 
     function closeAfter2000ms(text:string) {
@@ -629,9 +630,9 @@ const table = useReactTable({
               <h3 className='mb-5'>Share Files</h3>
 
     
-
+              <label className='block text-sm font-medium text-gray-700'>Email</label>
           <Select
-          
+          className='mt-1'
     isMulti
     value={selectedEmails.map((email) => ({ label: email, value: email }))}
     componentAs={CreatableSelect}
@@ -726,7 +727,7 @@ const table = useReactTable({
                     }}
                     >
                       <Form  className=' overflow-y-auto max-h-[400px] mt-4' style={{scrollbarWidth:'none'}}>
-                        <FormItem label=''>
+                        <FormItem label='Files'>
                           <Field name='files'>
                             {({ field, form }: any) => (
                               <Upload

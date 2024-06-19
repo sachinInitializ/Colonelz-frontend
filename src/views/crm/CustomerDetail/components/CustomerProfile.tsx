@@ -66,9 +66,9 @@ const CustomerInfoField = ({
 interface ProjectUpdateData {
   user_id: string | null;
     project_id: string | null;
-    timeline_date: string;
     project_budget: string;
     project_status:string;
+    timeline_date:string;
     designer:string
   }
   const ProjectUpdate: React.FC<Data> = (data) => {
@@ -96,13 +96,15 @@ interface ProjectUpdateData {
         [e.target.name]: e.target.value,
       });
     };
-  const handleDateChange = (date: Date | null) => {
-    if (date) {
-      setFormData({
-        ...formData,
-        timeline_date: date.toISOString().split('T')[0],
-      });
-    }
+    const handleDateChange = (date: Date | null) => {
+      if (date) {
+          date.setHours(date.getHours() + 5);
+          date.setMinutes(date.getMinutes() + 30);
+          setFormData({
+              ...formData,
+              timeline_date: date.toISOString().split('T')[0],
+          });
+      }
   };
   
 
@@ -149,7 +151,7 @@ interface ProjectUpdateData {
         <form>
         <FormItem label="Timeline Date">
           <DatePicker
-            
+            value={new Date(formData.timeline_date)}
             onChange={handleDateChange}
           />
         </FormItem>
@@ -193,8 +195,6 @@ interface ProjectUpdateData {
                                       ).value
                                     : '',
                             })
-                           
-                           
                           }}
                     />
           </FormItem>
