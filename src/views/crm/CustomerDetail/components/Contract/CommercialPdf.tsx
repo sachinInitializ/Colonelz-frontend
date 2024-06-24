@@ -1139,6 +1139,10 @@ there may be a rate revision in case the prices of input materials go up by 5% o
 If work is still NOT permitted for 30 days, it will be deemed as Termination.
 </Text></View>
 
+<View style={{fontWeight:'bold'}}><Text> </Text></View>
+<View style={{fontWeight:'bold'}}><Text>Additional Note:</Text></View>
+<View ><Text>{pdfData.additional_note}</Text></View>
+
 
 <View> <Text style={styles.part1}>Design Implementation Payment Terms & Conditions</Text></View>
 
@@ -1168,9 +1172,7 @@ actual.
 <View style={styles.design}><Text>4.</Text><Text style={{fontWeight:'bold'}}>Orders once confirmed and closed, cannot be cancelled.
 </Text></View>
 
-<View style={{fontWeight:'bold'}}><Text> </Text></View>
-<View style={{fontWeight:'bold'}}><Text>Additional Note:</Text></View>
-<View ><Text>{pdfData.additional_note}</Text></View>
+
 
 
 

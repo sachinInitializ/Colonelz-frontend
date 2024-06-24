@@ -22,6 +22,7 @@ export  type DataItem = {
     files: File[] 
     type: string;
     created_at: string;
+    deleted_name : string;
   };
   
 export type Response = {

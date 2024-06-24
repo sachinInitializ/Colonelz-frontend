@@ -24,7 +24,7 @@ import { MdDeleteOutline } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { Input, Notification, Tooltip, toast } from '@/components/ui'
 import { LiaTrashRestoreSolid } from "react-icons/lia";
-import { AiOutlineFile } from 'react-icons/ai'
+import { AiOutlineFile, AiOutlineFolder } from 'react-icons/ai'
 import { ConfirmDialog } from '@/components/shared'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
@@ -59,7 +59,6 @@ function DebouncedInput({
     return (
         <div className="flex justify-end">
             <div className="flex items-center mb-4">
-                <span className="mr-2">Search:</span>
                 <Input
                     {...props}
                     value={value}
@@ -99,6 +98,15 @@ type ArchiveData={
     sub_folder_name_first:string
     sub_folder_name_second:string
 }
+type Restore={
+    file_id:string
+    lead_id:string
+    project_id:string
+    type:string
+    folder_name:string
+    sub_folder_name_first:string
+    sub_folder_name_second:string
+}
 
 const { Tr, Th, Td, THead, TBody,Sorter } = Table
 
@@ -130,7 +138,9 @@ const PaginationTable = () => {
 
 
       const [deleteData,setDeleteData]=useState<ArchiveData>()
+      const [restoreData,setRestoreData]=useState<Restore>()
       const [dialogIsOpen2, setIsOpen2] = useState(false)
+      const [dialogIsOpen3, setIsOpen3] = useState(false)
       const [folderName, setFolderName] = useState<string>('')
   
       const openDialog2 = (file_id:string,lead_id:string,project_id:string,type:string,folder_name:string,sub_folder_name_first:string,sub_folder_name_second:string,delete_type:string) => {
@@ -140,6 +150,15 @@ const PaginationTable = () => {
   
       const onDialogClose2 = () => {
           setIsOpen2(false)
+      }
+  
+      const openDialog3 = (file_id:string,lead_id:string,project_id:string,type:string,folder_name:string,sub_folder_name_first:string,sub_folder_name_second:string) => {
+          setIsOpen3(true)
+          setRestoreData({file_id,lead_id,project_id,type,folder_name,sub_folder_name_first,sub_folder_name_second})
+      }
+  
+      const onDialogClose3 = () => {
+          setIsOpen3(false)
       }
 
       const deleteArchive = async (deleteData:any) => {
@@ -173,7 +192,7 @@ const PaginationTable = () => {
               Folder deleted successfully
             </Notification>,{placement:'top-center'}
           )
-        //   window.location.reload()
+          window.location.reload()
         } catch (error) {
           toast.push(
             <Notification closable type="danger" duration={2000}>
@@ -196,6 +215,8 @@ const PaginationTable = () => {
             sub_folder_name_second:sub_folder_name_second,
             restore_type:file_id?'file':'folder'
            }
+           console.log('postData',postData);
+           
         try {
            const respone= await apiGetCrmFileManagerArchiveRestore(postData);
            if(respone.code===200){
@@ -226,7 +247,7 @@ const PaginationTable = () => {
         () => [
             {
                 header: 'Name',
-                accessorKey: 'fileName',
+                accessorKey: 'deleted_name',
                 cell: ({row}) => {
                     const file = row.original.files && row.original.files[0];
                     const project_name = row.original.project_name;
@@ -239,8 +260,8 @@ const PaginationTable = () => {
                         <div>
                         {
                             fileName 
-                            ? <a href={file.fileUrl} target="_blank" rel="noopener noreferrer" className='flex items-center gap-2'>{<AiOutlineFile/>}{ fileName.length > 20 ? fileName.slice(0,20) : fileName}</a>
-                            : <div className=' cursor-pointer' onClick={() => navigate(`/app/crm/filemanager/archive/file?folder=${folderName}&${project_name?`project_name=${project_name}`:`lead_name:${lead_name}`}`)}>{folderName || subfolderName}</div>
+                            ? <a href={file.fileUrl} target="_blank" rel="noopener noreferrer" className=' cursor-pointer text-md flex items-center gap-2'>{<AiOutlineFile/>}{ fileName.length > 20 ? `${fileName.slice(0,20)}...` : fileName}</a>
+                            : <div className='  flex items-center gap-2' >{<AiOutlineFolder/>}{folderName || subfolderName}</div>
                         }
                     </div>
                     )
@@ -248,6 +269,7 @@ const PaginationTable = () => {
 
             },
             {header:"Location",
+                id: 'location',
             cell:({row})=>{
                 return(
                     <div className="flex items-center gap-2">
@@ -281,6 +303,7 @@ const PaginationTable = () => {
             {
                 header: 'Actions',
                 accessorKey: 'age',
+                id: 'age',
                 cell: ({row}) => {
                     const fileId=row.original.files[0].fileId
                     const leadId=row.original.lead_id
@@ -380,6 +403,7 @@ const PaginationTable = () => {
 
     return (
         <div>
+            <div className='flex justify-between mb-5'>
             <h3 className='mb-5'>Archive</h3>
             <DebouncedInput
                 value={globalFilter ?? ''}
@@ -387,6 +411,7 @@ const PaginationTable = () => {
                 placeholder="Search all columns..."
                 onChange={(value) => setGlobalFilter(String(value))}
             />
+            </div>
             <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -405,7 +430,7 @@ const PaginationTable = () => {
                                                             ? 'cursor-pointer select-none'
                                                             : '',
                                                     onClick:
-                                                        header.column.getToggleSortingHandler(),
+                                                     header.column.getToggleSortingHandler()
                                                 }}
                                             >
                                                 {flexRender(
@@ -414,9 +439,9 @@ const PaginationTable = () => {
                                                     header.getContext()
                                                 )}
                                                 {
-                                                    <Sorter
-                                                        sort={header.column.getIsSorted()}
-                                                    />
+                                                   header.column.id !== 'age' && header.column.id !== 'location' && <Sorter
+                                                   sort={header.column.getIsSorted()}
+                                               />
                                                 }
                                             </div>
                                         )}
@@ -475,10 +500,23 @@ const PaginationTable = () => {
           onConfirm={() =>  deleteArchive(
             deleteData
         )}
-          title="Delete Folder"
+          title={`Delete ${deleteData?.delete_type}`}
           onRequestClose={onDialogClose2}>
             <p> Are you sure, delete this {deleteData?.delete_type} permanently? </p>            
         </ConfirmDialog>
+            {/* <ConfirmDialog
+          isOpen={dialogIsOpen3}
+          type="success"
+          onClose={onDialogClose3}
+          confirmButtonColor="green-600"
+          onCancel={onDialogClose3}
+          onConfirm={() => deleteArchive(
+            deleteData
+        )}
+          title={`Restore `}
+          onRequestClose={onDialogClose3}>
+            <p> Are you sure, restore this file/folder? </p>            
+        </ConfirmDialog> */}
         </div>
     )
 }
