@@ -1,31 +1,134 @@
-import React, { useState, useRef } from "react";
-import JoditEditor from "jodit-react";
+import React, { useRef } from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+const styles = {
+	page: {
+		marginLeft: '5rem',
+		marginRight: '5rem',
+		color: 'black',
+		backgroundColor: 'white',
+	},
 
+	columnLayout: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		margin: '3rem 0 5rem 0',
+		gap: '2rem',
+	},
 
-export default function App() {
-  const editor = useRef(null);
-  const [content, setContent] = useState("Start writing");
-  const config = {
-    readonly: false,
-    height: 400
-  };
-  const handleUpdate = (event) => {
-    const editorContent = event.target.innerHTML;
-    setContent(editorContent);
+	column: {
+		display: 'flex',
+		flexDirection: 'column',
+	},
+
+	spacer2: {
+		height: '2rem',
+	},
+
+	fullWidth: {
+		width: '100%',
+	},
+
+	marginb0: {
+		marginBottom: 0,
+	},
+};
+
+const ReportTemplate = () => {
+	return (
+		<>
+			<div style={styles.page}>
+				<div>
+					<h1 style={styles.introText}>
+						Report Heading That Spans More Than Just One Line
+					</h1>
+				</div>
+
+				<div style={styles.spacer2}></div>
+
+				<img style={styles.fullWidth} src="photo-2.png" />
+			</div>
+
+			<div style={styles.page}>
+				<div>
+					<h2 style={styles.introText}>
+						Report Heading That Spans More Than Just One Line
+					</h2>
+				</div>
+
+				<div style={styles.columnLayout}>
+					<div style={styles.column}>
+						<img style={styles.fullWidth} src="photo-2.png" />
+						<h4 style={styles.marginb0}>Subtitle One</h4>
+						<p>
+							Lorem ipsum dolor sit amet, consectetur adipiscing
+							elit, sed do eiusmod tempor incididunt ut labore et
+							dolore magna aliqua.
+						</p>
+					</div>
+
+					<div style={styles.column}>
+						<img style={styles.fullWidth} src="photo-1.png" />
+						<h4 style={styles.marginb0}>Subtitle Two</h4>
+						<p>
+							Lorem ipsum dolor sit amet, consectetur adipiscing
+							elit, sed do eiusmod tempor incididunt ut labore et
+							dolore magna aliqua.
+						</p>
+					</div>
+				</div>
+
+				<div style={styles.columnLayout}>
+					<div style={styles.column}>
+						<img style={styles.fullWidth} src="photo-3.png" />
+						<h4 style={styles.marginb0}>Subtitle One</h4>
+						<p>
+							Lorem ipsum dolor sit amet, consectetur adipiscing
+							elit, sed do eiusmod tempor incididunt ut labore et
+							dolore magna aliqua.
+						</p>
+					</div>
+
+					<div style={styles.column}>
+						<img style={styles.fullWidth} src="photo-4.png" />
+						<h4 style={styles.marginb0}>Subtitle Two</h4>
+						<p>
+							Lorem ipsum dolor sit amet, consectetur adipiscing
+							elit, sed do eiusmod tempor incididunt ut labore et
+							dolore magna aliqua.
+						</p>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+};
+
+const App = () => {
+  const reportTemplateRef = useRef(null);
+
+  const handleGeneratePdf = () => {
+    const input = reportTemplateRef.current;
+
+    html2canvas(input)
+      .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+        pdf.addImage(imgData, 'PNG', 0, 0);
+        pdf.save("download.pdf");
+      });
   };
 
   return (
-    <div className="App">
-      <h1>React Editors</h1>
-      <h2>Start editing to see some magic happen!</h2>
-      <JoditEditor
-        ref={editor}
-        value={content}
-        config={config}
-        onBlur={handleUpdate}
-        onChange={(newContent) => {}}
-      />
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+    <div>
+      <button className="button" onClick={handleGeneratePdf}>
+        Generate PDF
+      </button>
+      <div ref={reportTemplateRef}>
+        <ReportTemplate />
+      </div>
     </div>
   );
 }
+
+export default App;

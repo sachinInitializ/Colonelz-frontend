@@ -14,6 +14,9 @@ import CreatableSelect from 'react-select/creatable'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { HiOutlineCloudUpload } from 'react-icons/hi'
 
+import App from './Richtext'
+import { apiCreateMom } from '@/services/CrmService'
+
 type Option = {
     value: string
     label: string
@@ -189,18 +192,9 @@ const YourFormComponent: React.FC = () => {
                 formDataToSend.append('files', file),
             )
 
-            const response = await fetch(
-                'https://col-phase4.test.initz.run//v1/api/admin/create/mom/',
-                {
-                    headers:{
-                        Authorization: `Bearer ${localStorage.getItem('auth')}`
-                    },
-                    method: 'POST',
-                    body: formDataToSend,
-                },
-            )
-            const responseData=await response.json()
-            if (response.ok) {
+            const response = await apiCreateMom(formDataToSend)
+           
+            if (response.code === 200) {
                 toast.push(
                     <Notification closable type="success" duration={2000}>
                         Mom Created Successfully
@@ -212,7 +206,7 @@ const YourFormComponent: React.FC = () => {
             } else {
                 toast.push(
                     <Notification closable type="success" duration={2000}>
-                        {responseData.errorMessage}
+                        {response.errorMessage}
                     </Notification>
                 )
             }
@@ -221,6 +215,8 @@ const YourFormComponent: React.FC = () => {
             alert('An error occurred')
         }
     }
+
+   
 
     return (
         <div>
@@ -356,6 +352,8 @@ const YourFormComponent: React.FC = () => {
                                 }
                             />
                         </FormItem>
+
+                        {/* <App/> */}
 
                         <FormItem label="File">
                             <Upload multiple

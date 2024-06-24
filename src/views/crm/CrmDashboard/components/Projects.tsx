@@ -73,7 +73,7 @@ const Project = ({  className }: LeadsProps) => {
                 <TBody>
                     {memoizedProjects.slice(0, 5).map((item, index) => {
                         const currentDate = new Date();
-                        const projectEndDate = new Date(item.timeline_date);
+                        const projectEndDate = new Date(item.project_end_date);
                         const dateDifference = Math.floor((projectEndDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24));
                         return (
                             <Tr key={index}>
@@ -96,7 +96,7 @@ const Project = ({  className }: LeadsProps) => {
                         </Dropdown></Td>
                                 <Td className=' capitalize'>{item.project_status}</Td>
                                 <Td className=' capitalize'>{item.designer}</Td>
-                                <Td>{dayjs(item.timeline_date).format('DD-MM-YYYY')}</Td>
+                                <Td>{dayjs(item.project_end_date).format('DD-MM-YYYY')}</Td>
                             </Tr>
                         )
                     })}

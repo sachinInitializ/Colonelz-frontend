@@ -19,7 +19,6 @@ type Status = 'success' | 'failed'
 
 function useAuth() {
     const dispatch = useAppDispatch()
-    const ENDPOINT = 'https://col-phase4.test.initz.run';
 
 
 

@@ -9,17 +9,74 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     flexRender,
+    getFacetedMinMaxValues,
+    getFacetedUniqueValues,
+    getFacetedRowModel,
+    getSortedRowModel,
 } from '@tanstack/react-table'
-import type { ColumnDef } from '@tanstack/react-table'
+import { rankItem } from '@tanstack/match-sorter-utils'
+import type { ColumnDef,FilterFn, ColumnFiltersState } from '@tanstack/react-table'
+import type { InputHTMLAttributes } from 'react'
 import { DataItem } from '../Store/ArchiveSlice'
 import { apiGetCrmFileManagerArchive, apiGetCrmFileManagerArchiveRestore, apiGetCrmFileManagerDeleteArchiveFiles } from '@/services/CrmService'
 import { FiDelete } from 'react-icons/fi'
 import { MdDeleteOutline } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
-import { Notification, Tooltip, toast } from '@/components/ui'
+import { Input, Notification, Tooltip, toast } from '@/components/ui'
 import { LiaTrashRestoreSolid } from "react-icons/lia";
 import { AiOutlineFile } from 'react-icons/ai'
 import { ConfirmDialog } from '@/components/shared'
+
+interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
+    value: string | number
+    onChange: (value: string | number) => void
+    debounce?: number
+}
+
+
+
+function DebouncedInput({
+    value: initialValue,
+    onChange,
+    debounce = 500,
+    ...props
+}: DebouncedInputProps) {
+    const [value, setValue] = useState(initialValue)
+
+    useEffect(() => {
+        setValue(initialValue)
+    }, [initialValue])
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            onChange(value)
+        }, debounce)
+
+        return () => clearTimeout(timeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value])
+
+    return (
+        <div className="flex justify-end">
+            <div className="flex items-center mb-4">
+                <span className="mr-2">Search:</span>
+                <Input
+                    {...props}
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                />
+            </div>
+        </div>
+    )
+}
+
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+    const itemRank = rankItem(row.getValue(columnId), value)
+    addMeta({
+        itemRank,
+    })
+    return itemRank.passed
+}
 
 type Person = {
     firstName: string
@@ -34,10 +91,16 @@ type Option = {
 
 type ArchiveData={
     delete_type:string
-    
+    file_id:string
+    lead_id:string
+    project_id:string
+    type:string
+    folder_name:string
+    sub_folder_name_first:string
+    sub_folder_name_second:string
 }
 
-const { Tr, Th, Td, THead, TBody } = Table
+const { Tr, Th, Td, THead, TBody,Sorter } = Table
 
 
 
@@ -51,6 +114,10 @@ const pageSizeOption = [
 ]
 
 const PaginationTable = () => {
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [globalFilter, setGlobalFilter] = useState('')
+
+
     const formatDate = (dateString: string | undefined) => {
         if (!dateString) return ''
         const date = new Date(dateString)
@@ -62,7 +129,7 @@ const PaginationTable = () => {
       }
 
 
-      const [deleteData,setDeleteData]=useState({})
+      const [deleteData,setDeleteData]=useState<ArchiveData>()
       const [dialogIsOpen2, setIsOpen2] = useState(false)
       const [folderName, setFolderName] = useState<string>('')
   
@@ -282,10 +349,25 @@ const PaginationTable = () => {
     const table = useReactTable({
         data:filesData,
         columns,
-        // Pipeline
+        filterFns: {
+            fuzzy: fuzzyFilter,
+        },
+        state: {
+            columnFilters,
+            globalFilter,
+        },
+        onColumnFiltersChange: setColumnFilters,
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: fuzzyFilter,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getFacetedRowModel: getFacetedRowModel(),
+        getFacetedUniqueValues: getFacetedUniqueValues(),
+        getFacetedMinMaxValues: getFacetedMinMaxValues(),
+        debugHeaders: true,
+        debugColumns: false,
     })
 
     const onPaginationChange = (page: number) => {
@@ -299,6 +381,12 @@ const PaginationTable = () => {
     return (
         <div>
             <h3 className='mb-5'>Archive</h3>
+            <DebouncedInput
+                value={globalFilter ?? ''}
+                className="p-2 font-lg shadow border border-block"
+                placeholder="Search all columns..."
+                onChange={(value) => setGlobalFilter(String(value))}
+            />
             <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -309,9 +397,28 @@ const PaginationTable = () => {
                                         key={header.id}
                                         colSpan={header.colSpan}
                                     >
-                                        {flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
+                                        {header.isPlaceholder ?  null : (
+                                            <div
+                                                {...{
+                                                    className:
+                                                        header.column.getCanSort()
+                                                            ? 'cursor-pointer select-none'
+                                                            : '',
+                                                    onClick:
+                                                        header.column.getToggleSortingHandler(),
+                                                }}
+                                            >
+                                                {flexRender(
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
+                                                {
+                                                    <Sorter
+                                                        sort={header.column.getIsSorted()}
+                                                    />
+                                                }
+                                            </div>
                                         )}
                                     </Th>
                                 )
@@ -370,7 +477,7 @@ const PaginationTable = () => {
         )}
           title="Delete Folder"
           onRequestClose={onDialogClose2}>
-            <p> Are you sure, delete this {deleteData.delete_type} permanently? </p>            
+            <p> Are you sure, delete this {deleteData?.delete_type} permanently? </p>            
         </ConfirmDialog>
         </div>
     )

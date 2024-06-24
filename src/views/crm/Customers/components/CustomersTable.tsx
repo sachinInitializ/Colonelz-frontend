@@ -140,7 +140,7 @@ const Filtering = () => {
             cell: (prop) => {
                 const row = prop.row.original;
                 const projectName = row.project_name;
-                const dateObject = new Date(row.timeline_date);
+                const dateObject = new Date(row.project_end_date);
                 const currentDate = new Date();
                 const dateDifference = Math.floor(
                     (dateObject.getTime() - currentDate.getTime()) / (1000 * 3600 * 24)

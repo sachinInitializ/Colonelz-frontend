@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {  MainQuotationData } from './quoteTypeData'; // Replace with your actual library
-import Filtering from './Quoation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Tabs } from '@/components/ui';
 import TabList from '@/components/ui/Tabs/TabList';
 import TabNav from '@/components/ui/Tabs/TabNav';
 import TabContent from '@/components/ui/Tabs/TabContent';
-import FinalEstimate from './FinalEstimate';
+import { apiGetCrmSingleProjectQuotation } from '@/services/CrmService';
 
 interface TabbedContentProps {
   data: MainQuotationData | null;
@@ -63,8 +62,7 @@ const YourMainComponent: React.FC = () => {
     if (projectId) {
       const fetchData = async () => {
         try {
-          const response = await fetch(`https://col-phase4.test.initz.run/v1/api/admin/get/quotation/?project_id=${projectId}`);
-          const data = await response.json();
+          const data = await apiGetCrmSingleProjectQuotation(projectId);
           setMainQuotationData(data);
         } catch (error) {
           console.error('Error fetching data:', error);

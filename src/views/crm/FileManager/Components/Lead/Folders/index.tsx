@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchLeadData } from '../data';
-import { Button, Checkbox, Dialog, Dropdown, FormItem, Input, Notification, Segment, Select, Upload, toast } from '@/components/ui';
+import { Button, Checkbox, Dialog, Dropdown, FormItem, Input, Notification, Pagination, Segment, Select, Upload, toast } from '@/components/ui';
 import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn, CiImageOn } from 'react-icons/ci';
@@ -90,6 +90,11 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 interface User {
   username: string;
   role:string
+}
+
+type Option = {
+  value: number
+  label: string
 }
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
@@ -354,6 +359,15 @@ function formatFileSize(fileSizeInKB: string | undefined): string {
 
 const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 const [globalFilter, setGlobalFilter] = useState('')
+const totalData = leadData.length
+
+const pageSizeOption = [
+    { value: 10, label: '10 / page' },
+    { value: 20, label: '20 / page' },
+    { value: 30, label: '30 / page' },
+    { value: 40, label: '40 / page' },
+    { value: 50, label: '50 / page' },
+]
 
 const columns = useMemo<ColumnDef<FileItem>[]>(
     () => [
@@ -416,7 +430,13 @@ const table = useReactTable({
     debugHeaders: true,
     debugColumns: false,
 })
-  
+const onPaginationChange = (page: number) => {
+  table.setPageIndex(page - 1)
+}
+
+const onSelectChange = (value = 0) => {
+  table.setPageSize(Number(value))
+}
   return (
     <div>
        <div className='flex justify-between'>
@@ -524,6 +544,28 @@ const table = useReactTable({
                     })}
                 </TBody>
             </Table>
+
+            <div className="flex items-center justify-between mt-4">
+                <Pagination
+                    pageSize={table.getState().pagination.pageSize}
+                    currentPage={table.getState().pagination.pageIndex + 1}
+                    total={totalData}
+                    onChange={onPaginationChange}
+                />
+                <div style={{ minWidth: 130 }}>
+                    <Select<Option>
+                        size="sm"
+                        isSearchable={false}
+                        value={pageSizeOption.filter(
+                            (option) =>
+                                option.value ===
+                                table.getState().pagination.pageSize
+                        )}
+                        options={pageSizeOption}
+                        onChange={(option) => onSelectChange(option?.value)}
+                    />
+                </div>
+            </div>
             </>
       </div>
     </div>

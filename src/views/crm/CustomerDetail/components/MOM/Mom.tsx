@@ -12,7 +12,7 @@ import type { ColumnDef, Row, ColumnSort } from '@tanstack/react-table'
 import type { ReactElement } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Dropdown, Notification, toast } from '@/components/ui'
-import { apiGetCrmProjectsMom } from '@/services/CrmService'
+import { apiGetCrmProjectsMom, apishareMom } from '@/services/CrmService'
 import { useMomContext } from '../../store/MomContext'
 import appConfig from '@/configs/app.config'
 import { BsThreeDotsVertical } from 'react-icons/bs'
@@ -447,13 +447,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
         formData.append('mom_id', rowData.mom_id);
         formData.append('file', blob, 'myDocument1.pdf');
   
-       const response=await fetch('https://col-phase4.test.initz.run/v1/api/admin/send/momdata', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth')}`,
-        },
-        body: formData,
-      });
+       const response=await apishareMom(formData)
       const result = await response.json();
       if(result.code===200){
         toast.push(

@@ -1,3 +1,4 @@
+import process from "process"
 export type AppConfig = {
     apiPrefix: string
     authenticatedEntryPath: string

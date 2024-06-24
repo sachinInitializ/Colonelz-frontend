@@ -67,7 +67,7 @@ export async function EditPassword(Data: any) {
 
     return response;}
 export async function apiGetUsers() {
-    const response = await fetch(`${apiPrefix}admin/get/alluser`, {
+    const response = await fetch(`${apiPrefix}admin/get/alluser?id=${localStorage.getItem('userId')}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

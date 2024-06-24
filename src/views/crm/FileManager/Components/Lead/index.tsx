@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FolderItem,fetchLeadData} from './data';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Card, Dialog, Dropdown, Notification, Tooltip, toast } from '@/components/ui';
+import { Button, Card, Dialog, Dropdown, Notification, Pagination, Select, Tooltip, toast } from '@/components/ui';
 import type { MouseEvent } from 'react'
 import YourFormComponent from './LeadForm';
 import { FaFolder, FaRegFolder } from 'react-icons/fa';
@@ -75,6 +75,11 @@ function DebouncedInput({
             </div>
         </div>
     )
+}
+
+type Option = {
+  value: number
+  label: string
 }
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
@@ -179,6 +184,7 @@ function formatDate(dateString:string) {
 const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 const [globalFilter, setGlobalFilter] = useState('')
 
+
 const columns = useMemo<ColumnDef<FolderItem>[]>(
     () => [
         { header: 'Name', accessorKey: 'folder_name'
@@ -229,6 +235,24 @@ const columns = useMemo<ColumnDef<FolderItem>[]>(
     ],
     []
 )
+
+const totalData = leadData.length
+
+const pageSizeOption = [
+    { value: 10, label: '10 / page' },
+    { value: 20, label: '20 / page' },
+    { value: 30, label: '30 / page' },
+    { value: 40, label: '40 / page' },
+    { value: 50, label: '50 / page' },
+]
+
+const onPaginationChange = (page: number) => {
+  table.setPageIndex(page - 1)
+}
+
+const onSelectChange = (value = 0) => {
+  table.setPageSize(Number(value))
+}
 
 
 
@@ -433,6 +457,27 @@ const table = useReactTable({
                     })}
                 </TBody>
             </Table>
+            <div className="flex items-center justify-between mt-4">
+                <Pagination
+                    pageSize={table.getState().pagination.pageSize}
+                    currentPage={table.getState().pagination.pageIndex + 1}
+                    total={totalData}
+                    onChange={onPaginationChange}
+                />
+                <div style={{ minWidth: 130 }}>
+                    <Select<Option>
+                        size="sm"
+                        isSearchable={false}
+                        value={pageSizeOption.filter(
+                            (option) =>
+                                option.value ===
+                                table.getState().pagination.pageSize
+                        )}
+                        options={pageSizeOption}
+                        onChange={(option) => onSelectChange(option?.value)}
+                    />
+                </div>
+            </div>
         </>
               <StickyFooter
                   className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"

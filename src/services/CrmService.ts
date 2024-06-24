@@ -26,6 +26,38 @@ export async function apiGetMomData() {
     console.log('Received response from server:', data);
     return data;
 }
+export async function apiCreateMom(formData: any) {
+    const response=await fetch(`${apiPrefix}/admin/create/mom/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth')}`,
+        },
+        body: formData,
+      });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apishareMom(formData: any) {
+    const response=await fetch(`${apiPrefix}admin/send/momdata`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth')}`,
+        },
+        body: formData,
+      });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
 
 export async function apiGetCrmProjects() {
     const response = await fetch(`${apiPrefix}admin/getall/project/?id=${userId}`, {
