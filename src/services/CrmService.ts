@@ -449,6 +449,19 @@ export async function apiGetCrmLeadsDetails(leadId:string | null) {
     return data;
 }
 
+export async function apiLeadsAnotherProject(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/lead/multiple/project`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+        
+    });
+
+    return response;
+}
 export async function apiGetCrmCreateLead(formData: any) {
     const response = await fetch(`${apiPrefix}admin/create/lead/`, {
         method: 'POST',

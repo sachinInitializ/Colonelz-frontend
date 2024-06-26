@@ -587,7 +587,6 @@ const Index = () => {
             {/* UploadFiles */}
 
             <Dialog  isOpen={dialogIsOpen2}
-                className='max-h-[300px]'
                 onClose={onDialogClose2} 
                 onRequestClose={onDialogClose2}>
                     <h3>Upload Files</h3>
@@ -632,7 +631,7 @@ const Index = () => {
                     }}
                     }}
                     >
-                      <Form>
+                      <Form className=' overflow-y-auto max-h-[400px] mt-4' style={{scrollbarWidth:'none'}}>
                         <FormItem label='Files' className='mt-4'>
                           <Field name='files'>
                             {({ field, form }: any) => (

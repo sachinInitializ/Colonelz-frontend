@@ -59,6 +59,7 @@ type RowType = {
     original: {
       remark: string;
       admin_status: string;
+      client_remark: string;
     };
   };
 
@@ -155,7 +156,7 @@ const Quotations=(data : FileItemProps )=> {
                                 <div>Pending</div>
 
                             ):status==='amended'?(
-                                <div>Amended</div>
+                                <div>Amendment</div>
                             ):
                             (<div>Not Sent</div>)
                         )
@@ -206,6 +207,8 @@ const Quotations=(data : FileItemProps )=> {
                                                 initialValues={{ project_id:projectId , file_id: fileId, status: 'rejected', remark: '' }}
                                                 validationSchema={Yup.object({ remark: Yup.string().required('Required') })}
                                                 onSubmit={async (values, { setSubmitting }) => {
+                                                    console.log(values);
+                                                    
                                                     const response = await apiGetCrmProjectShareQuotationApproval(values);
                                                     const responseData=await response.json();
                                                     if(response.status===200){
@@ -228,9 +231,13 @@ const Quotations=(data : FileItemProps )=> {
                                                 }}
                                             >
                                                 <Form>
-                                                    <FormItem label="Remark">
-                                                        <Field name="remark" as="textarea" component={Input}  />
-                                                    </FormItem>
+                                                <FormItem label="Remark">
+                                                    <Field name="remark">
+                                                    {({ field }:any) => (
+                                                        <Input {...field} textArea />
+                                                    )}
+                                                    </Field>
+                                                </FormItem>
                                                     <div className='flex justify-end'>
                                                         <Button type="submit" variant='solid'>Submit</Button>
                                                     </div>
@@ -251,6 +258,7 @@ const Quotations=(data : FileItemProps )=> {
                 accessorKey: 'remark',
                 cell: ({row}: {row: RowType}) => {
                     const Remark=row.original.remark;
+                    const clientRemark=row.original.client_remark;
                     const admin_status=row.original.admin_status;
                     const [dialogIsOpen, setIsOpen] = useState(false)
 
@@ -269,13 +277,20 @@ const Quotations=(data : FileItemProps )=> {
                     return(<> 
                     {admin_status==='rejected' &&        
                       <div><Button size='sm' variant='solid' onClick={()=>openDialog()}>Remark</Button></div>}
+                    {admin_status==='approved' &&        
+                      <div><Button size='sm' variant='solid' onClick={()=>openDialog()}>Client Remark</Button></div>}
+
                       <Dialog
                 isOpen={dialogIsOpen}
                 onClose={onDialogClose}
                 onRequestClose={onDialogClose}
             >
-         <h3 className='mb-4'>Remarks</h3>
-         <p style={{overflowWrap:"break-word"}}>{Remark}</p>
+         <h3 className='mb-4'>{Remark.length>0?'Remark':'Client Remark'
+            }</h3>
+         <p style={{overflowWrap:"break-word"}}>
+            {Remark.length>0?<div className=' break-words'>{Remark}</div>:<div className=' break-words'>{clientRemark}</div>}
+         
+         </p>
                       </Dialog>
                       </>
 

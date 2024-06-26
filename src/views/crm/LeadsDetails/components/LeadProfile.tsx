@@ -3,7 +3,9 @@ import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import type { MouseEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Dialog } from '@/components/ui'
+import { Dialog, Notification, toast } from '@/components/ui'
+import { ConfirmDialog } from '@/components/shared'
+import { apiLeadsAnotherProject } from '@/services/CrmService'
 
 type CustomerInfoFieldProps = {
     title?: string
@@ -25,6 +27,7 @@ type Customer = {
     source:string
     notes?: Note[];
     date:string
+    project:boolean
 }
 interface Note {
     _id: string;
@@ -33,6 +36,11 @@ interface Note {
     date: string;
     status: string;
   }
+type AddProject ={
+    lead_id:string
+    user_id:string | null
+    type:string
+}
 
 
 const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
@@ -53,25 +61,54 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
     const queryParams = new URLSearchParams(location.search)
     const myParam = queryParams.get('id') || ''
     const [dialogIsOpen, setIsOpen] = useState(false)
+    const [dialogIsOpen2, setIsOpen2] = useState(false)
+    const [project, setProject] = useState<AddProject>()
 
-    const onDialogClose = (e: MouseEvent) => {
-        console.log('onDialogClose', e)
+    const onDialogClose = () => {
         setIsOpen(false)
     }
+    const openDialog2 = () => {
+        setIsOpen2(true)
+        setProject({lead_id:myParam,user_id:localStorage.getItem('userId'),type:'true'})
+    }
 
-    const onDialogOk = (e: MouseEvent) => {
-        console.log('onDialogOk', e)
-        setIsOpen(false)
+    const onDialogClose2 = () => {
+        setIsOpen2(false)
     }
 
     const navigate = useNavigate()
 
+    const addProject=async()=>{
+        console.log(project);
+        
+            const response=await apiLeadsAnotherProject(project)
+            const responseData=await response.json()
+            if(responseData.code===200){
+                toast.push(
+                    <Notification closable type="success" duration={2000}>
+                        {responseData.message}
+                    </Notification>
+                )
+                window.location.reload()
+            }
+                else{
+                    toast.push(
+                        <Notification closable type="danger" duration={2000}>
+                            {responseData.errorMessage}
+                        </Notification>
+                    )
+                }
+            }
     return (
         <div className=" flex flex-col gap-3">
             <Card>
                 <div className="flex flex-col xl:justify-between h-full 2xl:min-w-[360px] mx-auto">
                     <div className="flex justify-between items-center">
                         <h5>Basic Information</h5>
+                        {data?.project?
+                        <Button onClick={()=>openDialog2()}>
+                            Add Another Project
+                        </Button>:
                         <Button
                             variant="solid"
                             onClick={() =>
@@ -81,7 +118,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                             }
                         >
                             Create Project
-                        </Button>
+                        </Button>}
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-y-7 gap-x-4 mt-8">
                         <CustomerInfoField
@@ -155,7 +192,6 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                                 <div className="text-right mt-6 mb-4 mr-[2%]">
                                     <Button
                                         variant="solid"
-                                        onClick={onDialogOk}
                                     >
                                         Okay
                                     </Button>
@@ -172,6 +208,18 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                     <div className="mt-4 flex flex-col xl:flex-row gap-2"></div>
                 </div>
             </Card>
+
+            <ConfirmDialog
+          isOpen={dialogIsOpen2}
+          type="success"
+          onClose={onDialogClose2}
+          confirmButtonColor="green-600"
+          onCancel={onDialogClose2}
+            onConfirm={()=>addProject()}
+          title={`Add Project`}
+          onRequestClose={onDialogClose2}>
+            <p> Are you sure, You want to add project? </p>            
+        </ConfirmDialog>
 
           
         </div>

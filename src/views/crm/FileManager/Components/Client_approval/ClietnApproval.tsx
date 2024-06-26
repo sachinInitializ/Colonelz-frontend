@@ -38,6 +38,7 @@ const ClientApproval = (props: QuotationApproval) => {
     const queryParams = new URLSearchParams(location.search);
     const project_id=queryParams.get('project_id')
     const file_id=queryParams.get('file_id')
+    const [message, setMessage] = useState(false)
     const onSendMail = async (
         values: QuotationApprovalFormSchema,
         setSubmitting: (isSubmitting: boolean) => void,
@@ -50,6 +51,7 @@ const ClientApproval = (props: QuotationApproval) => {
             
             if (resp.code===200) {
                 setSubmitting(false)
+                setMessage(true)
                 toast.push(
                     <Notification type='success' duration={2000}>
                             {resp.message}
@@ -75,7 +77,7 @@ const ClientApproval = (props: QuotationApproval) => {
 
     return (
         <Simple>
-        <div className={className}>
+        {!message?<><div className={className}>
         <h3 className="mb-4">Quotation Approval</h3>
             
             <Formik
@@ -106,8 +108,17 @@ const ClientApproval = (props: QuotationApproval) => {
                                     autoComplete="off"
                                     name="remark"
                                     placeholder="Remarks"
-                                    component={Input}
-                                />
+                                    
+                                >
+                                    {({ field, form }:any) => (
+                                        <Input
+                                        textArea
+                                            {...field}
+                                            error={touched.remark && errors.remark}
+                                            placeholder="Remarks"
+                                        />
+                                    )}
+                                </Field>
                             </FormItem>
                         </div>
                         <div className='grid grid-cols-3 gap-3'>
@@ -153,8 +164,9 @@ const ClientApproval = (props: QuotationApproval) => {
                     </FormContainer>
                 </Form>
             )}
-            </Formik>
-        </div>
+                </Formik>
+        </div></>:
+        <h3>Thank You For Your Response!</h3>}
         </Simple>
     )
 }

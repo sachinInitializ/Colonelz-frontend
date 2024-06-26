@@ -218,7 +218,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
 
       if (response.ok) {
         closeAfter2000ms('success', 'Project created successfully');
-        // navigate("/app/crm/projectslist");
+        navigate("/app/crm/projectslist");
       } else {
         const errorResponse = await response.json();
         const errorMessage = errorResponse.errorMessage || 'Unknown error';
