@@ -1255,10 +1255,16 @@ materials go up by 5% or more. If work is still NOT permitted for 30 days,
 it will be deemed as Termination.
 </Text></View>
 
-<View style={{fontWeight:'bold'}}><Text> </Text></View>
-<View style={{fontWeight:'bold'}}><Text>Additional Note:</Text></View>
-<View ><Text>{pdfData.additional_note}</Text></View>
-
+{pdfData.additional_note ?
+<>
+<View style={{display:'flex' ,gap:10, flexDirection:'row'}}>
+        <View><Text style={styles.part11} >7.</Text></View>
+        <View><Text style={styles.part71}>Additional Note</Text></View>
+       
+      </View>
+      <View style={styles.design}><Text> </Text><Text>{pdfData.additional_note}
+</Text></View></>:null
+}
 
 <View> <Text style={styles.part1}>Design Implementation Payment Terms & Conditions</Text></View>
 

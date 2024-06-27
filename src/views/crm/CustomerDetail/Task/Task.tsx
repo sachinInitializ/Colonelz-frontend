@@ -1,4 +1,3 @@
-
 import { useMemo, useState, useEffect } from 'react'
 import Table from '@/components/ui/Table'
 import Input from '@/components/ui/Input'
@@ -15,15 +14,16 @@ import {
     flexRender,
 } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import { LeadDataItem } from './type'
+import { useAppSelector, type Project } from '../store'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
+import { HiOutlineEye, HiOutlineUserAdd, HiOutlineUserGroup, HiOutlineUsers } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
-import { getLeadData } from './data'
-import { Select } from '@/components/ui'    
-import { useData } from '../FileManagerContext/FIleContext'
-import { Loading } from '@/components/shared'
-import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton'
+import useThemeClass from '@/utils/hooks/useThemeClass'
+import classNames from 'classnames'
+import {  Button, Dropdown, Select } from '@/components/ui'
+import { BiSolidBellRing } from 'react-icons/bi'
+import { apiGetCrmProjects } from '@/services/CrmService'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -33,13 +33,17 @@ interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>
 
 const { Tr, Th, Td, THead, TBody, Sorter } = Table
 
+const userDetailData = await apiGetCrmProjects();
+const projectData=userDetailData.data
+const projects=userDetailData.data.projects
+console.log('userDetailData', projectData);
+
 function DebouncedInput({
     value: initialValue,
     onChange,
     debounce = 500,
     ...props
 }: DebouncedInputProps) {
-    
     const [value, setValue] = useState(initialValue)
 
     useEffect(() => {
@@ -52,11 +56,10 @@ function DebouncedInput({
         }, debounce)
 
         return () => clearTimeout(timeout)
-    }, [value])
+        }, [value, debounce, onChange])
 
     return (
         <div className="flex justify-between ">
-
             <div className="flex items-center mb-4">
                 <Input
                     {...props}
@@ -65,17 +68,20 @@ function DebouncedInput({
                     onChange={(e) => setValue(e.target.value)}
                 />
             </div>
-       
         </div>
     )
 }
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  
+    // Rank the item
     const itemRank = rankItem(row.getValue(columnId), value)
+
+    // Store the itemRank info
     addMeta({
         itemRank,
     })
+
+    // Return if the item should be filtered in/out
     return itemRank.passed
 }
 type Option = {
@@ -90,78 +96,41 @@ const pageSizeOption = [
     { value: 40, label: '40 / page' },
     { value: 50, label: '50 / page' },
 ]
+const totalData=projects.length
 
-console.log(getLeadData);
-
+const formateDate = (dateString:string) => {
+    const date = new Date(dateString);
+    const day=date.getDate().toString().padStart(2, '0');
+    const month=(date.getMonth() + 1).toString().padStart(2, '0');
+    const year=date.getFullYear();
+    return `${day}-${month}-${year}`;
+    }
 const Filtering = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [selectedStatus] = useState<string>('');
     const [globalFilter, setGlobalFilter] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
+    const userId=localStorage.getItem('userId')
     const navigate=useNavigate()
+   
 
-    const columns = useMemo<ColumnDef<LeadDataItem>[]>(
-        () => [
-           
-            {
-                header: 'Lead name',
-                accessorKey: 'lead_name',
-                cell: (props) => {
-                    const row = props.row.original;
-                    return (
-                        <div className=' cursor-pointer'>
-                            {row.lead_Name}
-                        </div>
-                    )
-                  }},
-                  {
-                    header: 'Lead Status',
-                    accessorKey: 'lead_status',
-                    cell: (props) => {
-                        const row = props.row.original;
-                        return (
-                            <div>
-                                {row.lead_status}
-                            </div>
-                        )
-                      }
-                  },
-                  {
-                    header: 'Email',
-                    accessorKey: 'lead_email',
-                    cell: (props) => {
-                        const row = props.row.original;
-                        return (
-                            <div>
-                                {row.lead_email}
-                            </div>
-                        )
-                      }
-                  }
-                  ,
-                  {
-                    header: 'Created Date',
-                    accessorKey: 'lead_date',
-                    cell: ({row}) => {
-                        const date = row.original.lead_date;
-                        const [year, month, day] = new Date(date).toISOString().split('T')[0].split('-');
-                return `${day}-${month}-${year}`;
-                       
-                      }
-                  }
-            
-        ],
+    const columns = useMemo<ColumnDef<Project>[]>(() => [
+        
+        {
+            header: 'Project Status',
+            accessorKey: 'project_status',
+        },
+        {
+            header: 'Project Incharge',
+            accessorKey: 'designer',
+        },
+       
+       
+    ], [navigate])
 
-        []
-    )
-    const { leadData,loading } = useData();
-    
+    const [data,setData] = useState(() => projects)
 
-    const totalData = leadData.length
-    
-    
-    
     const table = useReactTable({
-        data:leadData,
+        data:projects,
         columns,
         filterFns: {
             fuzzy: fuzzyFilter,
@@ -183,6 +152,7 @@ const Filtering = () => {
         debugHeaders: true,
         debugColumns: false,
     })
+    
 
     const onPaginationChange = (page: number) => {
         table.setPageIndex(page - 1)
@@ -191,28 +161,24 @@ const Filtering = () => {
     const onSelectChange = (value = 0) => {
         table.setPageSize(Number(value))
     }
-   const pagingData = {
-        total: 0,
-        pageIndex: 1,
-        pageSize: 10,
-    }
-    const { pageSize, pageIndex, total } = pagingData
 
 
+  
 
     return (
         <>
-        {/* <Loading loading={ loading} type="cover"> */}
-        <div className='flex justify-between'>
-            <div></div>
+          
+            <div className='flex justify-end gap-3'>
             <DebouncedInput
                 value={globalFilter ?? ''}
                 className="p-2 font-lg shadow border border-block"
                 placeholder="Search ..."
                 onChange={(value) => setGlobalFilter(String(value))}
             />
+            <Button size='sm' >
+                Add task
+            </Button>
             </div>
-            
             <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -252,19 +218,10 @@ const Filtering = () => {
                         </Tr>
                     ))}
                 </THead>
-                {loading && leadData.length === 0 ? (
-                    <TableRowSkeleton
-                      
-                        rows={pagingData.pageSize}
-                        avatarInColumns= {[0]}
-               
-                        avatarProps={{ width: 14, height: 14 }}
-                    />
-                ) : (
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (
-                            <Tr key={row.id} className=' capitalize cursor-pointer' onClick={()=>navigate(`/app/crm/fileManager/leads?lead_id=${row.original.lead_id}&lead_name=${row.original.lead_Name}`)}>
+                            <Tr key={row.id} className=' capitalize'>
                                 {row.getVisibleCells().map((cell) => {
                                     return (
                                         <Td key={cell.id}>
@@ -278,9 +235,8 @@ const Filtering = () => {
                             </Tr>
                         )
                     })}
-                </TBody>)}
+                </TBody>
             </Table>
-          
             <div className="flex items-center justify-between mt-4">
                 <Pagination
                     pageSize={table.getState().pagination.pageSize}
@@ -302,10 +258,8 @@ const Filtering = () => {
                     />
                 </div>
             </div>
-            {/* </Loading> */}
         </>
     )
 }
 
 export default Filtering
-

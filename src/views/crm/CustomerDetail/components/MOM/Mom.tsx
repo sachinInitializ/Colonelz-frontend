@@ -579,7 +579,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
     )
 }
 
-const SubComponent = ({ data }: ApiResponse) => {
+const SubComponent = ({ data }: any) => {
     return (
         <ReactTable
             renderRowSubComponent={renderSubComponent}

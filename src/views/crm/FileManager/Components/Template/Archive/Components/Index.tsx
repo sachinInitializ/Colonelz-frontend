@@ -203,17 +203,17 @@ const PaginationTable = () => {
         
       }
 
-      const Restore=async(file_id:string,lead_id:string,project_id:string,type:string,folder_name:string,sub_folder_name_first:string,sub_folder_name_second:string)=>{
+      const Restore=async()=>{
         const postData = {
             user_id:localStorage.getItem('userId'),
-            file_id:file_id,
-            lead_id:lead_id,
-            project_id:project_id,
-            type:type,
-            folder_name:folder_name,
-            sub_folder_name_first:sub_folder_name_first,
-            sub_folder_name_second:sub_folder_name_second,
-            restore_type:file_id?'file':'folder'
+            file_id:restoreData?.file_id,
+            lead_id:restoreData?.lead_id,
+            project_id:restoreData?.project_id,
+            type:restoreData?.type,
+            folder_name:restoreData?.folder_name,
+            sub_folder_name_first:restoreData?.sub_folder_name_first,
+            sub_folder_name_second:restoreData?.sub_folder_name_second,
+            restore_type:restoreData?.file_id?'file':'folder'
            }
            console.log('postData',postData);
            
@@ -317,7 +317,7 @@ const PaginationTable = () => {
                         return (<div className='flex gap-3  '>
                                 <Tooltip title="Restore">
                                 <span className="cursor-pointer">
-                            <LiaTrashRestoreSolid className='text-xl cursor-pointer hover:text-blue-500' onClick={()=>Restore(
+                            <LiaTrashRestoreSolid className='text-xl cursor-pointer hover:text-blue-500' onClick={()=>openDialog3(
                                 fileId,
                                 leadId,
                                 projectId,
@@ -504,19 +504,19 @@ const PaginationTable = () => {
           onRequestClose={onDialogClose2}>
             <p> Are you sure, delete this {deleteData?.delete_type} permanently? </p>            
         </ConfirmDialog>
-            {/* <ConfirmDialog
+            <ConfirmDialog
           isOpen={dialogIsOpen3}
           type="success"
           onClose={onDialogClose3}
           confirmButtonColor="green-600"
           onCancel={onDialogClose3}
-          onConfirm={() => deleteArchive(
-            deleteData
+          onConfirm={() => Restore(
+            
         )}
           title={`Restore `}
           onRequestClose={onDialogClose3}>
             <p> Are you sure, restore this file/folder? </p>            
-        </ConfirmDialog> */}
+        </ConfirmDialog>
         </div>
     )
 }

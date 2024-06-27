@@ -1,17 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { apiGetCrmFileManager } from "@/services/ProjectService";
 import { ApiResponse, LeadDataItem, ProjectDataItem, TemplateDataItem } from "../Components/type";
+import { set } from 'lodash';
 
 interface DataContextValue {
   leadData: LeadDataItem[];
   projectData: ProjectDataItem[];
   templateData: TemplateDataItem[];
+  loading:boolean;
 }
 
 const DataContext = createContext<DataContextValue | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [data, setData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +22,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const response = await apiGetCrmFileManager();
         setData(response);
         console.log('response', response);
+        setLoading(false);
         
       } catch (error) {
         console.error('Error fetching data', error);
@@ -32,6 +36,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     leadData: data?.data.leadData || [],
     projectData: data?.data.projectData || [],
     templateData: data?.data.templateData || [],
+    loading:loading,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

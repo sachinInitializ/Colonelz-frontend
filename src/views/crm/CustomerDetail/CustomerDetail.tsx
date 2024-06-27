@@ -19,6 +19,7 @@ import Index from './Quotation'
 import Contract from './components/Contract'
 import { MomProvider } from './store/MomContext'
 import { ProjectProvider } from '../Customers/store/ProjectContext'
+import Task from './Task/Task'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -52,7 +53,7 @@ const CustomerDetail = () => {
       mom: queryParams.get('type') || '',
     };
     const [details, setDetails] = useState<any | null>(null);
-    const[momdata,setmomdata]= useState<any | null>(null);
+    const[momdata,setmomdata]= useState<any >(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -97,6 +98,7 @@ const CustomerDetail = () => {
                   <>
                     <TabNav value="mom">MOM</TabNav>
                     <TabNav value="tab5">All MOM</TabNav>
+                    <TabNav value="tab4">Task Manager</TabNav>
                   </>
                 )}
             </TabList>
@@ -114,8 +116,12 @@ const CustomerDetail = () => {
                 </TabContent>
               
                 <TabContent value="tab5">
-                  <AllMom data={momdata}/>
+                  <AllMom />
                 </TabContent>
+                <TabContent value="tab4">
+                  <Task/>
+                </TabContent>
+
             </div>
         </Tabs>
         </MomProvider>

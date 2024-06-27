@@ -42,7 +42,7 @@ interface IndeterminateCheckboxProps extends Omit<CheckboxProps, 'onChange'> {
 const { Tr, Th, Td, THead, TBody } = Table
 
 export type FileItemProps = {
-    data:FileItem[] | []
+    data:FileItem[]
 }
 type FileItem = {
    admin_status:string,

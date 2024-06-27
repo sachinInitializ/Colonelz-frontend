@@ -271,7 +271,7 @@ interface File {
   
 }
 
-const App: React.FC = () => {
+const App = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [highlightedText, setHighlightedText] = useState<string>('');
   const [searchInput, setSearchInput] = useState<string>('');
