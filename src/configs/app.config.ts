@@ -9,7 +9,7 @@ export type AppConfig = {
 }
 
 const appConfig: AppConfig = {
-    apiPrefix: 'http://colonelz-backend.prod.initz.run/v1/api/',
+    apiPrefix: 'https://colonelz-backend.prod.initz.run/v1/api/',
     authenticatedEntryPath: '/app/crm/dashboard',
     unAuthenticatedEntryPath: '/sign-in',
     tourPath: '/app/account/kyc-form',
