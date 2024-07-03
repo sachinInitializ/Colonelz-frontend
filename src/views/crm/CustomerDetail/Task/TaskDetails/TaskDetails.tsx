@@ -63,8 +63,8 @@ const TaskDetails = () => {
     <>
   
     <h3 className='mb-6'>Task Details</h3>
-    <div className='flex flex-col gap-5 sm:flex-row'>
-        <div className='sm:w-1/3 '>
+    <div className='flex flex-col gap-5 xl:flex-row'>
+        <div className='xl:w-1/3 '>
     <Card 
                 clickable
                 className="hover:shadow-lg transition p-2 duration-150 ease-in-out dark:border dark:border-gray-600 dark:border-solid"
@@ -90,7 +90,7 @@ const TaskDetails = () => {
                 <div><p><span className='text-gray-700 dark:text-gray-200 font-semibold'>Description:</span>{taskData.task_description}</p></div>
             </Card>
             </div>
-            <div className='sm:w-2/3'>
+            <div className='xl:w-2/3'>
           
                 <div className='flex justify-between mb-4 items-center'>
                 <h5>Subtasks</h5>

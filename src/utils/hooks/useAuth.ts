@@ -91,7 +91,7 @@ function useAuth() {
     }
     const tokens=localStorage.getItem('auth')
     if (tokens) {
-    setTimeout(signOut, 60*60*1000);
+    setTimeout(signOut, 24*60*60*1000);
     }
     return {
         authenticated: token && signedIn,

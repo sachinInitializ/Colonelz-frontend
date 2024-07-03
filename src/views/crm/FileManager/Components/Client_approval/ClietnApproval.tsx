@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormItem, FormContainer } from '@/components/ui/Form'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
@@ -32,6 +32,7 @@ const validationSchema = Yup.object().shape({
 
 const ClientApproval = (props: QuotationApproval) => {
     const { disableSubmit = false, className } = props
+    const [status, setStatus] = useState('')
 
     const [emailSent, setEmailSent] = useState(false)
     const location=useLocation()
@@ -44,8 +45,11 @@ const ClientApproval = (props: QuotationApproval) => {
         setSubmitting: (isSubmitting: boolean) => void,
         status: string
     ) => {
+       
+        
         try {
             values.status=status
+            setStatus(status)
             console.log(values,status);
             const resp = await QuotationApproval(values )
             
@@ -76,7 +80,7 @@ const ClientApproval = (props: QuotationApproval) => {
     }
 
     return (
-        <Simple>
+        <Simple className='w-1/2'>
         {!message?<><div className={className}>
         <h3 className="mb-4">Quotation Approval</h3>
             
@@ -166,7 +170,12 @@ const ClientApproval = (props: QuotationApproval) => {
             )}
                 </Formik>
         </div></>:
-        <h3>Thank You For Your Response!</h3>}
+        <>
+        {status==='approved'?
+        <h3 className=''>Thank you for accepting the Contract. Welcome onboard, we're excited to begin this journey with you.</h3>:status==='amended'?
+    <h3>Thank you for your feedback. Please allow us some time to get back to you.</h3>:<h3>Thank you for your feedback. Please share with us your concerns; we would like to address them on priority.</h3>}
+
+        </>}
         </Simple>
     )
 }
