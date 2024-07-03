@@ -554,9 +554,10 @@ export async function apiGetCrmFileManagerShareContractFile(formData: any) {
     const response = await fetch(`${apiPrefix}admin/share/contract`, {
         method: 'POST',
         headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        body: formData
+        body: JSON.stringify(formData)
         
     });
 

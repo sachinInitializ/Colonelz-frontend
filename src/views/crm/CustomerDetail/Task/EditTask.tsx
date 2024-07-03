@@ -75,8 +75,8 @@ const priorityOptions = [
                         actual_task_end_date: new Date(Data.actual_task_end_date),
                         estimated_task_start_date: new Date(Data.estimated_task_start_date),
                         estimated_task_end_date: new Date(Data.estimated_task_end_date),
-                        task_status: statusOptions.find((option)=>option.value===Data.task_status),  
-                        task_priority: priorityOptions.find((option)=>option.value===Data.task_priority), 
+                        task_status: statusOptions.find((option)=>option.value===Data.task_status)?.value,  
+                        task_priority: priorityOptions.find((option)=>option.value===Data.task_priority)?.value, 
                         task_assignee: Data.task_assignee,
                         reporter: Data.reporter,
                       }}
@@ -108,12 +108,12 @@ const priorityOptions = [
                             <FormItem label='Task Status'>
                                 <Field name='task_status'  placeholder='Task'>
                                     {({field}:any)=>(
-                                        <Select
-                                        options={statusOptions}
-                                        name='task_status'
-                                        value={field.value}
-                                        onChange={(value) => { field.onChange({ target: {name:'task_status', value: value?.value } }) }}
-                                        />
+                                       <Select
+                                       placeholder={Data.task_status}
+                                       options={statusOptions}
+                                       name='task_status'
+                                       onChange={(option) => field.onChange({ target: { name: 'task_status', value: option ? option.value : '' } })}
+                                   />
                                     )}
                                 </Field>
                             </FormItem>
