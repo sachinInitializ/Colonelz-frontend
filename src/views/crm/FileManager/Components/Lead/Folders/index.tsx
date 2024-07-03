@@ -629,6 +629,7 @@ const onSelectChange = (value = 0) => {
           Shared for approval successfully
         </Notification>,{placement:'top-center'}
       )
+      window.location.reload()
     }
     else{
       toast.push(

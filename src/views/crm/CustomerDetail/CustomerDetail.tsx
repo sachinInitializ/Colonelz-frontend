@@ -19,7 +19,7 @@ import Index from './Quotation'
 import Contract from './components/Contract'
 import { MomProvider } from './store/MomContext'
 import { ProjectProvider } from '../Customers/store/ProjectContext'
-import Task from './Task/Task'
+import Task from './Task/index'
 
 injectReducer('crmCustomerDetails', reducer)
 

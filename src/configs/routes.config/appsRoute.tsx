@@ -237,6 +237,12 @@ const appsRoute: Routes = [
         component: lazy(() => import('@/views/crm/Projects')),
         authority: ["ADMIN","Senior Architect"],
     },
+    {
+        key: 'appsCrm.inventory',
+        path: `${APP_PREFIX_PATH}/crm/Projects/TaskDetails`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/Task/TaskDetails/TaskDetails')),
+        authority: ["ADMIN","Senior Architect"],
+    },
   
    
     // {

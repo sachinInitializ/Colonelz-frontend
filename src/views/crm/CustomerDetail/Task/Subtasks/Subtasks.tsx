@@ -16,16 +16,16 @@ import {
 import { rankItem } from '@tanstack/match-sorter-utils'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
-import { apiGetCrmLeads, apiGetCrmProjectsTaskData, apiGetCrmProjectsTaskDelete } from '@/services/CrmService'
+import { apiGetCrmLeads, apiGetCrmProjectsSubTaskData, apiGetCrmProjectsSubTaskDelete, apiGetCrmProjectsTaskData, apiGetCrmProjectsTaskDelete } from '@/services/CrmService'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button, Notification, Pagination, Select, toast } from '@/components/ui'
 import { HiOutlineEye, HiOutlinePencil, HiPlusCircle } from 'react-icons/hi'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import { MdDeleteOutline } from 'react-icons/md'
-import TaskDetails from './TaskDetailsDrawer'
-import AddTask from './AddTask'
+import SubTaskDetails from './SubTaskDetailsDrawer'
+import EditSubTask from './EditSubTask'
 import { ConfirmDialog } from '@/components/shared'
-import EditTask from './EditTask'
+
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -34,23 +34,22 @@ interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>
 }
 
 const { Tr, Th, Td, THead, TBody, Sorter } = Table
-type Task = {
+type SubTask = {
     project_id: string;
     task_id: string;
-    task_name: string;
-    task_description: string;
-    actual_task_start_date: string;
-    actual_task_end_date: string;
-    estimated_task_start_date: string;
-    estimated_task_end_date: string;
-    task_status: string;
-    task_priority: string;
-    task_createdOn: string;
-    reporter: string;
-    task_createdBy: string;
-    number_of_subtasks: number;
-    user_id: string;
-    task_assignee: string;
+    sub_task_id: string;
+    sub_task_name: string;
+    sub_task_description: string;
+    actual_sub_task_start_date: string;
+    actual_sub_task_end_date: string;
+    estimated_sub_task_start_date: string;
+    estimated_sub_task_end_date: string;
+    sub_task_status: string;
+    sub_task_priority: string;
+    sub_task_createdOn: string;
+    sub_task_reporter: string;
+    sub_task_createdBy: string;
+    sub_task_assignee: string;
 };
 
 
@@ -61,12 +60,17 @@ const pageSizeOption = [
     { value: 40, label: '40 / page' },
     { value: 50, label: '50 / page' },
 ]
-const ActionColumn = ({ row }: { row: Task}) => {
+const ActionColumn = ({ row }: { row: SubTask}) => {
     const navigate = useNavigate()
     const { textTheme } = useThemeClass()
+    const location=useLocation()
+    const queryParams = new URLSearchParams(location.search);
+    const projectId=queryParams.get('project_id') || '';
     const data={user_id:localStorage.getItem('userId'),
-    project_id:row.project_id,
-    task_id:row.task_id}
+    project_id:projectId,
+    task_id:row.task_id,
+    sub_task_id:row.sub_task_id}
+
     const [dialogIsOpen, setIsOpen] = useState(false)
 
     const openDialog = () => {
@@ -77,11 +81,12 @@ const ActionColumn = ({ row }: { row: Task}) => {
     }
     
     const onDelete = async () => {
-        try{
-        const response = await apiGetCrmProjectsTaskDelete(data)
+        const response = await apiGetCrmProjectsSubTaskDelete(data)
+        console.log('response',response)
+        
         if(response.code===200){
             toast.push(
-                <Notification type='success' duration={2000} closable>Task Deleted Successfully</Notification>
+                <Notification type='success' duration={2000} closable>Subtask Deleted Successfully</Notification>
             )
         }
         else{
@@ -90,22 +95,24 @@ const ActionColumn = ({ row }: { row: Task}) => {
             )
         
         }
-        }
-        catch(e){
-            toast.push(
-                <Notification type='danger' duration={2000} closable>Internal Server Error</Notification>
-            )
-        }
+        
+       
     }
     return (
         <div className="flex justify-end text-lg">
             <span
-                className={`cursor-pointer p-2  hover:${textTheme}`}>
-                <EditTask Data={row} task={false}/>
+                className={`cursor-pointer p-2  hover:${textTheme}`}
+                
+            >
+                <EditSubTask Data={row}/>
                 
             </span>
-            <span className={`cursor-pointer py-2  hover:${textTheme}`}>
-                <MdDeleteOutline onClick={()=>openDialog()}/>   
+            <span
+                className={`cursor-pointer py-2  hover:${textTheme}`}
+                
+            >
+                <MdDeleteOutline onClick={()=>openDialog()}/>
+                
             </span>
 
             <ConfirmDialog
@@ -117,7 +124,7 @@ const ActionColumn = ({ row }: { row: Task}) => {
           onConfirm={() => onDelete()}
           title="Delete Task"
           onRequestClose={onDialogClose}>
-            <p> Are you sure you want to delete this task? </p>            
+            <p> Are you sure you want to delete this Subtask? </p>            
         </ConfirmDialog>
         </div>
     )
@@ -143,13 +150,10 @@ function DebouncedInput({
 
         return () => clearTimeout(timeout)
     }, [value])
-    const location=useLocation()
-    const queryParams = new URLSearchParams(location.search);
-    const projectId=queryParams.get('project_id') || '';
 
     return (
         <div className="flex justify-between md:flex-col lg:flex-row">
-            <h3></h3>
+            <h3>Leads</h3>
             <div className="flex items-center mb-4 gap-3">
                 <Input
                 size='sm'
@@ -157,7 +161,15 @@ function DebouncedInput({
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                 />
-                <AddTask project={projectId}/>
+                  <Link
+                className="block lg:inline-block md:mb-0 mb-4"
+                to="/app/crm/lead-new"
+            >
+                {(role==='ADMIN' || role==='Senior Architect' || role==='Project Architect') && 
+                <Button block variant="solid" size="sm" icon={<HiPlusCircle />}>
+                    Add Lead
+                </Button>}
+            </Link>
             </div>
         </div>
     )
@@ -178,18 +190,21 @@ const statusColors: { [key: string]: string } = {
     'Not Interested': 'bg-red-200 text-red-700',
 };
 
-const Filtering = () => {
+const Subtasks = (task:any) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
+    const navigate = useNavigate()
+
+
     const location=useLocation()
     const queryParams = new URLSearchParams(location.search);
     const projectId=queryParams.get('project_id') || '';
     const [taskData,setTaskData]=useState<any>(null)
-
+    
   
     useEffect(() => {
         const TaskData=async()=>{
-            const response = await apiGetCrmProjectsTaskData(projectId);
+            const response = await apiGetCrmProjectsSubTaskData(projectId,task.task);
             setTaskData(response.data)
             console.log('response',response);
         }
@@ -197,7 +212,6 @@ const Filtering = () => {
   
     }, [])
     console.log('taskData',taskData);
-
     const formateDate = (dateString:string) => {
         const date = new Date(dateString);
         const day=date.getDate().toString().padStart(2, '0');
@@ -206,43 +220,43 @@ const Filtering = () => {
         return `${day}-${month}-${year}`;
         }
 
-    const columns = useMemo<ColumnDef<Task>[]>(
+    const columns = useMemo<ColumnDef<SubTask>[]>(
         () => [
          {
-            header:'Name',
-            accessorKey:'task_name',
+            header:'Subtask',
+            accessorKey:'sub_task_name',
            cell:({row})=>{
 
-            return <TaskDetails data={row.original}/>
+            return <SubTaskDetails data={row.original}/>
            }
          },
          {
-            header:'Task Priority',
-            accessorKey:'task_priority',
+            header:'Priority',
+            accessorKey:'sub_task_priority',
          },
          {
-            header:'Task Status',
-            accessorKey:'task_status'
+            header:'Status',
+            accessorKey:'sub_task_status'
          },
             {
-                header:'Task Start Date',
-                accessorKey:'actual_task_start_date',
+                header:'Start Date',
+                accessorKey:'sub_task_start_date',
                 cell:({row})=>{
-                    return <span>{formateDate(row.original.actual_task_start_date)}</span>
+                    return <div>{formateDate(row.original.actual_sub_task_start_date)}</div>
                 }
             },
             {
-                header:'Task End Date',
-                accessorKey:'actual_task_end_date',
+                header:'End Date',
+                accessorKey:'sub_task_end_date',
                 cell:({row})=>{
-                    return <span>{formateDate(row.original.actual_task_end_date)}</span>
+                    return <div>{formateDate(row.original.actual_sub_task_end_date)}</div>
                 }
             },
             {
                 header:'Action',
                 id: 'action',
                 accessorKey:'action',
-                cell: ({row}) => <ActionColumn row={row.original}/>,
+                cell: ({row}) => <ActionColumn row={row.original}  />,
             }
            
         ],
@@ -282,12 +296,6 @@ const Filtering = () => {
     }
     return (
         <>
-            <DebouncedInput
-                value={globalFilter ?? ''}
-                className="p-2 font-lg shadow border border-block"
-                placeholder="Search..."
-                onChange={(value) => setGlobalFilter(String(value))}
-            />
             <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -367,11 +375,9 @@ const Filtering = () => {
                     />
                 </div>
             </div>
-
-          
         </>
     )
 }
 
-export default Filtering
+export default Subtasks
 

@@ -2,11 +2,11 @@
     "nav": {
         "apps": "Apps",
         "appsProject": {
-            "project": "Project",
+            "project": "Project Manager",
             "dashboard": "Dashboard",
             "projectList": "Project List",
             "scrumBoard": "Scrum Board",
-            "market":"Project",
+            "market":"Project Manager",
             "issue": "Issue"
         },
         "appsCrm": {
@@ -22,7 +22,7 @@
             "sales": "Sales",
             "dashboard": "Dashboard",
             "fileManager": "File Manager",
-            "productList": "Lead Management",
+            "productList": "Lead Manager",
             "productEdit": "Product Edit",
             "productNew": "New Product",
             "orderList": "MOM",
@@ -32,7 +32,7 @@
             "crypto": "Crypto",
             "dashboard": "Dashboard",
             "portfolio": "Portfolio",
-            "market": "Project",
+            "market": "Project Manager",
             "wallets": "Wallets"
         },
         "appsknowledgeBase": {

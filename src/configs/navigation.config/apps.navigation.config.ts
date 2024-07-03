@@ -27,21 +27,17 @@ const appsNavigationConfig: NavigationTree[] = [
                         authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Site Supervisor","Executive Assistant"],
                         subMenu: [],
                     },
-                  
-
                     {
-                                    key: 'appsCrm.project',
-                                    path: `${APP_PREFIX_PATH}/crm/projectslist`,
-                                    title: 'Project',
-                                    translateKey: '',
-                                    icon: 'projects',
-                                    type: NAV_ITEM_TYPE_ITEM,
-                                    authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer",,"Project Architect","Executive Assistant"],
-                                    subMenu: [],
-                                },
-                  
-                  
-                   
+                        key: 'appsSales.productList',
+                        path: `${APP_PREFIX_PATH}/leads`,
+                        title: 'Lead Manager',
+                        translateKey: 'nav.appsSales.productList',
+                        icon: 'lead',
+                        type: NAV_ITEM_TYPE_ITEM,
+                        authority: ["ADMIN","Senior Architect","Project Architect"],
+                        subMenu: [],
+                    },
+                                     
               
                 
                     {
@@ -55,15 +51,16 @@ const appsNavigationConfig: NavigationTree[] = [
                         subMenu: [],
                     },
                     {
-                        key: 'appsSales.productList',
-                        path: `${APP_PREFIX_PATH}/leads`,
-                        title: 'Lead Management',
-                        translateKey: 'nav.appsSales.productList',
-                        icon: 'lead',
+                        key: 'appsCrm.project',
+                        path: `${APP_PREFIX_PATH}/crm/projectslist`,
+                        title: 'Project Manager',
+                        translateKey: '',
+                        icon: 'projects',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: ["ADMIN","Senior Architect","Project Architect"],
+                        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer",,"Project Architect","Executive Assistant"],
                         subMenu: [],
                     },
+                    
                     
                
 ]

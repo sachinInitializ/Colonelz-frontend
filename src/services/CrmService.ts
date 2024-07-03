@@ -195,6 +195,154 @@ export async function apiGetCrmProjectsMom(projectId:string) {
     console.log('Received response from server:', data);
     return data;
 }
+export async function apiGetCrmProjectsAddTask(Data: any) {
+    const response = await fetch(`${apiPrefix}admin/create/task`, {
+        method: 'Post',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(Data)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmProjectsTaskData(projectId:string) {
+    const response = await fetch(`${apiPrefix}admin/get/all/task?user_id=${userId}&project_id=${projectId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmProjectsSingleTaskData(projectId:string |null,taskId:string | null) {
+    const response = await fetch(`${apiPrefix}admin/get/single/task?user_id=${userId}&project_id=${projectId}&task_id=${taskId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmProjectsTaskUpdate(task:any) {
+    const response = await fetch(`${apiPrefix}admin/update/task`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(task)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmProjectsTaskDelete(Data:any) {
+    const response = await fetch(`${apiPrefix}admin/delete/task`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(Data)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmProjectsSubTaskData(projectId:string,taskId:string) {
+    
+    const response = await fetch(`${apiPrefix}admin/get/all/subtask?user_id=${userId}&project_id=${projectId}&task_id=${taskId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmProjectsAddSubTask(Data: any) {
+    const response = await fetch(`${apiPrefix}admin/create/subtask`, {
+        method: 'Post',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(Data)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmProjectsSubTaskUpdate(task:any) {
+    const response = await fetch(`${apiPrefix}admin/update/subtask`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(task)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+export async function apiGetCrmProjectsSubTaskDelete(Data:any) {
+    const response = await fetch(`${apiPrefix}admin/delete/subtask`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(Data)
+    });
+
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
 
 export async function apiGetCrmFileManager() {
     const response = await fetch(`${apiPrefix}admin/getfile/`, {
@@ -406,10 +554,9 @@ export async function apiGetCrmFileManagerShareContractFile(formData: any) {
     const response = await fetch(`${apiPrefix}admin/share/contract`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(formData)
+        body: formData
         
     });
 

@@ -12,13 +12,12 @@ import Checkbox from '@/components/ui/Checkbox'
 import type { ChangeEvent } from 'react'
 import type { CheckboxProps } from '@/components/ui/Checkbox'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Button, Dialog, FormItem, Input, Notification, Select, toast } from '@/components/ui'
+import { Button, Dialog, FormItem, Input, Notification, Select, Upload, toast } from '@/components/ui'
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { apiGetCrmFileManagerShareContractFile, apiGetCrmProjectShareContractApproval, apiGetCrmProjectShareQuotation, apiGetCrmProjectShareQuotationApproval } from '@/services/CrmService'
 import { use } from 'i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
-import Textarea from '@/views/ui-components/forms/Input/Textarea'
 
 type FormData = {
   user_name: string;
@@ -30,18 +29,7 @@ type FormData = {
   type: string;
 };
 
-const validationSchema = Yup.object({
-    user_name: Yup.string().when('type', (type: string, schema) => {
-      return type === 'Internal' ? schema.required('Required') : schema;
-    }),
-    client_name: Yup.string().when('type', (type: string, schema) => {
-      return type === 'External' ? schema.required('Required') : schema;
-    }),
-    client_email: Yup.string().email('Invalid email address').when('type', (type: string, schema) => {
-      return type === 'External'? schema.required('Required') : schema;
-    }),
-    type: Yup.string().required('Required'),
-  });
+
 
 type CheckBoxChangeEvent = ChangeEvent<HTMLInputElement>
 
@@ -128,7 +116,7 @@ const ContractDetails=(data : FileItemProps )=> {
         catch(error){
             toast.push(
                 <Notification closable type='danger' duration={2000}>
-                    Error
+                    Internal Server Error
                 </Notification>
             )
         }
@@ -238,7 +226,7 @@ const ContractDetails=(data : FileItemProps )=> {
                 ...(role !== 'designer' ? [{
                 header: 'Remark',
                 accessorKey: 'remark',
-                cell:({row})=>{
+                cell:({row}:any)=>{
                     const Remark=row.original.remark;
                     const admin_status=row.original.admin_status;
                     const [dialogIsOpen, setIsOpen] = useState(false)
@@ -294,8 +282,12 @@ const ContractDetails=(data : FileItemProps )=> {
         email: string;
         file_id: string;
         type:string
-        lead_id:string |null
+        lead_id:string 
         folder_name:string
+        project_name:string
+        site_location:string
+        quotation:File[]
+
     }
     interface Option {
         value: string ;
@@ -345,12 +337,41 @@ const ContractDetails=(data : FileItemProps )=> {
             options={options}
             name={field.name}
             value={options ? options.find(option => option.value === field.value) : ''}
-            onChange={(option) => form.setFieldValue(field.name, option.value)}
+            onChange={(option) => form.setFieldValue(field.name, option ? option.value : '')}
         />
     );
     const handleSubmit = async (values:FormValues) => {
-        const response=await apiGetCrmFileManagerShareContractFile(values);
+        const formData=new FormData();
+        formData.append('client_name',values.client_name);
+        formData.append('email',values.email);
+        formData.append('file_id',values.file_id);
+        formData.append('type',values.type);
+        formData.append('lead_id',values.lead_id);
+        formData.append('folder_name',values.folder_name);
+        formData.append('project_name',values.project_name);
+        formData.append('site_location',values.site_location);
+
+        values.quotation.forEach((file:File)=>{
+            formData.append('quotation',file);
+        })
+        const response=await apiGetCrmFileManagerShareContractFile(formData);
         const responseData=  await response.json();
+        if(response.status===200){
+            toast.push(
+                <Notification closable type='success' duration={2000}>
+                    {responseData.message}
+                </Notification>
+            )
+            window.location.reload();
+        }
+        else{
+            toast.push(
+                <Notification closable type='danger' duration={2000}>
+                    {responseData.errorMessage}
+                </Notification>
+            )
+        }
+        console.log(responseData);
         
       };
      
@@ -400,18 +421,30 @@ const ContractDetails=(data : FileItemProps )=> {
                   <h3 className='mb-4'>Share To Client</h3>
 
                  <Formik
-                 initialValues={{ client_name: '', email: '', file_id: '',type:'Client',lead_id:leadId,folder_name:'contract' }}
+                 initialValues={{
+                     client_name: ''
+                    , email: ''
+                    , file_id: '',
+                    type:'Client',
+                    lead_id:leadId,
+                    folder_name:'contract',
+                    project_name:'',
+                    site_location:'',
+                    quotation:[]
+                }}
                  validationSchema={Yup.object({
                      client_name: Yup.string().required('Required'),
                      email: Yup.string().email('Invalid email address').required('Required'),
                      file_id: Yup.string().required('Required'),
                  })}
                  onSubmit={(values, { setSubmitting }) => {
+                    console.log(values);
+                    
                         handleSubmit(values);
                         setSubmitting(false);
                  }}
                  >
-                    <Form>
+                    <Form className='max-h-96 overflow-y-auto'>
                  <FormItem label='Client Name'>
                  <Field name="client_name" type="text" component={Input}/>
                  </FormItem>
@@ -419,7 +452,33 @@ const ContractDetails=(data : FileItemProps )=> {
                     <Field name="email" type="text" component={Input}/>
                     </FormItem>
                     <FormItem label='File'>
-                    <Field name="file_id" component={SelectField} options={approvedFiles}/>
+                    <Field name="file_id" >
+                        {({ field, form }: any) => (
+                            <SelectField
+                                options={approvedFiles}
+                                field={field}
+                                form={form}
+                            />
+                        )}
+                    </Field>
+                    </FormItem>
+                    <FormItem label='Project Name'>
+                    <Field name="project_name" type="text" component={Input}/>
+                    </FormItem>
+                    <FormItem label='Site Location'>
+                    <Field name="site_location" type="text" component={Input}/>
+                    </FormItem>
+                    <FormItem label='Quotation'>
+                    <Field name="quotation" type="text">
+  {({ field, form }: any) => (
+    <Upload
+    accept='.pdf'
+      onChange={(files) => {
+        form.setFieldValue('quotation', files);
+      }}
+    />
+  )}
+</Field>
                     </FormItem>
                     <Button type='submit' variant='solid'> Submit</Button>
                  </Form>  
