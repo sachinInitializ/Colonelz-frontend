@@ -4,6 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DatePicker from '@/components/ui/DatePicker/DatePicker';
 import { StickyFooter } from '@/components/shared';
 import { apiGetCrmCreateLeadToProject } from '@/services/CrmService';
+import { Field, Form, Formik } from 'formik';
+import * as Yup from 'yup';
 
 interface FormData {
   lead_id: string | null;
@@ -62,28 +64,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     location: queryParams.get('location') || '',
   };
 
-  const initialFormData: FormData = {
-    lead_id: allQueryParams.id,
-    status: '',
-    content: '',
-    createdBy: 'Client',
-    client_name: allQueryParams.name,
-    client_email: allQueryParams.email,
-    client_contact: allQueryParams.phone,
-    location: allQueryParams.location,
-    designer: '',
-    description: '',
-    project_type: '',
-    project_name: '',
-    project_status: '',
-    project_start_date: null,
-    timeline_date: null,
-    project_budget: '',
-    contract: null,
-  };
 
-  const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const navigate = useNavigate();
 
   const projectTypeOptions = [
@@ -96,272 +77,303 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     { value: 'executing', label: 'Executing' },
   ];
 
-  const handleDateChange = (date: Date | null, fieldName: string) => {
-    setFormData({
-      ...formData,
-      [fieldName]: date ? `${date}` : null,
-    });
-    setErrors({
-      ...errors,
-      date: '',
-    });
-  };
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    if (name === 'client_contact') {
-      const onlyNums = value.replace(/[^0-9]/g, '');
-      if (onlyNums.length <= 10) {
-        setFormData({ ...formData, [name]: onlyNums });
-      }
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-    setErrors({
-      ...errors,
-      [name]: '',
-    });
-  };
-
-  const handleFileChange = (file: File[]) => {
-    if (file.length > 0) {
-      setFormData({
-        ...formData,
-        contract: file[0],
-      });
-    } else {
-      console.log('No file selected');
-    }
-    setErrors({
-      ...errors,
-      contract: '',
-    });
-  };
-
-  function closeAfter2000ms(type: string, message: string) {
-    toast.push(
-      <Notification closable type={type} duration={2000}>
-        {message}
-      </Notification>
-    );
-  }
-
-  const handleFormSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    // Validate the form data
-    const validationErrors: { [key: string]: string } = {};
-
-    if (!formData.client_name.trim()) {
-      validationErrors.client_name = "Client's Name is required";
-    }
-    if (!formData.client_email.trim() || !/^\S+@\S+\.\S+$/.test(formData.client_email.trim())) {
-      validationErrors.client_email = 'Valid email is required';
-    }
-    if (!formData.client_contact.trim() || !/^\d{10}$/.test(formData.client_contact.trim())) {
-      validationErrors.client_contact = 'Valid 10-digit contact number is required';
-    }
-    if (!formData.location.trim()) {
-      validationErrors.location = 'Location is required';
-    }
-    if (!formData.designer.trim()) {
-      validationErrors.designer = 'Project Incharge is required';
-    }
-    if (!formData.project_type.trim()) {
-      validationErrors.project_type = 'Project Type is required';
-    }
-    if (!formData.project_name.trim()) {
-      validationErrors.project_name = 'Project Name is required';
-    }
-    if (!formData.project_budget.trim()) {
-      validationErrors.project_budget = 'Project Budget is required';
-    }
-    if (!formData.project_status.trim()) {
-      validationErrors.project_status = 'Project Status is required';
-    }
-    if (!formData.project_start_date) {
-      validationErrors.project_start_date = 'Project Start Date is required';
-    }
-    if (!formData.timeline_date) {
-      validationErrors.timeline_date = 'Timeline Date is required';
-    }
-
-    if (formData.timeline_date && formData.project_start_date) {
-      const startDate = new Date(formData.project_start_date);
-      const endDate = new Date(formData.timeline_date);
-
-      if (endDate <= startDate) {
-        validationErrors.timeline_date = 'Timeline Date must be greater than Project Start Date';
-      }
-    }
-
-    if (Object.keys(validationErrors).length > 0) {
-      console.log(formData);
-
-      closeAfter2000ms('warning', 'Please fill in the required fields');
-      setErrors(validationErrors);
-      return;
-    }
-
-    console.log(formData);
-
-    try {
-      const formDataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null) {
-          formDataToSend.append(key, value as string | Blob);
-        }
-      });
-      console.log(Array.from(formDataToSend.entries()));
-        
-      const response = await apiGetCrmCreateLeadToProject(formDataToSend);
-
-      if (response.ok) {
-        closeAfter2000ms('success', 'Project created successfully');
-        navigate("/app/crm/projectslist");
-      } else {
-        const errorResponse = await response.json();
-        const errorMessage = errorResponse.errorMessage || 'Unknown error';
-        closeAfter2000ms('danger', errorMessage);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      closeAfter2000ms('danger', 'An error occurred');
-    }
-  };
 
   return (
     <div>
       <div className='flex justify-between items-center max-sm:flex-col mb-6'></div>
-      <form onSubmit={handleFormSubmit}>
-        <FormContainer>
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 xl:grid-cols-3 '>
-            <FormItem label="Client's Name" className=''>
-              <Input name='client_name' value={formData.client_name} onChange={handleInputChange} />
-              {errors.client_name && <span className='text-red-500'>{errors.client_name}</span>}
-            </FormItem>
-            <FormItem label='Client Email' className=''>
-              <Input name='client_email' value={formData.client_email} onChange={handleInputChange} />
-              {errors.client_email && <span className='text-red-500'>{errors.client_email}</span>}
-            </FormItem>
-            <FormItem label='Client Contact' className=''>
-              <Input name='client_contact' value={formData.client_contact} onChange={handleInputChange} />
-              {errors.client_contact && <span className='text-red-500'>{errors.client_contact}</span>}
-            </FormItem>
-            <FormItem label='Project Name' className=''>
-              <Input name='project_name' value={formData.project_name} onChange={handleInputChange} />
-              {errors.project_name && <span className='text-red-500'>{errors.project_name}</span>}
-            </FormItem>
-            <FormItem label='Location' className=''>
-              <Input name='location' value={formData.location} onChange={handleInputChange} />
-              {errors.location && <span className='text-red-500'>{errors.location}</span>}
-            </FormItem>
-            <FormItem label='Project Incharge' className=''>
-              <Input name='designer' value={formData.designer} onChange={handleInputChange} />
-              {errors.designer && <span className='text-red-500'>{errors.designer}</span>}
-            </FormItem>
-            <FormItem label='Project Budget' className=''>
-              <Input name='project_budget' value={formData.project_budget} onChange={handleInputChange} />
-              {errors.project_budget && <span className='text-red-500'>{errors.project_budget}</span>}
-            </FormItem>
-            <FormItem label='Project Type' className=''>
-              <Select
-                options={projectTypeOptions}
-                value={projectTypeOptions.find((option) => option.value === formData.project_type)}
-                onChange={(selectedOption) => {
-                  setFormData({
-                    ...formData,
-                    project_type: selectedOption ? (selectedOption as { value: string; label: string }).value : '',
-                  });
-                  setErrors({
-                    ...errors,
-                    project_type: '',
-                  });
-                }}
-              />
-              {errors.project_type && <span className='text-red-500'>{errors.project_type}</span>}
-            </FormItem>
-            <FormItem label='Project Status' className=''>
-              <Select
-                options={projectStatusOptions}
-                value={projectStatusOptions.find((option) => option.value === formData.project_status)}
-                onChange={(selectedOption) => {
-                  setFormData({
-                    ...formData,
-                    project_status: selectedOption ? (selectedOption as { value: string; label: string }).value : '',
-                  });
-                  setErrors({
-                    ...errors,
-                    project_status: '',
-                  });
-                }}
-              />
-              {errors.project_status && <span className='text-red-500'>{errors.project_status}</span>}
-            </FormItem>
-            <FormItem label="Project Start Date">
-              <DatePicker
-                size="md"
-                onChange={(date) =>
-                  handleDateChange(date, 'project_start_date')
-                }
-              />
-              {errors.project_start_date && (
-                <span className="text-red-500">
-                  {errors.project_start_date}
-                </span>
-              )}
-            </FormItem>
-            <FormItem label="Timeline Date">
-              <DatePicker
-                size="md"
-                onChange={(date) =>
-                  handleDateChange(date, 'timeline_date')
-                }
-              />
-              {errors.timeline_date && (
-                <span className="text-red-500">
-                  {errors.timeline_date}
-                </span>
-              )}
-            </FormItem>
-            <FormItem label='Please Upload Signed Contract' className=''>
-              <Upload
-                multiple={false}
-                name='contract'
-                onChange={handleFileChange}
-              />
-            </FormItem>
-            <FormItem label='Description' className=''>
-              <Input
-                textArea
-                name='description'
-                value={formData.description}
-                onChange={handleInputChange}
-              />
-            </FormItem>
-          </div>
-          <StickyFooter
-            className="-mx-8 px-8 flex items-center justify-between py-4"
-            stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-          >
-            <div className="md:flex items-center">
-              <Button
-                size="sm"
-                className="ltr:mr-3 rtl:ml-3"
-                type="button"
-                onClick={() => {
-                  navigate(-1)
-                }}
-              >
-                Discard
-              </Button>
-              <Button size="sm" variant="solid" type="submit">
-                Submit
-              </Button>
-            </div>
-          </StickyFooter>
+     <Formik
+     initialValues={{
+      lead_id: allQueryParams.id,
+      client_name:allQueryParams.name,
+      client_email:allQueryParams.email || '',
+      client_contact:allQueryParams.phone,
+      project_name:'',
+      location:allQueryParams.location || '',
+      designer:'',
+      project_budget:'',
+      project_type:'',
+      project_status:'',
+      project_start_date:'',
+      timeline_date:'',
+      contract:[],
+      description:'',
+     }}
+     validationSchema={Yup.object().shape({
+      client_name: Yup.string().required('Client Name is required'),
+      client_email: Yup.string().email('Invalid email').required('Email is required'),
+      client_contact: Yup.string().required('Contact is required'),
+      project_name: Yup.string().required('Project Name is required'),
+      location: Yup.string().required('Location is required'),
+      designer: Yup.string().required('Designer is required'),
+      project_budget: Yup.string().required('Budget is required'),
+      project_type: Yup.string().required('Type is required'),
+      project_status: Yup.string().required('Status is required'),
+      project_start_date: Yup.string().required('Start Date is required'),
+      timeline_date: Yup.string().required('Timeline is required').test(
+        'date',
+        'Timeline Date should be greater than Start Date',
+        function (value) {
+          const startDate = this.parent.project_start_date;
+          const timelineDate = new Date(value);
+          const startDateValue = new Date(startDate);
+          return timelineDate > startDateValue;
+        }
+      
+      ),
+      contract: Yup.array().required('Contract is required').test(
+        'file',
+        'File is required',
+        (value) => {
+          return value.length > 0;
+        }
+      ),
+      description: Yup.string(),
+     })}
+     onSubmit={async(values) => {
+       console.log(values);
+       const formData=new FormData();
+       Object.keys(values).forEach(key => {
+        if (key !== 'contract') {
+          formData.append(key, values[key]);
+        }
+      });
+      values.contract.forEach((file, index) => {
+        formData.append('contract', file);
+      });
+
+       console.log('Form Data:', formData);
+       console.log('Values:', values);
+       
+       
+        const response =await apiGetCrmCreateLeadToProject(formData);
+        const responseData=await response.json();
+        if(responseData.code===200){
+          toast.push(
+            <Notification
+              key={Math.random()}
+              type='success'
+              title='Project created successfully'
+              duration={2000}
+            />
+          )
+          navigate("/app/crm/projectslist");
+          window.location.reload();
+        }
+        else{
+          const errorMessage = responseData.errorMessage || 'Internal Server Error';
+          toast.push(
+            <Notification
+              key={Math.random()}
+              type='danger'
+              title={errorMessage}
+              duration={2000}
+            />
+          )
+        } 
+    }
+  }
+     >
+      {({ values,errors, touched }) => (
+        <Form >
+        <FormContainer className='grid grid-cols-1 sm:grid-cols-2 gap-5 xl:grid-cols-4'>
+        <FormItem label='Client Name'
+        asterisk
+        invalid={errors.client_name && touched.client_name}
+        errorMessage={errors.client_name}
+        >
+          <Field
+            component={Input}
+            name='client_name'
+            type='text'
+            placeholder='Client Name'/>
+        </FormItem>
+        <FormItem label='Client Email'
+        asterisk
+        invalid={errors.client_email && touched.client_email}
+        errorMessage={errors.client_email}
+        >
+          <Field
+            component={Input}
+            name='client_email'
+            type='email'
+            placeholder='Client Email'/>  
+        </FormItem>
+        <FormItem label='Client Contact'
+        asterisk
+        invalid={errors.client_contact && touched.client_contact}
+        errorMessage={errors.client_contact}
+        >
+          <Field
+            component={Input}
+            name='client_contact'
+            type='text'
+            placeholder='Client Contact'/>
+        </FormItem>
+        <FormItem label='Project Name'
+        asterisk
+        invalid={errors.project_name && touched.project_name}
+        errorMessage={errors.project_name}
+        >
+          <Field
+            component={Input}
+            name='project_name'
+            type='text'
+            placeholder='Project Name'/>
+        </FormItem>
+        <FormItem label='Location'
+        asterisk
+        invalid={errors.location && touched.location}
+        errorMessage={errors.location}
+        >
+          <Field
+            component={Input}
+            name='location'
+            type='text'
+            placeholder='Location'/>
+        </FormItem>
+        <FormItem label='Designer'
+        asterisk
+        invalid={errors.designer && touched.designer}
+        errorMessage={errors.designer}
+        >
+          <Field
+            component={Input}
+            name='designer'
+            type='text'
+            placeholder='Designer'/>
+        </FormItem>
+        <FormItem label='Project Budget'
+        asterisk
+        invalid={errors.project_budget && touched.project_budget}
+        errorMessage={errors.project_budget}
+        >
+          <Field
+            component={Input}
+            name='project_budget'
+            type='text'
+            placeholder='Project Budget'/>
+        </FormItem>
+        <FormItem label='Project Type'
+        asterisk
+        invalid={errors.project_type && touched.project_type}
+        errorMessage={errors.project_type}
+        >
+          <Field
+            name='project_type'>
+              {({ field,form }:any) => {
+                return (
+                  <Select
+                    options={projectTypeOptions}
+                    onChange={(option) => form.setFieldValue(field.name, option?.value)}
+                  />
+                );
+              }}
+            </Field>
+        </FormItem>
+        <FormItem label='Project Status'
+        asterisk
+        invalid={errors.project_status && touched.project_status}
+        errorMessage={errors.project_status}
+        >
+          <Field
+            name='project_status'>
+              {({ field,form }:any) => {
+                return (
+                  <Select
+                    options={projectStatusOptions}
+                    onChange={(option) => form.setFieldValue(field.name, option?.value)}
+                  />
+                );
+              }
+            }
+            </Field>
+
+        </FormItem>
+        <FormItem label='Project Start Date'
+        asterisk
+        invalid={errors.project_start_date && touched.project_start_date}
+        errorMessage={'Start Date is required'}
+        >
+          <Field
+            name='project_start_date'>
+            {({ field,form }:any) => {
+              return (
+                <DatePicker
+                  onChange={(date) => form.setFieldValue(field.name, `${date}`)}
+                />
+              );
+            }}
+            </Field>
+        </FormItem>
+        <FormItem label='Timeline Date'
+        asterisk
+        invalid={errors.timeline_date && touched.timeline_date}
+        errorMessage={errors.timeline_date}
+        >
+          <Field
+            name='timeline_date'>
+            {({ field,form }:any) => {
+              return (
+                <DatePicker
+                  onChange={(date) => form.setFieldValue(field.name, `${date}`)}
+                />
+              );
+            }}
+            </Field>
+        </FormItem>
+        <FormItem label='Contract'
+        asterisk
+        invalid={Boolean(
+          errors.contract && touched.contract
+      )}
+      errorMessage={errors.contract as string}
+        >
+        <Field name='contract'>
+  {({ field, form }: any) => {
+    return (
+      <Upload
+            onChange={(files) =>
+            form.setFieldValue(field.name, files)
+          }
+        onFileRemove={(files) =>form.setFieldValue(field.name, files)}/>
+    );
+  }}
+
+</Field>
+        </FormItem>
+      
+       
         </FormContainer>
-      </form>
+        <div className='grid lg:grid-cols-2 '>
+        <FormItem label='Description'>
+          <Field
+            name='description'
+            >
+            {({ field,form }:any) => {
+              return (
+                <Input
+                textArea  
+                  type='text'
+                  placeholder='Description'
+                  onChange={(e) => form.setFieldValue(field.name, e.target.value)}
+                />
+              );
+            }}
+            </Field>
+        </FormItem>
+        </div>
+        <StickyFooter 
+         className="-mx-8 px-8 flex items-center gap-3 py-4"
+                stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+        >
+
+          <Button type='button' size='sm' onClick={() => navigate(-1)}>Cancel</Button>
+
+          <Button type='submit' size='sm' variant='solid'>Submit</Button>
+        </StickyFooter>
+        </Form>)}
+      
+        </Formik>
     </div>
   );
 };

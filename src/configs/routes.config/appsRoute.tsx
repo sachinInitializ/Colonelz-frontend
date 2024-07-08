@@ -226,6 +226,12 @@ const appsRoute: Routes = [
         authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect"],
     },
     {
+        key: 'appsCrm.form',
+        path: `${APP_PREFIX_PATH}/crm/project/AllMOM`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/MOM/AllMom')),
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect"],
+    },
+    {
         key: 'appsCrm.mom',
         path: `${APP_PREFIX_PATH}/crm/MOM`,
         component: lazy(() => import('@/views/crm/Inventory')),
@@ -279,7 +285,7 @@ const appsRoute: Routes = [
     {
         key: 'appsCrm.customerDetails',
         path: `${APP_PREFIX_PATH}/crm/pdf1`,
-        component: lazy(() => import('@/views/crm/CustomerDetail/components/Contract/Mycomponent')),
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/Contract')),
         authority: ["ADMIN","Senior Architect"],
        
     },
@@ -300,16 +306,16 @@ const appsRoute: Routes = [
             
         },
     },
-    {
-        key: 'appsCrm.quotationform',
-        path: `${APP_PREFIX_PATH}/crm/project/quotation-form`,
-        component: lazy(() => import('@/views/crm/CustomerDetail/components/QuotationForm')),
-        authority: ["ADMIN","Senior Architect"],
-        meta: {
-            header: 'Quotation',
-            headerContainer: true,
-        },
-    },
+    // {
+    //     key: 'appsCrm.quotationform',
+    //     path: `${APP_PREFIX_PATH}/crm/project/quotation-form`,
+    //     component: lazy(() => import('@/views/crm/CustomerDetail/components/QuotationForm')),
+    //     authority: ["ADMIN","Senior Architect"],
+    //     meta: {
+    //         header: 'Quotation',
+    //         headerContainer: true,
+    //     },
+    // },
     
     {
         key: 'appsSales.productNew',

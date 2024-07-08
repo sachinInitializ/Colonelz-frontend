@@ -29,7 +29,7 @@ type Task = {
     reporter: string;
     task_createdBy: string;
     number_of_subtasks: number;
-    percentage:''
+    percentage:string
 };
 type Data={
     data:Task
@@ -98,7 +98,7 @@ const TaskDetails = (Data:Data) => {
             >
                 <div className='flex gap-5 items-center'>
                 <h4 className='p-2'>Task:{Data.data.task_name}</h4>
-                <Button className='flex items-center justify-center gap-1'  variant='twoTone' size='sm' onClick={()=>navigate(`/app/crm/Projects/TaskDetails?project_id=${Data.data.project_id}&task=${Data.data.task_id}`)}><p className=' font-bold text-lg'>View Task Details</p></Button>
+                <Button className='flex items-center justify-center gap-1'  variant='twoTone' size='sm' onClick={()=>navigate(`/app/crm/Projects/TaskDetails?project_id=${Data.data.project_id}&task=${Data.data.task_id}`)}><p className=''>View Task Details</p></Button>
                 </div>
                 <Tabs defaultValue="tab1">
                 <TabList>
@@ -118,7 +118,7 @@ const TaskDetails = (Data:Data) => {
                     <CustomerInfoField title="Estimated Task End Date" value={formateDate(Data.data.estimated_task_end_date)} />
                     <CustomerInfoField title="Reporter" value={(Data.data.reporter)} />
                     <CustomerInfoField title="Number of Subtasks" value={Data.data.number_of_subtasks} />
-                    <CustomerInfoField title="Description" value={Data.data.task_description} />
+                    <div><p><span className='text-gray-700 dark:text-gray-200 font-semibold'>Description: </span>{Data.data.task_description}</p></div>
                     <div className='my-4'>
                     <div className='flex justify-between items-center py-2'>
                     <h5>Subtasks</h5>

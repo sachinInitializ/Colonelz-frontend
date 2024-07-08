@@ -6,6 +6,8 @@ import { StickyFooter } from '@/components/shared'
 import { apiGetCrmCreateLead } from '@/services/CrmService'
 import { format, isValid, parse } from 'date-fns'
 import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
+import { Field, Form, Formik } from 'formik'
+import * as Yup from 'yup'
 
 const options = [
     { value: 'Follow Up', label: 'Follow Up' },
@@ -36,260 +38,218 @@ interface FormData {
 }
 
 const LeadForm: React.FC = () => {
-    const [formData, setFormData] = useState<FormData>({
-        name: '',
-        email: '',
-        phone: '',
-        location: '',
-        lead_manager: '',
-        status: null,
-        source: '',
-        content: '',
-        createdBy: 'ADMIN',
-        role: 'ADMIN',
-        date: null,
-        
-    })
-    interface FormData {
-        [key: string]: any;
-    }
-
-    const [errors, setErrors] = useState<Partial<FormData>>({})
-
-    const handleInputChange = (name: keyof FormData, value: string) => {
-        setFormData({
-            ...formData,
-            [name]: value,
-        })
-        setErrors({
-            ...errors,
-            [name]: '',
-        })
-    }
-
-    const handleDateChange = (date: Date | null) => {
-        console.log(date);
-        
-        setFormData({ ...formData, date });
-        setErrors({
-          ...errors,
-          date: '',
-        });
-      };
-
-    const validateForm = () => {
-        
-        const newErrors: Partial<FormData> = {}
-        if (!formData.name.trim()) newErrors.name = 'Name is required.'
-        if (!formData.email.trim()) newErrors.email = 'Email is required.'
-        if (!formData.phone.trim())
-            newErrors.phone = 'Phone number is required.'
-        if (!formData.location.trim())
-            newErrors.location = 'Location is required.'
-        if (!formData.status) newErrors.status = 'Status is required.'
-        if (!formData.date) newErrors.date = 'Date is required.'
-        if (!formData.lead_manager) newErrors.lead_manager = 'Lead Manager is required.'
-
-
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (
-            formData.email.trim() &&
-            !emailPattern.test(formData.email.trim())
-        ) {
-            newErrors.email = 'Invalid email address.'
-        }
-        const phonePattern = /^\d{10}$/
-        const trimmedPhone = formData.phone.trim()
-        if (
-            trimmedPhone &&
-            (!phonePattern.test(trimmedPhone) ||
-                formData.phone !== trimmedPhone)
-        ) {
-            newErrors.phone =
-                'Invalid phone number (10 digits only, no spaces, and no leading/trailing spaces).'
-        }
-
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
-    }
     const navigate = useNavigate()
 
-    function closeAfter2000ms(type:string, message:string) {
-        toast.push(
-            <Notification closable type={type} duration={2000}>
-                {message}
-            </Notification>
-        )
-    }
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        const userId=localStorage.getItem('userId')
-        if (validateForm()) {
-            try {
-                
-                const formDataToSend = new FormData()
-                console.log(formData);
-                for (const key in formData) {
-                    if (key !== 'files') {
-                        formDataToSend.append(key, formData[key])
-                    }
-                }
-                formDataToSend.append('userId', userId);
-                
-                console.log(formData);
-                
-                const response = await apiGetCrmCreateLead(formDataToSend)
-                const errorMessage = await response.json()
-                console.log(errorMessage.errorMessage);
-                
-                if (response.ok) {
-                    closeAfter2000ms('success','Lead added successfully')
+    return (
+       <Formik
+       initialValues={{
+              userId:localStorage.getItem('userId'),
+              name: '',
+              email: '',
+              phone: '',
+              location: '',
+              lead_manager: '',
+              status: null,
+              source: '',
+              content: '',
+              createdBy: 'ADMIN',
+              role: localStorage.getItem('role') || 'ADMIN',
+              date: null,
+       }}
+       validationSchema={Yup.object().shape({
+            name: Yup.string().required('Name is required'),
+            email: Yup.string().email('Must be a valid email').required('Email is required'),
+            phone: Yup.string().required('Phone number is required'),
+            location: Yup.string().required('Location is required'),
+            lead_manager: Yup.string().required('Lead Manager is required'),
+            status: Yup.string().required('Status is required'),
+            date: Yup.string().required('Date is required'),
+         })
+       }
+       onSubmit={
+              async(values) => {
+                console.log(values);
+                const response = await apiGetCrmCreateLead(values)
+                const data= await response.json()
+                console.log(data);
+                if (data.code===200){
+                    toast.push(
+                        <Notification type='success' duration={2000}>
+                            Lead Created Successfully
+                        </Notification>
+                    )
                     navigate('/app/leads')
                     window.location.reload()
-                } else {
-                    closeAfter2000ms('danger',errorMessage.errorMessage)
                 }
-            } catch (error) {
-              closeAfter2000ms('danger',`Error: ${error}`)
+                else{
+                    toast.push(
+                        <Notification type='danger' duration={2000}>
+                            {data.errorMessage}
+                        </Notification>
+                    )
+                }
             }
-        }
-        else {
-            closeAfter2000ms('warning','Please check all the required fields')
-        } 
-    }
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    return (
-        <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 xl:grid-cols-3 sm:grid-cols-2 gap-5">
-                <div>
-                    <FormItem label="Lead Name">
-                        <Input
-                            size="md"
-                            type="text"
-                            value={formData.name}
-                            onChange={(e) =>
-                                handleInputChange('name', e.target.value)
+       }>
+        {({ errors, touched }) => (<>
+        <Form >
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 xl:grid-cols-4'>
+            <FormItem label='Lead Name'
+            asterisk
+            invalid={errors.name && touched.name}
+            errorMessage={errors.name}
+            >
+                <Field
+                component={Input}
+                name='name'
+                placeholder='Enter lead name'
+                />
+            </FormItem>
+
+            <FormItem label='Email'
+            asterisk
+            invalid={errors.email && touched.email}
+            errorMessage={errors.email}
+            >
+                <Field
+                component={Input}
+                name='email'
+                placeholder='Enter email'
+                />
+            </FormItem>
+
+            <FormItem label='Phone'
+            asterisk
+            invalid={errors.phone && touched.phone}
+            errorMessage={errors.phone}
+            >
+                <Field
+                name='phone'
+                placeholder=''
+                >
+                    {({ field,form }:any) => (
+                       <Input
+                       maxLength={10}
+                       onChange={(e) => {
+                        const value = e.target.value;
+                        if (value.length <= 10 && /^[0-9]*$/.test(value)) {
+                          form.setFieldValue(field.name, value);
+                        }
+                          }}
+                          onKeyPress={(e) => {
+                            const charCode = e.which ? e.which : e.keyCode;
+                            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                              e.preventDefault();
                             }
-                        />
-                    <span className=" text-red-600">{errors.name}</span>
-                    </FormItem>
-                </div>
-                <div>
-                    <FormItem label="Email">
-                        <Input
-                            size="md"
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) =>
-                                handleInputChange('email', e.target.value)
-                            }
-                        />
-                    <span className=" text-red-600">{errors.email}</span>
-                    </FormItem>
-                </div>
-                <div>
-                    <FormItem label="Phone">
-                        <Input
-                            size="md"
-                            type="text"
-                            value={formData.phone}
-                            maxLength={10}
-                            onChange={(e) =>{
-                                const onlyNums = e.target.value.replace(/[^0-9]/g, '');
-                                if (onlyNums.length <= 10) {
-                                    handleInputChange('phone', onlyNums);
-                                }
-                            }
-                            }
-                        />
-                    <span className=" text-red-600">{errors.phone}</span>
-                    </FormItem>
-                </div>
-                <div>
-                    <FormItem label="Location">
-                        <Input
-                            type="text"
-                            value={formData.location}
-                            onChange={(e) =>
-                                handleInputChange('location', e.target.value)
-                            }
-                        />
-                    <span className=" text-red-600">{errors.location}</span>
-                    </FormItem>
-                </div>
-                <div>
-                    <FormItem label="Lead Manager">
-                        <Input
-                            type="text"
-                            value={formData.lead_manager}
-                            onChange={(e) =>
-                                handleInputChange(
-                                    'lead_manager',
-                                    e.target.value,
-                                )
-                            }
-                        />
-                    <span className=" text-red-600">{errors.lead_manager}</span>
-                    </FormItem>
-                </div>
-                <div>
-                    <FormItem label="Lead Status">
+                          }}
+                          />
+                    )}
+                </Field>
+            </FormItem>
+
+            <FormItem label='Location'
+            asterisk
+            invalid={errors.location && touched.location}
+            errorMessage={errors.location}
+            >
+                <Field
+                component={Input}
+                name='location'
+                placeholder='Enter location'
+                />
+            </FormItem>
+
+            <FormItem label='Lead Manager'
+            asterisk
+            invalid={errors.lead_manager && touched.lead_manager}
+            errorMessage={errors.lead_manager}
+            >
+                <Field
+                component={Input}
+                name='lead_manager'
+                placeholder='Enter lead manager'
+                />
+            </FormItem>
+
+            <FormItem label='Lead Status'
+            asterisk
+            invalid={errors.status && touched.status}
+            errorMessage={errors.status}
+            >
+                <Field
+                name='status'
+                options={options}
+                placeholder='Select status'
+                >
+                    {({ field, form, meta }:any) => (
                         <Select
-                            options={options}
-                            value={options.find(
-                                (option) => option.value === formData.status,
-                            )}
-                            onChange={(selectedOption) =>
-                              selectedOption && handleInputChange(
-                                    'status',
-                                    selectedOption.value,
-                                )
-                            }
+                        name='status'
+                        options={options}
+                        placeholder='Select status'
+                        onChange={(value) => {
+                            form.setFieldValue(field.name, value?.value)
+                        }}
                         />
-                    <span className=" text-red-600">{errors.status}</span>
-                    </FormItem>
-                </div>
-                <div>
-                <FormItem label="Created Date">
-                <DateTimepicker
-    size='md'
-    value={formData.date}
-    format="DD-MM-YYYY HH:mm"
-    onChange={handleDateChange}
-/>
-    <span className=" text-red-600">{errors.date}</span>
-</FormItem>
-                </div>
-                <div>
-                <FormItem label="Source">
-                  <Input
-                  value={formData.source}
-                  onChange={(e)=>{
-                    handleInputChange('source', e.target.value)
-                  }}/>
-                  
-                    
-                </FormItem>
-                </div>
-                
-                <div>
-                    <FormItem label="Description">
-                        <Input
-                            textArea
-                            value={formData.content}
-                            onChange={(e) =>
-                                handleInputChange('content', e.target.value)
-                            }
+                    )}
+                </Field>
+            </FormItem>
+
+            <FormItem label='Source'
+            asterisk
+            invalid={errors.source && touched.source}
+            errorMessage={errors.source}
+            >
+                <Field
+                name='source'
+                component={Input}
+                placeholder='Select source'
+
+                />
+            </FormItem>
+
+       
+            <FormItem label='Created Date'
+            asterisk
+            invalid={errors.date && touched.date}
+            errorMessage={errors.date}
+            >
+                <Field
+                name='date'
+                placeholder='Enter date'
+                >
+                    {({ field ,form}:any) => (
+                        <DateTimepicker
+                        onChange={(date) => {
+                         form.setFieldValue(field.name, `${date}`)
+                        }}
                         />
-                    </FormItem>
-                </div>
+                    )}
+                </Field>
+            </FormItem>
+
+            <FormItem label='Content'
+            >
+                <Field
+                name='content'
+                placeholder='Enter content'
+                >
+                    {({ field,form }:any) => (
+                       <Input
+                       textArea
+                       onChange={(e) => {
+                            form.setFieldValue(field.name, e.target.value)
+                          }}
+                          />
+                    )}
+                </Field>
+            </FormItem>
+
             </div>
+
             <StickyFooter
-                className="-mx-8 px-8 flex items-center justify-between py-4"
+                className="-mx-8 px-8 flex items-center gap-3 py-4"
                 stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
             >
-                <div className="md:flex items-center">
+                
                     <Button
                         size="sm"
                         className="ltr:mr-3 rtl:ml-3"
@@ -303,9 +263,13 @@ const LeadForm: React.FC = () => {
                     <Button size="sm" variant="solid" type="submit">
                         Submit
                     </Button>
-                </div>
+                
             </StickyFooter>
-        </form>
+        </Form>
+        
+       
+        </>)}
+            </Formik>
     )
 }
 

@@ -345,8 +345,10 @@ function ReactTable({
     )
 
     const location = useLocation()
-    const { leadData, client } = useMomContext();
+    const { leadData } = useMomContext();
+    const {client}=useMomContext()
     const projectId = new URLSearchParams(location.search).get('project_id')
+
     const [sorting, setSorting] = useState<ColumnSort[]>([])
     const table = useReactTable({
         data: leadData || [],
@@ -361,12 +363,12 @@ function ReactTable({
     })
 
     const navigate = useNavigate()
-
+    const [mom,setmom]=useState(false)
     
 
     return (
         <>
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-end mb-4 gap-3">
                 <Button
                     className="flex justify-center items-center"
                     size="sm"
@@ -379,6 +381,7 @@ function ReactTable({
                 >
                     Add MOM{' '}
                 </Button>
+                <Button variant='solid' size='sm' onClick={()=>navigate(`/app/crm/project/AllMOM?project_id=${projectId}`)}>View All MOM</Button>
             </div>
             {table.getRowModel().rows.length > 0 ? (
                 <>
@@ -443,7 +446,7 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
     const files = Array.isArray(rowData.files) ? rowData.files : []
     const handlePost=async(blob:any)=>{
         const formData = new FormData();
-        formData.append('project_id', projectId);
+        formData.append('project_id', projectId || '');
         formData.append('mom_id', rowData.mom_id);
         formData.append('file', blob, 'myDocument1.pdf');
   

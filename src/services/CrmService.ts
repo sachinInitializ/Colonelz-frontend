@@ -161,6 +161,21 @@ export async function apiGetCrmSingleProjects(projectId:string ) {
     const data = await response.json();
     return data;
 }
+export async function apiGetCrmSingleProjectReport(projectId:string | null ) {
+    const response = await fetch(`${apiPrefix}admin/gettask/details?project_id=${projectId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+}
 
 export async function apiGetCrmSingleProjectEdit(formData: any) {
     try {
@@ -205,9 +220,6 @@ export async function apiGetCrmProjectsAddTask(Data: any) {
         body: JSON.stringify(Data)
     });
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
     const data = await response.json();
     console.log('Received response from server:', data);
     return data;
@@ -253,10 +265,6 @@ export async function apiGetCrmProjectsTaskUpdate(task:any) {
         },
         body: JSON.stringify(task)
     });
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
     const data = await response.json();
     console.log('Received response from server:', data);
     return data;
@@ -271,9 +279,6 @@ export async function apiGetCrmProjectsTaskDelete(Data:any) {
         body: JSON.stringify(Data)
     });
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
     const data = await response.json();
     console.log('Received response from server:', data);
     return data;
@@ -305,9 +310,6 @@ export async function apiGetCrmProjectsAddSubTask(Data: any) {
         body: JSON.stringify(Data)
     });
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
     const data = await response.json();
     console.log('Received response from server:', data);
     return data;
@@ -322,9 +324,6 @@ export async function apiGetCrmProjectsSubTaskUpdate(task:any) {
         body: JSON.stringify(task)
     });
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
     const data = await response.json();
     console.log('Received response from server:', data);
     return data;
@@ -614,9 +613,10 @@ export async function apiGetCrmCreateLead(formData: any) {
     const response = await fetch(`${apiPrefix}admin/create/lead/`, {
         method: 'POST',
         headers: {
+            'Content-type':'application/json',
             'Authorization': `Bearer ${token}`
         },
-        body: formData
+        body: JSON.stringify(formData)
         
     });
 

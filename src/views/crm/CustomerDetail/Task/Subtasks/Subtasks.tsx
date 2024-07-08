@@ -88,6 +88,7 @@ const ActionColumn = ({ row }: { row: SubTask}) => {
             toast.push(
                 <Notification type='success' duration={2000} closable>Subtask Deleted Successfully</Notification>
             )
+            window.location.reload()
         }
         else{
             toast.push(
@@ -122,7 +123,7 @@ const ActionColumn = ({ row }: { row: SubTask}) => {
           confirmButtonColor="red-600"
           onCancel={onDialogClose}
           onConfirm={() => onDelete()}
-          title="Delete Task"
+          title="Delete Subtask"
           onRequestClose={onDialogClose}>
             <p> Are you sure you want to delete this Subtask? </p>            
         </ConfirmDialog>

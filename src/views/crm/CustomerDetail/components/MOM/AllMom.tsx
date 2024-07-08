@@ -301,20 +301,30 @@ const App = () => {
   
 
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
+  const [data,setdata]=useState()
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const projectId = searchParams.get('project_id');
+    if (projectId) {
+      const fetchData = async () => {
+        try {
+          const response = await apiGetCrmProjectsMom(projectId);
+          const data = response;
+          setdata(data.data.mom_data);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
 
-  // Create an object to store and map the query parameters
-  const allQueryParams: QueryParams = {
-    id: queryParams.get('id') || '',
-    project_id: queryParams.get('project_id') || '',
-    mom: queryParams.get('type') || '',
-  };
+      fetchData();
+    }
+  }, [location.search]);
 
   
 
-  const filteredMomData = leadData
-  ? leadData.filter((item) => {
-      const searchIn = (str: string | undefined): boolean => {
+  const filteredMomData = data
+  ? data.filter((item) => {
+      const searchIn = (str: string | unknown): boolean => {
         if (str === undefined) {
           return false;
         }
@@ -396,12 +406,13 @@ const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-point
           placeholder="Search..."
           value={searchInput}
           className=" w-1/5"
+          size='sm'
           onChange={handleSearchInputChange}
         />
        
 
       </div>
-      <ul>
+      <div>
       {filteredMomData.length > 0 ? (
     filteredMomData.map((rowData: any) => (
       <Card className='my-6'>
@@ -499,7 +510,7 @@ const Toggle= <BsThreeDotsVertical className='font-semibold text-xl cursor-point
         ))) : (
           <div style={{ textAlign: 'center' }}>No Mom Data</div>
       )}
-      </ul>
+      </div>
     </div>
   );
 };

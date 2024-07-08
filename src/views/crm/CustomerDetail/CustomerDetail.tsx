@@ -1,35 +1,30 @@
 import { useEffect, useState } from 'react'
 import Container from '@/components/shared/Container'
 import CustomerProfile from './components/CustomerProfile'
-import PaymentHistory from './components/Quotation'
 import reducer, { getCustomer, useAppDispatch } from './store'
 import { injectReducer } from '@/store'
 import useQuery from '@/utils/hooks/useQuery'
 import MOM from './components/MOM/Mom'
-import { Tabs } from '@/components/ui'
+import { Skeleton, Tabs } from '@/components/ui'
 import TabList from '@/components/ui/Tabs/TabList'
 import TabNav from '@/components/ui/Tabs/TabNav'
 import TabContent from '@/components/ui/Tabs/TabContent'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import AllMom from './components/MOM/AllMom'
-import { apiGetCrmFileManagerProjects, apiGetCrmSingleProjectQuotation, apiGetCrmSingleProjects } from '@/services/CrmService'
-import Quotations from './Quotation/Quotations'
+import {  apiGetCrmSingleProjectQuotation, apiGetCrmSingleProjects } from '@/services/CrmService'
 import { FileItem } from '../FileManager/Components/Project/data'
 import Index from './Quotation'
-import Contract from './components/Contract'
 import { MomProvider } from './store/MomContext'
 import { ProjectProvider } from '../Customers/store/ProjectContext'
 import Task from './Task/index'
+import Activity from './Project Progress/Activity'
 
 injectReducer('crmCustomerDetails', reducer)
 
 const CustomerDetail = () => {
     const dispatch = useAppDispatch()
     const query = useQuery()
-    useEffect(() => {
-        fetchData()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    const [loading, setLoading] = useState(true);
 
     const fetchData = () => {
         const id = query.get('lead_id')
@@ -44,6 +39,7 @@ const CustomerDetail = () => {
       
       }
       const [fileData,setFileData]=useState<FileItem[]>();
+      const navigate = useNavigate();
     const location = useLocation();
     const role=localStorage.getItem('role');
     const queryParams = new URLSearchParams(location.search);
@@ -55,12 +51,19 @@ const CustomerDetail = () => {
     const [details, setDetails] = useState<any | null>(null);
     const[momdata,setmomdata]= useState<any >(null);
 
+    const handleTabChange = (selectedTab:any) => {
+      const currentUrlParams = new URLSearchParams(location.search);
+      currentUrlParams.set('type', selectedTab);
+      navigate(`${location.pathname}?${currentUrlParams.toString()}`);
+  };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await apiGetCrmSingleProjects(allQueryParams.project_id);
                 const data = response
                 setDetails(data.data[0]);
+                setLoading(false);
                 setmomdata(data.data[0].mom)
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -82,31 +85,34 @@ const CustomerDetail = () => {
     
         fetchDataAndLog();
       }, []);
+
       
       return (
         <>
-        <h3 className='pb-5'>Project-{details?details.project_name:""}</h3>
+        <h3 className='pb-5'>Project-{loading?<Skeleton width={100}/>:details?details.project_name:""}</h3>
         <div>
           <ProjectProvider>
           <MomProvider>
-        <Tabs defaultValue={allQueryParams.mom}>
+{loading?<Skeleton height={400}/>:
+          <Tabs defaultValue={allQueryParams.mom} onChange={handleTabChange}>
             <TabList>
                 <TabNav value="tab1">Details</TabNav>
                 {(role === 'ADMIN' || role === 'Senior Architect' || role === 'Executive Assistant') && (
                   <TabNav value="tab2">Quotation</TabNav>
                 )}{role !== 'Executive Assistant' && (
                   <>
-                    <TabNav value="mom">MOM</TabNav>
-                    <TabNav value="tab5">All MOM</TabNav>
+                    <TabNav value="mom" >MOM</TabNav>
                     <TabNav value="tab4">Task Manager</TabNav>
+                    <TabNav value="tab5">Project Activity</TabNav>
                   </>
                 )}
             </TabList>
             <div className="p-4">
                 <TabContent value="tab1">
+                  {loading ? <Skeleton width={150}/> :
                     <Container>
                         <CustomerProfile data={details}/>
-                    </Container>
+                    </Container>}
                 </TabContent>
                 <TabContent value="tab2">
                   <Index data={fileData }/>
@@ -115,15 +121,15 @@ const CustomerDetail = () => {
                   <MOM data={details} />
                 </TabContent>
               
-                <TabContent value="tab5">
-                  <AllMom />
-                </TabContent>
                 <TabContent value="tab4">
                   <Task/>
                 </TabContent>
+                <TabContent value="tab5">
+                  <Activity Data={details} />
+                </TabContent>
 
             </div>
-        </Tabs>
+        </Tabs>}
         </MomProvider>
         </ProjectProvider>
     </div>

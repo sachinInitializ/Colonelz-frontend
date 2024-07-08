@@ -16,6 +16,7 @@ import { HiOutlineCloudUpload } from 'react-icons/hi'
 
 import App from './Richtext'
 import { apiCreateMom } from '@/services/CrmService'
+import { MultiValue } from 'react-select'
 
 type Option = {
     value: string
@@ -23,6 +24,7 @@ type Option = {
 }
 
 interface FormData {
+    user_id:string | null
     client_name: string
     organisor: string
     designer: string
@@ -34,7 +36,7 @@ interface FormData {
     project_id: string
 }
 
-const YourFormComponent: React.FC = () => {
+const YourFormComponent = () => {
     const navigate = useNavigate()
     interface QueryParams {
         project_id: string
@@ -49,6 +51,7 @@ const YourFormComponent: React.FC = () => {
         client_name: queryParams.get('client_name') || '',
     }
     const [formData, setFormData] = useState<FormData>({
+        user_id:localStorage.getItem('userId'),
         client_name: '',
         organisor: '',
         designer: '',
@@ -71,18 +74,18 @@ const YourFormComponent: React.FC = () => {
         },
         // Add more client options if needed
     ]
-    const organisorOptions: Option[] = [
-        {},
-        // Add more client options if needed
-    ]
-    const architectOptions: Option[] = [
-        {},
-        // Add more client options if needed
-    ]
-    const consultant_nameOptions: Option[] = [
-        {},
-        // Add more client options if needed
-    ]
+    // const organisorOptions: Option[] = [
+    //     {},
+    //     // Add more client options if needed
+    // ]
+    // const architectOptions: Option[] = [
+    //     {},
+    //     // Add more client options if needed
+    // ]
+    // const consultant_nameOptions: Option[] = [
+    //     {},
+    //     // Add more client options if needed
+    // ]
 
     const handleSelectChange = (
         selectedOption: Option | Option[] | null,
@@ -164,13 +167,13 @@ const YourFormComponent: React.FC = () => {
 
         const formatNames = (names: string | string[]) => {
             if (typeof names === 'string') {
-                return names // Return the single name as is
+                return names 
             } else if (names.length === 1) {
                 return names[0]
             } else {
-                const firstNames = names.slice(0, -1).join(', ') // Join all but the last name with ','
-                const lastName = names[names.length - 1] // Get the last name
-                return `${firstNames} & ${lastName}` // Combine with ' & '
+                const firstNames = names.slice(0, -1).join(', ') 
+                const lastName = names[names.length - 1] 
+                return `${firstNames} & ${lastName}`
             }
         }
 
@@ -202,7 +205,6 @@ const YourFormComponent: React.FC = () => {
                 )
                 window.location.reload()
                 navigate(-1)
-                // Redirect to home page or any other page after successful creation
             } else {
                 toast.push(
                     <Notification closable type="success" duration={2000}>
@@ -220,17 +222,18 @@ const YourFormComponent: React.FC = () => {
 
     return (
         <div>
-            <h5>MOM Details</h5>
+            <h5>MOM Form</h5>
             <form onSubmit={handleSubmit} className="mt-4">
                 <FormContainer>
-                    <div className="grid grid-cols-3 gap-5">
-                        <FormItem label="Client's Name">
+                    <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-5 h-72">
+                        <FormItem label="Client's Name"
+                        asterisk>
                             
                             <Select
                                 isMulti
                                 componentAs={CreatableSelect}
-                                options={clientOptions}
-                                onChange={(selectedOption) =>
+                            options={clientOptions}
+                                onChange={(selectedOption:any) =>
                                     handleSelectChange(
                                         selectedOption,
                                         'client_name',
@@ -243,13 +246,13 @@ const YourFormComponent: React.FC = () => {
                                 </span>
                             )}
                         </FormItem>
-                        <FormItem label="Organised By">
-                            {/* Use CreatableSelect to allow selecting or creating a new client name */}
+                        <FormItem label="Organised By"
+                        asterisk>
                             <Select
                                 isMulti
                                 componentAs={CreatableSelect}
-                                options={organisorOptions}
-                                onChange={(selectedOption) =>
+                              
+                                onChange={(selectedOption:any) =>
                                     handleSelectChange(
                                         selectedOption,
                                         'organisor',
@@ -262,12 +265,12 @@ const YourFormComponent: React.FC = () => {
                                 </span>
                             )}
                         </FormItem>
-                        <FormItem label="Designer's Name">
+                        <FormItem label="Designer's Name" asterisk>
                             <Select
                                 isMulti
                                 componentAs={CreatableSelect}
-                                options={architectOptions}
-                                onChange={(selectedOption) =>
+                           
+                                onChange={(selectedOption:any) =>
                                     handleSelectChange(
                                         selectedOption,
                                         'designer',
@@ -280,13 +283,11 @@ const YourFormComponent: React.FC = () => {
                                 </span>
                             )}
                         </FormItem>
-                        <FormItem label="Others">
-                            {/* Use CreatableSelect to allow selecting or creating a new client name */}
+                        <FormItem label="Others" >
                             <Select
                                 isMulti
                                 componentAs={CreatableSelect}
-                                options={consultant_nameOptions}
-                                onChange={(selectedOption) =>
+                                onChange={(selectedOption:any) =>
                                     handleSelectChange(
                                         selectedOption,
                                         'attendees',
@@ -299,14 +300,8 @@ const YourFormComponent: React.FC = () => {
                                 </span>
                             )}
                         </FormItem>
-                        {/* Add similar FormItem and Select components for other fields */}
-                        <FormItem label="Date">
+                        <FormItem label="Date" asterisk>
                             <DatePicker
-                                selected={
-                                    formData.meetingDate
-                                        ? new Date(formData.meetingDate)
-                                        : null
-                                }
                                 onChange={(date) =>
                                     handleInputChange(
                                         'meetingDate',
@@ -321,9 +316,8 @@ const YourFormComponent: React.FC = () => {
                                 </span>
                             )}
                         </FormItem>
-                        <FormItem label="Location">
+                        <FormItem label="Location" asterisk>
                             <Select
-                            size='sm'
                                 options={optionsSource}
                                 value={optionsSource.find(
                                     (option) =>
@@ -357,7 +351,7 @@ const YourFormComponent: React.FC = () => {
 
                         <FormItem label="File">
                             <Upload multiple
-                                onChange={(files) => handleFileChange(files)}
+                                onChange={(files:any) => handleFileChange(files)}
                             >
                                 <Button
                                     variant="solid"
@@ -370,10 +364,10 @@ const YourFormComponent: React.FC = () => {
                         </FormItem>
                     </div>
                     <div className="">
-                        <Button type="submit" className="mr-4" variant="solid">
+                        <Button type="submit" className="mr-4" variant="solid" size='sm'>
                             Submit
                         </Button>
-                        <Button type="submit" onClick={() => navigate(-1)}>
+                        <Button type="submit" onClick={() => navigate(-1)} size='sm'>
                             Discard
                         </Button>
                     </div>

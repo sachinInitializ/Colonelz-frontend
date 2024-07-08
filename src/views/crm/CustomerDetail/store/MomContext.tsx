@@ -7,6 +7,43 @@ const MomContext = createContext({ leadData: null, client: null });
 
 export const useMomContext = () => useContext(MomContext);
 
+export interface ApiResponse {
+  message: string;
+  status: boolean;
+  errorMessage: string;
+  code: number;
+  data: Data;
+}
+
+interface Data {
+  client_name: string;
+  mom_data: MomData[];
+}
+
+interface MomData {
+  mom_id: string;
+  meetingdate: string;
+  location: string;
+  attendees: Attendees;
+  remark: string;
+  files: File[];
+}
+
+interface Attendees {
+  client_name: string;
+  organisor: string;
+  designer: string;
+  attendees: string;
+}
+
+interface File {
+  fileUrl: string;
+  fileName: string;
+  fileId: string;
+  fileSize: string;
+  date: string;
+}
+
 export const MomProvider = ({ children }: { children: ReactNode }) => {
   const [leadData, setLeadData] = useState(null);
   const [client, setClient] = useState(null);

@@ -51,6 +51,7 @@ type Task = {
     number_of_subtasks: number;
     user_id: string;
     task_assignee: string;
+    percentage:string;
 };
 
 
@@ -83,6 +84,7 @@ const ActionColumn = ({ row }: { row: Task}) => {
             toast.push(
                 <Notification type='success' duration={2000} closable>Task Deleted Successfully</Notification>
             )
+            window.location.reload()
         }
         else{
             toast.push(
@@ -191,12 +193,10 @@ const Filtering = () => {
         const TaskData=async()=>{
             const response = await apiGetCrmProjectsTaskData(projectId);
             setTaskData(response.data)
-            console.log('response',response);
         }
         TaskData();
   
     }, [])
-    console.log('taskData',taskData);
 
     const formateDate = (dateString:string) => {
         const date = new Date(dateString);

@@ -5,6 +5,7 @@ import { Field, Form, Formik, FormikContext } from 'formik'
 import { DatePicker, FormItem, Input, Notification, Select, toast } from '@/components/ui'
 import { apiGetCrmProjectsAddTask, apiGetCrmProjectsTaskUpdate } from '@/services/CrmService'
 import { HiOutlinePencil } from 'react-icons/hi'
+import * as Yup from 'yup'
 
 type Task = {
     user_id: string;
@@ -80,33 +81,84 @@ const priorityOptions = [
                         task_assignee: Data.task_assignee,
                         reporter: Data.reporter,
                       }}
+                      validationSchema={Yup.object().shape({
+                        task_name: Yup.string().required("Task Name is required"),
+                        actual_task_start_date: Yup.string().required("Actual Start Date is required"),
+                        actual_task_end_date: Yup.string().required("Actual End Date is required").test(
+                            "is-greater",
+                            "End Date must be greater than Start Date",
+                            function (value) {
+                              const { actual_task_start_date } = this.parent;
+                              if (actual_task_start_date && value) {
+                                return new Date(value) > new Date(actual_task_start_date);
+                              }
+                              return true;
+                            }
+                          
+                        ),
+                        estimated_task_start_date: Yup.string().required("Estimated Start Date is required"),
+                        estimated_task_end_date: Yup.string().required("Estimated End Date is required").test(
+                            "is-greater",
+                            "End Date must be greater than Start Date",
+                            function (value) {
+                              const { estimated_task_start_date } = this.parent;
+                              if (estimated_task_start_date && value) {
+                                return new Date(value) > new Date(estimated_task_start_date);
+                              }
+                              return true;
+                            }
+                          
+                        ),
+                        task_status: Yup.string().required("Task Status is required"),
+                        task_priority: Yup.string().required("Task Priority is required"),
+                        task_assignee: Yup.string().required("Task Assignee is required"),
+                        reporter: Yup.string().required("Reporter is required"),
+                      })
+                      }
                      onSubmit={async(values, actions) => {
                         setLoading(true)
-                        try{
                             const response = await apiGetCrmProjectsTaskUpdate(values)
                             console.log('response', response);
-                            setLoading(false)
                             if(response.code===200){
+                                setLoading(false)
                                 toast.push(
                                     <Notification closable type='success' duration={2000}>Task Updated Successfully</Notification>
                                 )
+                                window.location.reload()
                             }
-                        }
-                        catch(error){
-                            setLoading(false)
-                            console.error('Error Adding Task:', error);
-                        }  
+                            else{
+                                setLoading(false)
+                                toast.push(
+                                    <Notification closable type='danger' duration={2000}>{response.errorMessage}</Notification>
+                                )
+                            }
+                        
+                         
                      }} >
+                        {({values, errors, touched})=>(
+
                         <Form className=' p-4 max-h-96 overflow-y-auto'>
                             <div className=' grid grid-cols-2 gap-x-5'>
-                            <FormItem label='Task Name'>
+                            <FormItem label='Task Name'
+                            asterisk
+                            invalid={errors.task_name && touched.task_name}
+                            errorMessage={errors.task_name}>
                                 <Field name='task_name'  component={Input} placeholder='Task Name'/>
+                               
                             </FormItem>
-                            <FormItem label='Task Assignee'>
+                            <FormItem label='Task Assignee'
+                            asterisk
+                            invalid={errors.task_assignee && touched.task_assignee}
+                            errorMessage={errors.task_assignee}>
                                 <Field name='task_assignee'  component={Input} placeholder='Task'/>
                             </FormItem>
-                            <FormItem label='Task Status'>
-                                <Field name='task_status'  placeholder='Task'>
+                            <FormItem label='Task Status'
+                            asterisk
+                            invalid={errors.task_status && touched.task_status}
+                            errorMessage={errors.task_status}
+                            >
+                                <Field name='task_status'  placeholder='Task'
+                                >
                                     {({field}:any)=>(
                                        <Select
                                        placeholder={Data.task_status}
@@ -117,7 +169,9 @@ const priorityOptions = [
                                     )}
                                 </Field>
                             </FormItem>
-                            <FormItem label='Actual Start Date'>
+                            <FormItem label='Actual Start Date'
+                            asterisk
+                             >
                             <Field name='actual_task_start_date' placeholder='Start date'>
                                 {({field}: any) => (
                                     <DatePicker name='actual_task_start_date'
@@ -129,7 +183,9 @@ const priorityOptions = [
                                 )}
                             </Field>
                             </FormItem>
-                            <FormItem label='Actual End Date'>
+                            <FormItem label='Actual End Date'
+                            asterisk
+                            >
                                 <Field name='actual_task_end_date' placeholder='End Date'>
                                     {({field}:any)=>(
                                         <DatePicker name='actual_task_end_date'
@@ -142,7 +198,9 @@ const priorityOptions = [
                                 </Field>
                             </FormItem>
 
-                            <FormItem label='Estimated Start Date'>
+                            <FormItem label='Estimated Start Date'
+                            asterisk
+                            >
                             <Field name='estimated_task_start_date' placeholder='Start date'>
                                 {({field}: any) => (
                                     <DatePicker name='estimated_task_start_date'
@@ -154,7 +212,8 @@ const priorityOptions = [
                                 )}
                             </Field>
                             </FormItem>
-                            <FormItem label='Estimated End Date'>
+                            <FormItem label='Estimated End Date'
+                            asterisk>
                                 <Field name='estimated_task_end_date' placeholder='End Date'>
                                     {({field}:any)=>(
                                         <DatePicker name='estimated_task_end_date'
@@ -166,16 +225,24 @@ const priorityOptions = [
                                     )}
                                 </Field>
                             </FormItem>
-                            <FormItem label='Reporting To'>
+                            <FormItem label='Reporting To'
+                            asterisk
+                            invalid={errors.reporter && touched.reporter}   
+                            errorMessage={errors.reporter}
+                            >
                                 <Field name='reporter'  component={Input} placeholder='Reporting to'/>
                             </FormItem>
-                            <FormItem label='Priority'>
+                            <FormItem label='Priority'
+                            asterisk
+                            invalid={errors.task_priority && touched.task_priority}
+                            errorMessage={errors.task_priority}
+                            >
                                 <Field name='task_priority'  placeholder='Task Priority'>
                                     {({field}:any)=>(
                                         <Select
                                         name='task_priority'
+                                        placeholder={Data.task_priority}
                                         options={priorityOptions}
-                                        value={field.value}
                                         onChange={(value) => { field.onChange({ target: {name:'task_priority', value: value?.value } }) }}
                                         />
                                     )}          
@@ -195,7 +262,7 @@ const priorityOptions = [
                             <div className='flex justify-end'>
                                 <Button type='submit' variant='solid' size='sm' loading={loading}>{loading?'Updating...':'Update'}</Button>
                             </div>
-                        </Form>
+                        </Form>)}
                 </Formik>
             </Dialog>
         </div>

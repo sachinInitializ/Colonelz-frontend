@@ -87,7 +87,11 @@ const TaskDetails = () => {
                 <CustomerInfoField title='Task Assignee' value={taskData.task_assignee}/>
                 <CustomerInfoField title='Reporter' value={taskData.reporter}/>
                 <CustomerInfoField title='Number of subtasks' value={taskData.number_of_subtasks}/>
-                <div><p><span className='text-gray-700 dark:text-gray-200 font-semibold'>Description:</span>{taskData.task_description}</p></div>
+                <div>
+                    <p>
+                        <span className='text-gray-700 dark:text-gray-200 font-semibold'>Description: </span>{taskData.task_description}
+                    </p>
+                </div>
             </Card>
             </div>
             <div className='xl:w-2/3'>

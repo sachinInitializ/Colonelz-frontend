@@ -5,9 +5,12 @@ import { useLocation } from 'react-router-dom'
 import {
     Customer, Data, Project,
 } from '../store'
-import { DatePicker, Dialog, FormItem, Input, Notification, Select, toast } from '@/components/ui'
+import { DatePicker, Dialog, FormItem, Input, Notification, Select, Timeline, toast } from '@/components/ui'
 import Cookies from 'js-cookie'
 import { apiGetCrmSingleProjectEdit } from '@/services/CrmService'
+import Progress from '../Project Progress/Activity'
+import { HiOutlinePencil } from 'react-icons/hi'
+import Report from '../Project Progress/Report'
 
 
 type CustomerInfoFieldProps = {
@@ -17,7 +20,7 @@ type CustomerInfoFieldProps = {
 }
 
 type CustomerProfileProps = {
-    data?: Partial<Customer>
+    data: Customer
 }
 
 const formatDate = (dateString: string | undefined) => {
@@ -36,28 +39,30 @@ const CustomerInfoField = ({
 }: CustomerInfoFieldProps) => {
     if (title === 'Project Id' || title === 'Project Type' || title === 'Project Start Date') {
         return (
-            <div>
-                <span>{title}</span>
-                <p className="text-gray-700 dark:text-gray-200 font-semibold">
-                    {value}
-                </p>
-            </div>
+            <div className='flex gap-1 mb-2 pt-1'>
+            <span className='text-gray-700 dark:text-gray-200 font-semibold'>{title}:</span>
+            <p className="" style={{overflowWrap:"break-word"}}>
+            {value }
+            </p>
+        </div>
         );
     } else if (title === 'Description') {
         return (
-            <div>
-                <span>{title}</span>
-                <div dangerouslySetInnerHTML={{ __html: value || '' }} className='text-gray-700 dark:text-gray-200 font-semibold' />
-            </div>
+            <div className='flex gap-1 mb-2 pt-1'>
+            <span className='text-gray-700 dark:text-gray-200 font-semibold'>{title}:</span>
+            <p className="" style={{overflowWrap:"break-word"}}>
+            {value }
+            </p>
+        </div>
         );
     } else {
         return (
-            <div>
-                <span>{title}</span>
-                <p className="text-gray-700 dark:text-gray-200 font-semibold">
-                    {value}
-                </p>
-            </div>
+            <div className='flex gap-1 mb-2 pt-1'>
+            <span className='text-gray-700 dark:text-gray-200 font-semibold'>{title}:</span>
+            <p className="" style={{overflowWrap:"break-word"}}>
+            {value }
+            </p>
+        </div>
         );
     }
 };
@@ -111,23 +116,21 @@ interface ProjectUpdateData {
   const handleUpdate = async () => {
     try {
       const response = await apiGetCrmSingleProjectEdit(formData);
-      const data=await response.json()
+      const data=await response?.json()
       console.log(data);
-      
-      console.log(data.code===200);
       if (data.errorMessage) {
         toast.push(
           <Notification closable type="danger" duration={2000}>
               {data.errorMessage}
           </Notification>
       )
-      // window.location.reload()
-      } else {
+    } else {
         toast.push(
-          <Notification closable type="success" duration={2000}>
+            <Notification closable type="success" duration={2000}>
              Project Updated Successfully
           </Notification>
       )
+      window.location.reload()
       }
     } catch (error) {
       toast.push(
@@ -223,15 +226,16 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
         setIsOpen(false)
     }
     return (
-        <Card>
+      <div className='flex flex-col gap-5 lg:flex-row'>
+        <Card className='lg:w-2/5'>
             <div className="flex flex-col xl:justify-between h-full 2xl:min-w-[360px] mx-auto">
                 <div className="flex xl:flex-row gap-4 justify-between">
                     <div className="flex xl:flex-row items-center gap-4">
                         <h4 className="font-bold capitalize">{data?.project_name}</h4>
                     </div>
                     <div className="mt-4 flex flex-col xl:flex-row gap-2">
-                    <Button variant="solid" onClick={() => openDialog()}>
-                Edit
+                    <Button variant="solid" onClick={() => openDialog()} size='sm' className='flex justify-center items-center gap-1'>
+            <span>  <HiOutlinePencil/></span><span>  Edit</span>
             </Button>
                     </div>
                 </div>
@@ -242,7 +246,7 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
             >
          <ProjectUpdate data={data}/>
             </Dialog>
-                <div className="grid grid-cols-3 sm:grid-cols-3 max-sm:grid-cols-1 max-sm:grid xl:grid-cols-4 gap-y-7 gap-x-5 mt-8 capitalize">
+                <div className=" mt-4 capitalize">
                     <CustomerInfoField title="Project Id" value={data?.project_id} />
                     <CustomerInfoField 
                         title="Project Type"
@@ -279,20 +283,24 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                     {data?.project_updated_by && data.project_updated_by.length>0 &&<>
                     <CustomerInfoField
                         title="Updated By"
-                        value={data.project_updated_by.length > 0 ? data.project_updated_by[data.project_updated_by.length-1].user_name : ""}                    />
+                        value={data.project_updated_by.length > 0 ? data.project_updated_by[data.project_updated_by.length-1].username : ""}                    />
                     <CustomerInfoField
                         title="Updated Date"
                         value={formatDate(data?.project_updated_by.length>0?data?.project_updated_by[data.project_updated_by.length-1].updated_date:"")}
                     />
                     </>}
                 </div>
-                    <div  className=' mt-7'>
-                      <span>Description</span>
-                      <p className=' text-wrap text-gray-700 dark:text-gray-200 font-semibold'>{data?.description}</p>
-                    </div>
+                <div>
+                    <p>
+                        <span className='text-gray-700 dark:text-gray-200 font-semibold'>Description: </span>{data.description}
+                    </p>
+                </div>
             </div>
           
         </Card>
+        <Report/>
+      
+        </div>
     )
 }
 

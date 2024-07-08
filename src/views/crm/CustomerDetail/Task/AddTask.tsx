@@ -45,7 +45,7 @@ const priorityOptions = [
     { label: "Cancelled", value: "Cancelled" },
   ];
   
-  console.log('project', project.project);
+ 
   
 
     return (
@@ -106,38 +106,44 @@ const priorityOptions = [
                       }
                      onSubmit={async(values, actions) => {
                         setLoading(true)
-                        try{
                             const response = await apiGetCrmProjectsAddTask(values)
-                            console.log('response', response);
-                            setLoading(false)
                             if(response.code===200){
+                                setLoading(false)
                                 toast.push(
                                     <Notification closable type='success' duration={2000}>Task Added Successfully</Notification>
                                 )
+                                window.location.reload()
+                            }
+                            else{
+                                setLoading(false)
+                                toast.push(
+                                    <Notification closable type='danger' duration={2000}>{response.errorMessage}</Notification>
+                                )
                             }
                         }
-                        catch(error){
-                            setLoading(false)
-                            console.error('Error Adding Task:', error);
-                        }
                             
-                     }}
+                    }
                      >
                         {({ values, touched, errors,}) => (
                         <Form className=' p-4 max-h-96 overflow-y-auto'>
                             <div className=' grid grid-cols-2 gap-x-5'>
                             <FormItem label='Task Name'
+                            asterisk
                             invalid={errors.task_name && touched.task_name}
                             errorMessage={errors.task_name}>
                                 <Field name='task_name'  component={Input} placeholder='Task Name'/>
                                
                             </FormItem>
                             <FormItem label='Task Assignee'
+                            asterisk
                             invalid={errors.task_assignee && touched.task_assignee}
                             errorMessage={errors.task_assignee}>
                                 <Field name='task_assignee'  component={Input} placeholder='Task'/>
                             </FormItem>
+
+
                             <FormItem label='Task Status'
+                            asterisk
                             invalid={errors.task_status && touched.task_status}
                             errorMessage='Task Status is required'
                             >
@@ -151,7 +157,10 @@ const priorityOptions = [
                                     )}
                                 </Field>
                             </FormItem>
+
+
                             <FormItem label='Actual Start Date'
+                            asterisk
                             invalid={errors.actual_task_start_date && touched.actual_task_start_date}
                             errorMessage={errors.actual_task_start_date}
                             >
@@ -163,7 +172,10 @@ const priorityOptions = [
                                     )}
                                 </Field>
                             </FormItem>
+
+
                             <FormItem label='Actual End Date'
+                            asterisk
                             invalid={errors.actual_task_end_date && touched.actual_task_end_date}
                             >
                                 <Field name='actual_task_end_date' placeholder='End Date'>
@@ -175,8 +187,12 @@ const priorityOptions = [
                                 </Field>
                                 <div className=' text-red-600'>{errors.actual_task_end_date}</div>
                             </FormItem>
+
+
                             <FormItem label='Estimated Start Date'
+                            asterisk
                             invalid={errors.estimated_task_start_date && touched.estimated_task_start_date}
+                            errorMessage={errors.estimated_task_start_date}
                             >
                                 <Field name='estimated_task_start_date' placeholder='Start Date'>
                                     {({field}:any)=>(
@@ -186,7 +202,10 @@ const priorityOptions = [
                                     )}
                                 </Field>
                             </FormItem>
+
+
                             <FormItem label='Estimated End Date'
+                            asterisk
                             invalid={errors.estimated_task_end_date && touched.estimated_task_end_date}
                             >
                                 <Field name='estimated_task_end_date' placeholder='End Date'>
@@ -200,12 +219,14 @@ const priorityOptions = [
                             </FormItem>
                            
                             <FormItem label='Reporting To'
+                            asterisk
                             invalid={errors.reporter && touched.reporter}
                             >
                                 <Field name='reporter'  component={Input} placeholder='Reporting to'/>
                                 <div className=' text-red-600'>{errors.reporter}</div>  
                             </FormItem>
                             <FormItem label='Priority'
+                            asterisk
                             invalid={errors.task_priority && touched.task_priority} 
                             errorMessage={errors.task_priority}
                             >
@@ -220,6 +241,8 @@ const priorityOptions = [
                                         
                                 </Field>
                             </FormItem>
+
+
                             </div>
                             <FormItem label='Desription'>
                                 <Field name='task_description' placeholder='Task Description'>

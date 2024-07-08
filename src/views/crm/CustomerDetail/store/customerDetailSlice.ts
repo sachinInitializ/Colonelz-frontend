@@ -87,7 +87,9 @@ export type Customer = {
 }
  export type ProjectUpdate = {
     updated_date:string
-    user_name:string
+    username:string
+    message:string
+    role:string
 }
 
 type GetCrmCustomerDetailsResponse = Customer & {
@@ -155,6 +157,7 @@ const initialState: CustomerDetailState = {
         project_id:'',
         project_type:'',
         project_status:'',
+        project_end_date:'',
         project_start_date:'',
         timeline_date:'',
         project_budget:'',
