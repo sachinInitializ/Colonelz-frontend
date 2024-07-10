@@ -14,7 +14,7 @@ export type Route = {
     key: string
     path: string
     component: LazyExoticComponent<<T extends Meta>(props: T) => JSX.Element>
-    
+    authority?: string[]
     meta?: Meta
 }
 

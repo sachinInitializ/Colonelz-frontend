@@ -3,7 +3,7 @@ import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import type { MouseEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Dialog, Notification, toast } from '@/components/ui'
+import { Dialog, Notification, Skeleton, toast } from '@/components/ui'
 import { ConfirmDialog } from '@/components/shared'
 import { apiLeadsAnotherProject } from '@/services/CrmService'
 
@@ -48,7 +48,7 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
         <div>
             <span>{title}</span>
             <p className="text-gray-700 dark:text-gray-200 font-semibold" style={{overflowWrap:"break-word"}}>
-            {value || 'N/A'}
+            {value || <Skeleton/>}
             </p>
         </div>
     )
@@ -202,7 +202,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                     <div className='mt-7'>
                     <CustomerInfoField
                             title="Description "
-                            value={data?.notes && data.notes[0] ? data.notes[0].content : 'N/A'}
+                            value={data?.notes && data.notes[0] ? data.notes[0].content : <Skeleton/>}
                         />
                         </div>
                     <div className="mt-4 flex flex-col xl:flex-row gap-2"></div>

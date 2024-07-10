@@ -44,7 +44,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager`,
         component: lazy(() => import('@/views/crm/FileManager')),
-        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Site Supervisor"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Executive Assistant","Site Supervisor"],
         meta: {
             header: 'File Manager',
             headerContainer: true,
@@ -81,7 +81,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Project/index')),
-        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Executive Assistant"],
         meta: {
          
         },
@@ -90,7 +90,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/folder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Project/Folders/index')),
-        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Executive Assistant"],
         meta: {
          
         },
@@ -338,7 +338,7 @@ const appsRoute: Routes = [
         key: 'appsSales.productNew',
         path: `${APP_PREFIX_PATH}/crm/lead-project`,
         component: lazy(() => import('@/views/crm/ProjectNew')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","Project Architect"],
         meta: {
             header: 'Add Project',
         },

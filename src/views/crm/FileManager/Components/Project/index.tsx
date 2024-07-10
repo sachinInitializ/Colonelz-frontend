@@ -90,7 +90,32 @@ const Index = () => {
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get('project_id');
   const projectName = queryParams.get('project_name');
+  const role=localStorage.getItem('role')
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const [dialogIsOpen, setIsOpen] = useState(false);
+  const openDialog = () => {
+    setIsOpen(true);
+  };
+
+  const onDialogClose = (e: MouseEvent) => {
+    console.log('onDialogClose', e);
+    setIsOpen(false);
+  };
+
+const [dialogIsOpen2, setIsOpen2] = useState(false)
+const [folderName, setFolderName] = useState<string>('')
+
+const openDialog2 = (folder_name:string) => {
+    setIsOpen2(true)
+    setFolderName(folder_name)
+}
+
+const onDialogClose2 = () => {
+    setIsOpen2(false)
+}
+
+
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
@@ -107,30 +132,8 @@ const Index = () => {
   
     fetchDataAndLog();
   }, [projectId]);
-  const navigate = useNavigate();
-const role=localStorage.getItem('role');
-  const [dialogIsOpen, setIsOpen] = useState(false);
-  const openDialog = () => {
-    setIsOpen(true);
-  };
 
-  const onDialogClose = (e: MouseEvent) => {
-    console.log('onDialogClose', e);
-    setIsOpen(false);
-  };
-console.log(projectData);
 
-const [dialogIsOpen2, setIsOpen2] = useState(false)
-const [folderName, setFolderName] = useState<string>('')
-
-const openDialog2 = (folder_name:string) => {
-    setIsOpen2(true)
-    setFolderName(folder_name)
-}
-
-const onDialogClose2 = () => {
-    setIsOpen2(false)
-}
 
 
 const deleteFolders = async (folder_name:string) => {
@@ -229,8 +232,25 @@ const columns = useMemo<ColumnDef<FolderItem>[]>(
 )
 
 
+const filteredProjectData = useMemo(() => {
+  if (role === 'Executive Assistant') {
+    return projectData.filter(item => 
+      item.folder_name.toLowerCase() === 'procurement' || 
+      item.folder_name.toLowerCase() === 'quotation'
+    );
+  }
+  else if (role === '3D Visualizer') {
+    return projectData.filter(item => 
+      item.folder_name.toLowerCase() !== 'contract' && 
+      item.folder_name.toLowerCase() !== 'quotation' && 
+      item.folder_name.toLowerCase() !== 'procurement data'
+    );
+  }
+  return projectData;
+}, [projectData, role]);
+
 const table = useReactTable({
-    data:projectData,
+    data:filteredProjectData,
     columns,
     filterFns: {
         fuzzy: fuzzyFilter,

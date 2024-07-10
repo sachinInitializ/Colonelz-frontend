@@ -4,7 +4,7 @@ import reducer, { getCustomer, useAppDispatch } from './store'
 import { injectReducer } from '@/store'
 import useQuery from '@/utils/hooks/useQuery'
 import LeadForm from './components/LeadForm'
-import { Card, Tabs } from '@/components/ui'
+import { Card, Skeleton, Tabs } from '@/components/ui'
 import CustomerProfile from './components/LeadProfile'
 import { apiGetCrmLeadsDetails } from '@/services/CrmService'
 import TabList from '@/components/ui/Tabs/TabList'
@@ -48,7 +48,7 @@ const CustomerDetail = () => {
     const lead = details?.data?.[0];
       return (
         <>    
-        <h3 className='pb-5'>Lead-{`${lead?.name}`}</h3>
+        <h3 className='pb-5'>Lead-{lead?.name || <Skeleton/>}</h3>
           <Tabs defaultValue="Details">
                 <TabList>
                     <TabNav value="Details">

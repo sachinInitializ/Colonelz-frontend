@@ -439,7 +439,6 @@ const ContractDetails=(data : FileItemProps )=> {
                  })}
                  onSubmit={(values, { setSubmitting }) => {
                     console.log(values);
-                    
                         handleSubmit(values);
                         setSubmitting(false);
                  }}
