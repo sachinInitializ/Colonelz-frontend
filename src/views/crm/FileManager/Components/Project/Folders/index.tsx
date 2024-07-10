@@ -11,6 +11,7 @@ import { HiShare, HiTrash } from 'react-icons/hi';
 import { FolderItem } from '../../type';
 import { format, parseISO } from 'date-fns';
 import { Field, Form, Formik } from 'formik';
+import NoData from '@/views/pages/NoData';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
@@ -443,7 +444,7 @@ const Index = () => {
       </div>
     </div>
          ) : (
-          <p className='h-[65vh]'>No files</p>
+         <NoData/>
         )}
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"

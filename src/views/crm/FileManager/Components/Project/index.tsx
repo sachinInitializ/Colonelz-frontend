@@ -25,6 +25,7 @@ import {
 import { rankItem } from '@tanstack/match-sorter-utils'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
+import NoData from '@/views/pages/NoData';
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -334,6 +335,7 @@ const table = useReactTable({
                         </Tr>
                     ))}
                 </THead>
+                {projectData.length === 0?<NoData/>:
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (
@@ -351,7 +353,7 @@ const table = useReactTable({
                             </Tr>
                         )
                     })}
-                </TBody>
+                </TBody>}
             </Table>
         </>
           )}

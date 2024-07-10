@@ -6,14 +6,14 @@ import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { apiGetCrmLeads } from '@/services/CrmService'
 import { Lead, useLeadContext } from '../../LeadList/store/LeadContext'
-import { Spinner } from '@/components/ui'
+import { Skeleton, Spinner } from '@/components/ui'
 
 
 
 
 const { Tr, Td, TBody, THead, Th } = Table
 
-const NameColumn = ({ row }: { row: Lead }) => {
+const NameColumn = ({ row }: { row: any }) => {
     
     
     return (
@@ -26,7 +26,7 @@ const NameColumn = ({ row }: { row: Lead }) => {
 
 
 
-const Leads = ({ data = [], className }: LeadsProps) => {
+const Leads = ({ data = [], className }: any) => {
     const navigate = useNavigate()
 
     const onNavigate = () => {
@@ -78,7 +78,7 @@ const Leads = ({ data = [], className }: LeadsProps) => {
         </THead>
         <TBody>
         {apiData === null ? (
-        <div className='flex justify-center items-center h-50 w-full'><Spinner size="40px"/></div>
+       <Skeleton/>
       ) : (
         apiData.slice(0, 5).map((item, index) => (
           <Tr key={index} onClick={()=>navigate(`/app/crm/lead/?id=${item.lead_id}`)} className=' cursor-pointer'>

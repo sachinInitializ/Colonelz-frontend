@@ -29,6 +29,7 @@ import { rankItem } from '@tanstack/match-sorter-utils'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
 import { FaFile } from 'react-icons/fa';
+import NoData from '@/views/pages/NoData';
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -570,7 +571,7 @@ const onSelectChange = (value = 0) => {
       </div>
     </div>
          ) : (
-          <p className='h-[65vh]'>No files</p>
+          <NoData/>
         )}
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
