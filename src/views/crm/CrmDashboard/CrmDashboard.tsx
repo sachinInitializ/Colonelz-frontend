@@ -39,7 +39,7 @@ const CrmDashboard = () => {
                 <div className="grid grid-cols-1 xl:grid-cols-7 gap-4">
                 </div>
                 <Project />
-                {(role === 'ADMIN' || role === 'Senior Architect') && <Leads />}
+                {(role === 'ADMIN' || role === 'Senior Architect' || role==='Project Architect') && <Leads />}
                 
           
         </div>

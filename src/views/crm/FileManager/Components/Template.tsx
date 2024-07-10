@@ -33,10 +33,11 @@ const Template = () => {
           <div className=' text-lg ' ><FaRegFolderOpen/></div>
        <p> Company Policies</p>
         </div></Card>
+        {role !== 'Jr. Executive HR & Marketing' && (
       <Card onClick={()=>navigate('/app/crm/fileManager/archive')}>  <div className='flex gap-4'>
           <div className=' text-lg ' ><IoMdArchive /></div>
        <p> Archive</p>
-        </div></Card>
+        </div></Card>)}
       
       </div>
   )

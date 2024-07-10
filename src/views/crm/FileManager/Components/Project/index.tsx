@@ -239,7 +239,7 @@ const filteredProjectData = useMemo(() => {
       item.folder_name.toLowerCase() === 'quotation'
     );
   }
-  else if (role === '3D Visualizer') {
+  else if (role === '3D Visualizer' || role==="Project Architect" || role==="Jr. Interior Designer" || role==="Site Supervisor") {
     return projectData.filter(item => 
       item.folder_name.toLowerCase() !== 'contract' && 
       item.folder_name.toLowerCase() !== 'quotation' && 

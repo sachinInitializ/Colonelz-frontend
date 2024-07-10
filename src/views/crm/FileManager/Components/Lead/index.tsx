@@ -254,10 +254,19 @@ const onSelectChange = (value = 0) => {
   table.setPageSize(Number(value))
 }
 
-
+const filteredProjectData = useMemo(() => {
+   if (role === '3D Visualizer' || role==="Project Architect" || role==="Jr. Interior Designer" || role==="Site Supervisor") {
+    return leadData.filter(item => 
+      item.folder_name.toLowerCase() !== 'contract' && 
+      item.folder_name.toLowerCase() !== 'quotation' && 
+      item.folder_name.toLowerCase() !== 'procurement data'
+    );
+  }
+  return leadData;
+}, [leadData, role]);
 
 const table = useReactTable({
-    data:leadData,
+    data:filteredProjectData,
     columns,
     filterFns: {
         fuzzy: fuzzyFilter,

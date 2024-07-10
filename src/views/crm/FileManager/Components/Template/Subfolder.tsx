@@ -346,7 +346,7 @@ const Index = () => {
             className="ltr:mr-3 rtl:ml-3"
             type="button"
             onClick={() => {
-            navigate(`/app/crm/fileManager/project/templates/${type}`)
+            navigate(type==='company data'?'/app/crm/fileManager':`/app/crm/fileManager/project/templates/${type}`)
             }}
           >
             Back

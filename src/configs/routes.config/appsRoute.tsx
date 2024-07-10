@@ -14,7 +14,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.register',
         path: `${APP_PREFIX_PATH}/crm/profile`,
         component: lazy(() => import('@/views/crm/Profile/index')),
-        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant","Site Supervisor"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant","Site Supervisor","Jr. Executive HR & Marketing"],
     },
     {
         key: 'appsCrm.register',
@@ -54,7 +54,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/leads`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Lead/index')),
-        authority: ["ADMIN","Senior Architect","Project Architect"],
+        authority: ["ADMIN","Senior Architect","Project Architect","Jr. Interior Designer","Site Supervisor"],
         meta: {
          
         },
@@ -63,7 +63,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/leads/folder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Lead/Folders/index')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","Project Architect","Jr. Interior Designer","Site Supervisor"],
         meta: {
          
         },
@@ -72,7 +72,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/leads/upload`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Lead/Folders/index')),
-        authority: ["ADMIN","Senior Architect"],
+        authority: ["ADMIN","Senior Architect","Jr. Interior Designer"],
         meta: {
          
         },
@@ -81,7 +81,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Project/index')),
-        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Executive Assistant"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Executive Assistant","Site Supervisor"],
         meta: {
          
         },
@@ -90,7 +90,7 @@ const appsRoute: Routes = [
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/folder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Project/Folders/index')),
-        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Executive Assistant"],
+        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Executive Assistant","Site Supervisor"],
         meta: {
          
         },

@@ -50,7 +50,7 @@ function useAuth() {
                 }
                 const redirectUrl = query.get(REDIRECT_URL_KEY)
                 navigate(
-                    redirectUrl ? redirectUrl : (resp.data.role === 'Jr. Executive HR & Marketing' ? '/app/crm/fileManager' : appConfig.authenticatedEntryPath)
+                    redirectUrl ? redirectUrl : ((resp.data.role === 'Jr. Executive HR & Marketing' || resp.data.role === 'Site Supervisor') ? '/app/crm/fileManager' : appConfig.authenticatedEntryPath)
                   )
                 return {
                     status: 'success',

@@ -114,7 +114,7 @@ const clientOptions: Option[] = uniqueFolderNames
     if (role === 'ADMIN' || role === 'Senior Architect') {
       return true;
     } else {
-      return folderName !== 'quotation' && folderName !== 'contract';
+      return folderName !== 'quotation' && folderName !== 'contract' && folderName!=='procurement data';
     }
   })
   .map((folderName) => ({

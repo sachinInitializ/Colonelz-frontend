@@ -21,6 +21,7 @@ const YourFormComponent: React.FC<Data> = (leadData) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const leadId = queryParams.get('lead_id');
+  const role=localStorage.getItem('role')
   
   const [formData, setFormData] = useState<FormData>({
     lead_id: leadId,
@@ -38,7 +39,6 @@ const YourFormComponent: React.FC<Data> = (leadData) => {
       ? [selectedOption.value]
       : [];
 
-    // Trim spaces from the selected value
     const trimmedValue = selectedValues.length > 0 ? selectedValues[0].toLowerCase().trim() : '';
 
     setFormData({
@@ -79,13 +79,11 @@ function closeAfter2000ms(data:string,type:any) {
   }
   const postData = new FormData();
 
-  // Append data to FormData
   if (formData.lead_id !== null) {
     postData.append('lead_id', formData.lead_id);
   }
   postData.append('folder_name', formData.folder_name);
 
-  // Append files to FormData
   formData.files.forEach((file) => {
     postData.append('files', file);
   });
@@ -115,10 +113,18 @@ const uniqueFolderNames = Array.from(
   )
 );
 
-const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
-  value: folderName,
-  label: folderName,
-}));
+const clientOptions: Option[] = uniqueFolderNames
+  .filter(folderName => {
+    if (role === 'ADMIN' || role === 'Senior Architect') {
+      return true;
+    } else {
+      return folderName !== 'quotation' && folderName !== 'contract' && folderName!=='procurement data';
+    }
+  })
+  .map((folderName) => ({
+    value: folderName,
+    label: folderName,
+  }));
 
   return (
     <form  className=' overflow-y-auto max-h-[400px]' style={{scrollbarWidth:'none'}} onSubmit={handleSubmit}>
