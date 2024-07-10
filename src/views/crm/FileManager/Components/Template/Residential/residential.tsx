@@ -1,66 +1,128 @@
 import React, { useEffect, useState } from 'react'
 import { FaFolder } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Footer from '../../../Footer'
 import { getTemplateData } from '../../data'
 
+import { useMemo } from 'react'
+import Table from '@/components/ui/Table'
+import Input from '@/components/ui/Input'
+import {
+    useReactTable,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
+    getFacetedMinMaxValues,
+    getPaginationRowModel,
+    getSortedRowModel,
+    flexRender,
+} from '@tanstack/react-table'
+import { rankItem } from '@tanstack/match-sorter-utils'
+import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
+import type { InputHTMLAttributes } from 'react'
+import { AiOutlineFolder } from 'react-icons/ai'
+
+interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
+    value: string | number
+    onChange: (value: string | number) => void
+    debounce?: number
+}
+
+const { Tr, Th, Td, THead, TBody, Sorter } = Table
+
+function DebouncedInput({
+    value: initialValue,
+    onChange,
+    debounce = 500,
+    ...props
+}: DebouncedInputProps) {
+    const [value, setValue] = useState(initialValue)
+
+    useEffect(() => {
+        setValue(initialValue)
+    }, [initialValue])
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            onChange(value)
+        }, debounce)
+
+        return () => clearTimeout(timeout)
+    }, [value])
+    return (
+      <div className="flex justify-end">
+          <div className="flex items-center mb-4">
+              <span className="mr-2"></span>
+              <Input
+                  {...props}
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+              />
+          </div>
+      </div>
+  )
+  }
+  const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+    const itemRank = rankItem(row.getValue(columnId), value)
+    addMeta({
+        itemRank,
+    })
+    return itemRank.passed
+}
+
+
+
+
 const Residential = () => {
+  type Result={
+    sub_folder:string,
+    count:number,
+    date:string,
+    name:string,
+    type:string
+  }
+  type folderpairs={
+    folder_name:string,
+    sub_folder_name_first:string
+    folder:string
+  }
     const navigate=useNavigate()
-    const [data,setData]=useState([])
+    const [data,setData]=useState<Result[]>([])
     useEffect(() => {
       const fetchDataAndLog = async () => {
-        try {
-          const templateData = await getTemplateData();
-          console.log(templateData);
-      
-          const folderSubFolderPairs = [
-            { folder_name: 'residential', sub_folder_name_first: 'designing' },
-            { folder_name: 'residential', sub_folder_name_first: 'executing' },
+          const templateData = await getTemplateData() || [];
+          const folderSubFolderPairs:folderpairs[] = [
+            { folder_name: 'residential', sub_folder_name_first: 'designing',folder:"Design" },
+            { folder_name: 'residential', sub_folder_name_first: 'executing',folder:"Design and Execution"},
           ];
+      console.log(templateData);
       
           const results = [];
-      
-          for (const pair of folderSubFolderPairs) {
-            const filteredData = templateData.flatMap(
-              (item) =>
-                item.files.filter(
-                  (file) =>
-                    file.folder_name === pair.folder_name &&
-                    file.sub_folder_name_first === pair.sub_folder_name_first
-                )
-            );
-      
             for (const pair of folderSubFolderPairs) {
-              const filteredData = templateData.flatMap(
-                (item) =>
+              let count=0;
+              let date=''
+              templateData.flatMap(
+                (item) =>{
                   item.files.filter(
-                    (file) =>
-                      file.folder_name === pair.folder_name &&
-                      file.sub_folder_name_first === pair.sub_folder_name_first
-                  )
-              );
-            
-              if (filteredData.length > 0) {
-                const uniqueSubFolderSecond = [...new Set(filteredData.map(file => file.sub_folder_name_second))];
-                results.push({
-                  folder_name: pair.folder_name,
-                  sub_folder_name_first: pair.sub_folder_name_first,
-                  total_unique_sub_folder_name_second: uniqueSubFolderSecond.length,
-                  updated_date: filteredData[0].updated_date,
-                });
-              }
+                    (file) =>{
+                     if(file.folder_name === pair.folder_name && file.sub_folder_name_first === pair.sub_folder_name_first){
+                      count++;
+                      date=formatDate(file.updated_date)
+                     }}
+                    )
+                  }
+                );
+                results.push({name:pair.folder,sub_folder:pair.sub_folder_name_first,count:count,date:date,type:'Folder'});
+
             }
             
             console.log(results);
-          setData(results);}
-        } catch (error) {
-          console.error('Error fetching lead data', error);
-        }
+          setData(results);
       };
       
       fetchDataAndLog();
     }, []);
-    console.log(data);
 
     function formatDate(dateString:string) {
       if(dateString=="-") return "-"
@@ -70,13 +132,57 @@ const Residential = () => {
       const year = date.getFullYear();
       return `${day}-${month}-${year}`;
     }
+
+
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [globalFilter, setGlobalFilter] = useState('')
+  
+    const columns = useMemo<ColumnDef<Result>[]>(
+        () => [
+            { header: 'Name', accessorKey: 'name', cell: ({row}) =>
+               <div className="flex items-center">
+                <AiOutlineFolder className="mr-2 text-lg"/>
+                <Link to={`/app/crm/fileManager/project/templates/residential/subfolder?type=residential&folder=${row.original.sub_folder}`}>{row.original.name}</Link>
+              </div>} ,
+            { header: 'type', accessorKey: 'type' },
+            { header: 'items', accessorKey: 'count' },
+            { header: 'modified', accessorKey: 'date' },
+        ],
+        []
+    )
+  
+    
+  
+    const table = useReactTable({
+        data: data,
+        columns,
+        filterFns: {
+            fuzzy: fuzzyFilter,
+        },
+        state: {
+            columnFilters,
+            globalFilter,
+        },
+        onColumnFiltersChange: setColumnFilters,
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: fuzzyFilter,
+        getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getFacetedRowModel: getFacetedRowModel(),
+        getFacetedUniqueValues: getFacetedUniqueValues(),
+        getFacetedMinMaxValues: getFacetedMinMaxValues(),
+        debugHeaders: true,
+        debugColumns: false,
+    })
   return (
     <>
     <div>
       <h3 className='mb-8'>Company Data</h3>
     <div className="h-screen w-full">
             <div className="flex-1 p-4">
-            <div className="flex items-center mb-4">
+            <div className="flex items-center justify-between mb-4">
         <nav className="flex">
           <ol className="flex items-center space-x-2">
             <li>
@@ -95,91 +201,74 @@ const Residential = () => {
             <li className="text-gray-500">Residential</li>
           </ol>
         </nav>
+        <DebouncedInput
+                value={globalFilter ?? ''}
+                className="p-2 font-lg border-block"
+                placeholder="Search"
+                onChange={(value) => setGlobalFilter(String(value))}
+            />
       </div>
-      
-              <div className="border rounded-lg shadow-sm dark:border-gray-700">
-                <div className="relative w-full overflow-auto">
-                  <table className="w-full caption-bottom text-sm">
-                    <thead className="[&amp;_tr]:border-b">
-                      <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                          Name
-                        </th>
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                          Type
-                        </th>
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                          Size
-                        </th>
-                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                          Modified
-                        </th>
-                       
-                      </tr>
-                    </thead>
-                 
-                  
-                <tbody className="[&amp;_tr:last-child]:border-0">
-                  <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                      <div className="flex items-center gap-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          className="h-5 w-5 text-gray-500 dark:text-gray-400"
-                        >
-                          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
-                        </svg>
-                        <a className="font-medium cursor-pointer" onClick={()=>navigate('/app/crm/fileManager/project/templates/residential/subfolder?type=residential&folder=designing')}>
-                          Design
-                        </a>
-                      </div>
-                    </td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Folder</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{data[0]?.total_unique_sub_folder_name_second?Number(data[0]?.total_unique_sub_folder_name_second)>0?`${data[0]?.total_unique_sub_folder_name_second} items`:`${data[0]?.total_unique_sub_folder_name_second} item`:"-"}</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatDate(data[0]?.updated_date?data[0]?.updated_date:"-")}</td>
-                    
-                  </tr>
-                  <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                      <div className="flex items-center gap-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          className="h-5 w-5 text-gray-500 dark:text-gray-400"
-                        >
-                          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
-                        </svg>
-                        <a className="font-medium cursor-pointer" onClick={()=>navigate('/app/crm/fileManager/project/templates/residential/subfolder?type=residential&folder=executing')}>
-                        Design and Execution
-                        </a>
-                      </div>
-                    </td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Folder</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{data[1]?.total_unique_sub_folder_name_second?Number(data[1]?.total_unique_sub_folder_name_second)>1?`${data[1]?.total_unique_sub_folder_name_second} items`:`${data[1]?.total_unique_sub_folder_name_second} item`:"-"}</td>
-                    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{formatDate(data[1]?.updated_date?data[1]?.updated_date:"-")}</td>
-                    
-                  </tr>
-                
-                </tbody>
-      
-                  </table>
-                </div>
-              </div>
+      <>
+          
+          <Table>
+              <THead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                      <Tr key={headerGroup.id}>
+                          {headerGroup.headers.map((header) => {
+                              return (
+                                  <Th
+                                      key={header.id}
+                                      colSpan={header.colSpan}
+                                  >
+                                      {header.isPlaceholder ? null : (
+                                          <div
+                                              {...{
+                                                  className:
+                                                      header.column.getCanSort()
+                                                          ? 'cursor-pointer select-none'
+                                                          : '',
+                                                  onClick:
+                                                      header.column.getToggleSortingHandler(),
+                                              }}
+                                          >
+                                              {flexRender(
+                                                  header.column.columnDef
+                                                      .header,
+                                                  header.getContext()
+                                              )}
+                                              {
+                                                  <Sorter
+                                                      sort={header.column.getIsSorted()}
+                                                  />
+                                              }
+                                          </div>
+                                      )}
+                                  </Th>
+                              )
+                          })}
+                      </Tr>
+                  ))}
+              </THead>
+              <TBody>
+                  {table.getRowModel().rows.map((row) => {
+                      return (
+                          <Tr key={row.id}>
+                              {row.getVisibleCells().map((cell) => {
+                                  return (
+                                      <Td key={cell.id}>
+                                          {flexRender(
+                                              cell.column.columnDef.cell,
+                                              cell.getContext()
+                                          )}
+                                      </Td>
+                                  )
+                              })}
+                          </Tr>
+                      )
+                  })}
+              </TBody>
+          </Table>
+      </>
             </div>
           </div>
     <Footer/>

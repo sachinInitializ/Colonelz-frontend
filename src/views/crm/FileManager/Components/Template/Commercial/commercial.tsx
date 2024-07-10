@@ -24,6 +24,7 @@ import {
 import { rankItem } from '@tanstack/match-sorter-utils'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
+import { AiOutlineFolder } from 'react-icons/ai'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -75,6 +76,7 @@ function DebouncedInput({
 
 const Commercial = () => {
   type Result={
+    sub_folder:string,
     count:number,
     date:string,
     name:string,
@@ -85,30 +87,21 @@ const Commercial = () => {
     sub_folder_name_first:string
     folder:string
   }
-  const [templateData, setTemplateData] = useState<TemplateDataItem[]>([]);
-  const results:Result[] = [];
   const [data,setData]=useState<Result[]>([])
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const folder_name='commercial'
-    const navigate=useNavigate()
     useEffect(() => {
       const fetchDataAndLog = async () => {
-        try {
-          const templateData = await getTemplateData();
-          console.log(templateData);
-          setTemplateData(templateData);
-      
+          const templateData = await getTemplateData() || [];
           const folderSubFolderPairs:folderpairs[] = [
             { folder_name: 'commercial', sub_folder_name_first: 'designing',folder:"Design" },
             { folder_name: 'commercial', sub_folder_name_first: 'executing',folder:"Design and Execution"},
           ];
+      console.log(templateData);
       
           const results = [];
             for (const pair of folderSubFolderPairs) {
               let count=0;
               let date=''
-              const filteredData = templateData.flatMap(
+              templateData.flatMap(
                 (item) =>{
                   item.files.filter(
                     (file) =>{
@@ -119,15 +112,12 @@ const Commercial = () => {
                     )
                   }
                 );
-                results.push({name:pair.folder,count:count,date:date,type:'Folder'});
+                results.push({name:pair.folder,sub_folder:pair.sub_folder_name_first,count:count,date:date,type:'Folder'});
 
             }
             
             console.log(results);
           setData(results);
-        } catch (error) {
-          console.error('Error fetching lead data', error);
-        }
       };
       
       fetchDataAndLog();
@@ -149,7 +139,8 @@ const Commercial = () => {
     const columns = useMemo<ColumnDef<Result>[]>(
         () => [
             { header: 'Name', accessorKey: 'name', cell: ({row}) =>
-               <div className="flex items-center"><FaFolder className="mr-2"/><Link to={`/app/crm/fileManager/project/templates/commercial/subfolder?type=commercial&folder=designing`}>{row.original.name}</Link></div>} ,
+               <div className="flex items-center">
+                <AiOutlineFolder className="mr-2 text-lg"/><Link to={`/app/crm/fileManager/project/templates/commercial/subfolder?type=commercial&folder=${row.original.sub_folder}`}>{row.original.name}</Link></div>} ,
             { header: 'type', accessorKey: 'type' },
             { header: 'items', accessorKey: 'count' },
             { header: 'modified', accessorKey: 'date' },
@@ -212,8 +203,8 @@ const Commercial = () => {
       </div>
       <DebouncedInput
                 value={globalFilter ?? ''}
-                className="p-2 font-lg shadow border border-block"
-                placeholder="Search all columns..."
+                className="p-2 font-lg border-block"
+                placeholder="Search"
                 onChange={(value) => setGlobalFilter(String(value))}
             />
       

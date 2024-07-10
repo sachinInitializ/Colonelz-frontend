@@ -17,6 +17,7 @@ import { HiOutlineCloudUpload } from 'react-icons/hi'
 import App from './Richtext'
 import { apiCreateMom } from '@/services/CrmService'
 import { MultiValue } from 'react-select'
+import { StickyFooter } from '@/components/shared'
 
 type Option = {
     value: string
@@ -160,6 +161,7 @@ const YourFormComponent = () => {
         // Validate remark
 
         // Set errors if any
+        
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors)
             return
@@ -180,6 +182,7 @@ const YourFormComponent = () => {
         try {
             const formDataToSend = new FormData()
             formDataToSend.append('meetingdate', formData.meetingDate)
+            formDataToSend.append('user_id', localStorage.getItem('userId') || '')
             formDataToSend.append('project_id', formData.project_id)
             formDataToSend.append('location', formData.location)
             formDataToSend.append('remark', formData.remark)
@@ -225,7 +228,7 @@ const YourFormComponent = () => {
             <h5>MOM Form</h5>
             <form onSubmit={handleSubmit} className="mt-4">
                 <FormContainer>
-                    <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-5 h-72">
+                    <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-5 min-h-96">
                         <FormItem label="Client's Name"
                         asterisk>
                             
@@ -363,15 +366,21 @@ const YourFormComponent = () => {
                             </Upload>
                         </FormItem>
                     </div>
-                    <div className="">
+                   
+                </FormContainer>
+                <StickyFooter
+         className="-mx-8 px-8 flex items-center gap-3 py-4"
+                stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+        >
+              
                         <Button type="submit" className="mr-4" variant="solid" size='sm'>
                             Submit
                         </Button>
                         <Button type="submit" onClick={() => navigate(-1)} size='sm'>
                             Discard
                         </Button>
-                    </div>
-                </FormContainer>
+
+                    </StickyFooter>
             </form>
         </div>
     )

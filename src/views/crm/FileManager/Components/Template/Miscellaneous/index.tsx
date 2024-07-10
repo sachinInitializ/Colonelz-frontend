@@ -19,14 +19,13 @@ const Index = () => {
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
-        const templateData = await getTemplateData();
+        const templateData = await getTemplateData() || [];
         console.log(templateData);
         setTemplateData(templateData);
       } catch (error) {
         console.error('Error fetching lead data', error);
       }
     };
-
     fetchDataAndLog();
   }, []);
   console.log(templateData);

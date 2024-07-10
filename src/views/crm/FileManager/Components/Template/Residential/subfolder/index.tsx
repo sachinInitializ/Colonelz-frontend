@@ -15,11 +15,11 @@ const Index = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const folderName = queryParams.get('folder');
-  const type='residential'
+  const type=queryParams.get('type')
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
-        const templateData = await getTemplateData();
+        const templateData = await getTemplateData() || [];
         console.log(templateData);
         setTemplateData(templateData);
       } catch (error) {

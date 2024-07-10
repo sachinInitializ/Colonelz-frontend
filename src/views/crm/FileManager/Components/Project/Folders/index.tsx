@@ -206,6 +206,7 @@ const Index = () => {
       file_id: selectedFileId, 
       folder_name: 'quotation',
       project_id: leadId,
+      user_id:localStorage.getItem('userId')
     };
     
       const response=await apiGetCrmProjectShareQuotation(postData);

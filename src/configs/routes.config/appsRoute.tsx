@@ -116,7 +116,7 @@ const appsRoute: Routes = [
     {
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/commercial/subfolder`,
-        component: lazy(() => import('@/views/crm/FileManager/Components/Template/Commercial/subfolder/index')),
+        component: lazy(() => import('@/views/crm/FileManager/Components/Template/Subfolder')),
         authority: ["ADMIN","Senior Architect"],
         meta: {
          
@@ -143,7 +143,7 @@ const appsRoute: Routes = [
     {
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/residential/subfolder`,
-        component: lazy(() => import('@/views/crm/FileManager/Components/Template/Residential/subfolder/index')),
+        component: lazy(() => import('@/views/crm/FileManager/Components/Template/Subfolder')),
         authority: ["ADMIN","Senior Architect"],
         meta: {
          
@@ -170,7 +170,7 @@ const appsRoute: Routes = [
     {
         key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/miscellaneous/subfolder`,
-        component: lazy(() => import('@/views/crm/FileManager/Components/Template/Miscellaneous')),
+        component: lazy(() => import('@/views/crm/FileManager/Components/Template/Subfolder')),
         authority: ["ADMIN","Senior Architect","Jr. Executive HR & Marketing"],
         meta: {
          

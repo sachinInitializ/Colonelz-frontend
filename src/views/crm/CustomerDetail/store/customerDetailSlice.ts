@@ -65,6 +65,8 @@ export type Data = {
 }
 type Client = {
     client_name:string
+    client_email:string
+    client_contact:string
 
 }
 export type Customer = {

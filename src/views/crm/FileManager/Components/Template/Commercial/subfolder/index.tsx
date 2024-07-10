@@ -5,24 +5,23 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Card, Dialog, Notification, toast } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import YourFormComponent from '../../TemplateForm';
-import Footer from '@/views/crm/FileManager/Footer';
 import { HiTrash } from 'react-icons/hi';
 import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import { apiDeleteFileManagerFolders } from '@/services/CrmService';
-import { sub } from 'date-fns';
 
 const Index = () => {
   const [templateData, setTemplateData] = useState<TemplateDataItem[]>([]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const folderName = queryParams.get('folder');
-  const type='commercial'
+  const type=queryParams.get('type')
+  
   useEffect(() => {
     const fetchDataAndLog = async () => {
       try {
         const templateData = await getTemplateData();
         console.log(templateData);
-        setTemplateData(templateData);
+        setTemplateData(templateData?templateData:[]);
       } catch (error) {
         console.error('Error fetching lead data', error);
       }
@@ -213,7 +212,7 @@ const deleteFolders = async (folder_name:string) => {
               </div>
             </div>
           ) : (
-             <p>No folders available. Click the button above to add folders.</p>
+             <p>No folders available. Click the Upload button to add folders.</p>
           )}
            <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"

@@ -14,7 +14,7 @@ interface TabbedContentProps {
 const TabbedContent: React.FC<TabbedContentProps> = ({ data }) => {
   const location = useLocation();
     if (!data || !data.data || !data.data.main_quotation) {
-      return null; // Return early if data or its nested properties are falsy
+      return null; 
     }
     const searchParams = new URLSearchParams(location.search);
     const projectId = searchParams.get('project_id');

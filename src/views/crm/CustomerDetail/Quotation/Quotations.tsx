@@ -104,6 +104,7 @@ const Quotations=(data : FileItemProps )=> {
             file_id: fileID,
             status: status,
             remark: remark,
+            user_id:localStorage.getItem('userId')
           };
         try{
             const response=await apiGetCrmProjectShareQuotationApproval(postData);
@@ -128,7 +129,7 @@ const Quotations=(data : FileItemProps )=> {
     
     const role = localStorage.getItem('role');
     const columns =
-        useMemo <ColumnDef <FileItem >[] >
+        useMemo <ColumnDef <any >[] >
         (() => {
             return [
                 {
@@ -277,7 +278,7 @@ const Quotations=(data : FileItemProps )=> {
                     return(<> 
                     {admin_status==='rejected' &&        
                       <div><Button size='sm' variant='solid' onClick={()=>openDialog()}>Remark</Button></div>}
-                    {admin_status==='approved' &&        
+                    {admin_status==='approved' &&  clientRemark.length>0 &&     
                       <div><Button size='sm' variant='solid' onClick={()=>openDialog()}>Client Remark</Button></div>}
 
                       <Dialog

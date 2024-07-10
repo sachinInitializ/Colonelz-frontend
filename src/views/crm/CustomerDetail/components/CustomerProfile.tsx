@@ -39,7 +39,7 @@ const CustomerInfoField = ({
 }: CustomerInfoFieldProps) => {
     if (title === 'Project Id' || title === 'Project Type' || title === 'Project Start Date') {
         return (
-            <div className='flex gap-1 mb-2 pt-1'>
+            <div className='flex gap-1 mb-3 pt-1'>
             <span className='text-gray-700 dark:text-gray-200 font-semibold'>{title}:</span>
             <p className="" style={{overflowWrap:"break-word"}}>
             {value }
@@ -256,6 +256,15 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                         title="Client Name"
                         value={data?.client?data.client[0]?.client_name:""}
                     />
+                      <CustomerInfoField
+                        title="Client Email"
+                        value={data?.client?data.client[0]?.client_email:""}
+                    />
+                      <CustomerInfoField
+                        title="Client Contact"
+                        value={data?.client?data.client[0]?.client_contact:""}
+                    />
+
                     <CustomerInfoField
                         title="Project status"
                         value={data?.project_status}
