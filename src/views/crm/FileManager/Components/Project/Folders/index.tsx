@@ -12,6 +12,7 @@ import { FolderItem } from '../../type';
 import { format, parseISO } from 'date-fns';
 import { Field, Form, Formik } from 'formik';
 import NoData from '@/views/pages/NoData';
+import { AiOutlineDelete } from 'react-icons/ai';
 
 const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
@@ -429,7 +430,7 @@ const Index = () => {
               <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
                 <div className=' flex justify-center gap-3'> 
 
-                  <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>openDialog3(item.fileId)} />
+                  <AiOutlineDelete className='text-xl cursor-pointer hover:text-red-500' onClick={()=>openDialog3(item.fileId)} />
                   <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(item.fileId)}/>  
                   </div>
 
@@ -461,7 +462,7 @@ const Index = () => {
           >
             Back
           </Button>
-          {folderName?.toUpperCase() === "QUOTATION" || folderName?.toUpperCase() === "CONTRACT" ? (
+          {folderName?.toUpperCase() === "QUOTATION"  ? (
           <Button
             size="sm"
             className="ltr:mr-3 rtl:ml-3"
