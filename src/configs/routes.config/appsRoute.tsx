@@ -169,6 +169,15 @@ const appsRoute: Routes = [
     },
     {
         key: 'appsCrm.fileManager',
+        path: `${APP_PREFIX_PATH}/crm/layout`,
+        component: lazy(() => import('@/views/crm/Layout/layout')),
+        authority: ["ADMIN","Senior Architect"],
+        meta: {
+         
+        },
+    },
+    {
+        key: 'appsCrm.fileManager',
         path: `${APP_PREFIX_PATH}/crm/fileManager/project/templates/miscellaneous/subfolder`,
         component: lazy(() => import('@/views/crm/FileManager/Components/Template/Subfolder')),
         authority: ["ADMIN","Senior Architect","Jr. Executive HR & Marketing"],

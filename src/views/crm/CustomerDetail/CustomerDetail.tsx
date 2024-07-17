@@ -18,6 +18,7 @@ import { MomProvider } from './store/MomContext'
 import { ProjectProvider } from '../Customers/store/ProjectContext'
 import Task from './Task/index'
 import Activity from './Project Progress/Activity'
+import Timeline from './Timeline/Timeline'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -104,6 +105,7 @@ const CustomerDetail = () => {
                     <TabNav value="mom" >MOM</TabNav>
                     <TabNav value="tab4">Task Manager</TabNav>
                     <TabNav value="tab5">Project Activity</TabNav>
+                    <TabNav value="tab6">Timeline</TabNav>
                   </>
                 )}
             </TabList>
@@ -126,6 +128,9 @@ const CustomerDetail = () => {
                 </TabContent>
                 <TabContent value="tab5">
                   <Activity Data={details} />
+                </TabContent>
+                <TabContent value="tab6">
+                  <Timeline/>
                 </TabContent>
 
             </div>

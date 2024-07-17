@@ -343,6 +343,20 @@ export async function apiGetCrmProjectsSubTaskDelete(Data:any) {
     return data;
 }
 
+export async function apiGetCrmProjectsSingleSubTaskDataTimer(projectId:string,taskId:string,subTaskId:string) {
+    const response = await fetch(`${apiPrefix}admin/get/subtask/time?project_id=${projectId}&task_id=${taskId}&sub_task_id=${subTaskId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+    });
+
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+
 export async function apiGetCrmFileManager() {
     const response = await fetch(`${apiPrefix}admin/getfile/`, {
         method: 'GET',
@@ -550,10 +564,9 @@ export async function apiGetCrmFileManagerShareContractFile(formData: any) {
     const response = await fetch(`${apiPrefix}admin/share/contract`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(formData)
+        body: formData
         
     });
 

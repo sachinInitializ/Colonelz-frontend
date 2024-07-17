@@ -10,7 +10,8 @@ import TabContent from '@/components/ui/Tabs/TabContent';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdOutlineAdd } from 'react-icons/md';
 import { AiOutlineEye } from 'react-icons/ai';
 import { BiArrowFromRight } from 'react-icons/bi';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { apiGetCrmProjectsSingleSubTaskDataTimer } from '@/services/CrmService';
 
 type SubTask = {
     project_id: string;
@@ -44,6 +45,11 @@ const formateDate = (dateString:string) => {
 
 const SubTaskDetails = (Data:Data) => {
     const [verticalOpen, setVerticalOpen] = useState(false)
+    const location=useLocation()
+    const queryParam=new URLSearchParams(location.search);
+    const projectId=queryParam.get('project_id') || '';
+    const taskId=queryParam.get('task') || '';
+
    
     const navigate=useNavigate();
     
@@ -74,6 +80,18 @@ const SubTaskDetails = (Data:Data) => {
     const onDrawerClose = () => {
         setVerticalOpen(false)
     }
+
+    const [TimerData, setTimerData] = useState({
+        time: 0,
+        isRunning: false
+    })
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await apiGetCrmProjectsSingleSubTaskDataTimer(projectId, taskId, Data.data.sub_task_name);
+            const data = await response.json();
+            console.log(data);
+        }
+    }, [])
 
     return (
         <div>

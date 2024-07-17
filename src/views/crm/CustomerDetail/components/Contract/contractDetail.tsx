@@ -422,9 +422,9 @@ const ContractDetails=(data : FileItemProps )=> {
 
                  <Formik
                  initialValues={{
-                     client_name: ''
-                    , email: ''
-                    , file_id: '',
+                     client_name: '',
+                    email: '',
+                    file_id: '',
                     type:'Client',
                     lead_id:leadId,
                     folder_name:'contract',

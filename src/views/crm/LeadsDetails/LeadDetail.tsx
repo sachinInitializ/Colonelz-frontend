@@ -31,6 +31,7 @@ const CustomerDetail = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const myParam = urlParams.get('id');
     const [details, setDetails] = useState<any | null>(null);
+    const [loading,setLoading]=useState<boolean>(true)
     const role=localStorage.getItem('role')
 
     useEffect(() => {
@@ -38,6 +39,7 @@ const CustomerDetail = () => {
             try {
                 const response = await apiGetCrmLeadsDetails(myParam);
                 setDetails(response);
+                setLoading(false)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -64,7 +66,7 @@ const CustomerDetail = () => {
                 </TabList>
                 <div className="p-4">
                     <TabContent value="Details">
-                    <CustomerProfile data={lead}/>
+                    <CustomerProfile data={lead} loading={loading}/>
                     </TabContent>
                     <TabContent value="Actions">
                     <Card className='mt-5' >

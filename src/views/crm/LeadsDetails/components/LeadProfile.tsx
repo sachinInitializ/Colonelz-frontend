@@ -14,6 +14,7 @@ type CustomerInfoFieldProps = {
 
 type CustomerProfileProps = {
     data?: Partial<Customer>
+    loading?:boolean
 }
 type Customer = {
     _id: string
@@ -43,19 +44,12 @@ type AddProject ={
 }
 
 
-const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
-    return (
-        <div>
-            <span>{title}</span>
-            <p className="text-gray-700 dark:text-gray-200 font-semibold" style={{overflowWrap:"break-word"}}>
-            {value || <Skeleton/>}
-            </p>
-        </div>
-    )
-}
 
 
-const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
+
+const CustomerProfile: React.FC<CustomerProfileProps> = ({ data },{loading}) => {
+
+
 
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
@@ -78,8 +72,21 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
 
     const navigate = useNavigate()
 
+    const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
+        
+        
+        return (
+            <div>
+                <span>{title}</span>
+                {!value?<Skeleton/>:
+                <p className="text-gray-700 dark:text-gray-200 font-semibold" style={{overflowWrap:"break-word"}}>
+                {value || '-'}
+                </p>}
+            </div>
+        )
+    }
+
     const addProject=async()=>{
-        console.log(project);
         
             const response=await apiLeadsAnotherProject(project)
             const responseData=await response.json()
@@ -202,7 +209,9 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
                     <div className='mt-7'>
                     <CustomerInfoField
                             title="Description "
-                            value={data?.notes && data.notes[0] ? data.notes[0].content : <Skeleton/>}
+                            value={data?.notes?.map((note) => (
+                                <>{note.content || '-'}</>)
+    )}
                         />
                         </div>
                     <div className="mt-4 flex flex-col xl:flex-row gap-2"></div>

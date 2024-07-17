@@ -90,7 +90,7 @@ const _UserDropdown = ({ className }: CommonProps) => {
                 {dropdownItemList.map((item) => {
                     if (role==='ADMIN' || !['Add User to Project', 'Add User to Lead', 'Create User'].includes(item.label)) {
                         return (
-                        <>
+                        <div key={item.label}>
                             <Dropdown.Item
                             key={item.label}
                             eventKey={item.label}
@@ -109,7 +109,7 @@ const _UserDropdown = ({ className }: CommonProps) => {
                             </Link>
                             </Dropdown.Item>
                             <Dropdown.Item variant="divider" />
-                        </>
+                        </div>
                         );
                     }
                     })}
