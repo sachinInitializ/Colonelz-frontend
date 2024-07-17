@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FileItem, fetchLeadData } from '../data';
-import { Button, Checkbox, Dialog, Dropdown, FormItem, Input, Notification, Pagination, Segment, Select, Upload, toast } from '@/components/ui';
+import { Button, Checkbox, Dialog, Dropdown, FormItem, Input, Notification, Pagination, Segment, Select, Skeleton, Upload, toast } from '@/components/ui';
 import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn, CiImageOn } from 'react-icons/ci';
@@ -138,7 +138,7 @@ const Index = () => {
   const [dialogIsOpen2, setIsOpen2] = useState(false)
   const [dialogIsOpen3, setIsOpen3] = useState(false)
   const [fileId, setFileId] = useState<string>('')
-
+  const [loading,setLoading]=useState(true)
 
 
   const openDialog = (fileId:string) => {
@@ -184,6 +184,7 @@ const onDialogClose3 = () => {
     const fetchDataAndLog = async () => {
       try {
         const leadData = await apiGetCrmFileManagerLeads(leadId);
+        setLoading(false)
         const folderData = leadData?.data
         console.log(folderData);
         
@@ -446,7 +447,7 @@ const onSelectChange = (value = 0) => {
         Upload Files
       </Button>
       </div>
-      {leadData && leadData.length > 0 ? (
+      {!loading ?leadData.length===0 ?(<NoData/>):(
       <div className="w-full">
       <div className="flex-1">
 <>
@@ -570,9 +571,8 @@ const onSelectChange = (value = 0) => {
             </>
       </div>
     </div>
-         ) : (
-          <NoData/>
-        )}
+         ) :
+        (<Skeleton height={300}/>)}
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
         stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
