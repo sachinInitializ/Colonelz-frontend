@@ -18,7 +18,7 @@ import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-ta
 import type { InputHTMLAttributes } from 'react'
 import { apiGetCrmLeads, apiGetCrmProjectsTaskData, apiGetCrmProjectsTaskDelete } from '@/services/CrmService'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Button, Notification, Pagination, Select, toast } from '@/components/ui'
+import { Button, Notification, Pagination, Select, Skeleton, toast } from '@/components/ui'
 import { HiOutlineEye, HiOutlinePencil, HiPlusCircle } from 'react-icons/hi'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import { MdDeleteOutline } from 'react-icons/md'
@@ -26,6 +26,7 @@ import TaskDetails from './TaskDetailsDrawer'
 import AddTask from './AddTask'
 import { ConfirmDialog } from '@/components/shared'
 import EditTask from './EditTask'
+import NoData from '@/views/pages/NoData'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -187,11 +188,14 @@ const Filtering = () => {
     const queryParams = new URLSearchParams(location.search);
     const projectId=queryParams.get('project_id') || '';
     const [taskData,setTaskData]=useState<any>(null)
+    const [loading,setLoading]=useState(true)
 
   
     useEffect(() => {
         const TaskData=async()=>{
             const response = await apiGetCrmProjectsTaskData(projectId);
+
+            setLoading(false)
             setTaskData(response.data)
         }
         TaskData();
@@ -288,7 +292,8 @@ const Filtering = () => {
                 placeholder="Search..."
                 onChange={(value) => setGlobalFilter(String(value))}
             />
-            <Table>
+            {!loading ? taskData.length===0?(<NoData/>):(
+                <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <Tr key={headerGroup.id}>
@@ -346,6 +351,8 @@ const Filtering = () => {
                     })}
                 </TBody>
             </Table>
+                ):(<Skeleton height={300}/>)}
+            
             <div className="flex items-center justify-between mt-4">
                 <Pagination
                     pageSize={table.getState().pagination.pageSize}

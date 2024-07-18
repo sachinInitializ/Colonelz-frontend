@@ -8,6 +8,7 @@ import YourFormComponent from '../../TemplateForm';
 import { HiTrash } from 'react-icons/hi';
 import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import { apiDeleteFileManagerFolders } from '@/services/CrmService';
+import NoData from '@/views/pages/NoData';
 
 const Index = () => {
   const [templateData, setTemplateData] = useState<TemplateDataItem[]>([]);
@@ -212,7 +213,7 @@ const deleteFolders = async (folder_name:string) => {
               </div>
             </div>
           ) : (
-             <p>No folders available. Click the Upload button to add folders.</p>
+             <NoData/>
           )}
            <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { useState, useMemo, useEffect } from 'react'
 import Table from '@/components/ui/Table'
@@ -22,10 +24,11 @@ import { apiGetCrmFileManagerArchive, apiGetCrmFileManagerArchiveRestore, apiGet
 import { FiDelete } from 'react-icons/fi'
 import { MdDeleteOutline } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
-import { Input, Notification, Tooltip, toast } from '@/components/ui'
+import { Input, Notification, Skeleton, Tooltip, toast } from '@/components/ui'
 import { LiaTrashRestoreSolid } from "react-icons/lia";
 import { AiOutlineFile, AiOutlineFolder } from 'react-icons/ai'
 import { ConfirmDialog } from '@/components/shared'
+import NoData from '@/views/pages/NoData'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -187,6 +190,7 @@ const PaginationTable = () => {
         
         try {
           await apiGetCrmFileManagerDeleteArchiveFiles(postData);
+
           toast.push(
             <Notification closable type="success" duration={2000}>
               Folder deleted successfully
@@ -357,13 +361,15 @@ const PaginationTable = () => {
     )
 
     const [filesData,setFilesData] = useState([])
+    const [loading,setLoading] = useState(true)
     const userId=localStorage.getItem('userId')
     useEffect(() => {
         const fetchData = async () => {
             const response = await apiGetCrmFileManagerArchive(userId)
+                setLoading(false)
             setFilesData(response.data)
             console.log(response);
-            
+            console.log(filesData)
         }
         fetchData()
     }
@@ -412,64 +418,72 @@ const PaginationTable = () => {
                 onChange={(value) => setGlobalFilter(String(value))}
             />
             </div>
-            <Table>
-                <THead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <Th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                    >
-                                        {header.isPlaceholder ?  null : (
-                                            <div
-                                                {...{
-                                                    className:
-                                                        header.column.getCanSort()
-                                                            ? 'cursor-pointer select-none'
-                                                            : '',
-                                                    onClick:
-                                                     header.column.getToggleSortingHandler()
-                                                }}
-                                            >
-                                                {flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext()
-                                                )}
-                                                {
-                                                   header.column.id !== 'age' && header.column.id !== 'location' && <Sorter
-                                                   sort={header.column.getIsSorted()}
-                                               />
-                                                }
-                                            </div>
-                                        )}
-                                    </Th>
-                                )
-                            })}
-                        </Tr>
-                    ))}
-                </THead>
-                <TBody>
-                    {table.getRowModel().rows.map((row) => {
-                        return (
-                            <Tr key={row.id}>
-                                {row.getVisibleCells().map((cell) => {
+
+            {
+                !loading ?filesData.length === 0 ?(<NoData/>) :(
+                    <Table >
+                    <THead>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <Tr key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => {
                                     return (
-                                        <Td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
+                                        <Th
+                                            key={header.id}
+                                            colSpan={header.colSpan}
+                                        >
+                                            {header.isPlaceholder ?  null : (
+                                                <div
+                                                    {...{
+                                                        className:
+                                                            header.column.getCanSort()
+                                                                ? 'cursor-pointer select-none'
+                                                                : '',
+                                                        onClick:
+                                                         header.column.getToggleSortingHandler()
+                                                    }}
+                                                >
+                                                    {flexRender(
+                                                        header.column.columnDef
+                                                            .header,
+                                                        header.getContext()
+                                                    )}
+                                                    {
+                                                       header.column.id !== 'age' && header.column.id !== 'location' && <Sorter
+                                                       sort={header.column.getIsSorted()}
+                                                   />
+                                                    }
+                                                </div>
                                             )}
-                                        </Td>
+                                        </Th>
                                     )
                                 })}
                             </Tr>
-                        )
-                    })}
-                </TBody>
-            </Table>
+                        ))}
+                    </THead>
+                    <TBody>
+                        {table.getRowModel().rows.map((row) => {
+                            return (
+                                <Tr key={row.id}>
+                                    {row.getVisibleCells().map((cell) => {
+                                        return (
+                                            <Td key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </Td>
+                                        )
+                                    })}
+                                </Tr>
+                            )
+                        })}
+                    </TBody>
+                </Table>
+                ):(
+                    <Skeleton height={300}/>
+                )
+            }
+           
             <div className="flex items-center justify-between mt-4">
                 <Pagination
                     pageSize={table.getState().pagination.pageSize}
