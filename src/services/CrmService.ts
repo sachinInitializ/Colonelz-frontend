@@ -314,6 +314,19 @@ export async function apiGetCrmProjectsAddSubTask(Data: any) {
     console.log('Received response from server:', data);
     return data;
 }
+export async function apiGetCrmProjectsSingleSubTaskDetails(projectId:string,taskId:string,subTaskId:string) {
+    const response = await fetch(`${apiPrefix}admin/get/single/subtask?user_id=${userId}&project_id=${projectId}&task_id=${taskId}&sub_task_id=${subTaskId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+    });
+
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
 export async function apiGetCrmProjectsSubTaskUpdate(task:any) {
     const response = await fetch(`${apiPrefix}admin/update/subtask`, {
         method: 'PUT',
@@ -331,6 +344,21 @@ export async function apiGetCrmProjectsSubTaskUpdate(task:any) {
 export async function apiGetCrmProjectsSubTaskDelete(Data:any) {
     const response = await fetch(`${apiPrefix}admin/delete/subtask`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(Data)
+    });
+
+    const data = await response.json();
+    console.log('Received response from server:', data);
+    return data;
+}
+
+export async function apiGetCrmProjectsSingleSubTaskTimer(Data:any) {
+    const response = await fetch(`${apiPrefix}admin/update/subtask/time`, {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}` 

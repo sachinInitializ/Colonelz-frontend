@@ -11,11 +11,18 @@ import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdOutlineAdd } from 'react-i
 import { AiOutlineEye } from 'react-icons/ai';
 import { BiArrowFromRight } from 'react-icons/bi';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { apiGetCrmProjectsSingleSubTaskDataTimer } from '@/services/CrmService';
+import { IoMdSquareOutline } from 'react-icons/io';
+import { IoPlayOutline } from "react-icons/io5";
+import { PiPause, PiSquareThin } from "react-icons/pi";
+import { CiPause1 } from 'react-icons/ci';
+import { GiSquare } from "react-icons/gi";
+import { apiGetCrmProjectsSingleSubTaskDataTimer, apiGetCrmProjectsSingleSubTaskTimer } from '@/services/CrmService';
+import { time } from 'console';
 
 type SubTask = {
     project_id: string;
     task_id: string;
+    sub_task_id:string;
     sub_task_name: string;
     sub_task_description: string;
     actual_sub_task_start_date: string;
@@ -27,6 +34,7 @@ type SubTask = {
     sub_task_createdOn: string;
     sub_task_reporter: string;
     sub_task_createdBy: string;
+    sub_task_assignee: string;
 };
 type Data={
     data:SubTask
@@ -81,17 +89,175 @@ const SubTaskDetails = (Data:Data) => {
         setVerticalOpen(false)
     }
 
-    const [TimerData, setTimerData] = useState({
-        time: 0,
-        isRunning: false
+    type UpdateData={
+        project_id:string,
+        task_id:string,
+        sub_task_id:string
+        sub_task_assignee:string,
+        time:string,
+        isrunning:boolean,
+        current:string,
+        total_time:string,
+    }
+    const [data, setData] = useState<UpdateData>({
+        project_id:projectId,
+        task_id:taskId,
+        sub_task_id:Data.data.sub_task_id,
+        sub_task_assignee:Data.data.sub_task_assignee,
+        time:'',
+        isrunning:false,
+        current:'',
+        total_time:'',
     })
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await apiGetCrmProjectsSingleSubTaskDataTimer(projectId, taskId, Data.data.sub_task_name);
-            const data = await response.json();
-            console.log(data);
+    const Submit=async(data:UpdateData)=>{
+        const response=await apiGetCrmProjectsSingleSubTaskTimer(data);
+
+    }
+
+    
+    const usePersistentTimer = (subtaskId: string) => {
+        const getInitialState = () => {
+          const savedTimers = localStorage.getItem('timers');
+          const timers = savedTimers ? JSON.parse(savedTimers) : {};
+          return timers[subtaskId] || { time: 0, isRunning: true, totalTime: 0, current:new Date().getTime()  };
+        };
+      
+        const [timerData, setTimerData] = useState(getInitialState);
+
+        useEffect(() => {
+            const fetchData = async () => {
+                const response = await apiGetCrmProjectsSingleSubTaskDataTimer(projectId, taskId, Data.data.sub_task_id);
+                if (response) {
+                    const { time, isrunning, total_time, current } = response.data;
+                    console.log(response.data);
+                    time.length===0 ?
+                    setTimerData({
+                      time: 0,
+                      isRunning: false,
+                      totalTime: 0,
+                      current: null,
+                    }) :
+                    setTimerData({
+                      time: parseInt(time, 10),
+                      isRunning: isrunning,
+                      totalTime: parseInt(time, 10),
+                      current: parseInt(current, 10),
+                    });
+                  }
+            }
+            fetchData();
+        }, [projectId])
+      
+        useEffect(() => {
+          const savedTimers = localStorage.getItem('timers');
+          const timers = savedTimers ? JSON.parse(savedTimers) : {};
+          timers[subtaskId] = timerData;
+          localStorage.setItem('timers', JSON.stringify(timers));
+        }, [timerData, subtaskId]);
+      
+        return [timerData, setTimerData];
+      };
+    
+   
+      const [timerData, setTimerData] = usePersistentTimer(Data.data.sub_task_id);
+
+    
+      useEffect(() => {
+        let interval = null;
+        if (timerData.isRunning) {
+          interval = setInterval(() => {
+            setTimerData((prevData:any) => {
+              const now = new Date().getTime();
+              const diff = now - prevData.current;
+              time: prevData.time + diff
+              return { ...prevData  };
+            });
+          }, 1);
+        } else {
+            if(interval)          clearInterval(interval);
         }
-    }, [])
+        return () =>{if(interval) {clearInterval(interval);}}
+      }, [timerData.isRunning]);
+    
+      const formatTime = () => {
+        const totalTime = timerData.isRunning
+          ? timerData.time + (new Date().getTime() - timerData.current)
+          : timerData.time;
+        const hours = Math.floor(totalTime / 3600000);
+        const minutes = Math.floor((totalTime % 3600000) / 60000);
+        const seconds = Math.floor((totalTime % 60000) / 1000);
+        const milliseconds = Math.floor(totalTime % 1000).toString().padStart(3, '0');
+    
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${milliseconds}`;
+      };
+    
+      const handleStart = () => {
+        const now = new Date().getTime();
+        setTimerData((prevData:any) => {
+          const updatedData = {
+            ...prevData,
+            isRunning: true,
+            current: now,
+          };
+      
+          const submitData = {
+            ...data,
+            time: `${updatedData.time}`, 
+            isrunning: true,
+            current: now.toString(),
+            total_time: updatedData.totalTime.toString(), 
+          };
+          console.log(submitData);
+          Submit(submitData);
+      
+          return updatedData;
+        });
+      };
+    
+      const handlePause = () => {
+        setTimerData((prevData:any) => {
+          const now = new Date().getTime();
+          const updatedTime = prevData.time + (now - (prevData.current || now));
+          const updatedData = {
+            ...prevData,
+            isRunning: false,
+            time: updatedTime,
+            current: null,
+          };
+      
+          
+          const submitData = {
+            ...data,
+            time: updatedData.time.toString(), 
+            isrunning: false,
+            current: now.toString(),
+            total_time: updatedData.totalTime.toString(), 
+          };
+      
+          
+          Submit(submitData);
+      
+          return updatedData;
+        });
+      };
+    
+      const handleReset = () =>{ setTimerData({ time: 0, isRunning: false, totalTime: 0, current: null })
+        const submitData = {
+            ...data,
+            time: '0',
+            isrunning: false,
+            current: new Date().getTime().toString(),
+            total_time: '0',
+        };
+        Submit(submitData);
+    };
+    
+      
+    
+
+    
+
+   
 
     return (
         <div>
@@ -117,8 +283,18 @@ const SubTaskDetails = (Data:Data) => {
                 <TabList>
                     <TabNav value="tab1">Details</TabNav>
                 </TabList>
+
+
+
                 <div className="p-4">
                     <TabContent value="tab1">
+                    <div className='flex  gap-4 items-center mb-5'>
+                        <span onClick={timerData.isRunning?handlePause:handleStart} className=''>
+                            {timerData.isRunning?<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'><CiPause1 className='font-bold'/></Button>:<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'><IoPlayOutline className=''/></Button>}</span>
+                                <Button className='!rounded-full shadow-md' variant='twoTone' size='sm' onClick={handleReset}><PiSquareThin/></Button>
+                            <h5>{formatTime()}</h5>
+      
+    </div>
                     <CustomerInfoField title="Creator" value={Data.data.sub_task_createdBy} />
                     <CustomerInfoField title="Created On" value={formateDate(Data.data.sub_task_createdOn)} />
                     <div className='p-1'> </div>
