@@ -24,6 +24,7 @@ import { Select } from '@/components/ui'
 import { useData } from '../FileManagerContext/FIleContext'
 import { Loading } from '@/components/shared'
 import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton'
+import NoData from '@/views/pages/NoData'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -252,15 +253,15 @@ const Filtering = () => {
                         </Tr>
                     ))}
                 </THead>
-                {loading && leadData.length === 0 ? (
+                {loading  ? (
                     <TableRowSkeleton
                       
                         rows={pagingData.pageSize}
                         avatarInColumns= {[0]}
-               
+                        columns={columns.length}
                         avatarProps={{ width: 14, height: 14 }}
                     />
-                ) : (
+                ):leadData.length===0?<Tr><Td colSpan={columns.length}><NoData/></Td></Tr>: (
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (

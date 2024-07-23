@@ -12,7 +12,7 @@ type TableRowSkeletonProps = {
 const { Tr, Td, TBody } = Table
 
 const TableRowSkeleton = (props: TableRowSkeletonProps) => {
-    const { columns = 1, rows = 10, avatarInColumns = [], avatarProps } = props
+    const { columns = props.columns, rows = 10, avatarInColumns = [], avatarProps } = props
 
     return (
         <TBody>
@@ -22,14 +22,14 @@ const TableRowSkeleton = (props: TableRowSkeletonProps) => {
                         (col) => (
                             <Td key={`col-${col}`}>
                                 <div className="flex flex-auto items-center gap-2">
-                                    {avatarInColumns.includes(col) && (
+                                    {/* {avatarInColumns.includes(col) && (
                                         <div>
                                             <Skeleton
                                                 variant="circle"
                                                 {...avatarProps}
                                             />
                                         </div>
-                                    )}
+                                    )} */}
                                     <Skeleton />
                                 </div>
                             </Td>

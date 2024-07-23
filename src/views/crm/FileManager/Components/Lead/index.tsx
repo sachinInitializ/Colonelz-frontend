@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FolderItem,fetchLeadData} from './data';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Card, Dialog, Dropdown, Notification, Pagination, Select, Tooltip, toast } from '@/components/ui';
+import { Button, Card, Dialog, Dropdown, Notification, Pagination, Select, Skeleton, Tooltip, toast } from '@/components/ui';
 import type { MouseEvent } from 'react'
 import YourFormComponent from './LeadForm';
 import { FaFolder, FaRegFolder } from 'react-icons/fa';
@@ -33,6 +33,8 @@ import { rankItem } from '@tanstack/match-sorter-utils'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
 import { MdDeleteOutline } from 'react-icons/md';
+import NoData from '@/views/pages/NoData';
+import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton';
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -94,6 +96,7 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 
 const Index = () => {
     const [leadData, setLeadData] = useState<FolderItem[]>([]);
+    const [loading, setLoading] = useState(true);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const leadId = queryParams.get('lead_id');
@@ -103,6 +106,7 @@ const Index = () => {
         const fetchData = async () => {
             const data = await fetchLeadData(leadId);
             setLeadData(data);
+            setLoading(false);
         };
         fetchData();
     }, [leadId]);
@@ -293,98 +297,13 @@ const table = useReactTable({
      
   return (
       <div>
-          <div className=" flex justify-between">
+          <div className=" flex justify-between mb-5">
               <h3 className="">Lead-{leadName}</h3>
               <Button variant="solid" size="sm" onClick={() => openDialog()}>
                   Upload
               </Button>
           </div>
-        
-
-          <div className=" w-full">
-      <div className="flex-1 p-4">
-      
-
-        {/* <div className="border rounded-lg shadow-sm dark:border-gray-700">
-          <div className="relative w-full overflow-auto">
-            <table className="w-full caption-bottom text-sm">
-              <thead className="[&amp;_tr]:border-b">
-                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                    Name
-                  </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                    Type
-                  </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                    Files
-                  </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                    Modified
-                  </th>
-                  <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0  ">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-           
-            
-          <tbody className="[&amp;_tr:last-child]:border-0">
-          {leadData.map((item) => 
-          {
-            // If the folder is 'contract' and the user is not an admin or senior architect, skip rendering this item
-            if (item.folder_name === 'contract' && (role==="3D Visualizer" || role==="Jr. Interior Designer"|| role==="Project Architect"|| role==="Executive Assistant")) {
-              return null;
-            }
-            
-           return (
-            <tr key={item.folder_name} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                <div className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="h-5 w-5 text-gray-500 dark:text-gray-400"
-                  >
-                    <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
-                  </svg>
-                  <a className="font-medium cursor-pointer" onClick={()=> navigate(
-                              `/app/crm/fileManager/leads/folder?lead_id=${leadId}&lead_name=${leadName}&folder_name=${item.folder_name}`,
-                          )}>
-                    {item.folder_name}
-                  </a>
-                </div>
-              </td>
-              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Folder</td>
-              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{Number(item.total_files)>1?`${item.total_files} items`:`${item.total_files} item`}</td>
-              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-              {formatDate(item.updated_date)}
-                </td>
-              <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
-               
-                <div className=' flex justify-center cursor-pointer' onClick={()=>openDialog2(item.folder_name)}>
-              <HiTrash className=' text-xl text-center hover:text-red-500'/>
-              </div>
-              </td>
-            </tr>)
-})}
-          
-          </tbody>
-
-            </table>
-          </div>
-        </div> */}
-      </div>
-    </div>
-
-
+    
     <>
     <div className=' flex justify-between'>
     <div className="flex items-center mb-4">
@@ -447,6 +366,13 @@ const table = useReactTable({
                         </Tr>
                     ))}
                 </THead>
+                {loading?
+                 <TableRowSkeleton  rows={10}
+                 avatarInColumns= {[0]}
+                 columns={columns.length}
+                 avatarProps={{ width: 14, height: 14 }}
+             />
+                :filteredProjectData.length===0?<TBody><Tr className='mx-auto'><Td colSpan={columns.length}><NoData/></Td></Tr></TBody>:
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (
@@ -464,7 +390,7 @@ const table = useReactTable({
                             </Tr>
                         )
                     })}
-                </TBody>
+                </TBody>}
             </Table>
             <div className="flex items-center justify-between mt-4">
                 <Pagination

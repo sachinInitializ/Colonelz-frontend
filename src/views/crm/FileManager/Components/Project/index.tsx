@@ -26,6 +26,7 @@ import { rankItem } from '@tanstack/match-sorter-utils'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
 import NoData from '@/views/pages/NoData';
+import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton';
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -282,17 +283,7 @@ const table = useReactTable({
               <Button variant="solid" size="sm" onClick={() => openDialog()}>
                   Upload
               </Button>
-          </div>
-            {isLoading ? (
-            <div className="flex items-center gap-4">
-              <div>
-                <Skeleton variant="circle" />
-              </div>
-              <Skeleton />
-            </div>
-          ) : projectData.length === 0 ? (
-            <div>No Data</div>
-          ) : (
+          </div> 
             <>
     <div className=' flex justify-between'>
     <div className="flex items-center mb-4">
@@ -355,7 +346,11 @@ const table = useReactTable({
                         </Tr>
                     ))}
                 </THead>
-                {projectData.length === 0?<NoData/>:
+                {isLoading?<TableRowSkeleton
+                      avatarInColumns= {[0]}
+                      columns={columns.length}
+                      avatarProps={{ width: 14, height: 14 }}
+                  />:projectData.length === 0?<Td colSpan={columns.length}><NoData/></Td>:
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (
@@ -376,7 +371,7 @@ const table = useReactTable({
                 </TBody>}
             </Table>
         </>
-          )}
+          
 
 
           <StickyFooter

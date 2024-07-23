@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FileItem, fetchProjectData } from '../data'
 import {
@@ -8,6 +8,7 @@ import {
     FormItem,
     Input,
     Notification,
+    Pagination,
     Segment,
     Select,
     Skeleton,
@@ -30,6 +31,78 @@ import { format, parseISO } from 'date-fns'
 import { Field, Form, Formik } from 'formik'
 import NoData from '@/views/pages/NoData'
 import { AiOutlineDelete } from 'react-icons/ai'
+
+import Table from '@/components/ui/Table'
+import {
+    useReactTable,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
+    getFacetedMinMaxValues,
+    getPaginationRowModel,
+    getSortedRowModel,
+    flexRender,
+} from '@tanstack/react-table'
+import { rankItem } from '@tanstack/match-sorter-utils'
+import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
+import type { InputHTMLAttributes } from 'react'
+import { FaFile } from 'react-icons/fa';
+import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton';
+import { MdDeleteOutline } from 'react-icons/md';
+
+interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
+    value: string | number
+    onChange: (value: string | number) => void
+    debounce?: number
+}
+
+const { Tr, Th, Td, THead, TBody, Sorter } = Table
+
+function DebouncedInput({
+    value: initialValue,
+    onChange,
+    debounce = 500,
+    ...props
+}: DebouncedInputProps) {
+    const [value, setValue] = useState(initialValue)
+
+    useEffect(() => {
+        setValue(initialValue)
+    }, [initialValue])
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            onChange(value)
+        }, debounce)
+
+        return () => clearTimeout(timeout)
+    }, [value])
+
+    return (
+        <div className="flex justify-end">
+            <div className="flex items-center mb-4">
+                <span className="mr-2">Search:</span>
+                <Input
+                    {...props}
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                />
+            </div>
+        </div>
+    )
+}
+
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  
+    const itemRank = rankItem(row.getValue(columnId), value)
+
+    addMeta({
+        itemRank,
+    })
+
+    return itemRank.passed
+}
 
 const Index = () => {
     const [leadData, setLeadData] = useState<FileItem[]>([])
@@ -58,6 +131,11 @@ const Index = () => {
         role: string
         username: string
     }
+    
+type Option = {
+    value: number
+    label: string
+  }
 
     useEffect(() => {
         const response = async () => {
@@ -382,6 +460,95 @@ const Index = () => {
         }
     }
 
+    function formatDate(dateString:string) {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+      }
+
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+const [globalFilter, setGlobalFilter] = useState('')
+const totalData = leadData.length
+
+const pageSizeOption = [
+    { value: 10, label: '10 / page' },
+    { value: 20, label: '20 / page' },
+    { value: 30, label: '30 / page' },
+    { value: 40, label: '40 / page' },
+    { value: 50, label: '50 / page' },
+]
+
+const columns = useMemo<ColumnDef<FileItem>[]>(
+    () => [
+        { header: 'Name', accessorKey: 'fileName',
+          cell:({row})=>{
+              const file=row.original
+              const fileName=file.fileName
+              const fileurl=file.fileUrl
+              return <Link to={fileurl} target='_blank'><div className='flex items-center gap-2'>{getFileIcon(row.original.fileName)}{fileName}</div></Link>
+          }
+         },
+
+        { header: 'Type',cell:({row})=>{
+         return <div>{getFileType(row.original.fileName)}</div>
+        } },
+
+
+        { header: 'Size', accessorKey: 'fileSize',
+          cell:({row})=>{
+            return <div>{formatFileSize(row.original.fileSize)}</div>
+          }
+         },
+
+
+        { header: 'Created', accessorKey: 'date',cell:({row})=>{
+          return <div>{formatDate(row.original.date)}</div>
+        } },
+        { header: 'Actions', accessorKey: 'actions',
+        cell:({row})=>{
+          return <div className='flex items-center gap-2'>
+              <MdDeleteOutline className='text-xl cursor-pointer hover:text-red-500' onClick={()=>openDialog3(row.original.fileId)} />
+                  <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(row.original.fileId)}/> 
+          </div>
+        }
+         },
+    ],
+    []
+)
+
+const table = useReactTable({
+    data:leadData,
+    columns,
+    filterFns: {
+        fuzzy: fuzzyFilter,
+    },
+    state: {
+        columnFilters,
+        globalFilter,
+    },
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    debugHeaders: true,
+    debugColumns: false,
+})
+const onPaginationChange = (page: number) => {
+  table.setPageIndex(page - 1)
+}
+
+const onSelectChange = (value = 0) => {
+  table.setPageSize(Number(value))
+}
+
     const handleUploadFiles = () => {}
 
     return (
@@ -398,10 +565,9 @@ const Index = () => {
                     Upload Files
                 </Button>
             </div>
-            {
-             !loading ?leadData.length===0 ?(<NoData/>) :
+        
              
-             (
+             
                 <div className="w-full">
                     <div className="flex-1 p-4">
                         <div className="flex items-center mb-4">
@@ -448,91 +614,95 @@ const Index = () => {
                             </nav>
                         </div>
 
-                        <div className="border rounded-lg shadow-sm dark:border-gray-700">
-                            <div className="relative w-full overflow-auto">
-                                <table className="w-full caption-bottom text-sm">
-                                    <thead className="[&amp;_tr]:border-b">
-                                        <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                                                Name
-                                            </th>
-                                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                                                Type
-                                            </th>
-                                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                                                Size
-                                            </th>
-                                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                                                Modified
-                                            </th>
-                                            <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0 ">
-                                                Actions
-                                            </th>
-                                        </tr>
-                                    </thead>
+                        <Table>
+                <THead>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <Tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                    <Th
+                                        key={header.id}
+                                        colSpan={header.colSpan}
+                                    >
+                                        {header.isPlaceholder || header.id==='actions' ? null : (
+                                            <div
+                                                {...{
+                                                    className:
+                                                        header.column.getCanSort()
+                                                            ? 'cursor-pointer select-none'
+                                                            : '',
+                                                    onClick:
+                                                        header.column.getToggleSortingHandler(),
+                                                }}
+                                            >
+                                                {flexRender(
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
+                                                {
+                                                    <Sorter
+                                                        sort={header.column.getIsSorted()}
+                                                    />
+                                                }
+                                            </div>
+                                        )}
+                                    </Th>
+                                )
+                            })}
+                        </Tr>
+                    ))}
+                </THead>
+                {loading?<TableRowSkeleton
+                      avatarInColumns= {[0]}
+                      columns={columns.length}
+                      avatarProps={{ width: 14, height: 14 }}
+                  />:leadData.length===0?<Td colSpan={columns.length}><NoData/></Td>:
+                <TBody>
+                    {table.getRowModel().rows.map((row) => {
+                        return (
+                            <Tr key={row.id}>
+                                {row.getVisibleCells().map((cell) => {
+                                    return (
+                                        <Td key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </Td>
+                                    )
+                                })}
+                            </Tr>
+                        )
+                    })}
+                </TBody>}
+            </Table>
 
-                                    <tbody className="[&amp;_tr:last-child]:border-0">
-                                        {leadData.map((item) => (
-                                            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                                    <div className="flex items-center gap-2">
-                                                        {getFileIcon(
-                                                            item.fileName,
-                                                        )}
-                                                        <a
-                                                            className="font-medium cursor-pointer"
-                                                            href={item.fileUrl}
-                                                            target="_blank"
-                                                        >
-                                                            {item.fileName}
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                                    {getFileType(item.fileName)}
-                                                </td>
-                                                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                                    {formatFileSize(
-                                                        item.fileSize,
-                                                    )}
-                                                </td>
-                                                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                                    {format(
-                                                        parseISO(item.date),
-                                                        'dd-MM-yyyy',
-                                                    )}
-                                                </td>
-                                                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 text-center">
-                                                    <div className=" flex justify-center gap-3">
-                                                        <AiOutlineDelete
-                                                            className="text-xl cursor-pointer hover:text-red-500"
-                                                            onClick={() =>
-                                                                openDialog3(
-                                                                    item.fileId,
-                                                                )
-                                                            }
-                                                        />
-                                                        <HiShare
-                                                            className="text-xl cursor-pointer"
-                                                            onClick={() =>
-                                                                openDialog(
-                                                                    item.fileId,
-                                                                )
-                                                            }
-                                                        />
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+            <div className="flex items-center justify-between mt-4">
+                <Pagination
+                    pageSize={table.getState().pagination.pageSize}
+                    currentPage={table.getState().pagination.pageIndex + 1}
+                    total={totalData}
+                    onChange={onPaginationChange}
+                />
+                <div style={{ minWidth: 130 }}>
+                    <Select<Option>
+                        size="sm"
+                        isSearchable={false}
+                        value={pageSizeOption.filter(
+                            (option) =>
+                                option.value ===
+                                table.getState().pagination.pageSize
+                        )}
+                        options={pageSizeOption}
+                        onChange={(option) => onSelectChange(option?.value)}
+                    />
+                </div>
+            </div>
                     </div>
                 </div>
-            ) : (
-              <Skeleton height={300}/>
-            )}
+            
+            
             <StickyFooter
                 className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
                 stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"

@@ -1,222 +1,169 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { PDFDocument } from 'pdf-lib';
-import { Document, Page, pdfjs } from 'react-pdf';
-import Draggable, { DraggableEventHandler } from 'react-draggable';
-import { ResizableBox } from 'react-resizable';
-import 'react-resizable/css/styles.css';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { PDFDocument, rgb } from 'pdf-lib';
+import { Worker, Viewer } from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import { zoomPlugin } from '@react-pdf-viewer/zoom';
+import { scrollModePlugin } from '@react-pdf-viewer/scroll-mode';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+interface DropdownInput {
+  id: number;
+  page: number;
+  x: number;
+  y: number;
+  value: string;
+  options: string[];
+  name: string;
+}
 
-const PdfFormCreator: React.FC = () => {
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [pdfDoc, setPdfDoc] = useState<PDFDocument | null>(null);
-  const [fields, setFields] = useState<any[]>([]);
-  const [originalPdfData, setOriginalPdfData] = useState<ArrayBuffer | null>(null);
-  const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
-  const [zoom, setZoom] = useState<number>(1);
-  const [showText, setShowText] = useState<boolean>(false);
-  const pdfContainerRef = useRef<HTMLDivElement>(null);
+const PdfEditor: React.FC = () => {
+  const [pdfData, setPdfData] = useState<Uint8Array | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [dropdownInputs, setDropdownInputs] = useState<DropdownInput[]>([]);
+  const [isAddingDropdown, setIsAddingDropdown] = useState<boolean>(false);
+  const [scale, setScale] = useState<number>(1);
+  const viewerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
+  const zoomPluginInstance = zoomPlugin();
+  const { ZoomInButton, ZoomOutButton, CurrentScale } = zoomPluginInstance;
+  const scrollModePluginInstance = scrollModePlugin();
+  const { SwitchScrollModeButton } = scrollModePluginInstance;
 
   useEffect(() => {
-    const loadPdf = async () => {
-      if (pdfFile) {
-        try {
-          const existingPdfBytes = await pdfFile.arrayBuffer();
-          const loadedPdfDoc = await PDFDocument.load(existingPdfBytes);
-          setPdfDoc(loadedPdfDoc);
-          setOriginalPdfData(existingPdfBytes);
-          const pdfUrl = URL.createObjectURL(new Blob([existingPdfBytes], { type: 'application/pdf' }));
-          setPdfDataUrl(pdfUrl);
-        } catch (error) {
-          console.error('Error loading PDF:', error);
-          alert('Error loading PDF. Please try again.');
-        }
-      }
-    };
+    if (pdfData) {
+      const url = URL.createObjectURL(new Blob([pdfData], { type: 'application/pdf' }));
+      setFileUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [pdfData]);
 
-    loadPdf();
-  }, [pdfFile]);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const loadPdf = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && file.type === 'application/pdf') {
-      setPdfFile(file);
-    } else {
-      alert('Please upload a valid PDF file.');
+    if (file) {
+      const arrayBuffer = await file.arrayBuffer();
+      setPdfData(new Uint8Array(arrayBuffer));
+    }
+  }, []);
+
+  const handleViewerClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (isAddingDropdown && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / scale;
+      const y = (event.clientY - rect.top) / scale;
+
+      const pageNumber = 0; // Update this based on your page detection logic
+
+      setDropdownInputs((prevInputs) => [
+        ...prevInputs,
+        {
+          id: Date.now(),
+          page: pageNumber,
+          x,
+          y,
+          value: '',
+          options: [
+            'Bahuverma.pdf',
+            'https://example.com/option2.pdf',
+            'https://example.com/option3.pdf',
+          ],
+          name: 'drawing',
+        }
+      ]);
+      setIsAddingDropdown(false);
     }
   };
 
-  const addFieldToPDF = async () => {
-    if (!pdfDoc) return;
+  const handleDropdownChange = (id: number, value: string) => {
+    setDropdownInputs((prevInputs) =>
+      prevInputs.map((input) => (input.id === id ? { ...input, value } : input))
+    );
+    window.open(value, '_blank');
+  };
 
-    const form = pdfDoc.getForm();
-    const page = pdfDoc.getPage(0); // Assuming a single-page PDF for simplicity
-
-    fields.forEach((field) => {
-      const [x, y] = [field.left, page.getHeight() - field.top - field.height];
-      if (field.type === 'text') {
-        const textField = form.createTextField(field.name);
-        textField.setText(field.defaultValue || '');
-        textField.addToPage(page, { x, y, width: field.width, height: field.height });
-      } else if (field.type === 'dropdown') {
-        const dropdownField = form.createDropdown(field.name);
-        dropdownField.addOptions(field.options || []);
-        dropdownField.select(field.defaultValue || '');
-        dropdownField.addToPage(page, { x, y, width: field.width, height: field.height });
-      } else if (field.type === 'checkbox') {
-        const checkBox = form.createCheckBox(field.name);
-        if (field.checked) checkBox.check();
-        checkBox.addToPage(page, { x, y, width: field.width, height: field.height });
-      } else if (field.type === 'radio') {
-        const radioGroup = form.createRadioGroup(field.name);
-        field.options.forEach((option: string, index: number) => {
-          radioGroup.addOptionToPage(option, page, { x: x + index * 50, y });
+  const saveTextToPdf = useCallback(async () => {
+    if (pdfData) {
+      const pdfDoc = await PDFDocument.load(pdfData);
+      const pages = pdfDoc.getPages();
+      dropdownInputs.forEach(({ page, x, y, value, name }) => {
+        const pdfPage = pages[page];
+        const { height } = pdfPage.getSize();
+        pdfPage.drawText(`${name}: ${value}`, {
+          x,
+          y: height - y,
+          size: 12,
+          color: rgb(0, 0, 0),
         });
-        radioGroup.select(field.defaultValue || field.options[0]);
-      } else if (field.type === 'optionList') {
-        const optionList = form.createOptionList(field.name);
-        optionList.addOptions(field.options || []);
-        optionList.select(field.defaultValue || '');
-        optionList.addToPage(page, { x, y, width: field.width, height: field.height });
-      }
-    });
+      });
 
-    const updatedBytes = await pdfDoc.save();
-    const updatedPdfBlob = new Blob([updatedBytes], { type: 'application/pdf' });
-    const updatedPdfSrc = URL.createObjectURL(updatedPdfBlob);
-    setPdfDataUrl(updatedPdfSrc);
-  };
-
-  const handleDownload = async () => {
-    await addFieldToPDF();
-    if (pdfDoc) {
-      const updatedBytes = await pdfDoc.save();
-      const updatedPdfBlob = new Blob([updatedBytes], { type: 'application/pdf' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(updatedPdfBlob);
-      link.download = 'updated_pdf.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const pdfBytes = await pdfDoc.save();
+      setPdfData(pdfBytes);
+      setDropdownInputs([]);
     }
-  };
+  }, [pdfData, dropdownInputs]);
 
-  const handleAddField = (type: string) => {
-    const uniqueName = `${type}_${fields.length}_${new Date().getTime()}`;
-    setFields([
-      ...fields,
-      {
-        type,
-        name: uniqueName,
-        left: 50,
-        top: 50,
-        width: type === 'dropdown' ? 150 : 100,
-        height: 20,
-        options: ['Option 1', 'Option 2', 'Option 3'],
-        defaultValue: '',
-        checked: false,
-      },
-    ]);
-  };
-
-  const handleDrag: DraggableEventHandler = (e, data) => {
-    const index = parseInt(data.node.getAttribute('data-index')!, 10);
-    const newFields = [...fields];
-    newFields[index] = {
-      ...newFields[index],
-      left: data.x,
-      top: data.y,
-    };
-    setFields(newFields);
-  };
-
-  const handleResize = (index: number, e: any, data: any) => {
-    const newFields = [...fields];
-    newFields[index] = {
-      ...newFields[index],
-      width: data.size.width,
-      height: data.size.height,
-    };
-    setFields(newFields);
-  };
-
-  const handleZoomIn = () => setZoom(zoom + 0.2);
-  const handleZoomOut = () => setZoom(zoom - 0.2);
-
-  const handleToggleText = () => setShowText(!showText);
+  const handleZoomChange = useCallback((newScale: number) => {
+    setScale(newScale);
+  }, []);
 
   return (
     <div>
-      <input type="file" accept=".pdf" onChange={handleFileChange} />
-      {pdfDataUrl && (
-        <div>
-          <h2>PDF Uploaded:</h2>
-          <div
-            ref={pdfContainerRef}
-            style={{
-              position: 'relative',
-              width: `${800 * zoom}px`,
-              height: `${600 * zoom}px`,
-              border: '1px solid black',
-              overflow: 'auto',
-            }}
-          >
-            <Document
-              file={pdfDataUrl}
-              onLoadSuccess={() => {
-                // Update coordinates if needed
+      <input type="file" onChange={loadPdf} />
+      <button onClick={() => setIsAddingDropdown(true)}>Add Dropdown Input</button>
+      <button onClick={saveTextToPdf}>Save Text to PDF</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+        <ZoomOutButton />
+        <CurrentScale />
+        <ZoomInButton />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+      
+      </div>
+      {fileUrl && (
+        <div 
+          ref={containerRef}
+          onClick={handleViewerClick}
+          style={{ position: 'relative', width: '100%', minHeight: '100vh' }}
+        >
+          <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.0.279/build/pdf.worker.min.js`}>
+            <Viewer
+              fileUrl={fileUrl}
+              plugins={[defaultLayoutPluginInstance, zoomPluginInstance, scrollModePluginInstance]}
+              onZoom={(zoom) => handleZoomChange(zoom.scale)}
+              style={{ width: '100%', height: 'auto' }}
+            />
+          </Worker>
+          {dropdownInputs.map(({ id, x, y, value, options, name }) => (
+            <div
+              key={id}
+              style={{
+                position: 'absolute',
+                left: x * scale,
+                top: y * scale,
+                background: 'white',
+                border: '1px solid black',
+                transform: `scale(${scale})`,
+                transformOrigin: 'top left'
               }}
             >
-              <Page pageNumber={1} width={800 * zoom} />
-            </Document>
-            {fields.map((field, index) => (
-              <Draggable
-                key={index}
-                position={{ x: field.left * zoom, y: field.top * zoom }}
-                onStop={handleDrag}
-                nodeRef={pdfContainerRef}
+              <label htmlFor={`dropdown-${id}`}>{name}: </label>
+              <select
+                id={`dropdown-${id}`}
+                value={value}
+                onChange={(e) => handleDropdownChange(id, e.target.value)}
               >
-                <ResizableBox
-                  width={field.width * zoom}
-                  height={field.height * zoom}
-                  minConstraints={[50 * zoom, 20 * zoom]}
-                  maxConstraints={[400 * zoom, 100 * zoom]}
-                  onResizeStop={(e, data) => handleResize(index, e, data)}
-                  resizeHandles={['se']}
-                  data-index={index.toString()}
-                >
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      backgroundColor: 'rgba(255, 255, 0, 0.5)',
-                      border: '1px solid black',
-                      textAlign: 'center',
-                      lineHeight: `${field.height * zoom}px`,
-                      cursor: 'move',
-                    }}
-                  >
-                    {field.type.charAt(0).toUpperCase() + field.type.slice(1)} {index + 1}
-                  </div>
-                </ResizableBox>
-              </Draggable>
-            ))}
-          </div>
-          <button onClick={() => handleAddField('text')}>Add Text Field</button>
-          <button onClick={() => handleAddField('checkbox')}>Add Checkbox</button>
-          <button onClick={() => handleAddField('radio')}>Add Radio Group</button>
-          <button onClick={() => handleAddField('dropdown')}>Add Dropdown</button>
-          <button onClick={() => handleAddField('optionList')}>Add Option List</button>
-          <button onClick={handleDownload}>Download PDF</button>
-          <button onClick={handleZoomIn}>Zoom In</button>
-          <button onClick={handleZoomOut}>Zoom Out</button>
-          <button onClick={handleToggleText}>
-            {showText ? 'Hide Text' : 'Show Text'}
-          </button>
+                <option value="" disabled>Drawing</option>
+                {options.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
+          ))}
         </div>
       )}
     </div>
   );
 };
 
-export default PdfFormCreator;
+export default PdfEditor;

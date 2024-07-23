@@ -23,6 +23,8 @@ import { getProjectData } from './data'
 import { Select } from '@/components/ui'
 import { GoProjectRoadmap } from 'react-icons/go'
 import { useData } from '../FileManagerContext/FIleContext'
+import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton'
+import NoData from '@/views/pages/NoData'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -68,15 +70,12 @@ function DebouncedInput({
     )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    // Rank the item
     const itemRank = rankItem(row.getValue(columnId), value)
     addMeta({
         itemRank,
     })
 
-    // Return if the item should be filtered in/out
     return itemRank.passed
 }
 type Option = {
@@ -148,7 +147,7 @@ const Filtering = () => {
         []
     )
 
-    const { projectData } = useData();
+    const { projectData,loading } = useData();
     const totalData=projectData.length
     
     const table = useReactTable({
@@ -234,6 +233,11 @@ const Filtering = () => {
                         </Tr>
                     ))}
                 </THead>
+                {loading?<TableRowSkeleton
+                      avatarInColumns= {[0]}
+                      columns={columns.length}
+                      avatarProps={{ width: 14, height: 14 }}
+                  />:projectData.length===0?<Td colSpan={columns.length}><NoData/></Td>:
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (
@@ -251,7 +255,7 @@ const Filtering = () => {
                             </Tr>
                         )
                     })}
-                </TBody>
+                </TBody>}
             </Table>
             <div className="flex items-center justify-between mt-4">
                 <Pagination

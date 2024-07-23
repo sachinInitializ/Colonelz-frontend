@@ -1,16 +1,15 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, {  useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileItem, fetchLeadData } from '../data';
-import { Button, Checkbox, Dialog, Dropdown, FormItem, Input, Notification, Pagination, Segment, Select, Skeleton, Upload, toast } from '@/components/ui';
+import { FileItem } from '../data';
+import { Button, Dialog, FormItem, Input, Notification, Pagination, Select, Upload, toast } from '@/components/ui';
 import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn, CiImageOn } from 'react-icons/ci';
-import { apiDeleteFileManagerFiles, apiGetCrmFileManagerCreateLeadFolder, apiGetCrmFileManagerCreateProjectFolder, apiGetCrmFileManagerLeads, apiGetCrmFileManagerShareContractFile, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { apiDeleteFileManagerFiles, apiGetCrmFileManagerCreateLeadFolder, apiGetCrmFileManagerLeads, apiGetCrmFileManagerShareContractFile, apiGetCrmFileManagerShareFiles } from '@/services/CrmService';
+import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import { apiGetUsers } from '@/services/CommonService';
-import { BsThreeDotsVertical } from 'react-icons/bs';
-import { HiShare, HiTrash } from 'react-icons/hi';
+import { HiShare } from 'react-icons/hi';
 
 
 import Table from '@/components/ui/Table'
@@ -30,6 +29,8 @@ import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-ta
 import type { InputHTMLAttributes } from 'react'
 import { FaFile } from 'react-icons/fa';
 import NoData from '@/views/pages/NoData';
+import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton';
+import { MdDeleteOutline } from 'react-icons/md';
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -57,7 +58,6 @@ function DebouncedInput({
         }, debounce)
 
         return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     return (
@@ -74,17 +74,14 @@ function DebouncedInput({
     )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    // Rank the item
+  
     const itemRank = rankItem(row.getValue(columnId), value)
 
-    // Store the itemRank info
     addMeta({
         itemRank,
     })
 
-    // Return if the item should be filtered in/out
     return itemRank.passed
 }
 
@@ -400,7 +397,7 @@ const columns = useMemo<ColumnDef<FileItem>[]>(
         { header: 'Actions', accessorKey: 'actions',
         cell:({row})=>{
           return <div className='flex items-center gap-2'>
-              <HiTrash className='text-xl cursor-pointer hover:text-red-500' onClick={()=>openDialog3(row.original.fileId)} />
+              <MdDeleteOutline className='text-xl cursor-pointer hover:text-red-500' onClick={()=>openDialog3(row.original.fileId)} />
                   <HiShare className='text-xl cursor-pointer'  onClick={() => openDialog(row.original.fileId)}/> 
           </div>
         }
@@ -447,7 +444,7 @@ const onSelectChange = (value = 0) => {
         Upload Files
       </Button>
       </div>
-      {!loading ?leadData.length===0 ?(<NoData/>):(
+
       <div className="w-full">
       <div className="flex-1">
 <>
@@ -527,6 +524,11 @@ const onSelectChange = (value = 0) => {
                         </Tr>
                     ))}
                 </THead>
+                {loading?<TableRowSkeleton
+                      avatarInColumns= {[0]}
+                      columns={columns.length}
+                      avatarProps={{ width: 14, height: 14 }}
+                  />:leadData.length===0?<Td colSpan={columns.length}><NoData/></Td>:
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (
@@ -544,7 +546,7 @@ const onSelectChange = (value = 0) => {
                             </Tr>
                         )
                     })}
-                </TBody>
+                </TBody>}
             </Table>
 
             <div className="flex items-center justify-between mt-4">
@@ -571,8 +573,7 @@ const onSelectChange = (value = 0) => {
             </>
       </div>
     </div>
-         ) :
-        (<Skeleton height={300}/>)}
+        
       <StickyFooter
         className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
         stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
