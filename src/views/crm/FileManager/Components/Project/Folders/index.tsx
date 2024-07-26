@@ -108,6 +108,8 @@ const Index = () => {
     const [leadData, setLeadData] = useState<FileItem[]>([])
     const [selectedFiles, setSelectedFiles] = useState<string[]>([])
     const [selectedEmails, setSelectedEmails] = useState<string[]>([])
+    const [selectedEmailsCc, setSelectedEmailsCc] = useState<string[]>([])
+    const [selectedEmailsBcc, setSelectedEmailsBcc] = useState<string[]>([])
     const [selectedType, setSelectedType] = useState('Internal')
     const [selectedUsername, setSelectedUsername] = useState('')
     const [usernameError, setUsernameError] = useState('')
@@ -340,6 +342,8 @@ type Option = {
             lead_id: '',
             project_id: leadId,
             email: selectedEmails,
+            cc: selectedEmailsCc,
+            bcc: selectedEmailsBcc,
             subject: subject,
             body: body,
             user_id: localStorage.getItem('userId'),
@@ -743,8 +747,9 @@ const onSelectChange = (value = 0) => {
                 onRequestClose={onDialogClose}
             >
                 <h3 className="mb-5">Share Files</h3>
+                <div className='max-h-96 overflow-y-auto '>
                 <label className="block text-sm font-medium text-gray-700">
-                    Email
+                    To
                 </label>
                 <Select
                     className="mt-1"
@@ -764,6 +769,52 @@ const onSelectChange = (value = 0) => {
                     onCreateOption={(inputValue) => {
                         const newEmails = [...selectedEmails, inputValue]
                         setSelectedEmails(newEmails)
+                    }}
+                />
+                <label className="block text-sm font-medium text-gray-700 mt-4">
+                    Cc
+                </label>
+                <Select
+                    className="mt-1"
+                    componentAs={CreatableSelect}
+                    isMulti
+                    value={selectedEmailsCc.map((email) => ({
+                        label: email,
+                        value: email,
+                    }))}
+                    placeholder="Add email addresses..."
+                    onChange={(newValues) => {
+                        const emails = newValues
+                            ? newValues.map((option) => option.value)
+                            : []
+                        setSelectedEmailsBcc(emails)
+                    }}
+                    onCreateOption={(inputValue) => {
+                        const newEmails = [...selectedEmailsCc, inputValue]
+                        setSelectedEmailsBcc(newEmails)
+                    }}
+                />
+                <label className="block text-sm font-medium text-gray-700">
+                    Bcc
+                </label>
+                <Select
+                    className="mt-1"
+                    componentAs={CreatableSelect}
+                    isMulti
+                    value={selectedEmailsBcc.map((email) => ({
+                        label: email,
+                        value: email,
+                    }))}
+                    placeholder="Add email addresses..."
+                    onChange={(newValues) => {
+                        const emails = newValues
+                            ? newValues.map((option) => option.value)
+                            : []
+                        setSelectedEmailsBcc(emails)
+                    }}
+                    onCreateOption={(inputValue) => {
+                        const newEmails = [...selectedEmailsBcc, inputValue]
+                        setSelectedEmailsBcc(newEmails)
                     }}
                 />
 
@@ -803,6 +854,7 @@ const onSelectChange = (value = 0) => {
                     >
                         Share
                     </Button>
+                </div>
                 </div>
             </Dialog>
 

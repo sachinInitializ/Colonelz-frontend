@@ -1,134 +1,50 @@
-import React, { useRef } from 'react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-const styles = {
-	page: {
-		marginLeft: '5rem',
-		marginRight: '5rem',
-		color: 'black',
-		backgroundColor: 'white',
-	},
+import React, { useState } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
-	columnLayout: {
-		display: 'flex',
-		justifyContent: 'space-between',
-		margin: '3rem 0 5rem 0',
-		gap: '2rem',
-	},
+const RichTextEditor: React.FC = () => {
+  const [value, setValue] = useState('');
 
-	column: {
-		display: 'flex',
-		flexDirection: 'column',
-	},
-
-	spacer2: {
-		height: '2rem',
-	},
-
-	fullWidth: {
-		width: '100%',
-	},
-
-	marginb0: {
-		marginBottom: 0,
-	},
-};
-
-const ReportTemplate = () => {
-	return (
-		<>
-			<div style={styles.page}>
-				<div>
-					<h1 style={styles.introText}>
-						Report Heading That Spans More Than Just One Line
-					</h1>
-				</div>
-
-				<div style={styles.spacer2}></div>
-
-				<img style={styles.fullWidth} src="photo-2.png" />
-			</div>
-
-			<div style={styles.page}>
-				<div>
-					<h2 style={styles.introText}>
-						Report Heading That Spans More Than Just One Line
-					</h2>
-				</div>
-
-				<div style={styles.columnLayout}>
-					<div style={styles.column}>
-						<img style={styles.fullWidth} src="photo-2.png" />
-						<h4 style={styles.marginb0}>Subtitle One</h4>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua.
-						</p>
-					</div>
-
-					<div style={styles.column}>
-						<img style={styles.fullWidth} src="photo-1.png" />
-						<h4 style={styles.marginb0}>Subtitle Two</h4>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua.
-						</p>
-					</div>
-				</div>
-
-				<div style={styles.columnLayout}>
-					<div style={styles.column}>
-						<img style={styles.fullWidth} src="photo-3.png" />
-						<h4 style={styles.marginb0}>Subtitle One</h4>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua.
-						</p>
-					</div>
-
-					<div style={styles.column}>
-						<img style={styles.fullWidth} src="photo-4.png" />
-						<h4 style={styles.marginb0}>Subtitle Two</h4>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua.
-						</p>
-					</div>
-				</div>
-			</div>
-		</>
-	);
-};
-
-const App = () => {
-  const reportTemplateRef = useRef(null);
-
-  const handleGeneratePdf = () => {
-    const input = reportTemplateRef.current;
-
-    html2canvas(input)
-      .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
-        pdf.addImage(imgData, 'PNG', 0, 0);
-        pdf.save("download.pdf");
-      });
+  const handleChange = (content: string) => {
+    setValue(content);
   };
 
+  const modules = {
+    toolbar: [
+      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+      [{size: []}],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, 
+       {'indent': '-1'}, {'indent': '+1'}],
+      ['link', 'image', 'video'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'align': [] }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      ['clean']
+    ],
+  };
+
+  const formats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block',
+    'list', 'bullet', 'indent',
+    'link', 'image', 'video',
+    'color', 'background',
+    'align',
+    'script'
+  ];
+
   return (
-    <div>
-      <button className="button" onClick={handleGeneratePdf}>
-        Generate PDF
-      </button>
-      <div ref={reportTemplateRef}>
-        <ReportTemplate />
-      </div>
+    <div className="rich-text-editor">
+      <ReactQuill 
+        value={value} 
+        onChange={handleChange} 
+        modules={modules}
+        formats={formats}
+        theme="snow"
+      />
     </div>
   );
-}
+};
 
-export default App;
+export default RichTextEditor;

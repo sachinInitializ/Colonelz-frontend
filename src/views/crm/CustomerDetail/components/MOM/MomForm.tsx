@@ -339,33 +339,12 @@ const YourFormComponent = () => {
                                 </span>
                             )}
                         </FormItem>
-                        <FormItem label="Remark">
-                            <Input
-                            textArea
-                                name="remark"
-                                value={formData.remark}
-                                onChange={(e) =>
-                                    handleInputChange('remark', e.target.value)
-                                }
-                            />
-                        </FormItem>
+                       
 
-                        {/* <App/> */}
 
-                        <FormItem label="File">
-                            <Upload multiple
-                                onChange={(files:any) => handleFileChange(files)}
-                            >
-                                <Button
-                                    variant="solid"
-                                    icon={<HiOutlineCloudUpload />}
-                                    type="button"
-                                >
-                                    Upload your file
-                                </Button>
-                            </Upload>
-                        </FormItem>
+                      
                     </div>
+                        <App/>
                    
                 </FormContainer>
                 <StickyFooter

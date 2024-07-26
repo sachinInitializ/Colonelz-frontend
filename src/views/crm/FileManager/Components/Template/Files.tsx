@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Checkbox, Dialog, FormItem, Input, Notification, Upload, toast } from '@/components/ui';
+import { Button, Checkbox, Dialog, FormItem, Input, Notification, Select, Upload, toast } from '@/components/ui';
 import { ConfirmDialog, StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn, CiImageOn } from 'react-icons/ci';
@@ -82,6 +82,8 @@ const Index = () => {
   const [leadData, setLeadData] = useState<FileItem[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  const [selectedEmailsCc, setSelectedEmailsCc] = useState<string[]>([]);
+  const [selectedEmailsBcc, setSelectedEmailsBcc] = useState<string[]>([]);
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const location = useLocation();
@@ -232,6 +234,8 @@ const onDialogClose3 = () => {
         type:'template',
       file_id: selectedFiles,
       email: selectedEmails,
+      cc: selectedEmailsCc,
+      bcc: selectedEmailsBcc,
       subject: subject,
       body: body,
     };
@@ -269,6 +273,8 @@ const onDialogClose3 = () => {
   
       setSelectedFiles([]);
       setSelectedEmails([]);
+      setSelectedEmailsCc([]);
+      setSelectedEmailsBcc([]);
       setSubject('')
       setBody('')
       onDialogClose()
@@ -555,12 +561,13 @@ const onDialogClose3 = () => {
 
             >
               <h3 className='mb-5'>Share Files</h3>
-
-          <CreatableSelect
+              <div className='max-h-96 overflow-y-auto'>
+              <label className='block text-sm font-medium text-gray-700'>To</label>
+          <Select
           
     isMulti
     value={selectedEmails.map((email) => ({ label: email, value: email }))}
-    
+    componentAs={CreatableSelect}
     placeholder="Add email addresses..."
     onChange={(newValues) => {
       const emails = newValues ? newValues.map((option) => option.value) : [];
@@ -569,6 +576,38 @@ const onDialogClose3 = () => {
     onCreateOption={(inputValue) => {
       const newEmails = [...selectedEmails, inputValue];
       setSelectedEmails(newEmails);
+    }}
+  />
+              <label className='block text-sm font-medium text-gray-700'>Cc</label>
+          <Select
+          
+    isMulti
+    value={selectedEmailsCc.map((email) => ({ label: email, value: email }))}
+    componentAs={CreatableSelect}
+    placeholder="Add email addresses..."
+    onChange={(newValues) => {
+      const emails = newValues ? newValues.map((option) => option.value) : [];
+      setSelectedEmailsCc(emails);
+    }}
+    onCreateOption={(inputValue) => {
+      const newEmails = [...selectedEmailsCc, inputValue];
+      setSelectedEmailsCc(newEmails);
+    }}
+  />
+              <label className='block text-sm font-medium text-gray-700'>Bcc</label>
+          <Select
+          
+    isMulti
+    value={selectedEmailsBcc.map((email) => ({ label: email, value: email }))}
+    componentAs={CreatableSelect}
+    placeholder="Add email addresses..."
+    onChange={(newValues) => {
+      const emails = newValues ? newValues.map((option) => option.value) : [];
+      setSelectedEmailsBcc(emails);
+    }}
+    onCreateOption={(inputValue) => {
+      const newEmails = [...selectedEmailsBcc, inputValue];
+      setSelectedEmailsBcc(newEmails);
     }}
   />
 
@@ -598,6 +637,8 @@ const onDialogClose3 = () => {
          <Button size="sm" variant="solid" type="submit" className='mt-5 ' onClick={handleShareFiles} >
             Share
           </Button>
+          </div>
+
           </div>
             </Dialog>
 
