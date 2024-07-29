@@ -4,7 +4,7 @@ import type { CallbackSetSkip } from '../types'
 
 type Step1Props = CallbackSetSkip
 
-const Step1 = ({ onNext, onSkip }: Step1Props) => {
+const Thank = ({ onNext, onSkip }: Step1Props) => {
     return (
         <div className="text-center">
             <DoubleSidedImage
@@ -21,15 +21,10 @@ const Step1 = ({ onNext, onSkip }: Step1Props) => {
                 will only take a minute or two.
             </p>
             <div className="mt-8 max-w-[350px] mx-auto">
-                <Button block className="mb-2" variant="solid" onClick={onNext}>
-                    Get started
-                </Button>
-                <Button block variant="plain" onClick={onSkip}>
-                    Skip now
-                </Button>
+               
             </div>
         </div>
     )
 }
 
-export default Step1
+export default Thank

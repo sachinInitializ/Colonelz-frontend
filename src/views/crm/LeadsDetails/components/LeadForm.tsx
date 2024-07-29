@@ -63,6 +63,7 @@ const myParam = queryParams.get('id') || ''
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(false);
 
   const statusOptions = [
     { value: 'No Response', label: 'No Response' },
@@ -114,7 +115,7 @@ const myParam = queryParams.get('id') || ''
 
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
+    setLoading(true);
     const validationErrors: { [key: string]: string } = {};
     if (!selectedStatus) {
       validationErrors.status = 'Status is required';
@@ -131,14 +132,17 @@ const myParam = queryParams.get('id') || ''
     try {
       const response = await apiGetCrmLeadsUpdates(formData)
       const errorMessage = await response.json()
+      setLoading(false)
       if (response.ok) {
           closeAfter2000ms('success','Lead Updated successfully')
           window.location.reload()
       } else {
           closeAfter2000ms('danger',errorMessage.errorMessage)
+          setLoading(false)
       }
   } catch (error) {
     closeAfter2000ms('danger',`Error: ${error}`)
+    setLoading(false)
   }
   };
 
@@ -215,8 +219,10 @@ const myParam = queryParams.get('id') || ''
               variant="solid"
               type="submit"
               className=''
+              loading={loading}
             >
-              Submit
+              {loading?'Submitting':'Submit'}
+              
             </Button>
           </div>
         </FormContainer>

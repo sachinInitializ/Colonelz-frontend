@@ -72,8 +72,8 @@ const priorityOptions = [
                         project_id: Data.project_id,
                         task_name: Data.task_name,
                         task_description: Data.task_description,
-                        actual_task_start_date: new Date(Data.actual_task_start_date),
-                        actual_task_end_date: new Date(Data.actual_task_end_date),
+                        actual_task_start_date: new Date(Data.actual_task_start_date) ,
+                        actual_task_end_date: `${new Date(Data.actual_task_end_date)}`,
                         estimated_task_start_date: new Date(Data.estimated_task_start_date),
                         estimated_task_end_date: new Date(Data.estimated_task_end_date),
                         task_status: statusOptions.find((option)=>option.value===Data.task_status)?.value,  
@@ -174,7 +174,7 @@ const priorityOptions = [
                             <Field name='actual_task_start_date' placeholder='Start date'>
                                 {({field}: any) => (
                                     <DatePicker name='actual_task_start_date'
-                                        value={field.value}
+                                        value={''} 
                                         onChange={(value) => {
                                             field.onChange({ target: {name: 'actual_task_start_date', value: `${value}`} })
                                         }}
@@ -188,7 +188,8 @@ const priorityOptions = [
                                 <Field name='actual_task_end_date' placeholder='End Date'>
                                     {({field}:any)=>(
                                         <DatePicker name='actual_task_end_date'
-                                        value={field.value}
+                                        value={field.value?field.value:''}
+                                        placeholder='End Date'
                                         onChange={(value) => { 
                                             field.onChange({ target: {name: 'actual_task_end_date', value: `${value}`} })
                                         }}

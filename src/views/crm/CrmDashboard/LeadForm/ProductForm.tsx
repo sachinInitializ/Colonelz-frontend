@@ -39,7 +39,7 @@ interface FormData {
 
 const LeadForm: React.FC = () => {
     const navigate = useNavigate()
-
+    const [loading, setLoading] = useState(false)
     return (
        <Formik
        initialValues={{
@@ -68,9 +68,10 @@ const LeadForm: React.FC = () => {
        }
        onSubmit={
               async(values) => {
-                console.log(values);
+                setLoading(true)
                 const response = await apiGetCrmCreateLead(values)
                 const data= await response.json()
+                setLoading(false)
                 console.log(data);
                 if (data.code===200){
                     toast.push(
@@ -260,8 +261,8 @@ const LeadForm: React.FC = () => {
                     >
                         Discard
                     </Button>
-                    <Button size="sm" variant="solid" type="submit">
-                        Submit
+                    <Button size="sm" variant="solid" type="submit" loading={loading}>
+                        {loading?'Submitting':'Submit'}
                     </Button>
                 
             </StickyFooter>

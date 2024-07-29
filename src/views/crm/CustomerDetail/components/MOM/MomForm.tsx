@@ -39,6 +39,7 @@ interface FormData {
 
 const YourFormComponent = () => {
     const navigate = useNavigate()
+    const [submitting, setSubmitting] = useState(false)
     interface QueryParams {
         project_id: string
         client_name: string
@@ -67,26 +68,13 @@ const YourFormComponent = () => {
 
     
 
-    // Options for the client select input
     const clientOptions: Option[] = [
         {
             value: allQueryParams.client_name,
             label: allQueryParams.client_name,
         },
-        // Add more client options if needed
     ]
-    // const organisorOptions: Option[] = [
-    //     {},
-    //     // Add more client options if needed
-    // ]
-    // const architectOptions: Option[] = [
-    //     {},
-    //     // Add more client options if needed
-    // ]
-    // const consultant_nameOptions: Option[] = [
-    //     {},
-    //     // Add more client options if needed
-    // ]
+   
 
     const handleSelectChange = (
         selectedOption: Option | Option[] | null,
@@ -147,6 +135,7 @@ const YourFormComponent = () => {
     ]
 
     const handleSubmit = async (e: FormEvent) => {
+        setSubmitting(true)
         e.preventDefault()
         const validationErrors: { [key: string]: string } = {}
         if (formData.client_name.length === 0) {
@@ -165,9 +154,6 @@ const YourFormComponent = () => {
             validationErrors.location = 'Location is required'
         }
 
-        // Validate remark
-
-        // Set errors if any
         
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors)
@@ -187,7 +173,8 @@ const YourFormComponent = () => {
         }
 
         try {
-            const formDataToSend = new FormData()
+            setSubmitting(false)    
+                    const formDataToSend = new FormData()
             formDataToSend.append('meetingdate', formData.meetingDate)
             formDataToSend.append('user_id', localStorage.getItem('userId') || '')
             formDataToSend.append('project_id', formData.project_id)
@@ -223,8 +210,12 @@ const YourFormComponent = () => {
                 )
             }
         } catch (error) {
-            console.error('Error:', error)
-            alert('An error occurred')
+            setSubmitting(false)
+            toast.push(
+                <Notification closable type="success" duration={2000}>
+                    Internal server Error
+                </Notification>
+            )
         }
     }
 
@@ -376,8 +367,8 @@ const YourFormComponent = () => {
                 stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
         >
               
-                        <Button type="submit" className="mr-4" variant="solid" size='sm'>
-                            Submit
+                        <Button type="submit" className="mr-4" variant="solid" size='sm' loading={submitting}>
+                            {submitting ? 'Submitting...' : 'Submit'}
                         </Button>
                         <Button type="submit" onClick={() => navigate(-1)} size='sm'>
                             Discard

@@ -80,10 +80,14 @@ const ContractDetails=(data : FileItemProps )=> {
     const [rowSelection, setRowSelection] = useState({})
     const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]); 
     const [dialogIsOpen, setIsOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [remark, setRemark] = useState("");
     const location=useLocation()
     const queryParams=new URLSearchParams(location.search)
     const leadId=queryParams.get('id')
+    const [approvalLoading,setApprovalLoading]=useState(false)
+    
+    
 
     const openDialog = () => {
         setIsOpen(true)
@@ -95,6 +99,7 @@ const ContractDetails=(data : FileItemProps )=> {
     }
 
     const Approval=async(fileID:string,status:string)=>{
+        setApprovalLoading(true);
         const postData = {
             lead_id:leadId ,
             file_id: fileID,
@@ -104,6 +109,7 @@ const ContractDetails=(data : FileItemProps )=> {
         try{
             const response=await apiGetCrmProjectShareContractApproval(postData);
             const responseData=await response.json();
+            setApprovalLoading(false);
             if(response.status===200){
                 toast.push(
                     <Notification closable type='success' duration={2000}>
@@ -114,6 +120,7 @@ const ContractDetails=(data : FileItemProps )=> {
             }
         }
         catch(error){
+            setApprovalLoading(false);
             toast.push(
                 <Notification closable type='danger' duration={2000}>
                     Internal Server Error
@@ -171,7 +178,7 @@ const ContractDetails=(data : FileItemProps )=> {
                                     <div>Pending</div>
                                 ) : (
                                     <div className='flex gap-1'>
-                                        <Button variant='solid' size='sm' onClick={()=>Approval(fileId,'approved')}>Accept</Button>
+                                        <Button variant='solid' size='sm' onClick={()=>Approval(fileId,'approved')}>{approvalLoading?"Approving...":'Approve'}</Button>
                                         <Button variant='solid' color='red-600' size='sm' onClick={()=>openDialog1(fileId)}>Reject</Button>
                                         <Dialog
                                             isOpen={dialogIsOpen}
@@ -183,8 +190,10 @@ const ContractDetails=(data : FileItemProps )=> {
                                                 initialValues={{ lead_id:leadId , file_id: fileId, status: 'rejected', remark: '' }}
                                                 validationSchema={Yup.object({ remark: Yup.string().required('Required') })}
                                                 onSubmit={async (values, { setSubmitting }) => {
+                                                    setSubmitting(true);
                                                     const response = await apiGetCrmProjectShareContractApproval(values);
                                                     const responseData=await response.json();
+                                                    setSubmitting(false);
                                                     if(response.status===200){
                                                         toast.push(
                                                             <Notification closable type='success' duration={2000}>
@@ -204,6 +213,7 @@ const ContractDetails=(data : FileItemProps )=> {
                                                     setSubmitting(false);
                                                 }}
                                             >
+                                                {({ handleSubmit,isSubmitting }) => (
                                                 <Form>
                                                     <FormItem label="Remark">
                                                         <Field name="remark"    >
@@ -222,9 +232,9 @@ const ContractDetails=(data : FileItemProps )=> {
                                                         </Field>
                                                     </FormItem>
                                                     <div className='flex justify-end'>
-                                                        <Button type="submit" variant='solid'>Submit</Button>
+                                                        <Button type="submit" variant='solid' loading={isSubmitting}>{isSubmitting?'Submitting':'Submit'}</Button>
                                                     </div>
-                                                </Form>
+                                                </Form>)}
                                             </Formik>
                                         </Dialog>
                                     </div>
@@ -300,6 +310,7 @@ const ContractDetails=(data : FileItemProps )=> {
         project_name:string
         site_location:string
         quotation:File[]
+        user_id:string
 
     }
     interface Option {
@@ -345,15 +356,15 @@ const ContractDetails=(data : FileItemProps )=> {
         }
      }
 
-     const SelectField: React.FC<SelectFieldProps> = ({ options, field, form }) => (
+     const SelectField: React.FC<any> = ({ options, field, form }) => (
         <Select
             options={options}
             name={field.name}
-            value={options ? options.find(option => option.value === field.value) : ''}
+            value={options ? options.find((option:any) => option.value === field.value) : ''}
             onChange={(option) => form.setFieldValue(field.name, option ? option.value : '')}
         />
     );
-    const handleSubmit = async (values:FormValues) => {
+    const handleSubmit = async (values:any) => {
         const formData=new FormData();
         formData.append('client_name',values.client_name);
         formData.append('email',values.email);
@@ -363,13 +374,15 @@ const ContractDetails=(data : FileItemProps )=> {
         formData.append('folder_name',values.folder_name);
         formData.append('project_name',values.project_name);
         formData.append('site_location',values.site_location);
-
+        formData.append('user_id',localStorage.getItem('userId') as string);
         
+        setLoading(true);
         values.quotation.forEach((file:File)=>{
             formData.append('quotation',file);
         })
         const response=await apiGetCrmFileManagerShareContractFile(formData);
         const responseData=  await response.json();
+        setLoading(false);
         if(response.status===200){
             toast.push(
                 <Notification closable type='success' duration={2000}>
@@ -457,7 +470,8 @@ const ContractDetails=(data : FileItemProps )=> {
                         setSubmitting(false);
                  }}
                  >
-                    <Form className='max-h-96 overflow-y-auto'>
+                    <div className='max-h-96 overflow-y-auto '>
+                    <Form className='mr-3'>
                  <FormItem label='Client Name' asterisk>
                  <Field name="client_name" type="text" component={Input}/>
                  </FormItem>
@@ -484,17 +498,21 @@ const ContractDetails=(data : FileItemProps )=> {
                     <FormItem label='Quotation'>
                     <Field name="quotation" type="text">
   {({ field, form }: any) => (
+    
     <Upload
     accept='.pdf'
+    draggable
       onChange={(files) => {
         form.setFieldValue('quotation', files);
       }}
     />
+
   )}
 </Field>
                     </FormItem>
-                    <Button type='submit' variant='solid'> Submit</Button>
+                    <Button type='submit' block variant='solid' loading={loading}> {loading?'Submitting':'Submit'} </Button>
                  </Form>  
+                 </div>
                  </Formik>
                  
             </Dialog>

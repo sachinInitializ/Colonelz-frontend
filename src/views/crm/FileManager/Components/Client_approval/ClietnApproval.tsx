@@ -13,6 +13,7 @@ import type { AxiosError } from 'axios'
 import Simple from '@/components/layouts/AuthLayout/Simple'
 import { useLocation } from 'react-router-dom'
 import { Notification, toast } from '@/components/ui'
+import Thank from './thank'
 
 interface QuotationApproval extends CommonProps {
     disableSubmit?: boolean
@@ -81,7 +82,7 @@ const ClientApproval = (props: QuotationApproval) => {
 
     return (
         <Simple className='w-1/2'>
-        {!message?<><div className={className}>
+        {message?<><div className={className}>
         <h3 className="mb-4">Quotation Approval</h3>
             
             <Formik
@@ -172,8 +173,8 @@ const ClientApproval = (props: QuotationApproval) => {
         </div></>:
         <>
         {status==='approved'?
-        <h3 className=''>Thank you for accepting the Contract. Welcome onboard, we're excited to begin this journey with you.</h3>:status==='amended'?
-    <h3>Thank you for your feedback. Please allow us some time to get back to you.</h3>:<h3>Thank you for your feedback. Please share with us your concerns; we would like to address them on priority.</h3>}
+       <Thank data={"Thank you for accepting the Contract. Welcome onboard, we're excited to begin this journey with you."}/>:status==='amended'?
+    <Thank data={'Thank you for your feedback. Please allow us some time to get back to you.'}/>:<Thank data={'Thank you for your feedback. Please share with us your concerns; we would like to address them on priority.'}/>}
 
         </>}
         </Simple>

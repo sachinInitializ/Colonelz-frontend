@@ -51,7 +51,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     phone: string;
     location: string;
   }
-  
+  const [loading,setLoading]=useState(false);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
@@ -131,9 +131,9 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
       description: Yup.string(),
      })}
      onSubmit={async(values) => {
-       console.log(values);
+       setLoading(true);
        const formData=new FormData();
-       Object.keys(values).forEach(key => {
+       Object.keys(values).forEach((key:string) => {
         if (key !== 'contract') {
           formData.append(key, values[key]);
         }
@@ -148,6 +148,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
        
         const response =await apiGetCrmCreateLeadToProject(formData);
         const responseData=await response.json();
+        setLoading(false);
         if(responseData.code===200){
           toast.push(
             <Notification
@@ -370,7 +371,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
 
           <Button type='button' size='sm' onClick={() => navigate(-1)}>Cancel</Button>
 
-          <Button type='submit' size='sm' variant='solid'>Submit</Button>
+          <Button type='submit' size='sm' variant='solid' loading={loading}>{loading?'Submitting':'Submit'}</Button>
         </StickyFooter>
         </Form>)}
       

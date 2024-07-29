@@ -143,20 +143,16 @@ const clientOptions: Option[] = uniqueFolderNames
 
       <FormItem label="File">
                             <Upload
+                            draggable
                                 onChange={(files) => handleFileChange(files)}
                                 multiple
-                            >
-                                <Button
-                                    icon={<HiOutlineCloudUpload />}
-                                    type="button"
-                                >
-                                    Upload your file
-                                </Button>
-                            </Upload>
+                            />
+                                
+                           
                         </FormItem>
               <div className='flex justify-end'>
 
-      <Button type="submit" variant='solid'>Submit</Button>
+      <Button type="submit" variant='solid' block>Submit</Button>
       </div>
     </form>
   );

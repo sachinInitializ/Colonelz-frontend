@@ -284,7 +284,7 @@ const Index = () => {
                                 <ol className="flex items-center space-x-2">
                                     <li>
                                         <a
-                                            href="#"
+                                            href="/app/crm/fileManager"
                                             className="text-blue-600 dark:text-blue-400 hover:underline"
                                         >
                                             FileManager
@@ -295,7 +295,7 @@ const Index = () => {
                                     </li>
                                     <li>
                                         <a
-                                            href="#"
+                                            href="/app/crm/fileManager"
                                             className="text-blue-600 dark:text-blue-400 hover:underline"
                                         >
                                             Company Data
@@ -306,7 +306,7 @@ const Index = () => {
                                     </li>
                                     <li>
                                         <a
-                                            href="#"
+                                            href={`/app/crm/fileManager/project/templates/${type}`}
                                             className="text-blue-600 dark:text-blue-400 hover:underline"
                                         >
                                             {type}

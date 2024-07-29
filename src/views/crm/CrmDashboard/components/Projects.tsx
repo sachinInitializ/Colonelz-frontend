@@ -9,6 +9,7 @@ import { BiSolidBellRing } from 'react-icons/bi'
 import { apiGetCrmProjects } from '@/services/CrmService'
 import { Dropdown } from '@/components/ui'
 import { useProjectContext } from '../../Customers/store/ProjectContext'
+import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton'
 
 
 
@@ -48,6 +49,9 @@ const Project = ({  className }: LeadsProps) => {
       }
  
     const projects=useProjectContext();
+    const {loading}=useProjectContext()
+    console.log(loading);
+    
     const memoizedProjects = useMemo(() => projects.projects, [projects.projects]);
 
     return (
@@ -70,8 +74,16 @@ const Project = ({  className }: LeadsProps) => {
                         <Th></Th>
                     </Tr>
                 </THead>
+                    {loading ?
+                     <TableRowSkeleton
+                     avatarInColumns= {[0]}
+                     columns={6}
+                     rows={5}
+                     avatarProps={{ width: 14, height: 14 }}
+                 />:
                 <TBody>
-                    {memoizedProjects.slice(0, 5).map((item, index) => {
+                    {
+                    memoizedProjects.slice(0, 5).map((item, index) => {
                         const currentDate = new Date();
                         const projectEndDate = new Date(item.project_end_date);
                         const dateDifference = Math.floor((projectEndDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24));
@@ -100,7 +112,7 @@ const Project = ({  className }: LeadsProps) => {
                             </Tr>
                         )
                     })}
-                </TBody>
+                </TBody>}
             </Table>
         </Card>
     )

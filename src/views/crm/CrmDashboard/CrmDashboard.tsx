@@ -10,7 +10,7 @@ interface Data{
 
 }
 const CrmDashboard = () => {
-    const {apiData}=useProjectContext()
+    const {apiData,loading}=useProjectContext()
 
     const data=[
         {

@@ -230,16 +230,16 @@ const Filtering = () => {
          },
             {
                 header:'Task Start Date',
-                accessorKey:'actual_task_start_date',
+                accessorKey:'estimated_task_start_date',
                 cell:({row})=>{
-                    return <span>{formateDate(row.original.actual_task_start_date)}</span>
+                    return <span>{formateDate(row.original.estimated_task_start_date)}</span>
                 }
             },
             {
                 header:'Task End Date',
-                accessorKey:'actual_task_end_date',
+                accessorKey:'estimated_task_end_date',
                 cell:({row})=>{
-                    return <span>{formateDate(row.original.actual_task_end_date)}</span>
+                    return <span>{formateDate(row.original.estimated_task_end_date)}</span>
                 }
             },
             {

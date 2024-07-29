@@ -25,6 +25,9 @@ import { rankItem } from '@tanstack/match-sorter-utils'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
 import { AiOutlineFolder } from 'react-icons/ai'
+import { apiGetCrmFileManager } from '@/services/CrmService'
+import NoData from '@/views/pages/NoData'
+import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -88,9 +91,12 @@ const Commercial = () => {
     folder:string
   }
   const [data,setData]=useState<Result[]>([])
+  const [loading,setIsLoading]=useState(true)
     useEffect(() => {
       const fetchDataAndLog = async () => {
-          const templateData = await getTemplateData() || [];
+          const data = await apiGetCrmFileManager(); 
+          setIsLoading(false)
+          const templateData=data.data.templateData
           const folderSubFolderPairs:folderpairs[] = [
             { folder_name: 'commercial', sub_folder_name_first: 'designing',folder:"Design" },
             { folder_name: 'commercial', sub_folder_name_first: 'executing',folder:"Design and Execution"},
@@ -102,9 +108,9 @@ const Commercial = () => {
               let count=0;
               let date=''
               templateData.flatMap(
-                (item) =>{
+                (item:any) =>{
                   item.files.filter(
-                    (file) =>{
+                    (file:any) =>{
                      if(file.folder_name === pair.folder_name && file.sub_folder_name_first === pair.sub_folder_name_first){
                       count++;
                       date=formatDate(file.updated_date)
@@ -252,6 +258,12 @@ const Commercial = () => {
                         </Tr>
                     ))}
                 </THead>
+                {loading?<TableRowSkeleton
+                      avatarInColumns= {[0]}
+                      columns={columns.length}
+                      rows={2}
+                      avatarProps={{ width: 14, height: 14 }}
+                  />:data.length===0?<Td colSpan={columns.length}><NoData/></Td>:
                 <TBody>
                     {table.getRowModel().rows.map((row) => {
                         return (
@@ -269,7 +281,7 @@ const Commercial = () => {
                             </Tr>
                         )
                     })}
-                </TBody>
+                </TBody>}
             </Table>
         </>
 

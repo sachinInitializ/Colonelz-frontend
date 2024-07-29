@@ -1000,7 +1000,7 @@ const onSelectChange = (value = 0) => {
                         folder_name: folderName,
                         files: [],
                     }}
-                    onSubmit={async (values) => {
+                    onSubmit={async (values,{setSubmitting}) => {
                         if (values.files.length === 0) {
                             toast.push(
                                 <Notification
@@ -1060,6 +1060,7 @@ const onSelectChange = (value = 0) => {
                         }
                     }}
                 >
+                    {({ isSubmitting }) => (
                     <Form
                         className=" overflow-y-auto max-h-[400px] mt-4"
                         style={{ scrollbarWidth: 'none' }}
@@ -1068,6 +1069,7 @@ const onSelectChange = (value = 0) => {
                             <Field name="files">
                                 {({ field, form }: any) => (
                                     <Upload
+                                    draggable
                                         onChange={(
                                             files: File[],
                                             fileList: File[],
@@ -1079,10 +1081,10 @@ const onSelectChange = (value = 0) => {
                                 )}
                             </Field>
                         </FormItem>
-                        <Button variant="solid" type="submit">
-                            Submit
+                        <Button variant="solid" type="submit" loading={isSubmitting} block>
+                            {isSubmitting ? 'Uploading...' : 'Upload'}
                         </Button>
-                    </Form>
+                    </Form>)}
                 </Formik>
             </Dialog>
 

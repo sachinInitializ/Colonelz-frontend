@@ -76,8 +76,7 @@ const CustomerDetail = () => {
     useEffect(() => {
         const fetchDataAndLog = async () => {
           try {
-            const leadData = await apiGetCrmSingleProjectQuotation(allQueryParams.project_id);
-            console.log(leadData.data);
+            const leadData = await apiGetCrmSingleProjectQuotation(allQueryParams.project_id)
            setFileData(leadData.data)
           } catch (error) {
             console.error('Error fetching lead data', error);

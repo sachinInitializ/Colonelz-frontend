@@ -25,6 +25,7 @@ const YourFormComponent: React.FC = () => {
   const queryParams = new URLSearchParams(location.search);
   const folderName = queryParams.get('folder');
   const type = queryParams.get('type');
+  const [submitting, setSubmitting] = useState(false);
   const [leadData, setLeadData] = useState<FoldersItem[]>([]);
   const [formData, setFormData] = useState<FormData>({
     sub_folder_name_first: folderName,
@@ -99,7 +100,7 @@ function closeAfter2000ms(data:string,type:string) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setSubmitting(true);
     if (!formData.sub_folder_name_second|| formData.files.length === 0) {
       toast.push(
         <Notification closable type="warning" duration={3000}>
@@ -124,8 +125,8 @@ function closeAfter2000ms(data:string,type:string) {
       const response = await apiGetCrmFileManagerCreateTemplateFolder(postData);
 
     
-      const responseData = await response.json(); 
-      console.log('Response Data:', responseData);
+      const responseData = await response.json();
+      setSubmitting(false); 
   
       if (response.ok) {
         closeAfter2000ms('File uploaded successfully.','success');
@@ -156,7 +157,7 @@ const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
     style={{scrollbarWidth:'none'}}
     onSubmit={handleSubmit}
      >
-     <h3 className='mb-5'>Project File Upload</h3>
+     <h3 className='mb-5'>File Upload</h3>
       <div className='mb-5'>
         <CreatableSelect
         name='sub_folder_name_second'
@@ -171,18 +172,16 @@ const clientOptions: Option[] = uniqueFolderNames.map((folderName) => ({
                             <Upload
                                 onChange={(files) => handleFileChange(files)}
                                 multiple
+                                draggable
                             >
-                                <Button
-                                    icon={<HiOutlineCloudUpload />}
-                                    type="button"
-                                >
-                                    Upload your file
-                                </Button>
+                                
                             </Upload>
                         </FormItem>
               <div className='flex justify-end'>
 
-      <Button type="submit" variant='solid'>Submit</Button>
+      <Button type="submit" variant='solid' loading={submitting} block>
+        {submitting ? 'Uploading...' : 'Upload'}
+      </Button>
       </div>
     </form>
   );

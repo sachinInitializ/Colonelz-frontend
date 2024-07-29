@@ -369,7 +369,11 @@ const onDialogClose3 = () => {
                 return <div> {getFileType(row.original.fileName)}</div>
             }
            },
-          { header: 'Size', accessorKey: 'fileSize' },
+          { header: 'Size', accessorKey: 'fileSize' ,
+            cell:({row})=>{
+                return formatFileSize(row.original.fileSize)
+            }
+          },
           { header: 'modified', accessorKey: 'date',
             cell:({row})=>{
                 return formatDate(row.original.date)
@@ -378,6 +382,7 @@ const onDialogClose3 = () => {
            {
             header:'Actions',
             accessorKey:'action',
+            id:'actions',
             cell:({row})=>{
                 return (  <div className=' flex justify-center gap-3'> 
   
@@ -478,7 +483,7 @@ const onDialogClose3 = () => {
                                       key={header.id}
                                       colSpan={header.colSpan}
                                   >
-                                      {header.isPlaceholder ? null : (
+                                      {header.isPlaceholder || header.id==='actions' ? null : (
                                           <div
                                               {...{
                                                   className:
@@ -547,9 +552,7 @@ const onDialogClose3 = () => {
           >
             Back
           </Button>
-          <Button size="sm" variant="solid" type="submit" onClick={handleShareFiles}>
-            Share
-          </Button>
+          
         </div>
       </StickyFooter>
       <Dialog
@@ -561,7 +564,7 @@ const onDialogClose3 = () => {
 
             >
               <h3 className='mb-5'>Share Files</h3>
-              <Formik initialValues={{ lead_id: leadId, folder_name: folderName, file_id: '', email: '', cc: '', bcc: '', subject: '', body: '' }}
+              <Formik initialValues={{ lead_id:'', folder_name: folderName, file_id: '', email: '', cc: '', bcc: '', subject: '', body: '' }}
               onSubmit={async(values) => {
                 if (selectedFiles.length === 0 || selectedEmails.length === 0) {
                   toast.push(
@@ -721,7 +724,7 @@ const onDialogClose3 = () => {
                       sub_folder_name_first:folderName,
                       sub_folder_name_second:subfolder,
                       files:[]}}
-                    onSubmit={async(values) => {
+                    onSubmit={async(values,{setSubmitting}) => {
                       if(values.files.length===0){
                         toast.push(
                           <Notification closable type="warning" duration={2000}>
@@ -730,6 +733,7 @@ const onDialogClose3 = () => {
                       )}
                       else{
                         console.log(values);
+                        setSubmitting(true)
                         let formData = new FormData();
                         formData.append('type', values.type || '');
                         formData.append('folder_name', values.folder_name || '');
@@ -740,6 +744,7 @@ const onDialogClose3 = () => {
                         }
                         const response=await apiGetCrmFileManagerCreateTemplateFolder(formData)
                         const responseData=await response.json()
+                        setSubmitting(false)
                         console.log(responseData);
                         
                         if(responseData.code===200){
@@ -759,11 +764,13 @@ const onDialogClose3 = () => {
                     }}
                     }}
                     >
+                      {({ isSubmitting }) => (
                       <Form className='mt-4'>
                         <FormItem label=''>
                           <Field name='files'>
                             {({ field, form }: any) => (
                               <Upload
+                              draggable
                                 onChange={(files: File[], fileList: File[]) => {
                                   form.setFieldValue('files', files);
                                 }}
@@ -772,8 +779,10 @@ const onDialogClose3 = () => {
                             )}
                           </Field>
                         </FormItem>
-                        <Button variant='solid' type='submit'>Submit</Button>
-                      </Form>
+                        <Button variant='solid' type='submit' block loading={isSubmitting} >
+                          {isSubmitting ? 'Uploading...' : 'Upload'}
+                        </Button>
+                      </Form>)}
                     </Formik>
             </Dialog>
 

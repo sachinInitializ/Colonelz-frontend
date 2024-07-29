@@ -1,7 +1,7 @@
 import { useState, useCallback, Suspense, lazy } from 'react'
 import Container from '@/components/shared/Container'
 
-const Step1 = lazy(() => import('./components/Step1'))
+const Step1 = lazy(() => import('./components/thank'))
 const Step2 = lazy(() => import('./components/Step2'))
 const Step3 = lazy(() => import('./components/Step3'))
 const Step4 = lazy(() => import('./components/Step4'))

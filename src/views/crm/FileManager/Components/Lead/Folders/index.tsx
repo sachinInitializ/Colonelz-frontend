@@ -138,6 +138,7 @@ const Index = () => {
   const [dialogIsOpen3, setIsOpen3] = useState(false)
   const [fileId, setFileId] = useState<string>('')
   const [loading,setLoading]=useState(true)
+  const [formloading,setFormLoading]=useState(false)
 
 
   const openDialog = (fileId:string) => {
@@ -606,6 +607,9 @@ const onSelectChange = (value = 0) => {
           
         </div>
       </StickyFooter>
+
+
+      {/* Share for Approval */}
       <Dialog
                 isOpen={dialogIsOpen1}
                 style={{}}
@@ -629,8 +633,17 @@ const onSelectChange = (value = 0) => {
     type: Yup.string().required('Required'),
   })}
   onSubmit={async(values, { setSubmitting }) => {
-    const response = await apiGetCrmFileManagerShareContractFile(values)
-    const responseData = await response.json()
+    setSubmitting(true)
+    const formData=new FormData()
+    formData.append('lead_id',values.lead_id)
+    formData.append('folder_name',values.folder_name)
+    formData.append('file_id',values.file_id)
+    formData.append('user_name',values.user_name)
+    formData.append('type',values.type)
+    
+    const response = await apiGetCrmFileManagerShareContractFile(formData)
+    const responseData = await response.json() 
+    setSubmitting(false)
     if(responseData.code===200){
       toast.push(
         <Notification closable type="success" duration={2000}>
@@ -648,7 +661,7 @@ const onSelectChange = (value = 0) => {
     }
   }}
 >
-  {({ handleChange, handleBlur, values }) => (
+  {({ handleChange, handleBlur, values,isSubmitting }) => (
     <Form>
       <h3 className='mb-5'>Share For Approval</h3>
       <FormItem label='Username' className=''>
@@ -666,7 +679,7 @@ const onSelectChange = (value = 0) => {
   />
 </FormItem>
       </FormItem>
-      <Button type="submit" variant='solid'>Share</Button>
+      <Button type="submit" variant='solid' loading={isSubmitting}>{isSubmitting?'Sharing':'Share'}</Button>
     </Form>
   )}
 </Formik>
@@ -828,6 +841,10 @@ const onSelectChange = (value = 0) => {
           </Formik>
             </Dialog>
 
+
+
+            {/* file upload */}
+
             <Dialog  isOpen={dialogIsOpen2}
                 className=' '
                 onClose={onDialogClose2} 
@@ -839,6 +856,7 @@ const onSelectChange = (value = 0) => {
                       folder_name:folderName,
                       files:[]}}
                     onSubmit={async(values) => {
+                      setFormLoading(true)
                       if(values.files.length===0){
                         toast.push(
                           <Notification closable type="warning" duration={2000}>
@@ -855,6 +873,8 @@ const onSelectChange = (value = 0) => {
                         }
                         const response=await apiGetCrmFileManagerCreateLeadFolder(formData)
                         const responseData=await response.json()
+                        setFormLoading(false)
+                        setLoading(false)
                         console.log(responseData);
                         
                         if(responseData.code===200){
@@ -882,12 +902,13 @@ const onSelectChange = (value = 0) => {
                                 onChange={(files: File[], fileList: File[]) => {
                                   form.setFieldValue('files', files);
                                 }}
+                                draggable
                                 multiple
                               />
                             )}
                           </Field>
                         </FormItem>
-                        <Button variant='solid' type='submit'>Submit</Button>
+                        <Button variant='solid' type='submit' block loading={formloading}>{formloading?'Submitting':'Submit'}</Button>
                       </Form>
                     </Formik>
             </Dialog>

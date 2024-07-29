@@ -3,6 +3,7 @@ import { ApiResponse, LeadDataItem, ProjectDataItem, TemplateDataItem } from "./
 
 let cachedData: ApiResponse | null = null;
 export const fetchData = async (): Promise<ApiResponse> => {
+  
   try {
     if (cachedData) {
       return cachedData;
@@ -26,6 +27,7 @@ export const getProjectData = async (): Promise<ProjectDataItem[]> => {
   return data.data.projectData;
 };
 export const getTemplateData = async (): Promise<TemplateDataItem[]> => {
+  
   const data = await fetchData();
   return data.data.templateData;
 };

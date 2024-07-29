@@ -13,6 +13,8 @@ import {FcTodoList} from 'react-icons/fc'
 import {GrInProgress} from 'react-icons/gr'
 import {MdOutlineVerified} from 'react-icons/md'
 import type { Statistic } from '../store'
+import { useProjectContext } from '../../Customers/store/ProjectContext'
+import { Skeleton } from '@/components/ui'
 
 
 
@@ -56,14 +58,19 @@ const StatisticIcon = ({ type }: { type?: string }) => {
 }
 
 const StatisticCard = ({ data = {} }: { data: Partial<Statistic> }) => {
+    const {loading}=useProjectContext()
+    console.log(loading);
+    
     return (
         <Card>
             <div className="flex items-center gap-4">
                 <StatisticIcon type={data.key} />
                 <div>
                     <div className="flex gap-1.5 items-end mb-2">
-                        <h3 className="font-bold leading-none">{data.value}</h3>
-                        <p className="font-semibold">{data.label}</p>
+                        {loading ? <Skeleton width={60}/> : <h3 className="font-bold leading-none">{data.value}</h3>}
+                       {loading ? <Skeleton width={60}/> : <p className="text-sm text-gray-500 dark:text-gray-400">{data.label}</p>}
+                        
+                    
                     </div>
                     {/* <p className="flex items-center gap-1">
                         <GrowShrink value={data.growShrink || 0} />

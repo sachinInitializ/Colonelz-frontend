@@ -290,9 +290,11 @@ const SubTaskDetails = (Data:Data) => {
                 <div className="p-4">
                     <TabContent value="tab1">
                     <div className='flex  gap-4 items-center mb-5'>
-                        <span onClick={timerData.isRunning?handlePause:handleStart} className=''>
-                            {timerData.isRunning?<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'><CiPause1 className='font-bold'/></Button>:<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'><IoPlayOutline className=''/></Button>}</span>
-                                <Button className='!rounded-full shadow-md' variant='twoTone' size='sm' onClick={handleReset}><PiSquareThin/></Button>
+
+                      {Data.data.sub_task_status==='Completed'?<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'disabled ><IoPlayOutline className='font-bold'/></Button>:
+                        <span  className=''  onClick={timerData.isRunning?handlePause:handleStart}>
+                            {timerData.isRunning?<Button className='!rounded-full shadow-md' variant='twoTone' size='sm' ><CiPause1 className='font-bold'/></Button>:<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'><IoPlayOutline className=''/></Button>}</span>}
+                                <Button className='!rounded-full shadow-md' variant='twoTone' size='sm' onClick={handleReset} disabled={Data.data.sub_task_status==='Completed'?true:false}><PiSquareThin/></Button>
                             <h5>{formatTime()}</h5>
       
     </div>

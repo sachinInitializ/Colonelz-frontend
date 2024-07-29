@@ -81,6 +81,7 @@ interface ProjectUpdateData {
     const searchParams = new URLSearchParams(location.search);
     const projectId = searchParams.get('project_id');
     const userId = localStorage.getItem('userId');
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<ProjectUpdateData>({
       user_id:userId,
       project_id: projectId,
@@ -114,10 +115,11 @@ interface ProjectUpdateData {
   
 
   const handleUpdate = async () => {
+    setLoading(true);
     try {
       const response = await apiGetCrmSingleProjectEdit(formData);
       const data=await response?.json()
-      console.log(data);
+      setLoading(false);
       if (data.errorMessage) {
         toast.push(
           <Notification closable type="danger" duration={2000}>
@@ -133,6 +135,7 @@ interface ProjectUpdateData {
       window.location.reload()
       }
     } catch (error) {
+      setLoading(false);
       toast.push(
         <Notification closable type="danger" duration={2000}>
            Error updating project status
@@ -205,8 +208,9 @@ interface ProjectUpdateData {
           <Button type="button" 
            variant='solid'
              onClick={handleUpdate}
+             loading={loading}
            >
-            Update Project
+            {loading?"Updating...":"Update Project"}
           </Button>
         </form>
       </div>

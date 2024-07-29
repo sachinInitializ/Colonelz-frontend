@@ -18,6 +18,7 @@ import * as Yup from 'yup';
 import { apiGetCrmProjectShareQuotation, apiGetCrmProjectShareQuotationApproval } from '@/services/CrmService'
 import { use } from 'i18next'
 import { useLocation } from 'react-router-dom'
+import NoData from '@/views/pages/NoData'
 
 type FormData = {
   user_name: string;
@@ -88,6 +89,7 @@ const Quotations=(data : FileItemProps )=> {
     const location=useLocation()
     const queryParams=new URLSearchParams(location.search)
     const projectId=queryParams.get('project_id')
+    const [submit,setSubmit]=useState(false)
 
     const openDialog = () => {
         setIsOpen(true)
@@ -348,8 +350,10 @@ const Quotations=(data : FileItemProps )=> {
         />
     );
     const handleSubmit = async (values:FormValues) => {
+        setSubmit(true);
         const response=await apiGetCrmProjectShareQuotation(values);
         const responseData=  await response.json();
+        setSubmit(false);
         if(responseData.code===200){
             toast.push(
                 <Notification closable type="success" duration={2000}>
@@ -399,7 +403,7 @@ const Quotations=(data : FileItemProps )=> {
         </TBody>
     </Table>
 ) : (
-    <div style={{ textAlign: 'center'}  }>No Quotation File</div>
+    <div style={{ textAlign: 'center'}  }><NoData/></div>
 )}
 
           
@@ -432,7 +436,7 @@ const Quotations=(data : FileItemProps )=> {
                     <FormItem label='File'>
                     <Field name="file_id" component={SelectField} options={approvedFiles}/>
                     </FormItem>
-                    <Button type='submit' variant='solid'> Submit</Button>
+                    <Button type='submit' variant='solid' loading={submit}> {submit?'Submitting':'Submit'}</Button>
                  </Form>  
                  </Formik>
                  

@@ -21,6 +21,7 @@ const YourFormComponent: React.FC<Data> = (data) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get('project_id');
+  const [submit,setSubmit]=useState(false);
   const [formData, setFormData] = useState<FormData>({
     project_id: projectId,
     folder_name: '',
@@ -57,7 +58,7 @@ const YourFormComponent: React.FC<Data> = (data) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setSubmit(true);
     if (!formData.folder_name || formData.files.length === 0) {
       toast.push(
         <Notification closable type="warning" duration={3000}>
@@ -82,6 +83,7 @@ const YourFormComponent: React.FC<Data> = (data) => {
     
       const response = await apiGetCrmFileManagerCreateProjectFolder(postData);
       const responseData = await response.json(); 
+      setSubmit(false);
       console.log('Response Data:', responseData);
   
       if (responseData.code===200) {
@@ -141,21 +143,16 @@ const clientOptions: Option[] = uniqueFolderNames
 
       <FormItem label="File">
                             <Upload
+                            draggable
                                 onChange={(files) => handleFileChange(files)}
                                 multiple
                             >
-                                <Button
-                                    
-                                    icon={<HiOutlineCloudUpload />}
-                                    type="button"
-                                >
-                                    Upload your file
-                                </Button>
+                                
                             </Upload>
                         </FormItem>
               <div className='flex justify-end'>
 
-      <Button type="submit" variant='solid'>Submit</Button>
+      <Button type="submit" variant='solid' loading={submit} block>{submit?'Submitting...':'Submit'}</Button>
       </div>
     </form>
   );
