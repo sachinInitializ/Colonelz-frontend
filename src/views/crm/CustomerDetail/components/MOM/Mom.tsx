@@ -1,4 +1,4 @@
-import { useMemo, Fragment, useState, useEffect, useContext } from 'react'
+import { useMemo, Fragment, useState, useEffect, useContext, useRef } from 'react'
 import Table from '@/components/ui/Table'
 import {
     useReactTable,
@@ -16,158 +16,10 @@ import { apiGetCrmProjectsMom, apishareMom } from '@/services/CrmService'
 import { useMomContext } from '../../store/MomContext'
 import appConfig from '@/configs/app.config'
 import { BsThreeDotsVertical } from 'react-icons/bs'
-import { Document, Page, Text, View, Image, BlobProvider, StyleSheet, Font, Link, PDFViewer } from '@react-pdf/renderer';
-Font.register({
-  family: 'Poppins',
-  fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/poppins/v1/VIeViZ2fPtYBt3B2fQZplvesZW2xOQ-xsNqO47m55DA.ttf",
-      fontWeight: 300,
-      
-    },
-    {
-      src: "https://fonts.gstatic.com/s/poppins/v1/hlvAxH6aIdOjWlLzgm0jqg.ttf",
-      fontWeight: 400
-    },
-    {
-      src: "https://fonts.gstatic.com/s/poppins/v1/4WGKlFyjcmCFVl8pRsgZ9vesZW2xOQ-xsNqO47m55DA.ttf",
-      fontWeight: 500,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/poppins/v1/-zOABrCWORC3lyDh-ajNnPesZW2xOQ-xsNqO47m55DA.ttf",
-      fontWeight: 600,
-    }
-    ,
-    {
-      src: "https://fonts.gstatic.com/s/poppins/v1/8JitanEsk5aDh7mDYs-fYfesZW2xOQ-xsNqO47m55DA.ttf",
-      fontWeight: 700,
-    }
-  ]
-});
+import { useReactToPrint } from 'react-to-print';
+import { BiChevronUp } from 'react-icons/bi'
+import { MdDownload } from 'react-icons/md'
 
-
-const styles = StyleSheet.create({
-  page: {
-    fontFamily:"Times-Roman",
-    paddingBottom:10,
-    paddingTop:20,
-  },
-  text: {
-    fontWeight:300,
-    fontSize: 14,
-    marginBottom: 5,
-    fontFamily: 'Poppins',
-    color:"gray",
-    textTransform: 'capitalize',
-    width:10,
-  },
-  header:{
-  height: 130,
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  },
-
-  headerText:{
-    fontSize: 24,
-    fontFamily: 'Poppins',
-    fontWeight: 700,
-  },
-
-  subsection:{
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingLeft:50,
-    paddingRight:50,
-  },
-  section: {
-    marginBottom: 10,
-    fontFamily: 'Poppins',
-    fontWeight: 400,
-   
-  },
-  section1: {
-    marginBottom: 10,
-    display: 'flex',
-    flexDirection: 'row',
-    alignContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-    fontSize: 14,
-
-  },
-  heading: {
-    fontSize: 25,
-    marginBottom: 20,
-    fontFamily: 'Poppins',
-    fontWeight: 500,
-    textAlign: 'center',
-    marginTop:20,
-
-  },
-  subheading: {
-    fontFamily: 'Poppins',
-    fontWeight: 400,
-    fontSize: 18,
-    marginBottom: 10,
-   paddingLeft:50,
-   marginTop:10,
-  },
-  subheading1: {
-    fontFamily: 'Poppins',
-    fontWeight: 400,
-    fontSize: 18,
-    marginBottom: 10,
-  marginTop:10,
-  },
-  subtext: {
-    fontSize: 16,
-    marginBottom: 10,
-    fontFamily: 'Poppins',
-    fontWeight: 400,
-  },
-
-  attendees: {
-    marginBottom: 10,
-  },
-  attendeeSection1: {
-    paddingLeft: 50,
-    paddingRight: 50,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    
-  },
-  attendeeSection: {
-    marginBottom: 10,
-    width:230
-    
-  },
-  attendeeHeading: {
-    fontFamily: 'Poppins',
-    fontWeight: 400,
-    fontSize: 14,
-    marginBottom: 5,
-  },
-  attendeeName: {
-    fontSize: 12,
-    marginBottom: 3,
-  },
-  image: {
-    margin: 10,
-    width: 90,
-    height: 60,
-  },
-  remarks:{
-    fontFamily: 'Poppins',
-    fontWeight: 400,
-    paddingLeft:50,
-    paddingRight:50,
-    color:"gray",
-    fontSize:12
-  }
-});
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
@@ -177,87 +29,6 @@ const formatDate = (dateString: string) => {
 
   return `${day}-${month}-${year}`
 }
-const MyDocument = (rowData:any) => (
-  <Document>
-  <Page style={styles.page}>
-    <View style={styles.header}>
-    <Image style={styles.image} src={'/Images/logo.png'} />
-      <Text style={styles.headerText}>Devs Project</Text>
-    </View>
-      
-    
-    <View style={styles.section}>
-      <Text style={styles.heading}>Meeting Details</Text>
-    </View>
-    <View style={styles.subsection}>
-      <View>
-    <View style={styles.section1}>
-     <Text style={styles.subtext}>Location:<Text style={styles.text}> {rowData.data.location}</Text></Text>   
-    </View>
-
-    <Text style={styles.subheading1}>Attendees</Text>
-    <View style={styles.attendeeSection}>
-          <Text style={styles.attendeeHeading}>Client: <Text style={styles.text}>{rowData.data.attendees?.client_name}</Text></Text>
-         
-        </View>
-
-        <View style={styles.attendeeSection}>
-          <Text style={styles.attendeeHeading}>Organizer:<Text style={styles.text}>{rowData.data.attendees?.organisor}</Text></Text>
-          
-        </View>
-
-       
-
-       
-
-        </View>
-
-    <View>
-    <View style={styles.section1}>
-    <Text style={styles.subtext}>Date: <Text style={styles.text}>{formatDate(rowData.data.meetingdate)}</Text></Text> 
-    </View>
-    <Text style={styles.subheading}> </Text>
-    <View style={styles.attendeeSection}>
-          <Text style={styles.attendeeHeading}>Designer:  <Text style={styles.text}>{rowData.data.attendees?.designer}</Text></Text>
-        
-      
-        </View>
-
-    <View style={styles.attendeeSection}>
-          <Text style={styles.attendeeHeading}>Others:<Text style={styles.text}>{rowData.data.attendees?.attendees}</Text></Text>
-          
-        </View>
-
-        </View>
-
-    </View>
-   
-    <View style={styles.section}>
-      <Text style={styles.subheading}>Remarks</Text>
-      <Text style={styles.remarks}>
-        {rowData.data.remark?rowData.data.remark:"-"}
-      </Text>
-    </View>
-    <View style={styles.section}>
-    <Text style={styles.subheading}>Files</Text>
-    <View style={styles.attendees}>
-      <View style={styles.attendeeSection1}>
-      <View style={styles.attendeeSection}>
-        {rowData.data.files.length > 0 ? (
-          rowData.data.files.map((file:any) => (
-              <Text style={styles.attendeeHeading}>File: <Text style={styles.text}><Link src={file.fileUrl}>{file.fileName.length>20?`${file.fileName.slice(0,20)}...`:file.fileName}</Link></Text></Text>
-          ))
-          ) : (
-          <Text>No files</Text>
-          )}
-       
-      </View>
-      </View>
-      </View>
-    </View>
-  </Page>
-</Document>
-);
 
 type ReactTableProps<T> = {
     renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
@@ -364,7 +135,7 @@ function ReactTable({
 
     const navigate = useNavigate()
     const [mom,setmom]=useState(false)
-    
+   
 
     return (
         <>
@@ -439,148 +210,141 @@ function ReactTable({
 }
 
 const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
-    const location=useLocation()
-    const projectId = new URLSearchParams(location.search).get('project_id')
+  const rowData = row.original;
+ 
+  const files = Array.isArray(rowData.files) ? rowData.files : [];
 
-    const rowData = row.original
-    const files = Array.isArray(rowData.files) ? rowData.files : []
-    const handlePost=async(blob:any)=>{
-        const formData = new FormData();
-        formData.append('project_id', projectId || '');
-        formData.append('mom_id', rowData.mom_id);
-        formData.append('file', blob, 'myDocument1.pdf');
-  
-       const response=await apishareMom(formData)
-      const result = await response.json();
-      if(result.code===200){
-        toast.push(
-          <Notification
-              type='success' duration={2000}
-          >
-              MOM Shared Successfully
-          </Notification>
-        )
-      }
-      else{
-        toast.push(
-          <Notification
-              type='danger' duration={2000}
-          >
-              {result.errorMessage}
-          </Notification>
-        )
-      
-      }
-    }
-    const { apiPrefix } = appConfig
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
-        const day = String(date.getUTCDate()).padStart(2, '0')
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Months are 0-based in JavaScript
-        const year = date.getUTCFullYear()
-    
-        return `${day}-${month}-${year}`
-    }
-    const Toggle=<BsThreeDotsVertical className='font-semibold text-xl cursor-pointer'/>
-    
-    return (
-        <div>
-             <main className="pb-10 ">
-        <div className=" dark:bg-gray-950 rounded-lg p-6">
-          <div className="space-y-4">
-            <div className="flex justify-between mb-8">
-              <h2 className="text-2xl font-bold">Meeting Details</h2>
-              <BlobProvider document={<MyDocument data={rowData} />}>
-        {({ blob, url, loading, error }) => {
-            if (loading) {
-            return <BsThreeDotsVertical className='font-semibold text-xl cursor-pointer'/>;
-            }
-            if (error) {
-            console.error(error);
-            return `Error: ${error.message}`;
-            }
-        
-            return (
-            <div>
-                <span>
-              <Dropdown renderTitle={Toggle} placement='bottom-end'>
-              <a href={url || ""} target='_blank' rel='noreferrer'    
-                    >  
-                <Dropdown.Item eventKey="a" >View MOM</Dropdown.Item></a>
-                <Dropdown.Item eventKey="b" onClick={()=>handlePost(blob)}>Share MOM</Dropdown.Item>
-                
-
-               
-            </Dropdown></span>
-            </div>
-            );
-        }}
-        </BlobProvider>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className='flex gap-1 items-center'>
-                <p className="text-gray-500 dark:text-gray-400 font-semibold text-lg">Location: </p>
-                <p className=' text-base'>{rowData.location}</p>
-                </div>
-                <div className='flex gap-1 items-center'>
-                <p className="text-gray-500 dark:text-gray-400 font-semibold text-lg">Date: </p>
-                <p className=' text-base'>{formatDate(rowData.meetingdate)}</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl">Attendees</p>
-                <ul className="space-y-1">
-                  <li className=' text-base'><span className='font-semibold text-lg'>Client:</span> {rowData.attendees.client_name?rowData.attendees.client_name:"-"} </li>
-                  <li className=' text-base'><span className='font-semibold text-lg'>Organizer:</span> {rowData.attendees.organisor?rowData.attendees.organisor:"-"} </li>
-                  <li className=' text-base'><span className='font-semibold text-lg'>Designer:</span> {rowData.attendees.designer?rowData.attendees.designer:"-"} </li>
-                  <li className=' text-base'><span className='font-semibold text-lg'>Others:</span> {rowData.attendees.attendees?rowData.attendees.attendees:"-"} </li>
-                </ul>
-              </div>
-            </div>
-            <div className='mb-6'>
-              <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl ">Remarks</p>
-              <p>
-                {rowData.remark?rowData.remark:"-"}
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl">Files</p>
-              <div className="space-y-2">
-              {files.length > 0 ? (
-                files.map((file) => (
-                    <a className="flex items-center gap-2 text-blue-600 hover:underline" href={file.fileUrl} target='_blank'>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="h-5 w-5"
-                    >
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                    </svg>
-                    {file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName}
-                    </a>
-                ))
-                ) : (
-                <p>No files</p>
-                )}
-          
-              </div>
-            </div>
+  const printContent = `
+ <html>
+    <head>
+      <title>Meeting Details - ${rowData.mom_id}</title>
+      <style>
+        body { font-family: Arial, sans-serif; }
+        .parts { display: flex; justify-content: space-between;}
+        .content { padding: 20px; }
+        .section { margin-bottom: 20px; }
+        .section-title { font-size: 1.2em; font-weight: bold; }
+        .section-content { margin-top: 10px; }
+      </style>
+    </head>
+    <body>
+      <div class="content">
+        <div class="parts">
+        <div class="section">
+          <div class="section-title">Meeting Details</div>
+          <div class="section-content">
+            <p><strong>Location:</strong> ${rowData.location}</p>
+            <p><strong>Date:</strong> ${formatDate(rowData.meetingdate)}</p>
           </div>
         </div>
-      </main>
-    
+        <div class="section">
+          <div class="section-title">Attendees</div>
+          <div class="section-content">
+            <p><strong>Client:</strong> ${rowData.attendees.client_name || '-'}</p>
+            <p><strong>Organizer:</strong> ${rowData.attendees.organisor || '-'}</p>
+            <p><strong>Designer:</strong> ${rowData.attendees.designer || '-'}</p>
+            <p><strong>Others:</strong> ${rowData.attendees.attendees || '-'}</p>
+          </div>
         </div>
-    )
-}
+    </div>
+        <div class="section">
+          <div class="section-title">Remarks</div>
+          <div class="section-content">${rowData.remark || 'No remarks'}</div>
+        </div>
+        <div class="section">
+          <div class="section-title">Files</div>
+          <div class="section-content">
+            ${files.length > 0
+              ? files.map(
+                  (file) => `<a href="${file.fileUrl}" target="_blank">${file.fileName}</a><br/>`
+                ).join('')
+              : 'No files attached'}
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+`;
+
+const handlePrint = () => {
+  const printWindow = window.open('', '', 'width=800,height=600');
+  printWindow?.document.write(printContent);
+  printWindow?.document.close();
+  printWindow?.focus();
+  printWindow?.print();
+};
+
+
+  return (
+      <div>
+          <main className="pb-10">
+              < div  className="dark:bg-gray-950 rounded-lg p-6">
+                  <div className="space-y-4">
+                      <div className="flex justify-between mb-8">
+                          <h2 className="text-2xl font-bold">Meeting Details</h2>
+                          <Button onClick={handlePrint} variant='solid' size='sm' className='flex justify-center items-center gap-2'><span>Download</span><span><MdDownload/></span></Button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                          <div>
+                              <div className="flex gap-1 items-center">
+                                  <p className="text-gray-500 dark:text-gray-400 font-semibold text-lg">Location: </p>
+                                  <p className="text-base">{rowData.location}</p>
+                              </div>
+                              <div className="flex gap-1 items-center">
+                                  <p className="text-gray-500 dark:text-gray-400 font-semibold text-lg">Date: </p>
+                                  <p className="text-base">{formatDate(rowData.meetingdate)}</p>
+                              </div>
+                          </div>
+                          <div>
+                              <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl">Attendees</p>
+                              <ul className="space-y-1">
+                                  <li className="text-base"><span className="font-semibold text-lg">Client:</span> {rowData.attendees.client_name ? rowData.attendees.client_name : '-'}</li>
+                                  <li className="text-base"><span className="font-semibold text-lg">Organizer:</span> {rowData.attendees.organisor ? rowData.attendees.organisor : '-'}</li>
+                                  <li className="text-base"><span className="font-semibold text-lg">Designer:</span> {rowData.attendees.designer ? rowData.attendees.designer : '-'}</li>
+                                  <li className="text-base"><span className="font-semibold text-lg">Others:</span> {rowData.attendees.attendees ? rowData.attendees.attendees : '-'}</li>
+                              </ul>
+                          </div>
+                      </div>
+                      <div className="mb-6">
+                          <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl">Remarks</p>
+                          <div className="remark-content" dangerouslySetInnerHTML={{ __html: rowData.remark }} />
+                      </div>
+                      <div>
+                          <p className="text-gray-500 dark:text-gray-400 font-semibold text-xl">Files</p>
+                          <div className="space-y-2">
+                              {files.length > 0 ? (
+                                  files.map((file, index) => (
+                                      <a key={index} className="flex items-center gap-2 text-blue-600 hover:underline" href={file.fileUrl} target='_blank'>
+                                          <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              width="24"
+                                              height="24"
+                                              viewBox="0 0 24 24"
+                                              fill="none"
+                                              stroke="currentColor"
+                                              strokeWidth="2"
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              className="h-5 w-5"
+                                          >
+                                              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                                              <polyline points="14 2 14 8 20 8"></polyline>
+                                          </svg>
+                                          {file.fileName.length > 20 ? `${file.fileName.substring(0, 20)}...` : file.fileName}
+                                      </a>
+                                  ))
+                              ) : (
+                                  <p>No files</p>
+                              )}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </main>
+      </div>
+  );
+};
+
 
 const SubComponent = ({ data }: any) => {
     return (

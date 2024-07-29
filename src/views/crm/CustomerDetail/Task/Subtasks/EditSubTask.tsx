@@ -174,9 +174,7 @@ const priorityOptions = [
 
 
                             <FormItem label='Actual Start Date'
-                            asterisk
-                            invalid={errors.actual_sub_task_start_date && touched.actual_sub_task_start_date}
-                            errorMessage={errors.actual_sub_task_start_date}
+                           
                             >
                                 <Field name='actual_sub_task_start_date'  placeholder='Start date'>
                                     {({field}:any)=>(
@@ -188,7 +186,6 @@ const priorityOptions = [
                                 </Field>
                             </FormItem>
                             <FormItem label='Actual End Date'
-                            asterisk
                             invalid={errors.actual_sub_task_end_date && touched.actual_sub_task_end_date}
                             >
                                 <Field name='actual_sub_task_end_date' placeholder='End Date'>

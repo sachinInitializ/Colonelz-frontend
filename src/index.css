@@ -10,3 +10,13 @@
 @import '../node_modules/@syncfusion/ej2-dropdowns/styles/material.css';
 @import '../node_modules/@syncfusion/ej2-grids/styles/material.css';
 @import '../node_modules/@syncfusion/ej2-react-spreadsheet/styles/material.css';
+/* Global styles or within the specific component's CSS module */
+.remark-content ol {
+    list-style-type: decimal;
+    margin-left: 20px;
+}
+
+.remark-content ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}

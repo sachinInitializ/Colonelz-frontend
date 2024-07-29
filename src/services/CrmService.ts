@@ -27,7 +27,7 @@ export async function apiGetMomData() {
     return data;
 }
 export async function apiCreateMom(formData: any) {
-    const response=await fetch(`${apiPrefix}/admin/create/mom/`, {
+    const response=await fetch(`${apiPrefix}admin/create/mom/`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('auth')}`,

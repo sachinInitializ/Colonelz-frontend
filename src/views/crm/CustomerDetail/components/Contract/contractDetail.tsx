@@ -206,7 +206,20 @@ const ContractDetails=(data : FileItemProps )=> {
                                             >
                                                 <Form>
                                                     <FormItem label="Remark">
-                                                        <Field name="remark"  component={Input}  />
+                                                        <Field name="remark"    >
+                                                            {({ field, form }: any) => (
+                                                                <Input
+                                                                    textArea
+                                                                    {...field}
+                                                                    onChange={ 
+                                                                        (e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                            handleInputChange(e);
+                                                                            form.setFieldValue(field.name, e.target.value);
+                                                                        }
+                                                                    }
+                                                                />
+                                                            )}
+                                                        </Field>
                                                     </FormItem>
                                                     <div className='flex justify-end'>
                                                         <Button type="submit" variant='solid'>Submit</Button>
@@ -351,6 +364,7 @@ const ContractDetails=(data : FileItemProps )=> {
         formData.append('project_name',values.project_name);
         formData.append('site_location',values.site_location);
 
+        
         values.quotation.forEach((file:File)=>{
             formData.append('quotation',file);
         })
@@ -419,7 +433,6 @@ const ContractDetails=(data : FileItemProps )=> {
                 onRequestClose={onDialogClose}
                 className={`pb-3`}>
                   <h3 className='mb-4'>Share To Client</h3>
-
                  <Formik
                  initialValues={{
                      client_name: '',
@@ -430,6 +443,7 @@ const ContractDetails=(data : FileItemProps )=> {
                     folder_name:'contract',
                     project_name:'',
                     site_location:'',
+                    user_id:localStorage.getItem('userId'),
                     quotation:[]
                 }}
                  validationSchema={Yup.object({
@@ -444,13 +458,13 @@ const ContractDetails=(data : FileItemProps )=> {
                  }}
                  >
                     <Form className='max-h-96 overflow-y-auto'>
-                 <FormItem label='Client Name'>
+                 <FormItem label='Client Name' asterisk>
                  <Field name="client_name" type="text" component={Input}/>
                  </FormItem>
-                    <FormItem label='Client Email'>
+                    <FormItem label='Client Email' asterisk>
                     <Field name="email" type="text" component={Input}/>
                     </FormItem>
-                    <FormItem label='File'>
+                    <FormItem label='File' asterisk>
                     <Field name="file_id" >
                         {({ field, form }: any) => (
                             <SelectField

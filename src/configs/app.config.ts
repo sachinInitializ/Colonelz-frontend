@@ -12,7 +12,7 @@ export type AppConfig = {
 }
 
 const appConfig: AppConfig = {
-    apiPrefix: 'http://localhost:8000/v1/api/',
+    apiPrefix: 'https://colonelz-back.test.initz.run/v1/api/',
     authenticatedEntryPath:(role==='Site Supervisor' || role==='Jr. Executive HR & Marketing')?'/app/crm/fileManager':'/app/crm/dashboard',
     unAuthenticatedEntryPath: '/sign-in',
     tourPath: '/app/account/kyc-form',

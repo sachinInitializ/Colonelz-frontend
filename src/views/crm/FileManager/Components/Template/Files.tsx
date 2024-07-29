@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Dialog, FormItem, Input, Notification, Select, Upload, toast } from '@/components/ui';
-import { ConfirmDialog, StickyFooter } from '@/components/shared';
+import { ConfirmDialog, RichTextEditor, StickyFooter } from '@/components/shared';
 import CreatableSelect from 'react-select/creatable';
 import { CiFileOn, CiImageOn } from 'react-icons/ci';
 import { getTemplateData } from '../data';
@@ -561,10 +561,64 @@ const onDialogClose3 = () => {
 
             >
               <h3 className='mb-5'>Share Files</h3>
-              <div className='max-h-96 overflow-y-auto'>
-              <label className='block text-sm font-medium text-gray-700'>To</label>
+              <Formik initialValues={{ lead_id: leadId, folder_name: folderName, file_id: '', email: '', cc: '', bcc: '', subject: '', body: '' }}
+              onSubmit={async(values) => {
+                if (selectedFiles.length === 0 || selectedEmails.length === 0) {
+                  toast.push(
+                    <Notification closable type="warning" duration={2000}>
+                        No files or email addresses selected for sharing
+                    </Notification>,{placement:'top-center'}
+                  )
+                  return;
+                }
+              
+                const postData = {
+                  file_id: selectedFiles,
+                  lead_id: leadId,
+                  project_id: '',
+                  email:  selectedEmails,
+                  cc:  selectedEmailsCc,
+                  bcc:  selectedEmailsBcc,
+                  subject: subject,
+                  body: body,
+                  user_id:localStorage.getItem('userId')
+                };
+              
+                try {
+                  const response = await apiGetCrmFileManagerShareFiles(postData);
+                  if (!response.ok) {
+                    console.error('Error sharing files:', response.statusText);
+                    return;
+                  }
+                  const responseData = await response.json();
+                  console.log('Files shared successfully:', responseData);
+                  setSelectedFiles([]);
+                  setSelectedEmails([]);
+                  setSelectedEmailsCc([]);
+                  setSelectedEmailsBcc([]);
+                  setSubject('')
+                  setBody('')
+                  onDialogClose()
+                  toast.push(
+                    <Notification closable type="success" duration={2000}>
+                        Successfully Shared
+                    </Notification>,{placement:'top-center'}
+                  )
+                  
+                  const updatedLeadData = leadData.map((file) => ({ ...file, active: false }));
+                  setLeadData(updatedLeadData);
+                } catch (error) {
+                  console.error('Error sharing files:', error);
+                }
+              }
+
+              }>
+    <div className='max-h-96 overflow-y-auto'>
+             <FormItem label='To'>
+              <Field>
+                {({ field, form }: any) => (
           <Select
-          
+          className='mt-1'
     isMulti
     value={selectedEmails.map((email) => ({ label: email, value: email }))}
     componentAs={CreatableSelect}
@@ -577,10 +631,14 @@ const onDialogClose3 = () => {
       const newEmails = [...selectedEmails, inputValue];
       setSelectedEmails(newEmails);
     }}
-  />
-              <label className='block text-sm font-medium text-gray-700'>Cc</label>
+  />)}
+  </Field></FormItem>
+    
+  <FormItem label='Cc'>
+              <Field>
+                {({ field, form }: any) => (
           <Select
-          
+          className='mt-1'
     isMulti
     value={selectedEmailsCc.map((email) => ({ label: email, value: email }))}
     componentAs={CreatableSelect}
@@ -593,10 +651,14 @@ const onDialogClose3 = () => {
       const newEmails = [...selectedEmailsCc, inputValue];
       setSelectedEmailsCc(newEmails);
     }}
-  />
-              <label className='block text-sm font-medium text-gray-700'>Bcc</label>
+  />)}
+  </Field></FormItem>
+    
+  <FormItem label='Bcc'>
+              <Field>
+                {({ field, form }: any) => (
           <Select
-          
+          className='mt-1'
     isMulti
     value={selectedEmailsBcc.map((email) => ({ label: email, value: email }))}
     componentAs={CreatableSelect}
@@ -610,27 +672,32 @@ const onDialogClose3 = () => {
       setSelectedEmailsBcc(newEmails);
     }}
   />
+)}
+  </Field></FormItem>
 
-<div className='mt-4'>
-          <label className='block text-sm font-medium text-gray-700'>Subject</label>
-          <input
+
+<div className=''>
+<FormItem label='Subject'>
+              <Field>
+                {({ field, form }: any) => (
+          <Input
+          required
             type='text'
             className='mt-1 p-2 w-full border rounded-md'
             value={subject}
             placeholder='Enter subject...'
             onChange={handleSubjectChange}
           />
+        )}
+  </Field></FormItem>
         </div>
-
-        <div className='mt-4'>
-          <label className='block text-sm font-medium text-gray-700'>Body</label>
-          <Input
-            className='mt-1 p-2 w-full border rounded-md'
-            value={body}
-            textArea
-            placeholder='Enter body...'
-            onChange={handleBodyChange}
-          />
+        <div className=''>
+          <FormItem label='Body'>
+              <Field>
+                {({ field, form }: any) => (
+             <RichTextEditor value={body} onChange={setBody} />
+        )}
+        </Field></FormItem>
         </div>
   
          <div className='flex justify-end'>
@@ -638,8 +705,8 @@ const onDialogClose3 = () => {
             Share
           </Button>
           </div>
-
           </div>
+          </Formik>
             </Dialog>
 
             <Dialog  isOpen={dialogIsOpen2}

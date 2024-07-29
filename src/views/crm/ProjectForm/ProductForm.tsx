@@ -97,6 +97,7 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
       timeline_date:'',
       contract:[],
       description:'',
+      user_id:localStorage.getItem('userId') || '',
      }}
      validationSchema={Yup.object().shape({
       client_name: Yup.string().required('Client Name is required'),

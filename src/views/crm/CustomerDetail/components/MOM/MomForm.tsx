@@ -132,6 +132,13 @@ const YourFormComponent = () => {
         }
     }
 
+
+    const handleRichTextChange = (content: string) => {
+        setFormData({
+            ...formData,
+            remark: content,
+        })
+    }
     const optionsSource = [
         { value: 'At Office', label: 'At Office' },
         { value: 'At Site', label: 'At Site' },
@@ -339,12 +346,29 @@ const YourFormComponent = () => {
                                 </span>
                             )}
                         </FormItem>
+
+                        <FormItem label="File">
+                            <Upload multiple
+                                onChange={(files:any) => handleFileChange(files)}
+                            >
+                                <Button
+                                    variant="solid"
+                                    icon={<HiOutlineCloudUpload />}
+                                    type="button"
+                                >
+                                    Upload your file
+                                </Button>
+                            </Upload>
+                        </FormItem>
                        
 
 
                       
                     </div>
-                        <App/>
+                    <App
+                        value={formData.remark}
+                        onChange={handleRichTextChange}
+                    />
                    
                 </FormContainer>
                 <StickyFooter

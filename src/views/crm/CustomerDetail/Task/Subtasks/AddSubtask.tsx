@@ -73,13 +73,14 @@ const priorityOptions = [
                       }}
                       validationSchema={Yup.object().shape({
                         sub_task_name: Yup.string().required('Subtask Name is required'),
-                        actual_sub_task_start_date: Yup.string().required('Actual Start Date is required'),
-                        actual_sub_task_end_date: Yup.string().required('Actual End Date is required').test(
+                        actual_sub_task_start_date: Yup.string(),
+                        actual_sub_task_end_date: Yup.string().test(
                             'is-greater',
                             'End date must be greater than start date',
                             function (value) {
                               const { actual_sub_task_start_date } = this.parent;
-                              return new Date(value) > new Date(actual_sub_task_start_date);
+                              if(value && actual_sub_task_start_date)
+                               return new Date(value) > new Date(actual_sub_task_start_date);
                             }
                           
                         ),
@@ -160,9 +161,7 @@ const priorityOptions = [
 
 
                             <FormItem label='Actual Start Date'
-                            asterisk
-                            invalid={errors.actual_sub_task_start_date && touched.actual_sub_task_start_date}
-                            errorMessage={errors.actual_sub_task_start_date}
+                           
                             >
                                 <Field name='actual_sub_task_start_date'  placeholder='Start date'>
                                     {({field}:any)=>(
@@ -175,7 +174,6 @@ const priorityOptions = [
 
 
                             <FormItem label='Actual End Date'
-                            asterisk
                             invalid={errors.actual_sub_task_end_date && touched.actual_sub_task_end_date}
                             >
                                 <Field name='actual_sub_task_end_date' placeholder='End Date'>
