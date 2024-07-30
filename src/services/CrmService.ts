@@ -10,24 +10,8 @@ const tokens = Cookies.get('auth')
 const userIds = Cookies.get('userId')
 console.log('token',token);
 
-
-
-export async function apiGetUsersList() {
-    const response = await fetch(`${apiPrefix}admin/get/userlist?user_id=${userId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` 
-        }
-    });
-
-    
-    const data = await response.json();
-    console.log('Received response from server:', data);
-    return data;
-}
 export async function apiGetMomData() {
-    const response = await fetch(`${apiPrefix}admin/getall/project/mom?id=${userId}`, {
+    const response = await fetch(`${apiPrefix}admin/getall/project/mom?id=65c32e19e0f36d8e1f30955c`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -35,7 +19,9 @@ export async function apiGetMomData() {
         }
     });
 
-    
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
     console.log('Received response from server:', data);
     return data;

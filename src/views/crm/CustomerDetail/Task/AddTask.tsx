@@ -21,11 +21,9 @@ type Task = {
     reporter: string;
   };
 
-const AddTask = ({project,userData}:any) => {
+const AddTask = (project:any) => {
     const [dialogIsOpen, setIsOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    console.log(userData);
-    
 const openDialog = () => {
     setIsOpen(true)
 }
@@ -46,12 +44,6 @@ const priorityOptions = [
     { label: "Completed", value: "Completed" },
     { label: "Cancelled", value: "Cancelled" },
   ];
-  const userOptions = userData.map((user:any) => ({
-    label: user.username,
-    value: user.username
-  }));
-
-  console.log(userOptions);
   
  
   
@@ -146,15 +138,7 @@ const priorityOptions = [
                             asterisk
                             invalid={errors.task_assignee && touched.task_assignee}
                             errorMessage={errors.task_assignee}>
-                                <Field name='task_assignee'  placeholder='Task'>
-                                    {({field}:any)=>(
-                                        <Select
-                                        options={userOptions}
-                                        name='task_assignee'
-                                        onChange={(value) => { field.onChange({ target: {name:'task_assignee', value: value?.value } }) }}
-                                        />
-                                    )}
-                                </Field>
+                                <Field name='task_assignee'  component={Input} placeholder='Task'/>
                             </FormItem>
 
 
