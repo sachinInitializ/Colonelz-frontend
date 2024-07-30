@@ -115,6 +115,7 @@ const Index = () => {
     const [usernameError, setUsernameError] = useState('')
     const [clientNameError, setClientNameError] = useState('')
     const [clientEmailError, setClientEmailError] = useState('')
+    const [approvalLoading, setApprovalLoading] = useState(false)
     const [subject, setSubject] = useState('')
     const [body, setBody] = useState('')
     const location = useLocation()
@@ -293,6 +294,7 @@ type Option = {
     }
 
     const handleShareFileForApproval = async () => {
+        setApprovalLoading(true)
         if (selectedFileId === null) {
             toast.push(
                 <Notification closable type="warning" duration={2000}>
@@ -314,6 +316,7 @@ type Option = {
 
         const response = await apiGetCrmProjectShareQuotation(postData)
         const responseJson = await response.json()
+        setApprovalLoading(false)
         if (responseJson.code === 200) {
             toast.push(
                 <Notification closable type="success" duration={2000}>
@@ -979,9 +982,12 @@ const onSelectChange = (value = 0) => {
                         variant="solid"
                         type="submit"
                         className="mt-5 "
+                        block
+                        loading={approvalLoading}
+
                         onClick={handleShareFileForApproval}
                     >
-                        Share
+                        {approvalLoading? 'Sharing...':'Share'}
                     </Button>
                 </div>
             </Dialog>

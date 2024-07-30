@@ -183,7 +183,7 @@ const Commercial = () => {
 
   return (
     <>
-     <div>
+     <div className='h-screen'>
       <h3 className='mb-8'>Company Data</h3>
     <div className=" w-full">
             <div className="flex justify-between p-4">
@@ -285,8 +285,8 @@ const Commercial = () => {
             </Table>
         </>
 
-    <Footer/>
     </div>
+    <Footer/>
     </>
   )
 }

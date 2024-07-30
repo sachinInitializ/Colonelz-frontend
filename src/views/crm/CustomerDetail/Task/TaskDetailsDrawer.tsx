@@ -119,14 +119,14 @@ const TaskDetails = (Data:Data) => {
                     <CustomerInfoField title="Reporter" value={(Data.data.reporter)} />
                     <CustomerInfoField title="Number of Subtasks" value={Data.data.number_of_subtasks} />
                     <div><p><span className='text-gray-700 dark:text-gray-200 font-semibold'>Description: </span>{Data.data.task_description}</p></div>
-                    <div className='my-4'>
+                    {/* <div className='my-4'>
                     <div className='flex justify-between items-center py-2'>
                     <h5>Subtasks</h5>
                     <AddSubTask task={{taskid:Data.data.task_id,project_id:Data.data.project_id}}/>
                     </div>
                     <Progress className="" size="sm" percent={Number(Data.data.percentage)} customInfo={<CircleCustomInfo percent={Number(Data.data.percentage)} />} />
                     </div>
-                    <Subtasks task={Data.data.task_id}/>
+                    <Subtasks task={Data.data.task_id}/> */}
                     </TabContent>
                 </div>
                 </Tabs>

@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
 import { Field, Form, Formik, FormikContext } from 'formik'
 import { DatePicker, FormItem, Input, Notification, Select, Tooltip, toast } from '@/components/ui'
-import { apiGetCrmProjectsAddSubTask, apiGetCrmProjectsAddTask } from '@/services/CrmService'
+import { apiGetCrmProjectsAddSubTask, apiGetCrmProjectsAddTask, apiGetUsersList } from '@/services/CrmService'
 import { MdOutlineAdd } from 'react-icons/md'
 import * as Yup from 'yup'
 
@@ -25,6 +25,15 @@ type Task = {
 const AddSubTask = (task:any) => {
     const [dialogIsOpen, setIsOpen] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [userData,setUserData]=useState<any>(null)
+    useEffect(() => {
+        const UserData=async()=>{
+            const response = await apiGetUsersList();
+            setUserData(response.data)
+        }
+        UserData();
+
+    },[])
 const openDialog = () => {
     setIsOpen(true)
 }
@@ -45,7 +54,10 @@ const priorityOptions = [
     { label: "Completed", value: "Completed" },
     { label: "Cancelled", value: "Cancelled" },
   ];
-  
+  const userOptions = userData?.map((user:any) => ({
+    label: user.username,
+    value: user.username
+  }));
   
 
     return (
@@ -139,7 +151,15 @@ const priorityOptions = [
                             invalid={errors.sub_task_assignee && touched.sub_task_assignee}
                             errorMessage={errors.sub_task_assignee}
                             >
-                                <Field name='sub_task_assignee'  component={Input} placeholder='Subtask Assignee'/>
+                                <Field name='sub_task_assignee'   placeholder='Subtask Assignee'>
+                                    {({field}:any)=>(
+                                        <Select
+                                        options={userOptions}
+                                        name='sub_task_assignee'
+                                        onChange={(value:any) => { field.onChange({ target: {name:'sub_task_assignee', value: value?.value } }) }}
+                                        />
+                                    )}
+                                </Field>
                             </FormItem>
 
 
@@ -220,7 +240,15 @@ const priorityOptions = [
                             invalid={errors.sub_task_reporter && touched.sub_task_reporter}
                             errorMessage={errors.sub_task_reporter}
                             >
-                                <Field name='sub_task_reporter'  component={Input} placeholder='Reporting to'/>
+                                <Field name='sub_task_reporter'   placeholder='Reporting to'>
+                                    {({field}:any)=>(
+                                        <Select
+                                        options={userOptions}
+                                        name='sub_task_reporter'
+                                        onChange={(value:any) => { field.onChange({ target: {name:'sub_task_reporter', value: value?.value } }) }}
+                                        />
+                                    )}
+                                </Field>
                             </FormItem>
 
 

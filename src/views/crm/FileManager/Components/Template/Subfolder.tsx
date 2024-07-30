@@ -227,6 +227,7 @@ const Index = () => {
             {
                 header: 'Actions',
                 accessorKey: 'action',
+                id: 'actions',
                 cell: ({ row }) => {
                     return (
                         <div
@@ -301,6 +302,7 @@ const Index = () => {
                                             Company Data
                                         </a>
                                     </li>
+                                    {type==='company data'?<></>:<>
                                     <li>
                                         <span className="mx-2">/</span>
                                     </li>
@@ -311,7 +313,7 @@ const Index = () => {
                                         >
                                             {type}
                                         </a>
-                                    </li>
+                                    </li></>}
                                     <li>
                                         <span className="mx-2">/</span>
                                     </li>
@@ -339,7 +341,7 @@ const Index = () => {
                                                                     header.colSpan
                                                                 }
                                                             >
-                                                                {header.isPlaceholder ? null : (
+                                                              {header.isPlaceholder || header.id==='actions' ? null : (
                                                                     <div
                                                                         {...{
                                                                             className:

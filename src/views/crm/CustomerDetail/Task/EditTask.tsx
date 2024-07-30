@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
 import { Field, Form, Formik, FormikContext } from 'formik'
 import { DatePicker, FormItem, Input, Notification, Select, toast } from '@/components/ui'
-import { apiGetCrmProjectsAddTask, apiGetCrmProjectsTaskUpdate } from '@/services/CrmService'
+import { apiGetCrmProjectsAddTask, apiGetCrmProjectsTaskUpdate, apiGetUsersList } from '@/services/CrmService'
 import { HiOutlinePencil } from 'react-icons/hi'
 import * as Yup from 'yup'
 
@@ -33,7 +33,15 @@ type Task = {
 const EditTask = ({ Data, task }: EditTaskProps) => {
     const [dialogIsOpen, setIsOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    console.log(task);
+    const [userData,setUserData]=useState<any>(null)
+    useEffect(() => {
+        const UserData=async()=>{
+            const response = await apiGetUsersList();
+            setUserData(response.data)
+        }
+        UserData();
+
+    },[task])
     
 const openDialog = () => {
     setIsOpen(true)
@@ -56,6 +64,18 @@ const priorityOptions = [
     { label: "Cancelled", value: "Cancelled" },
   ];
   
+  const userOptions = userData?.map((user:any) => ({
+    label: user.username,
+    value: user.username
+  }));
+
+  const formateDate = (dateString:string) => {
+    const date = new Date(dateString);
+    const day=date.getDate().toString().padStart(2, '0');
+    const month=(date.getMonth() + 1).toString().padStart(2, '0');
+    const year=date.getFullYear();
+    return `${day}-${month}-${year}`;
+    }
 
 
     return (
@@ -73,7 +93,7 @@ const priorityOptions = [
                         task_name: Data.task_name,
                         task_description: Data.task_description,
                         actual_task_start_date: new Date(Data.actual_task_start_date) ,
-                        actual_task_end_date: `${new Date(Data.actual_task_end_date)}`,
+                        actual_task_end_date:new Date(Data.actual_task_end_date),
                         estimated_task_start_date: new Date(Data.estimated_task_start_date),
                         estimated_task_end_date: new Date(Data.estimated_task_end_date),
                         task_status: statusOptions.find((option)=>option.value===Data.task_status)?.value,  
@@ -150,7 +170,16 @@ const priorityOptions = [
                             asterisk
                             invalid={errors.task_assignee && touched.task_assignee}
                             errorMessage={errors.task_assignee}>
-                                <Field name='task_assignee'  component={Input} placeholder='Task'/>
+                                <Field name='task_assignee'   placeholder='Task'>
+                                    {({field}:any)=>(
+                                        <Select
+                                        placeholder={Data.task_assignee}
+                                        options={userOptions}
+                                        name='task_assignee'
+                                        onChange={(option:any) => field.onChange({ target: { name: 'task_assignee', value: option ? option.value : '' } })}
+                                    />
+                                    )}
+                                </Field>
                             </FormItem>
                             <FormItem label='Task Status'
                             asterisk
@@ -174,7 +203,6 @@ const priorityOptions = [
                             <Field name='actual_task_start_date' placeholder='Start date'>
                                 {({field}: any) => (
                                     <DatePicker name='actual_task_start_date'
-                                        value={''} 
                                         onChange={(value) => {
                                             field.onChange({ target: {name: 'actual_task_start_date', value: `${value}`} })
                                         }}
@@ -188,9 +216,7 @@ const priorityOptions = [
                                 <Field name='actual_task_end_date' placeholder='End Date'>
                                     {({field}:any)=>(
                                         <DatePicker name='actual_task_end_date'
-                                        value={field.value?field.value:''}
-                                        placeholder='End Date'
-                                        onChange={(value) => { 
+                                        onChange={(value) => {
                                             field.onChange({ target: {name: 'actual_task_end_date', value: `${value}`} })
                                         }}
                                         />
@@ -231,7 +257,16 @@ const priorityOptions = [
                             invalid={errors.reporter && touched.reporter}   
                             errorMessage={errors.reporter}
                             >
-                                <Field name='reporter'  component={Input} placeholder='Reporting to'/>
+                                <Field name='reporter' placeholder='Reporting to'>
+                                    {({field}:any)=>(
+                                        <Select
+                                        name='reporter'
+                                        placeholder={Data.reporter}
+                                        options={userOptions}
+                                        onChange={(value:any) => { field.onChange({ target: {name:'reporter', value: value?.value } }) }}
+                                        />
+                                    )}
+                                </Field>
                             </FormItem>
                             <FormItem label='Priority'
                             asterisk

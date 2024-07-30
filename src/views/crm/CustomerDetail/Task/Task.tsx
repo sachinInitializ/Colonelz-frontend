@@ -95,13 +95,10 @@ const Filtering = () => {
     useEffect(() => {
         const TaskData=async()=>{
             const response = await apiGetCrmProjectsTaskData(projectId);
-           
-
             setLoading(false)
             setTaskData(response.data)
         }
         TaskData();
-  
     }, [projectId])
     useEffect(() => {
         const UserData=async()=>{
@@ -110,7 +107,7 @@ const Filtering = () => {
         }
         UserData();
 
-    },[])
+    },[projectId])
 
 
     function DebouncedInput({
@@ -194,6 +191,8 @@ const Filtering = () => {
                 )
             }
         }
+        console.log(userData);
+        
         return (
             <div className="flex justify-end text-lg">
                 <span

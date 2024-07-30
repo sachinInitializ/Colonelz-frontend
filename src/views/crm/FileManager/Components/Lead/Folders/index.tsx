@@ -679,7 +679,7 @@ const onSelectChange = (value = 0) => {
   />
 </FormItem>
       </FormItem>
-      <Button type="submit" variant='solid' loading={isSubmitting}>{isSubmitting?'Sharing':'Share'}</Button>
+      <Button type="submit" variant='solid' loading={isSubmitting} block>{isSubmitting?'Sharing':'Share'}</Button>
     </Form>
   )}
 </Formik>

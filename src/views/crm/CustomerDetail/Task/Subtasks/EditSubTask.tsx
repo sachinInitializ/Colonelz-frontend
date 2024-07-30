@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
 import { Field, Form, Formik, FormikContext } from 'formik'
 import { DatePicker, FormItem, Input, Notification, Select, Tooltip, toast } from '@/components/ui'
-import { apiGetCrmProjectsAddSubTask, apiGetCrmProjectsAddTask, apiGetCrmProjectsSingleSubTaskTimer, apiGetCrmProjectsSubTaskUpdate } from '@/services/CrmService'
+import { apiGetCrmProjectsAddSubTask, apiGetCrmProjectsAddTask, apiGetCrmProjectsSingleSubTaskTimer, apiGetCrmProjectsSubTaskUpdate, apiGetUsersList } from '@/services/CrmService'
 import { MdOutlineAdd } from 'react-icons/md'
 import { HiOutlinePencil } from 'react-icons/hi'
 import { useLocation } from 'react-router-dom'
@@ -37,6 +37,15 @@ const EditSubTask = (task:Data) => {
     const location=useLocation();
     const queryParams=new URLSearchParams(location.search);
     const project_id=queryParams.get('project_id')
+    const [userData,setUserData]=useState<any>(null)
+    useEffect(() => {
+        const UserData=async()=>{
+            const response = await apiGetUsersList();
+            setUserData(response.data)
+        }
+        UserData();
+
+    },[project_id])
 const openDialog = () => {
     setIsOpen(true)
 }
@@ -58,8 +67,18 @@ const priorityOptions = [
     { label: "Cancelled", value: "Cancelled" },
   ];
   
-  console.log(task);
+  const userOptions = userData?.map((user:any) => ({
+    label: user.username,
+    value: user.username
+  }));
   
+  const formateDate = (dateString:string) => {
+    const date = new Date(dateString);
+    const day=date.getDate().toString().padStart(2, '0');
+    const month=(date.getMonth() + 1).toString().padStart(2, '0');
+    const year=date.getFullYear();
+    return `${day}-${month}-${year}`;
+    }
 
     return (
         <div>
@@ -156,7 +175,16 @@ const priorityOptions = [
                             invalid={errors.sub_task_assignee && touched.sub_task_assignee}
                             errorMessage={errors.sub_task_assignee}
                             >
-                                <Field name='sub_task_assignee'  component={Input} placeholder='Subtask Assignee'/>
+                                <Field name='sub_task_assignee' placeholder='Subtask Assignee'>
+                                    {({field}:any)=>(
+                                        <Select
+                                        placeholder={task.Data.sub_task_assignee}
+                                        options={userOptions}
+                                        name='sub_task_assignee'
+                                        onChange={(value:any) => { field.onChange({ target: {name:'sub_task_assignee', value: value?.value } }) }}
+                                        />
+                                    )}
+                                </Field>
                             </FormItem>
                             <FormItem label='Subtask Status'
                             asterisk
@@ -182,7 +210,6 @@ const priorityOptions = [
                                 <Field name='actual_sub_task_start_date'  placeholder='Start date'>
                                     {({field}:any)=>(
                                         <DatePicker name='actual_sub_task_start_date'
-                                        value={field.value}
                                         onChange={(value) => { field.onChange({ target: {name:'actual_sub_task_start_date', value: `${value}` } }) }}
                                         />
                                     )}
@@ -194,7 +221,6 @@ const priorityOptions = [
                                 <Field name='actual_sub_task_end_date' placeholder='End Date'>
                                     {({field}:any)=>(
                                         <DatePicker name='actual_sub_task_end_date'
-                                        value={field.value}
                                         onChange={(value) => { field.onChange({ target: {name:'actual_sub_task_end_date', value: `${value }`} }) }}
                                         />
                                     )}
@@ -237,7 +263,16 @@ const priorityOptions = [
                             invalid={errors.sub_task_reporter && touched.sub_task_reporter}
                             errorMessage={errors.sub_task_reporter} 
                             >
-                                <Field name='sub_task_reporter'  component={Input} placeholder='Reporting to'/>
+                                <Field name='sub_task_reporter' placeholder='Reporting to'>
+                                    {({field}:any)=>(
+                                        <Select
+                                        placeholder={task.Data.sub_task_reporter}
+                                        options={userOptions}
+                                        name='sub_task_reporter'
+                                        onChange={(value:any) => { field.onChange({ target: {name:'sub_task_reporter', value: value?.value } }) }}
+                                        />
+                                    )}
+                                </Field>
                             </FormItem>
 
 

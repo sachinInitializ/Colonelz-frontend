@@ -496,8 +496,12 @@ let number=1;
       </View>
     <View style={styles.client2}>
       <Text style={styles.number}> +91 {pdfData.client_phone[0]}, {pdfData.client_email[0]}</Text>
-      <Text>- {pdfData.client_name[1]};</Text>
-      <Text style={styles.number}>+91 {pdfData.client_phone[1]}, {pdfData.client_email[1]}</Text>
+      {pdfData.client_name.slice(1).map((name:any, index:any) => (
+ <>
+    <Text>- {name};</Text>
+    <Text style={styles.number}>+91 {pdfData.client_phone[index + 1]}, {pdfData.client_email[index + 1]}</Text>
+    </>
+))}
     </View>
     <View style={styles.client1}>
       <Text>Colonelz’ Contact  - Ms. Naomi Sahay, Principal Designer;</Text>
@@ -895,16 +899,17 @@ joint material selection visits will be done as per the following rates:
     })}
 
 
-        <View >
+
+       <View>   <View >
         <View ><Text style={styles.fee} >{number++}. Final Design charges as per the site areas mentioned above are ₹
-        {Number(pdfData.design_charges_per_sft)*Number(pdfData.design_cover_area_in_sft)}/- (Covered area) + ₹ {Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft)}/- (Balcony area) + ₹ {Number(pdfData.terrace_covered_area_in_sft)*Number(pdfData.terrace_covered_charges_per_sft)}/- (Terrace covered area) ₹ {Number(pdfData.terrace_open_area_in_sft)*Number(pdfData.terrace_open_charges_per_sft)}/- (Terrace open area) = 
+        {Number(pdfData.design_charges_per_sft)*Number(pdfData.design_cover_area_in_sft)}/- (Covered area) + ₹ {Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft)}/- (Balcony area) + ₹ {Number(pdfData.terrace_covered_area_in_sft)*Number(pdfData.terrace_covered_charges_per_sft)}/- (Terrace covered area)+ ₹ {Number(pdfData.terrace_open_area_in_sft)*Number(pdfData.terrace_open_charges_per_sft)}/- (Terrace open area) = 
 ₹{Number(pdfData.design_charges_per_sft)*Number(pdfData.design_cover_area_in_sft)+Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft)+Number(pdfData.terrace_covered_area_in_sft)*Number(pdfData.terrace_covered_charges_per_sft)+Number(pdfData.terrace_open_area_in_sft)*Number(pdfData.terrace_open_charges_per_sft)}/-</Text></View>
         </View>
         <View>
           <Text style={styles.subfee} > ({numberToWordsString(Number(pdfData.design_charges_per_sft)*Number(pdfData.design_cover_area_in_sft)+Number(pdfData.balcony_area_in_sft)*Number(pdfData.balcony_charges_per_sft)+Number(pdfData.terrace_covered_area_in_sft)*Number(pdfData.terrace_covered_charges_per_sft)+Number(pdfData.terrace_open_area_in_sft)*Number(pdfData.terrace_open_charges_per_sft))}) 
 excl. of taxes.
           </Text>
-        </View>
+        </View></View>
 
 
         <View  >

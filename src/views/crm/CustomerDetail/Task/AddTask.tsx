@@ -46,7 +46,7 @@ const priorityOptions = [
     { label: "Completed", value: "Completed" },
     { label: "Cancelled", value: "Cancelled" },
   ];
-  const userOptions = userData.map((user:any) => ({
+  const userOptions = userData?.map((user:any) => ({
     label: user.username,
     value: user.username
   }));
@@ -66,7 +66,7 @@ const priorityOptions = [
                 <Formik 
                        initialValues={{
                         user_id: localStorage.getItem('userId') || '',
-                        project_id: project.project,
+                        project_id: project ,
                         task_name: "",
                         task_description: "",
                         estimated_task_start_date: "",
@@ -151,7 +151,7 @@ const priorityOptions = [
                                         <Select
                                         options={userOptions}
                                         name='task_assignee'
-                                        onChange={(value) => { field.onChange({ target: {name:'task_assignee', value: value?.value } }) }}
+                                        onChange={(value:any) => { field.onChange({ target: {name:'task_assignee', value: value?.value } }) }}
                                         />
                                     )}
                                 </Field>
@@ -235,7 +235,15 @@ const priorityOptions = [
                             asterisk
                             invalid={errors.reporter && touched.reporter}
                             >
-                                <Field name='reporter'  component={Input} placeholder='Reporting to'/>
+                                <Field name='reporter' placeholder='Reporting to'>
+                                    {({field}:any)=>(
+                                        <Select
+                                        options={userOptions}
+                                        name='reporter'
+                                        onChange={(value:any) => { field.onChange({ target: {name:'reporter', value: value?.value } }) }}
+                                        />
+                                    )}
+                                </Field>
                                 <div className=' text-red-600'>{errors.reporter}</div>  
                             </FormItem>
                             <FormItem label='Priority'
