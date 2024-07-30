@@ -261,7 +261,7 @@ const Residential = () => {
                       columns={columns.length}
                       rows={2}
                       avatarProps={{ width: 14, height: 14 }}
-                  />:data.length===?<NoData/>:     
+                  />:data.length===0?<NoData/>:     
                    <TBody>
                   {table.getRowModel().rows.map((row) => {
                       return (

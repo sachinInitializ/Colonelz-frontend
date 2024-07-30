@@ -16,7 +16,7 @@ import {
 import { rankItem } from '@tanstack/match-sorter-utils'
 import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
-import { apiGetCrmLeads, apiGetCrmProjectsTaskData, apiGetCrmProjectsTaskDelete } from '@/services/CrmService'
+import { apiGetCrmLeads, apiGetCrmProjectsTaskData, apiGetCrmProjectsTaskDelete, apiGetUsersList } from '@/services/CrmService'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button, Notification, Pagination, Select, Skeleton, toast } from '@/components/ui'
 import { HiOutlineEye, HiOutlinePencil, HiPlusCircle } from 'react-icons/hi'
@@ -63,108 +63,9 @@ const pageSizeOption = [
     { value: 40, label: '40 / page' },
     { value: 50, label: '50 / page' },
 ]
-const ActionColumn = ({ row }: { row: Task}) => {
-    const navigate = useNavigate()
-    const { textTheme } = useThemeClass()
-    const data={user_id:localStorage.getItem('userId'),
-    project_id:row.project_id,
-    task_id:row.task_id}
-    const [dialogIsOpen, setIsOpen] = useState(false)
 
-    const openDialog = () => {
-        setIsOpen(true)  
-    }
-    const onDialogClose = () => {
-        setIsOpen(false)
-    }
-    
-    const onDelete = async () => {
-        try{
-        const response = await apiGetCrmProjectsTaskDelete(data)
-        if(response.code===200){
-            toast.push(
-                <Notification type='success' duration={2000} closable>Task Deleted Successfully</Notification>
-            )
-            window.location.reload()
-        }
-        else{
-            toast.push(
-                <Notification type='danger' duration={2000} closable>{response.errorMessage}</Notification>
-            )
-        
-        }
-        }
-        catch(e){
-            toast.push(
-                <Notification type='danger' duration={2000} closable>Internal Server Error</Notification>
-            )
-        }
-    }
-    return (
-        <div className="flex justify-end text-lg">
-            <span
-                className={`cursor-pointer p-2  hover:${textTheme}`}>
-                <EditTask Data={row} task={false}/>
-                
-            </span>
-            <span className={`cursor-pointer py-2  hover:${textTheme}`}>
-                <MdDeleteOutline onClick={()=>openDialog()}/>   
-            </span>
 
-            <ConfirmDialog
-          isOpen={dialogIsOpen}
-          type="danger"
-          onClose={onDialogClose}
-          confirmButtonColor="red-600"
-          onCancel={onDialogClose}
-          onConfirm={() => onDelete()}
-          title="Delete Task"
-          onRequestClose={onDialogClose}>
-            <p> Are you sure you want to delete this task? </p>            
-        </ConfirmDialog>
-        </div>
-    )
-}
 
-function DebouncedInput({
-    value: initialValue,
-    onChange,
-    debounce = 500,
-    ...props
-}: DebouncedInputProps) {
-    const [value, setValue] = useState(initialValue)
-    const role=localStorage.getItem('role')
-
-    useEffect(() => {
-        setValue(initialValue)
-    }, [initialValue])
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            onChange(value)
-        }, debounce)
-
-        return () => clearTimeout(timeout)
-    }, [value])
-    const location=useLocation()
-    const queryParams = new URLSearchParams(location.search);
-    const projectId=queryParams.get('project_id') || '';
-
-    return (
-        <div className="flex justify-between md:flex-col lg:flex-row">
-            <h3></h3>
-            <div className="flex items-center mb-4 gap-3">
-                <Input
-                size='sm'
-                    {...props}
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                />
-                <AddTask project={projectId}/>
-            </div>
-        </div>
-    )
-}
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     
@@ -189,18 +90,138 @@ const Filtering = () => {
     const projectId=queryParams.get('project_id') || '';
     const [taskData,setTaskData]=useState<any>(null)
     const [loading,setLoading]=useState(true)
+    const [userData,setUserData]=useState<any>(null)
 
-  
     useEffect(() => {
         const TaskData=async()=>{
             const response = await apiGetCrmProjectsTaskData(projectId);
+           
 
             setLoading(false)
             setTaskData(response.data)
         }
         TaskData();
   
-    }, [])
+    }, [projectId])
+    useEffect(() => {
+        const UserData=async()=>{
+            const response = await apiGetUsersList();
+            setUserData(response.data)
+        }
+        UserData();
+
+    },[])
+
+
+    function DebouncedInput({
+        value: initialValue,
+        onChange,
+        debounce = 500,
+        ...props
+    }: DebouncedInputProps) {
+        const [value, setValue] = useState(initialValue)
+        const role=localStorage.getItem('role')
+    
+        useEffect(() => {
+            setValue(initialValue)
+        }, [initialValue])
+    
+        useEffect(() => {
+            const timeout = setTimeout(() => {
+                onChange(value)
+            }, debounce)
+    
+            return () => clearTimeout(timeout)
+        }, [value])
+        const location=useLocation()
+        const queryParams = new URLSearchParams(location.search);
+        const projectId=queryParams.get('project_id') || '';
+        console.log(userData);
+        
+    
+        return (
+            <div className="flex justify-between md:flex-col lg:flex-row">
+                <h3></h3>
+                <div className="flex items-center mb-4 gap-3">
+                    <Input
+                    size='sm'
+                        {...props}
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                    />
+                    <AddTask project={projectId} userData={userData}/>
+                </div>
+            </div>
+        )
+    }
+
+
+
+    const ActionColumn = ({ row }: { row: Task}) => {
+        const navigate = useNavigate()
+        const { textTheme } = useThemeClass()
+        const data={user_id:localStorage.getItem('userId'),
+        project_id:row.project_id,
+        task_id:row.task_id}
+        const [dialogIsOpen, setIsOpen] = useState(false)
+    
+        const openDialog = () => {
+            setIsOpen(true)  
+        }
+        const onDialogClose = () => {
+            setIsOpen(false)
+        }
+        
+        const onDelete = async () => {
+            try{
+            const response = await apiGetCrmProjectsTaskDelete(data)
+            if(response.code===200){
+                toast.push(
+                    <Notification type='success' duration={2000} closable>Task Deleted Successfully</Notification>
+                )
+                window.location.reload()
+            }
+            else{
+                toast.push(
+                    <Notification type='danger' duration={2000} closable>{response.errorMessage}</Notification>
+                )
+            
+            }
+            }
+            catch(e){
+                toast.push(
+                    <Notification type='danger' duration={2000} closable>Internal Server Error</Notification>
+                )
+            }
+        }
+        return (
+            <div className="flex justify-end text-lg">
+                <span
+                    className={`cursor-pointer p-2  hover:${textTheme}`}>
+                    <EditTask Data={row} task={false}/>
+                    
+                </span>
+                <span className={`cursor-pointer py-2  hover:${textTheme}`}>
+                    <MdDeleteOutline onClick={()=>openDialog()}/>   
+                </span>
+    
+                <ConfirmDialog
+              isOpen={dialogIsOpen}
+              type="danger"
+              onClose={onDialogClose}
+              confirmButtonColor="red-600"
+              onCancel={onDialogClose}
+              onConfirm={() => onDelete()}
+              title="Delete Task"
+              onRequestClose={onDialogClose}>
+                <p> Are you sure you want to delete this task? </p>            
+            </ConfirmDialog>
+            </div>
+        )
+    }
+
+  
+    
 
     const formateDate = (dateString:string) => {
         const date = new Date(dateString);
