@@ -82,7 +82,7 @@ const ClientApproval = (props: QuotationApproval) => {
 
     return (
         <Simple className='w-1/2'>
-        {message?<><div className={className}>
+        {!message?<><div className={className}>
         <h3 className="mb-4">Quotation Approval</h3>
             
             <Formik
