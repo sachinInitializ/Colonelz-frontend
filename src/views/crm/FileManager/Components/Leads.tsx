@@ -105,7 +105,7 @@ const Filtering = () => {
            
             {
                 header: 'Lead name',
-                accessorKey: 'lead_name',
+                accessorKey: 'lead_Name',
                 cell: (props) => {
                     const row = props.row.original;
                     return (
