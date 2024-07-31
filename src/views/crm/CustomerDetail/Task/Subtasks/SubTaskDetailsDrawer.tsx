@@ -291,10 +291,11 @@ const SubTaskDetails = (Data:Data) => {
                     <TabContent value="tab1">
                     <div className='flex  gap-4 items-center mb-5'>
 
-                      {(Data.data.sub_task_status==='Completed' || Data.data.sub_task_status==='Cancelled')?<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'disabled ><IoPlayOutline className='font-bold'/></Button>:
-                        <span  className=''  onClick={timerData.isRunning?handlePause:handleStart}>
-                            {timerData.isRunning?<Button className='!rounded-full shadow-md' variant='twoTone' size='sm' ><CiPause1 className='font-bold'/></Button>:<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'><IoPlayOutline className=''/></Button>}</span>}
-                                <Button className='!rounded-full shadow-md' variant='twoTone' size='sm' onClick={handleReset} disabled={Data.data.sub_task_status==='Completed'?true:false}><PiSquareThin/></Button>
+                      {(Data.data.sub_task_status==='Completed' || Data.data.sub_task_status==='Cancelled')?(<><Button className='!rounded-full shadow-md' variant='twoTone' size='sm'disabled ><IoPlayOutline className='font-bold'/></Button>
+                      <Button className='!rounded-full shadow-md' variant='twoTone' size='sm'disabled ><PiSquareThin/></Button></>):
+                    <><span  className=''  onClick={timerData.isRunning?handlePause:handleStart}>
+                            {timerData.isRunning?<Button className='!rounded-full shadow-md' variant='twoTone' size='sm' ><CiPause1 className='font-bold'/></Button>:<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'><IoPlayOutline className=''/></Button>}</span>
+                                <Button className='!rounded-full shadow-md' variant='twoTone' size='sm' onClick={handleReset} disabled={Data.data.sub_task_status==='Completed'?true:false}></Button></>    }
                             <h5>{formatTime()}</h5>
       
     </div>
