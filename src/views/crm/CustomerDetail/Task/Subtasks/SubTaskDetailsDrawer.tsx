@@ -291,7 +291,7 @@ const SubTaskDetails = (Data:Data) => {
                     <TabContent value="tab1">
                     <div className='flex  gap-4 items-center mb-5'>
 
-                      {Data.data.sub_task_status==='Completed'?<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'disabled ><IoPlayOutline className='font-bold'/></Button>:
+                      {(Data.data.sub_task_status==='Completed' || Data.data.sub_task_status==='Cancelled')?<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'disabled ><IoPlayOutline className='font-bold'/></Button>:
                         <span  className=''  onClick={timerData.isRunning?handlePause:handleStart}>
                             {timerData.isRunning?<Button className='!rounded-full shadow-md' variant='twoTone' size='sm' ><CiPause1 className='font-bold'/></Button>:<Button className='!rounded-full shadow-md' variant='twoTone' size='sm'><IoPlayOutline className=''/></Button>}</span>}
                                 <Button className='!rounded-full shadow-md' variant='twoTone' size='sm' onClick={handleReset} disabled={Data.data.sub_task_status==='Completed'?true:false}><PiSquareThin/></Button>
@@ -304,8 +304,8 @@ const SubTaskDetails = (Data:Data) => {
                     <CustomerInfoField title="Subtask Name" value={(Data.data.sub_task_name)} />
                     <CustomerInfoField title="Subtask Status" value={(Data.data.sub_task_status)} />
                     <CustomerInfoField title="Subtask Priority" value={(Data.data.sub_task_priority)} />
-                    <CustomerInfoField title="Subtask Start Date" value={formateDate(Data.data.actual_sub_task_start_date)} />
-                    <CustomerInfoField title="Subtask End Date" value={formateDate(Data.data.actual_sub_task_end_date)} />
+                    <CustomerInfoField title="Subtask Start Date" value={Data.data.actual_sub_task_start_date?formateDate(Data.data.actual_sub_task_start_date):'-'} />
+                    <CustomerInfoField title="Subtask End Date" value={Data.data.actual_sub_task_end_date?formateDate(Data.data.actual_sub_task_end_date):'-'} />
                     <CustomerInfoField title="Estimated Start Date" value={formateDate(Data.data.estimated_sub_task_start_date)} />
                     <CustomerInfoField title="Estimated End Date" value={formateDate(Data.data.estimated_sub_task_end_date)} />
                     <CustomerInfoField title="Reporter" value={(Data.data.sub_task_reporter)} />

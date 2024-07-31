@@ -85,8 +85,8 @@ const TaskDetails = () => {
         <CustomerInfoField title='Task Name' value={taskData.task_name}/>
         <CustomerInfoField title='Task Status' value={taskData.task_status}/>
         <CustomerInfoField title='Task Priority' value={taskData.task_priority}/>
-        <CustomerInfoField title='Actual Task Start Date' value={formateDate(taskData.actual_task_start_date)}/>
-        <CustomerInfoField title='Actual Task End Date' value={formateDate(taskData.actual_task_end_date)}/>
+        <CustomerInfoField title='Actual Task Start Date' value={taskData.actual_task_start_date?formateDate(taskData.actual_task_start_date):"-"}/>
+        <CustomerInfoField title='Actual Task End Date' value={taskData.actual_task_end_date?formateDate(taskData.actual_task_end_date):'-'}/>
         <CustomerInfoField title='Estimated Task Start Date' value={formateDate(taskData.estimated_task_start_date)}/>
         <CustomerInfoField title='Estimated Task End Date' value={formateDate(taskData.estimated_task_end_date)}/>
         <CustomerInfoField title='Task Assignee' value={taskData.task_assignee}/>

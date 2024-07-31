@@ -100,7 +100,7 @@ const Report: React.FC = () => {
         }}
         series={chartData.series}
         type="bar"
-        height={chartData.series[0]?.data.length *75 || 150}
+        height={chartData.series[0]?.data.length===1? 120:chartData.series[0]?.data.length*75 || 75}
         
       />
     </Card>

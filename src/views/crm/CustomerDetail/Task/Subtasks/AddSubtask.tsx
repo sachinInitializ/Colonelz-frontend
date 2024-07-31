@@ -6,6 +6,7 @@ import { DatePicker, FormItem, Input, Notification, Select, Tooltip, toast } fro
 import { apiGetCrmProjectsAddSubTask, apiGetCrmProjectsAddTask, apiGetUsersList } from '@/services/CrmService'
 import { MdOutlineAdd } from 'react-icons/md'
 import * as Yup from 'yup'
+import { useLocation } from 'react-router-dom'
 
 type Task = {
     user_id: string;
@@ -26,6 +27,10 @@ const AddSubTask = (task:any) => {
     const [dialogIsOpen, setIsOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [userData,setUserData]=useState<any>(null)
+    const location=useLocation()
+    const queryParams=new URLSearchParams(location.search)
+    const project_id=queryParams.get('project_id')
+    const task_id=queryParams.get('task')
     useEffect(() => {
         const UserData=async()=>{
             const response = await apiGetUsersList();
@@ -70,8 +75,8 @@ const priorityOptions = [
                 <Formik 
                        initialValues={{
                         user_id: localStorage.getItem('userId') || '',
-                        project_id: task.task.project_id,
-                        task_id: task.task.taskid,
+                        project_id: project_id || '',
+                        task_id: task_id || '',
                         sub_task_name: "",
                         sub_task_description: "",
                         actual_sub_task_start_date: "",
@@ -85,17 +90,7 @@ const priorityOptions = [
                       }}
                       validationSchema={Yup.object().shape({
                         sub_task_name: Yup.string().required('Subtask Name is required'),
-                        actual_sub_task_start_date: Yup.string(),
-                        actual_sub_task_end_date: Yup.string().test(
-                            'is-greater',
-                            'End date must be greater than start date',
-                            function (value) {
-                              const { actual_sub_task_start_date } = this.parent;
-                              if(value && actual_sub_task_start_date)
-                               return new Date(value) > new Date(actual_sub_task_start_date);
-                            }
-                          
-                        ),
+                       
 
                         estimated_sub_task_start_date: Yup.string().required('Estimated Start Date is required'),
                         estimated_sub_task_end_date: Yup.string().required('Estimated End Date is required').test(
@@ -194,7 +189,6 @@ const priorityOptions = [
 
 
                             <FormItem label='Actual End Date'
-                            invalid={errors.actual_sub_task_end_date && touched.actual_sub_task_end_date}
                             >
                                 <Field name='actual_sub_task_end_date' placeholder='End Date'>
                                     {({field}:any)=>(
@@ -203,7 +197,6 @@ const priorityOptions = [
                                         />
                                     )}
                                 </Field>
-                                <div className=' text-red-600'>{errors.actual_sub_task_end_date}</div>
                             </FormItem>
 
                             <FormItem label='Estimated Start Date'

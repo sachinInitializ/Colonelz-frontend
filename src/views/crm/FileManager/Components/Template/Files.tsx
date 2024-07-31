@@ -577,7 +577,7 @@ const onDialogClose3 = () => {
               
                 const postData = {
                   file_id: selectedFiles,
-                  lead_id: leadId,
+                  lead_id: '',
                   project_id: '',
                   email:  selectedEmails,
                   cc:  selectedEmailsCc,

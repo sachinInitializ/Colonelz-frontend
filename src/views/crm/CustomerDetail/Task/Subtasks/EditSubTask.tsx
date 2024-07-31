@@ -106,16 +106,7 @@ const priorityOptions = [
                       }}
                       validationSchema={Yup.object().shape({
                         sub_task_name: Yup.string().required('Subtask Name is required'),
-                        actual_sub_task_start_date: Yup.string().required('Actual Start Date is required'),
-                        actual_sub_task_end_date: Yup.string().required('Actual End Date is required').test(
-                            'is-greater',
-                            'End date must be greater than start date',
-                            function (value) {
-                              const { actual_sub_task_start_date } = this.parent;
-                              return new Date(value) > new Date(actual_sub_task_start_date);
-                            }
-                          
-                        ),
+                    
 
                         estimated_sub_task_start_date: Yup.string().required('Estimated Start Date is required'),
                         estimated_sub_task_end_date: Yup.string().required('Estimated End Date is required').test(
@@ -216,7 +207,6 @@ const priorityOptions = [
                                 </Field>
                             </FormItem>
                             <FormItem label='Actual End Date'
-                            invalid={errors.actual_sub_task_end_date && touched.actual_sub_task_end_date}
                             >
                                 <Field name='actual_sub_task_end_date' placeholder='End Date'>
                                     {({field}:any)=>(
@@ -225,7 +215,6 @@ const priorityOptions = [
                                         />
                                     )}
                                 </Field>
-                                <div className=' text-red-600'>{errors.actual_sub_task_end_date}</div>
                             </FormItem>
 
                             <FormItem label='Estimated Start Date'

@@ -412,6 +412,7 @@ const columns = useMemo<ColumnDef<FileItem>[]>(
     ],
     []
 )
+const role=localStorage.getItem('role')
 
 const table = useReactTable({
     data:leadData,
@@ -598,7 +599,7 @@ const onSelectChange = (value = 0) => {
             Back
           </Button>
           {
-            folderName==='contract' &&(
+            folderName==='contract' && (role==='ADMIN' || role==='Senior Architect')&& (
               <Button variant='solid' size='sm'  onClick={() => openDialog1()}>
                 Share For Approval
               </Button>

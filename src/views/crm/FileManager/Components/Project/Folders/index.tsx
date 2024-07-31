@@ -556,7 +556,7 @@ const onSelectChange = (value = 0) => {
   table.setPageSize(Number(value))
 }
 
-    const handleUploadFiles = () => {}
+   const role=localStorage.getItem('role');
 
     return (
         <div>
@@ -727,7 +727,7 @@ const onSelectChange = (value = 0) => {
                     >
                         Back
                     </Button>
-                    {folderName?.toUpperCase() === 'QUOTATION' ? (
+                    {(folderName?.toUpperCase() === 'QUOTATION' && (role==='ADMIN' || role==='Senior Architect')) ? (
                         <Button
                             size="sm"
                             className="ltr:mr-3 rtl:ml-3"

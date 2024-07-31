@@ -60,7 +60,6 @@ const priorityOptions = [
   const statusOptions = [
     { label: "Pending", value: "Pending" },
     { label: "In Progress", value: "In Progress" },
-    { label: "Completed", value: "Completed" },
     { label: "Cancelled", value: "Cancelled" },
   ];
   
@@ -103,19 +102,7 @@ const priorityOptions = [
                       }}
                       validationSchema={Yup.object().shape({
                         task_name: Yup.string().required("Task Name is required"),
-                        actual_task_start_date: Yup.string(),
-                        actual_task_end_date: Yup.string().test(
-                            "is-greater",
-                            "End Date must be greater than Start Date",
-                            function (value) {
-                              const { actual_task_start_date } = this.parent;
-                              if (actual_task_start_date && value) {
-                                return new Date(value) > new Date(actual_task_start_date);
-                              }
-                              return true;
-                            }
-                          
-                        ),
+                      
                         estimated_task_start_date: Yup.string().required("Estimated Start Date is required"),
                         estimated_task_end_date: Yup.string().required("Estimated End Date is required").test(
                             "is-greater",
@@ -211,7 +198,6 @@ const priorityOptions = [
                             </Field>
                             </FormItem>
                             <FormItem label='Actual End Date'
-                            invalid={errors.actual_task_end_date && touched.actual_task_end_date}
                             >
                                 <Field name='actual_task_end_date' placeholder='End Date'>
                                     {({field}:any)=>(
@@ -222,7 +208,6 @@ const priorityOptions = [
                                         />
                                     )}
                                 </Field>
-                                <div className=' text-red-600'>{errors.actual_task_end_date}</div>
                             </FormItem>
 
                             <FormItem label='Estimated Start Date'
