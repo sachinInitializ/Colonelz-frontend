@@ -31,6 +31,7 @@ const Index = () => {
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [filteredLeads, setFilteredLeads] = useState<Projects[]>([]);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [loading,setLoading]=useState(false)
 
   const Options = [
     { value: 'Jr. Interior Designer', label: 'Jr. Interior Designer' },
@@ -61,8 +62,10 @@ const Index = () => {
   
 
   const handleSubmit = async (values: FormValues) => {
+    setLoading(true)
     const response=await apiAddMemberToLead(values,token);
     const responseData=  await response.json();
+    setLoading(false)
     if(response.status===200){
      
       toast.push(
@@ -121,7 +124,7 @@ const Index = () => {
             />
           </FormItem>
 
-          <Button type="submit" variant='solid'>Submit</Button>
+          <Button type="submit" variant='solid' loading={loading}>{loading?'Submitting':'Submit'}</Button>
         </Form>
       )}
     </Formik>

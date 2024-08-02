@@ -139,6 +139,7 @@ const Index = () => {
   const [fileId, setFileId] = useState<string>('')
   const [loading,setLoading]=useState(true)
   const [formloading,setFormLoading]=useState(false)
+  const [shareloading,setShareLoading]=useState(false)
 
 
   const openDialog = (fileId:string) => {
@@ -241,7 +242,7 @@ console.log(leadData);
     } 
   }
   const handleShareFiles = async () => {
-
+    setShareLoading(true)
     if (selectedFiles.length === 0 || selectedEmails.length === 0) {
       warn('No files or email addresses selected for sharing.')
       return;
@@ -259,13 +260,7 @@ console.log(leadData);
       user_id:localStorage.getItem('userId')
     };
 
-    function closeAfter2000ms(text:string) {
-      toast.push(
-          <Notification closable type="success" duration={2000}>
-              {text}
-          </Notification>,{placement:'top-center'}
-      )
-  }
+    
   function warn(text:string) {
     toast.push(
         <Notification closable type="warning" duration={2000}>
@@ -274,12 +269,23 @@ console.log(leadData);
     )
 }
   
-    try {
+
       const response = await apiGetCrmFileManagerShareFiles(postData);
-      if (!response.ok) {
-        console.error('Error sharing files:', response.statusText);
-        return;
+      if (response.code===200) {
+       toast.push(
+          <Notification closable type="success" duration={2000}>
+              Files shared successfully
+          </Notification>,{placement:'top-center'}
+       )
       }
+      else{
+        toast.push(
+          <Notification closable type="danger" duration={2000}>
+              {response.errorMessage}
+          </Notification>,{placement:'top-center'}
+        )
+      }
+      setShareLoading(false)
       const responseData = await response.json();
       console.log('Files shared successfully:', responseData);
       setSelectedFiles([]);
@@ -289,13 +295,10 @@ console.log(leadData);
       setSubject('')
       setBody('')
       onDialogClose()
-      closeAfter2000ms('Successfully Shared')
       
       const updatedLeadData = leadData.map((file) => ({ ...file, active: false }));
       setLeadData(updatedLeadData);
-    } catch (error) {
-      console.error('Error sharing files:', error);
-    }
+  
   };
   
   const getFileIcon = (fileName: string) => {
@@ -685,6 +688,9 @@ const onSelectChange = (value = 0) => {
   )}
 </Formik>
             </Dialog>
+
+
+
       <Dialog
                 isOpen={dialogIsOpen}
                 style={{}}
@@ -695,57 +701,12 @@ const onSelectChange = (value = 0) => {
               <h3 className='mb-5'>Share Files</h3>
 
               <Formik initialValues={{ lead_id: leadId, folder_name: folderName, file_id: '', email: '', cc: '', bcc: '', subject: '', body: '' }}
-              onSubmit={async(values) => {
-                if (selectedFiles.length === 0 || selectedEmails.length === 0) {
-                  toast.push(
-                    <Notification closable type="warning" duration={2000}>
-                        No files or email addresses selected for sharing
-                    </Notification>,{placement:'top-center'}
-                  )
-                  return;
-                }
-              
-                const postData = {
-                  file_id: selectedFiles,
-                  lead_id: leadId,
-                  project_id: '',
-                  email:  selectedEmails,
-                  cc:  selectedEmailsCc,
-                  bcc:  selectedEmailsBCc,
-                  subject: subject,
-                  body: body,
-                  user_id:localStorage.getItem('userId')
-                };
-              
-                try {
-                  const response = await apiGetCrmFileManagerShareFiles(postData);
-                  if (!response.ok) {
-                    console.error('Error sharing files:', response.statusText);
-                    return;
-                  }
-                  const responseData = await response.json();
-                  console.log('Files shared successfully:', responseData);
-                  setSelectedFiles([]);
-                  setSelectedEmails([]);
-                  setSelectedEmailsCc([]);
-                  setSelectedEmailsBcc([]);
-                  setSubject('')
-                  setBody('')
-                  onDialogClose()
-                  toast.push(
-                    <Notification closable type="success" duration={2000}>
-                        Successfully Shared
-                    </Notification>,{placement:'top-center'}
-                  )
-                  
-                  const updatedLeadData = leadData.map((file) => ({ ...file, active: false }));
-                  setLeadData(updatedLeadData);
-                } catch (error) {
-                  console.error('Error sharing files:', error);
-                }
-              }
-
+              onSubmit={(values, { setSubmitting }) => {
+                console.log(values);
+              } 
               }>
+
+      {({isSubmitting})=>(
     <div className='max-h-96 overflow-y-auto'>
              <FormItem label='To'>
               <Field>
@@ -834,11 +795,12 @@ const onSelectChange = (value = 0) => {
         </div>
   
          <div className='flex justify-end'>
-         <Button size="sm" variant="solid" type="submit" className='mt-5 ' onClick={handleShareFiles} >
-            Share
+         <Button size="sm" variant="solid" type="submit" className='mt-5 ' onClick={handleShareFiles} loading={shareloading} block >
+            {shareloading ? 'Sharing...' : 'Share'}
           </Button>
           </div>
           </div>
+          )} 
           </Formik>
             </Dialog>
 

@@ -33,7 +33,9 @@ interface FormValues {
     terrace_covered_area_in_sft: string;
     terrace_open_charges_per_sft: string;
     terrace_open_area_in_sft: string;
+    additional_note: string;
 }
+
 
 const validationSchema = Yup.object().shape({
     // project_name: Yup.string().required('Required'),
@@ -84,8 +86,14 @@ const validationSchema = Yup.object().shape({
 export const FormikValuesContext = createContext(null);
 
 const FormComponent = ({ children }:any) => {
-    const { values } = useFormikContext<FormValues>();
-
+    const { values ,setFieldValue} = useFormikContext<FormValues>();
+    useEffect(() => {
+        const lead_id = new URLSearchParams(window.location.search).get('lead_id');
+        const fileName = `Contract_${lead_id}_${values.project_name}_${new Date().toLocaleString().replace(/[/,]/g, '-').replace(/:/g, '-')}`;
+        setFieldValue('file_name', fileName);
+    }, [values.project_name, setFieldValue]);
+    console.log(values.file_name);
+    
     return (
         <div className=''>
             {values.project_type==='residential' ? <MyComponent1 data={values}/> : <MyComponent data={values}/>
@@ -99,6 +107,8 @@ const Index = () => {
 
     
     const navigate=useNavigate()
+
+    
     const handleSubmit = async (values: FormValues) => {
     //     console.log(values)
     //   console.log(values.date);
@@ -128,11 +138,12 @@ const Index = () => {
     const queryParams = new URLSearchParams(location.search)
     const lead_id = queryParams.get('lead_id')
     const userId=localStorage.getItem('userId')
+    
     return (
         <Formik
         initialValues={{
             lead_id:lead_id,
-            file_name:'',
+            file_name:`Contract_${lead_id}_${new Date().toISOString().split('T')[0].split('-').reverse().join('-')}`,
             company_name: '',
             user_id:userId ,
             project_type: '',
@@ -232,7 +243,6 @@ const FormContent = () => {
     { value: 'Others', label: 'Others' },
   ]
 
-  
   const [checkboxList, setCheckboxList] = useState<(string | number)[]>([])
 
   const onCheckboxChange = (options: (string | number)[], e: SyntheticEvent) => {
@@ -479,6 +489,7 @@ const FormContent = () => {
                                     type="text"
                                     name="file_name"
                                     placeholder="File Name"
+                                    
                                 />
                             </FormItem>
                             <FormItem label='Design Charges'>

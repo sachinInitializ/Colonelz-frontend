@@ -74,7 +74,7 @@ function DebouncedInput({
 }
 
 const fuzzyFilter: FilterFn<Project> = (row, columnId, value, addMeta) => {
-    let itemValue = row.getValue(columnId);
+    let itemValue:any = row.getValue(columnId);
 
     
     if (columnId === 'project_end_date') {
@@ -179,7 +179,7 @@ const Filtering = () => {
                 const row = props.row.original;
                 return (
                     <div className=' cursor-pointer text-nowrap'>
-                        <Dropdown placement="top-center" renderTitle={<span>{row.client_name}</span>} className=' cursor-pointer' style={{width:'auto'}}>
+                        <Dropdown placement="middle-start-top" renderTitle={<span>{row.client_name}</span>} className=' cursor-pointer' style={{width:'auto'}}>
                             <div className='px-2'>
                                 <p>Client Name: {row.client[0].client_name}</p>
                                 <p>Client Email: {row.client[0].client_email}</p>

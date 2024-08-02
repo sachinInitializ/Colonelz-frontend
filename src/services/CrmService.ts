@@ -599,8 +599,10 @@ export async function apiGetCrmFileManagerShareFiles(formData: any) {
         body: JSON.stringify(formData)
         
     });
+    const data = await response.json();
 
-    return response;
+    return data;
+
 }
 export async function apiGetCrmFileManagerShareContractFile(formData: any) {
     const response = await fetch(`${apiPrefix}admin/share/contract`, {

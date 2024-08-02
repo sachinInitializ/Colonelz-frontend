@@ -27,6 +27,8 @@ import type { ColumnDef, FilterFn, ColumnFiltersState } from '@tanstack/react-ta
 import type { InputHTMLAttributes } from 'react'
 import NoData from '@/views/pages/NoData';
 import TableRowSkeleton from '@/components/shared/loaders/TableRowSkeleton';
+import { AiOutlineDelete } from 'react-icons/ai';
+import { MdOutlineDelete } from 'react-icons/md';
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -223,7 +225,7 @@ const columns = useMemo<ColumnDef<FolderItem>[]>(
             cell: ({row}) => {
                 return(
                     <div className=' ml-3 cursor-pointer' onClick={()=>openDialog2(row.original.folder_name)}>
-                  <HiTrash className=' text-xl text-center hover:text-red-500'/>
+                  <MdOutlineDelete className=' text-xl text-center hover:text-red-500'/>
                   </div>
                 )
             }

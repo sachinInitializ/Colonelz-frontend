@@ -92,6 +92,7 @@ const Index = () => {
   const type = queryParams.get('type');
   const subfolder = queryParams.get('subfolder');
   const folderId = queryParams.get('folder_id');
+  const [shareLoading, setShareLoading] = useState(false);
   
   const navigate=useNavigate()
 
@@ -228,7 +229,7 @@ const onDialogClose3 = () => {
         warn('No files or email addresses selected for sharing.')
         return
     }
-  
+  setShareLoading(true)
     const postData = {
       folder_id:folderId,
         type:'template',
@@ -238,15 +239,10 @@ const onDialogClose3 = () => {
       bcc: selectedEmailsBcc,
       subject: subject,
       body: body,
+      user_id:localStorage.getItem('userId')
     };
 
-      function closeAfter2000ms() {
-      toast.push(
-          <Notification closable type="success" duration={2000}>
-              Successfully Shared
-          </Notification>
-      )
-  }
+     
 
       function warn(text: string) {
           toast.push(
@@ -259,18 +255,23 @@ const onDialogClose3 = () => {
 
 
 
-    try {
+    
       const response = await apiGetCrmFileManagerShareFiles(postData);
-  
-      if (!response.ok) {
-        console.error('Error sharing files:', response.statusText);
-        return;
+      setShareLoading(false)
+      if(response.code===200){
+        toast.push(
+          <Notification closable type="success" duration={2000}>
+              Files shared successfully
+          </Notification>,{placement:'top-center'}
+      )
       }
-  
-      const responseData = await response.json();
-  
-      console.log('Files shared successfully:', responseData);
-  
+      else{
+        toast.push(
+          <Notification closable type="danger" duration={2000}>
+              {response.errorMessage}
+          </Notification>,{placement:'top-center'}
+      )
+      }
       setSelectedFiles([]);
       setSelectedEmails([]);
       setSelectedEmailsCc([]);
@@ -278,14 +279,11 @@ const onDialogClose3 = () => {
       setSubject('')
       setBody('')
       onDialogClose()
-      closeAfter2000ms()
      
       
       const updatedLeadData = leadData.map((file) => ({ ...file, active: false }));
       setLeadData(updatedLeadData);
-    } catch (error) {
-      console.error('Error sharing files:', error);
-    }
+    
   };
 
   const getFileIcon = (fileName: string) => {
@@ -565,54 +563,10 @@ const onDialogClose3 = () => {
             >
               <h3 className='mb-5'>Share Files</h3>
               <Formik initialValues={{ lead_id:'', folder_name: folderName, file_id: '', email: '', cc: '', bcc: '', subject: '', body: '' }}
-              onSubmit={async(values) => {
-                if (selectedFiles.length === 0 || selectedEmails.length === 0) {
-                  toast.push(
-                    <Notification closable type="warning" duration={2000}>
-                        No files or email addresses selected for sharing
-                    </Notification>,{placement:'top-center'}
-                  )
-                  return;
-                }
-              
-                const postData = {
-                  file_id: selectedFiles,
-                  lead_id: '',
-                  project_id: '',
-                  email:  selectedEmails,
-                  cc:  selectedEmailsCc,
-                  bcc:  selectedEmailsBcc,
-                  subject: subject,
-                  body: body,
-                  user_id:localStorage.getItem('userId')
-                };
-              
-                try {
-                  const response = await apiGetCrmFileManagerShareFiles(postData);
-                  if (!response.ok) {
-                    console.error('Error sharing files:', response.statusText);
-                    return;
-                  }
-                  const responseData = await response.json();
-                  console.log('Files shared successfully:', responseData);
-                  setSelectedFiles([]);
-                  setSelectedEmails([]);
-                  setSelectedEmailsCc([]);
-                  setSelectedEmailsBcc([]);
-                  setSubject('')
-                  setBody('')
-                  onDialogClose()
-                  toast.push(
-                    <Notification closable type="success" duration={2000}>
-                        Successfully Shared
-                    </Notification>,{placement:'top-center'}
-                  )
-                  
-                  const updatedLeadData = leadData.map((file) => ({ ...file, active: false }));
-                  setLeadData(updatedLeadData);
-                } catch (error) {
-                  console.error('Error sharing files:', error);
-                }
+              onSubmit={async(values) =>
+                 {
+               console.log(values);
+               
               }
 
               }>
@@ -704,8 +658,8 @@ const onDialogClose3 = () => {
         </div>
   
          <div className='flex justify-end'>
-         <Button size="sm" variant="solid" type="submit" className='mt-5 ' onClick={handleShareFiles} >
-            Share
+         <Button size="sm" variant="solid" type="submit" className='mt-5 ' onClick={handleShareFiles} loading={shareLoading} block>
+            {shareLoading ? 'Sharing...' : 'Share'}
           </Button>
           </div>
           </div>

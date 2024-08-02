@@ -17,7 +17,7 @@ interface DropdownInput {
   name: string;
 }
 
-const PdfEditor: React.FC = () => {
+const PdfEditor= () => {
   const [pdfData, setPdfData] = useState<Uint8Array | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [dropdownInputs, setDropdownInputs] = useState<DropdownInput[]>([]);
