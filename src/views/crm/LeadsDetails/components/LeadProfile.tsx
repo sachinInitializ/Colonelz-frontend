@@ -1,9 +1,7 @@
-import React, {  useState } from 'react'
-import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
-import type { MouseEvent } from 'react'
+import { useState, type MouseEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Dialog, Notification, Skeleton, toast } from '@/components/ui'
+import { Card, Dialog, Notification, Skeleton, toast } from '@/components/ui'
 import { ConfirmDialog } from '@/components/shared'
 import { apiLeadsAnotherProject } from '@/services/CrmService'
 
@@ -14,7 +12,6 @@ type CustomerInfoFieldProps = {
 
 type CustomerProfileProps = {
     data?: Partial<Customer>
-    loading?:boolean
 }
 type Customer = {
     _id: string
@@ -47,9 +44,7 @@ type AddProject ={
 
 
 
-const CustomerProfile: React.FC<CustomerProfileProps> = ({ data },{loading}) => {
-
-
+const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
 
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
@@ -76,10 +71,10 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data },{loading}) => 
         
         
         return (
-            <div>
-                <span>{title}</span>
+            <div className='flex items-center my-3  '>
+                <span className="text-gray-700 dark:text-gray-200 font-semibold" >{title}: </span>
                 {!value?<Skeleton width={100}/>:
-                <p className="text-gray-700 dark:text-gray-200 font-semibold" style={{overflowWrap:"break-word"}}>
+                <p style={{overflowWrap:"break-word"}}>
                 {value || '-'}
                 </p>}
             </div>
@@ -87,6 +82,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data },{loading}) => 
     }
 
     const addProject=async()=>{
+        console.log(project);
         
             const response=await apiLeadsAnotherProject(project)
             const responseData=await response.json()
@@ -107,27 +103,13 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data },{loading}) => 
                 }
             }
     return (
-        <div className=" flex flex-col gap-3">
+        <div className=" flex flex-col gap-3 xl:w-2/5  ">
             <Card>
                 <div className="flex flex-col xl:justify-between h-full 2xl:min-w-[360px] mx-auto">
                     <div className="flex justify-between items-center">
-                        <h5>Basic Information</h5>
-                        {data?.project?
-                        <Button onClick={()=>openDialog2()}>
-                            Add Another Project
-                        </Button>:
-                        <Button
-                            variant="solid"
-                            onClick={() =>
-                                navigate(
-                                    `/app/crm/lead-project/?id=${myParam}&name=${data?.name}&email=${data?.email}&phone=${data?.phone}&location=${data?.location}`,
-                                )
-                            }
-                        >
-                            Create Project
-                        </Button>}
+                        <h5>Lead Details</h5>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-y-7 gap-x-4 mt-8">
+                    <div className="">
                         <CustomerInfoField
                             title="Lead Name"
                             value={data?.name}
@@ -191,7 +173,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data },{loading}) => 
                                             <div>
                                                 <p>Description</p>
                                                 <p className="text-gray-700 dark:text-gray-200 font-semibold text-wrap">
-                                                    {note.content}</p>
+                                                   </p>
                                             </div>
                                         </Card>
                                     </div>
@@ -206,13 +188,27 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data },{loading}) => 
                             </div>
                         </Dialog>
                     </div>
-                    <div className='mt-7'>
-                    <CustomerInfoField
-                            title="Description "
-                            value={data?.notes?.map((note) => (
-                                <>{note.content || '-'}</>)
-    )}
-                        />
+                    <div className=''>
+                    <div className='my-3'>
+                                                <p>Description</p>
+                                                <p className="text-gray-700 dark:text-gray-200 font-semibold text-wrap">
+                                                   <div className="remark-content" dangerouslySetInnerHTML={{ __html: data?.notes?data?.notes[0]?.content:"" }} /></p>
+                                            </div>
+                           {data?.project?
+                        <Button onClick={()=>openDialog2()} block variant='solid'>
+                            Add Another Project
+                        </Button>:
+                        <Button
+                            variant="solid"
+                            block
+                            onClick={() =>
+                                navigate(
+                                    `/app/crm/lead-project/?id=${myParam}&name=${data?.name}&email=${data?.email}&phone=${data?.phone}&location=${data?.location}`,
+                                )
+                            }
+                        >
+                            Create Project
+                        </Button>}
                         </div>
                     <div className="mt-4 flex flex-col xl:flex-row gap-2"></div>
                 </div>
@@ -227,7 +223,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data },{loading}) => 
             onConfirm={()=>addProject()}
           title={`Add Project`}
           onRequestClose={onDialogClose2}>
-            <p> Are you sure, You want to add project? </p>            
+            <p> Are you sure, You want to add another project in this lead? </p>            
         </ConfirmDialog>
 
           

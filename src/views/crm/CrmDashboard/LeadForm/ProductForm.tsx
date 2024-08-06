@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import DatePicker from '@/components/ui/DatePicker/DatePicker'
 import { Button, FormItem, Input, Notification, Select, toast } from '@/components/ui'
 import { useNavigate } from 'react-router-dom'
-import { StickyFooter } from '@/components/shared'
+import { RichTextEditor, StickyFooter } from '@/components/shared'
 import { apiGetCrmCreateLead } from '@/services/CrmService'
 import { format, isValid, parse } from 'date-fns'
 import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
@@ -12,7 +12,7 @@ import * as Yup from 'yup'
 const options = [
     { value: 'Follow Up', label: 'Follow Up' },
     { value: 'Interested', label: 'Interested' },
-    { value: 'Not Interested', label: 'Not Interested' },
+    { value: 'Not Contacted', label: 'Not Contacted' },
     { value: 'No Response', label: 'No Response' },
 ]
 const optionsSource = [
@@ -227,6 +227,9 @@ const LeadForm: React.FC = () => {
                 </Field>
             </FormItem>
 
+           
+
+            </div>
             <FormItem label='Content'
             >
                 <Field
@@ -234,17 +237,14 @@ const LeadForm: React.FC = () => {
                 placeholder='Enter content'
                 >
                     {({ field,form }:any) => (
-                       <Input
-                       textArea
+                       <RichTextEditor
                        onChange={(e) => {
-                            form.setFieldValue(field.name, e.target.value)
+                        form.setFieldValue(field.name, e)
                           }}
                           />
                     )}
                 </Field>
             </FormItem>
-
-            </div>
 
             <StickyFooter
                 className="-mx-8 px-8 flex items-center gap-3 py-4"

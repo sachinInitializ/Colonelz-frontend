@@ -699,8 +699,21 @@ export async function apiGetCrmLeadsUpdates(formData: any) {
         body: JSON.stringify(formData)
         
     });
-
-    return response;
+    const responseData = await response.json();
+    return responseData;
+}
+export async function apiGetCrmEditLead(formData: any) {
+    const response = await fetch(`${apiPrefix}admin/update/lead/data/`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+           'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+        
+    });
+    const responseData = await response.json();
+    return responseData;
 }
 
 export async function apPutCrmCustomer<T, U extends Record<string, unknown>>(

@@ -13,6 +13,7 @@ import type { ChangeEvent } from 'react'
 import type { CheckboxProps } from '@/components/ui/Checkbox'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Button, Dialog, FormItem, Input, Notification, Select, Upload, toast } from '@/components/ui'
+import Pagination from '@/components/ui/Pagination'
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { apiGetCrmFileManagerShareContractFile, apiGetCrmProjectShareContractApproval, apiGetCrmProjectShareQuotation, apiGetCrmProjectShareQuotationApproval } from '@/services/CrmService'
@@ -298,6 +299,21 @@ const ContractDetails=(data : FileItemProps )=> {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+    const pageSizeOption = [
+        { value: 10, label: '10 / page' },
+        { value: 20, label: '20 / page' },
+        { value: 30, label: '30 / page' },
+        { value: 40, label: '40 / page' },
+        { value: 50, label: '50 / page' },
+    ]
+
+    const onPaginationChange = (page: number) => {
+        table.setPageIndex(page - 1)
+    }
+
+    const onSelectChange = (value = 0) => {
+        table.setPageSize(Number(value))
+    }
   console.log(data.data);
   
     interface FormValues {
@@ -313,9 +329,9 @@ const ContractDetails=(data : FileItemProps )=> {
         user_id:string
 
     }
-    interface Option {
-        value: string ;
-        label: string;
+    type Option = {
+        value: number
+        label: string
     }
     
     interface SelectFieldProps {
@@ -408,9 +424,9 @@ const ContractDetails=(data : FileItemProps )=> {
         <div>
         <div className=' flex justify-end mb-4 gap-3'>
             <Button variant='solid' size='sm' onClick={()=>openDialog()} >Share to Client</Button>
-            <Button variant='solid' size='sm' onClick={()=>navigate(`/app/crm/contract?lead_id=${leadId}`)}>Create Contract</Button>
     </div>
     {table.getRowModel().rows.length > 0 ? (
+        <div>
     <Table>
         <THead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -435,6 +451,28 @@ const ContractDetails=(data : FileItemProps )=> {
             ))}
         </TBody>
     </Table>
+       <div className="flex items-center justify-between mt-4">
+       <Pagination
+           pageSize={table.getState().pagination.pageSize}
+           currentPage={table.getState().pagination.pageIndex + 1}
+           total={data.data.length}
+           onChange={onPaginationChange}
+       />
+       <div style={{ minWidth: 130 }}>
+           <Select<Option>
+               size="sm"
+               isSearchable={false}
+               value={pageSizeOption.filter(
+                   (option) =>
+                       option.value ===
+                       table.getState().pagination.pageSize
+               )}
+               options={pageSizeOption}
+               onChange={(option) => onSelectChange(option?.value)}
+           />
+       </div>
+   </div>
+   </div>
 ) : (
     <div style={{ textAlign: 'center' }}>No Contracts for approval</div>
 )}

@@ -148,7 +148,7 @@ type Option = {
             console.log(userdata)
 
             const usernames = userdata
-                .filter((user: User) => user.role === 'Executive Assistant')
+                .filter((user: User) => (user.role === 'Senior Architect') || (user.role === 'ADMIN'))
                 .map((user: User) => user.username)
             if (usernames) {
                 console.log(usernames)

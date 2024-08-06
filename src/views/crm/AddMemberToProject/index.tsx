@@ -123,7 +123,7 @@ const Index = () => {
             />
           </FormItem>
 
-          <Button type="submit" variant='solid' loading={loading}>{loading?'Submitting...':'Submit'}</Button>
+          <Button type="submit" variant='solid' loading={loading} block>{loading?'Submitting...':'Submit'}</Button>
         </Form>
       )}
     </Formik>
