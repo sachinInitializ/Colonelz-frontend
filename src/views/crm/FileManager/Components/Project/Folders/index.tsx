@@ -23,6 +23,7 @@ import {
     apiGetCrmFileManagerCreateProjectFolder,
     apiGetCrmFileManagerShareFiles,
     apiGetCrmProjectShareQuotation,
+    apiGetUsersList,
 } from '@/services/CrmService'
 import { apiGetUsers } from '@/services/CommonService'
 import { HiShare, HiTrash } from 'react-icons/hi'
@@ -143,7 +144,7 @@ type Option = {
 
     useEffect(() => {
         const response = async () => {
-            const data = await apiGetUsers()
+            const data = await apiGetUsersList()
             const userdata = data.data
             console.log(userdata)
 
@@ -730,7 +731,7 @@ const onSelectChange = (value = 0) => {
                     >
                         Back
                     </Button>
-                    {(folderName?.toUpperCase() === 'QUOTATION' && (role==='ADMIN' || role==='Senior Architect')) ? (
+                    {(folderName?.toUpperCase() === 'QUOTATION' && (role==='ADMIN' || role==='Senior Architect' || role==='Executive Assistant')) ? (
                         <Button
                             size="sm"
                             className="ltr:mr-3 rtl:ml-3"
