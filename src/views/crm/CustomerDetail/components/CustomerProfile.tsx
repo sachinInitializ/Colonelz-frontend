@@ -11,6 +11,8 @@ import { apiGetCrmSingleProjectEdit } from '@/services/CrmService'
 import Progress from '../Project Progress/Activity'
 import { HiOutlinePencil } from 'react-icons/hi'
 import Report from '../Project Progress/Report'
+import { useRoleContext } from '../../Roles/RolesContext'
+import { AuthorityCheck } from '@/components/shared'
 
 
 type CustomerInfoFieldProps = {
@@ -221,6 +223,7 @@ interface ProjectUpdateData {
 
 const CustomerProfile = ({ data }: CustomerProfileProps) => {
     const [dialogIsOpen, setIsOpen] = useState(false)
+    const {roleData} = useRoleContext()
 
     const openDialog = () => {
         setIsOpen(true)
@@ -238,9 +241,14 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                         <h4 className="font-bold capitalize">{data?.project_name}</h4>
                     </div>
                     <div className="mt-4 flex flex-col xl:flex-row gap-2">
+                    <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.contract?.update??[]}
+                    >
                     <Button variant="solid" onClick={() => openDialog()} size='sm' className='flex justify-center items-center gap-1'>
             <span>  <HiOutlinePencil/></span><span>  Edit</span>
             </Button>
+            </AuthorityCheck>
                     </div>
                 </div>
                 <Dialog

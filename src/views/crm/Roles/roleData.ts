@@ -1,15 +1,4 @@
-export interface NavigationTree {
-    key: string
-    path: string
-    isExternalLink?: boolean
-    title: string
-    translateKey: string
-    icon: string
-    type: 'title' | 'collapse' | 'item'
-    authority: string[]
-    subMenu:[]
-    
-}
+import { apiGetRoleDetails, apiGetRoleWiseDetails } from "@/services/CommonService";
 
 type RoleAccessPermissions = {
     read?: string[];
@@ -32,7 +21,7 @@ type RoleAccessPermissions = {
     | "addMember"
     | "role";
   
-  export type RoleAccessData = {
+  type RoleAccessData = {
     message: string;
     status: boolean;
     errorMessage: string;
@@ -42,3 +31,16 @@ type RoleAccessPermissions = {
     };
   };
 
+
+  export async function fetchRoleAccessData(): Promise<RoleAccessData> {
+    const response = await apiGetRoleWiseDetails(); 
+    return response;
+  }
+  fetchRoleAccessData()
+    .then((roleAccessData) => {
+      console.log("Fetched role access data:", roleAccessData);
+    })
+    .catch((error) => {
+      console.error("Error fetching role access data:", error);
+    });
+  

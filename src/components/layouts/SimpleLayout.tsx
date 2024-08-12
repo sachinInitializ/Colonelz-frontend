@@ -9,6 +9,7 @@ import MobileNav from '@/components/template/MobileNav'
 import HorizontalNav from '@/components/template/HorizontalNav'
 import View from '@/views'
 import { UserDetailsProvider } from '@/views/Context/userdetailsContext'
+import { RoleProvider } from '@/views/crm/Roles/RolesContext'
 
 const HeaderActionsStart = () => {
     return (
@@ -45,7 +46,9 @@ const SimpleLayout = () => {
                         headerMiddle={<HorizontalNav />}
                         headerEnd={<HeaderActionsEnd />}
                     />
+                    <RoleProvider>
                     <View pageContainerType="contained" />
+                    </RoleProvider>
                 </div>
             </div>
         </div>

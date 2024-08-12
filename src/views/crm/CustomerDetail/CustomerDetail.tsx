@@ -19,6 +19,8 @@ import { ProjectProvider } from '../Customers/store/ProjectContext'
 import Task from './Task/index'
 import Activity from './Project Progress/Activity'
 import Timeline from './Timeline/Timeline'
+import { AuthorityCheck } from '@/components/shared'
+import { useRoleContext } from '../Roles/RolesContext'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -39,10 +41,12 @@ const CustomerDetail = () => {
         mom:string
       
       }
-      const [fileData,setFileData]=useState<FileItem[]>();
-      const navigate = useNavigate();
+    const [fileData,setFileData]=useState<FileItem[]>();
+    const navigate = useNavigate();
     const location = useLocation();
     const role=localStorage.getItem('role');
+    const {roleData} = useRoleContext();
+
     const queryParams = new URLSearchParams(location.search);
     const allQueryParams: QueryParams = {
       id: queryParams.get('id') || '',
@@ -96,39 +100,62 @@ const CustomerDetail = () => {
 {loading?<Skeleton height={400}/>:
           <Tabs defaultValue={allQueryParams.mom} onChange={handleTabChange}>
             <TabList>
-                <TabNav value="tab1">Details</TabNav>
-                {(role === 'ADMIN' || role === 'Senior Architect' || role === 'Executive Assistant') && (
-                  <TabNav value="tab2">Quotation</TabNav>
-                )}{role !== 'Executive Assistant' && (
+                <TabNav value="details">Details</TabNav>
+                <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.quotation?.read??[]}
+                    >
+                  <TabNav value="Quotation">Quotation</TabNav>
+                  </AuthorityCheck>
                   <>
+                  <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.mom?.read??[]}
+                    >
                     <TabNav value="mom" >MOM</TabNav>
-                    <TabNav value="tab4">Task Manager</TabNav>
-                    <TabNav value="tab5">Project Activity</TabNav>
-                    <TabNav value="tab6">Timeline</TabNav>
+                    </AuthorityCheck>
+                    <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.task?.read??[]}
+                    >
+                    <TabNav value="task">Task Manager</TabNav>
+                    </AuthorityCheck>
+                    <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={['ADMIN']}
+                    >
+                    <TabNav value="activity">Project Activity</TabNav>
+                    </AuthorityCheck>
+                    <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.task?.read??[]}
+                    >
+                    <TabNav value="timeline">Timeline</TabNav>
+                    </AuthorityCheck>
                   </>
-                )}
+              
             </TabList>
             <div className="p-4">
-                <TabContent value="tab1">
+                <TabContent value="details">
                   {loading ? <Skeleton width={150}/> :
                     <Container>
                         <CustomerProfile data={details}/>
                     </Container>}
                 </TabContent>
-                <TabContent value="tab2">
+                <TabContent value="Quotation">
                   <Index data={fileData }/>
                 </TabContent>
                 <TabContent value="mom">
                   <MOM data={details} />
                 </TabContent>
               
-                <TabContent value="tab4">
+                <TabContent value="task">
                   <Task/>
                 </TabContent>
-                <TabContent value="tab5">
+                <TabContent value="activity">
                   <Activity Data={details} />
                 </TabContent>
-                <TabContent value="tab6">
+                <TabContent value="timeline">
                   <Timeline/>
                 </TabContent>
 

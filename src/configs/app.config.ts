@@ -1,5 +1,6 @@
 const role = localStorage.getItem('role');
-const env = await import.meta.env.VITE_APP_BASE_URL;
+const env = import.meta.env.VITE_APP_BASE_URL;
+
 
 export type AppConfig = {
     apiPrefix: string;

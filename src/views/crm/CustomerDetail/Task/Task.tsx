@@ -24,9 +24,10 @@ import useThemeClass from '@/utils/hooks/useThemeClass'
 import { MdDeleteOutline } from 'react-icons/md'
 import TaskDetails from './TaskDetailsDrawer'
 import AddTask from './AddTask'
-import { ConfirmDialog } from '@/components/shared'
+import { AuthorityCheck, ConfirmDialog } from '@/components/shared'
 import EditTask from './EditTask'
 import NoData from '@/views/pages/NoData'
+import { useRoleContext } from '../../Roles/RolesContext'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -118,6 +119,7 @@ const Filtering = () => {
     }: DebouncedInputProps) {
         const [value, setValue] = useState(initialValue)
         const role=localStorage.getItem('role')
+        const {roleData}=useRoleContext()
     
         useEffect(() => {
             setValue(initialValue)
@@ -146,7 +148,12 @@ const Filtering = () => {
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
                     />
+                    <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.task?.create??[]}
+                    >
                     <AddTask project={projectId} userData={userData}/>
+                    </AuthorityCheck>
                 </div>
             </div>
         )
@@ -157,6 +164,7 @@ const Filtering = () => {
     const ActionColumn = ({ row }: { row: Task}) => {
         const navigate = useNavigate()
         const { textTheme } = useThemeClass()
+        const { roleData } = useRoleContext()
         const data={user_id:localStorage.getItem('userId'),
         project_id:row.project_id,
         task_id:row.task_id}
@@ -195,14 +203,24 @@ const Filtering = () => {
         
         return (
             <div className="flex justify-end text-lg">
+                <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.task?.update??[]}
+                    >
                 <span
                     className={`cursor-pointer p-2  hover:${textTheme}`}>
                     <EditTask Data={row} task={false}/>
                     
                 </span>
+                </AuthorityCheck>
+                <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.task?.delete??[]}
+                    >
                 <span className={`cursor-pointer py-2  hover:${textTheme}`}>
                     <MdDeleteOutline onClick={()=>openDialog()}/>   
                 </span>
+                </AuthorityCheck>
     
                 <ConfirmDialog
               isOpen={dialogIsOpen}

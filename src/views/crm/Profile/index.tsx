@@ -7,6 +7,7 @@ import Profile from './profile'
 import Password from './passsword'
 import Users from '../users'
 import { UserDetailsProvider } from '@/views/Context/userdetailsContext'
+import Roles from './Roles'
 
 const Index = () => {
     const userRole=localStorage.getItem('role')
@@ -17,6 +18,7 @@ const Index = () => {
         <TabNav value="tab1">Profile</TabNav>
         <TabNav value="tab2">Password</TabNav>
         {userRole === 'ADMIN' && <TabNav value="tab3">Users</TabNav>}
+        <TabNav value="tab4">Roles</TabNav>
     </TabList>
     <div className="p-4">
         <TabContent value="tab1">
@@ -29,6 +31,9 @@ const Index = () => {
         </TabContent>
         <TabContent value="tab3">
            <Users/>
+        </TabContent>
+        <TabContent value="tab4">
+           <Roles/>
         </TabContent>
     </div>
 </Tabs>

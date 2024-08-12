@@ -28,7 +28,6 @@ interface FormData {
     user_id:string | null
     client_name: string
     organisor: string
-    designer: string
     attendees: string
     meetingDate: string
     location: string
@@ -56,7 +55,6 @@ const YourFormComponent = () => {
         user_id:localStorage.getItem('userId'),
         client_name: '',
         organisor: '',
-        designer: '',
         attendees: '',
         meetingDate: '',
         location: '',
@@ -144,9 +142,7 @@ const YourFormComponent = () => {
         if (formData.organisor.length === 0) {
             validationErrors.organisor = "Organisor's Name is required"
         }
-        if (formData.designer.length === 0) {
-            validationErrors.designer = "Designer's Name is required"
-        }
+       
         if (!formData.meetingDate) {
             validationErrors.meetingDate = 'Meeting Date is required'
         }
@@ -185,7 +181,6 @@ const YourFormComponent = () => {
                 formatNames(formData.client_name),
             )
             formDataToSend.append('organisor', formatNames(formData.organisor))
-            formDataToSend.append('designer', formatNames(formData.designer))
             formDataToSend.append('attendees', formatNames(formData.attendees))
 
             formData.files.forEach((file) =>
@@ -266,24 +261,7 @@ const YourFormComponent = () => {
                                 </span>
                             )}
                         </FormItem>
-                        <FormItem label="Designer's Name" asterisk>
-                            <Select
-                                isMulti
-                                componentAs={CreatableSelect}
-                           
-                                onChange={(selectedOption:any) =>
-                                    handleSelectChange(
-                                        selectedOption,
-                                        'designer',
-                                    )
-                                }
-                            />
-                            {errors.designer && (
-                                <span className="text-red-500">
-                                    {errors.designer}
-                                </span>
-                            )}
-                        </FormItem>
+                       
                         <FormItem label="Others" >
                             <Select
                                 isMulti

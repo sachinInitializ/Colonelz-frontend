@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FolderItem, fetchProjectData } from './data';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Dialog, Notification, Skeleton, toast } from '@/components/ui';
+import { Button, Dialog, Notification, Pagination, Select, Skeleton, toast } from '@/components/ui';
 import type { MouseEvent } from 'react';
 import YourFormComponent from './ProjectForm';
 import { FaFolder } from 'react-icons/fa';
@@ -37,6 +37,10 @@ interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>
 }
 
 const { Tr, Th, Td, THead, TBody, Sorter } = Table
+type Option={
+  value:number;
+  label:string;
+}
 
 function DebouncedInput({
     value: initialValue,
@@ -234,6 +238,24 @@ const columns = useMemo<ColumnDef<FolderItem>[]>(
     []
 )
 
+const totalData = projectData.length
+
+const pageSizeOption = [
+    { value: 10, label: '10 / page' },
+    { value: 20, label: '20 / page' },
+    { value: 30, label: '30 / page' },
+    { value: 40, label: '40 / page' },
+    { value: 50, label: '50 / page' },
+]
+
+const onPaginationChange = (page: number) => {
+  table.setPageIndex(page - 1)
+}
+
+const onSelectChange = (value = 0) => {
+  table.setPageSize(Number(value))
+}
+
 
 const filteredProjectData = useMemo(() => {
   if (role === 'Executive Assistant') {
@@ -372,6 +394,27 @@ const table = useReactTable({
                     })}
                 </TBody>}
             </Table>
+            <div className="flex items-center justify-between mt-4">
+                <Pagination
+                    pageSize={table.getState().pagination.pageSize}
+                    currentPage={table.getState().pagination.pageIndex + 1}
+                    total={totalData}
+                    onChange={onPaginationChange}
+                />
+                <div style={{ minWidth: 130 }}>
+                    <Select<Option>
+                        size="sm"
+                        isSearchable={false}
+                        value={pageSizeOption.filter(
+                            (option) =>
+                                option.value ===
+                                table.getState().pagination.pageSize
+                        )}
+                        options={pageSizeOption}
+                        onChange={(option) => onSelectChange(option?.value)}
+                    />
+                </div>
+            </div>
         </>
           
 

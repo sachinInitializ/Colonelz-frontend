@@ -309,7 +309,7 @@ const Index = () => {
                                     <li>
                                         <a
                                             href={`/app/crm/fileManager/project/templates/${type}`}
-                                            className="text-blue-600 dark:text-blue-400 hover:underline"
+                                            className="text-blue-600 dark:text-blue-400 hover:underline capitalize"
                                         >
                                             {type}
                                         </a>
@@ -318,7 +318,7 @@ const Index = () => {
                                         <span className="mx-2">/</span>
                                     </li>
 
-                                    <li className="text-gray-500">
+                                    <li className="text-gray-500 capitalize">
                                         {folderName}
                                     </li>
                                 </ol>

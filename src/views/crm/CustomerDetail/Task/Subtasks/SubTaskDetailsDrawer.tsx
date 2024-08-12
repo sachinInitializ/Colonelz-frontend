@@ -56,6 +56,8 @@ const SubTaskDetails = (Data:Data) => {
     const location=useLocation()
     const queryParam=new URLSearchParams(location.search);
     const projectId=queryParam.get('project_id') || '';
+    console.log(Data);
+    
     
 
    
