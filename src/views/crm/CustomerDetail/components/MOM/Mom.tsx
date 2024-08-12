@@ -348,7 +348,6 @@ const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
           <div class="section-content">
             <p><strong>Client:</strong> ${rowData.attendees.client_name || '-'}</p>
             <p><strong>Organizer:</strong> ${rowData.attendees.organisor || '-'}</p>
-            <p><strong>Designer:</strong> ${rowData.attendees.designer || '-'}</p>
             <p><strong>Others:</strong> ${rowData.attendees.attendees || '-'}</p>
           </div>
         </div>
@@ -406,7 +405,6 @@ const handlePrint = () => {
                               <ul className="space-y-1">
                                   <li className="text-base"><span className="font-semibold text-lg">Client:</span> {rowData.attendees.client_name ? rowData.attendees.client_name : '-'}</li>
                                   <li className="text-base"><span className="font-semibold text-lg">Organizer:</span> {rowData.attendees.organisor ? rowData.attendees.organisor : '-'}</li>
-                                  <li className="text-base"><span className="font-semibold text-lg">Designer:</span> {rowData.attendees.designer ? rowData.attendees.designer : '-'}</li>
                                   <li className="text-base"><span className="font-semibold text-lg">Others:</span> {rowData.attendees.attendees ? rowData.attendees.attendees : '-'}</li>
                               </ul>
                           </div>
