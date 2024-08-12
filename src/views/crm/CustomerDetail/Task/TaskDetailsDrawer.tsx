@@ -91,7 +91,7 @@ const TaskDetails = (Data:Data) => {
                 
                 isOpen={verticalOpen}
                 placement="right"
-                width={500}
+                width={400}
                 bodyClass="py-3"
                 onRequestClose={onDrawerClose}
                 closable={false}

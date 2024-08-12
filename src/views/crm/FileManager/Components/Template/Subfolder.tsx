@@ -273,6 +273,7 @@ const Index = () => {
         <div>
             <div className=" mb-5 flex justify-between">
                 <h3 className="">Folder</h3>
+                
                 <Button variant="solid" size="sm" onClick={() => openDialog()}>
                     Upload
                 </Button>

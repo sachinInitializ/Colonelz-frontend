@@ -35,7 +35,13 @@ type SubTask = {
     sub_task_reporter: string;
     sub_task_createdBy: string;
     sub_task_assignee: string;
+    remark:Remark[]
 };
+type Remark={
+
+    remark:string;
+    remark_date:string;
+    remark_by:string;}
 type Data={
     data:SubTask
 }
@@ -274,7 +280,7 @@ const SubTaskDetails = (Data:Data) => {
                 
                 isOpen={verticalOpen}
                 placement="right"
-                width={450}
+                width={400}
                 bodyClass="py-3"
                 onRequestClose={onDrawerClose}
                 closable={false}
@@ -313,6 +319,20 @@ const SubTaskDetails = (Data:Data) => {
                     <CustomerInfoField title="Estimated End Date" value={formateDate(Data.data.estimated_sub_task_end_date)} />
                     <CustomerInfoField title="Reporter" value={(Data.data.sub_task_reporter)} />
                     <CustomerInfoField title="Description" value={Data.data.sub_task_description} />
+                    <div className=' gap-1 mb-2 pt-1'>
+                <span className='text-gray-700 dark:text-gray-200 font-semibold'>Remarks:</span>
+                <ul className='list-disc ml-4'>
+                {Data.data.remark.map((remark,index)=>(
+                   
+                        <li className="" style={{overflowWrap:"break-word"}}>
+                        {remark.remark}     ({formateDate(remark.remark_date)})
+                        </li>
+
+                ))}
+                </ul>
+                
+            </div>
+
                    
                     </TabContent>
                 </div>
