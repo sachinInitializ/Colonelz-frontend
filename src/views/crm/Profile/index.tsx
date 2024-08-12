@@ -8,9 +8,12 @@ import Password from './passsword'
 import Users from '../users'
 import { UserDetailsProvider } from '@/views/Context/userdetailsContext'
 import Roles from './Roles'
+import { useRoleContext } from '../Roles/RolesContext'
+import { AuthorityCheck } from '@/components/shared'
 
 const Index = () => {
     const userRole=localStorage.getItem('role')
+    const {roleData}=useRoleContext()
   return (<div className='px-4'>
     <h3 className='mb-5'>My Profile</h3>
     <Tabs defaultValue="tab1">
@@ -18,7 +21,12 @@ const Index = () => {
         <TabNav value="tab1">Profile</TabNav>
         <TabNav value="tab2">Password</TabNav>
         {userRole === 'ADMIN' && <TabNav value="tab3">Users</TabNav>}
+        <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.role?.read??[]}
+                    >
         <TabNav value="tab4">Roles</TabNav>
+        </AuthorityCheck>
     </TabList>
     <div className="p-4">
         <TabContent value="tab1">
