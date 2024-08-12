@@ -110,7 +110,11 @@ const Roles = () => {
                 const id= row.original._id
                 return(
                 <span className='flex items-center text-lg gap-2'>
-                <span><Link to={`/app/crm/roles/edit?role=${role}&id=${id}`}><BiPencil/></Link></span>
+                <span>
+                    {/* <Link to={`/app/crm/roles/edit?role=${role}&id=${id}`}> */}
+                <BiPencil/>
+                {/* </Link> */}
+                </span>
                 <span><MdDeleteOutline/></span>
                 </span>)
             },
