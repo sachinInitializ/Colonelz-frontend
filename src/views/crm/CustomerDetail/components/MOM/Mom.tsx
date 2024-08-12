@@ -1,60 +1,120 @@
-import { useMemo, Fragment, useState, useEffect, useContext, useRef } from 'react'
-import Table from '@/components/ui/Table'
+import { useMemo, Fragment, useState, useEffect } from 'react';
+import Table from '@/components/ui/Table';
 import {
     useReactTable,
     getCoreRowModel,
-    getExpandedRowModel,
+    getFilteredRowModel,
+    getSortedRowModel,
     flexRender,
-} from '@tanstack/react-table'
-import { HiOutlineChevronRight, HiOutlineChevronDown } from 'react-icons/hi'
-import type { ApiResponse, MomData } from './data'
-import type { ColumnDef, Row, ColumnSort } from '@tanstack/react-table'
-import type { ReactElement } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { Button, Dropdown, Notification, toast } from '@/components/ui'
-import { apiGetCrmProjectsMom, apishareMom } from '@/services/CrmService'
-import { useMomContext } from '../../store/MomContext'
-import appConfig from '@/configs/app.config'
-import { BsThreeDotsVertical } from 'react-icons/bs'
-import { useReactToPrint } from 'react-to-print';
-import { BiChevronUp } from 'react-icons/bi'
-import { MdDownload } from 'react-icons/md'
+} from '@tanstack/react-table';
+import { HiOutlineChevronRight, HiOutlineChevronDown } from 'react-icons/hi';
+import type { MomData } from './data';
+import type { ColumnDef, Row, ColumnSort, FilterFn } from '@tanstack/react-table';
+import type { InputHTMLAttributes, ReactElement } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Button, DatePicker, Input } from '@/components/ui';
+import { useMomContext } from '../../store/MomContext';
+import type { ColumnFiltersState } from '@tanstack/react-table';
+import { rankItem } from '@tanstack/match-sorter-utils';
+import Sorter from '@/components/ui/Table/Sorter';
+import { MdDownload } from 'react-icons/md';
+import { useRoleContext } from '@/views/crm/Roles/RolesContext';
+import { AuthorityCheck } from '@/components/shared';
 
+interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
+    value: string | number;
+    onChange: (value: string | number) => void;
+    debounce?: number;
+}
+
+function DebouncedInput({
+    value: initialValue,
+    onChange,
+    debounce = 500,
+    ...props
+}: DebouncedInputProps) {
+    const [value, setValue] = useState(initialValue);
+
+    useEffect(() => {
+        setValue(initialValue);
+    }, [initialValue]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            onChange(value);
+        }, debounce);
+
+        return () => clearTimeout(timeout);
+    }, [value]);
+
+    return (
+        <div className="flex justify-end">
+            <div className="flex items-center mb-4">
+                <Input  
+                    {...props}
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    className=' max-sm:w-full'
+                />
+            </div>
+        </div>
+    );
+}
 
 const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  const day = String(date.getUTCDate()).padStart(2, '0')
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Months are 0-based in JavaScript
-  const year = date.getUTCFullYear()
+    const date = new Date(dateString);
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-based in JavaScript
+    const year = date.getUTCFullYear();
+  
+    return `${day}-${month}-${year}`;
+};
 
-  return `${day}-${month}-${year}`
-}
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+    let itemValue: any = row.getValue(columnId);
+    if (columnId === 'meetingdate') {
+        itemValue = formatDate(itemValue);
+    } else if (columnId === 'client_name') {
+        itemValue = row.original.attendees.client_name;
+    }
+
+    const itemRank = rankItem(itemValue, value);
+    addMeta({ itemRank });
+
+    return itemRank.passed;
+};
+
 
 type ReactTableProps<T> = {
-    renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
-    getRowCanExpand: (row: Row<T>) => boolean
-    data: Data
-}
-type Data = {
-    client_name:string,
-    mom: MOM[]
-}
-type MOM = {
-    mom_id: string
-}
+    renderRowSubComponent: (props: { row: Row<T> }) => ReactElement;
+    getRowCanExpand: (row: Row<T>) => boolean;
+    data: Data;
+};
 
-const { Tr, Th, Td, THead, TBody } = Table
+type Data = {
+    client_name: string;
+    mom: MOM[];
+};
+
+type MOM = {
+    mom_id: string;
+};
+
+const { Tr, Th, Td, THead, TBody } = Table;
 
 function ReactTable({
     renderRowSubComponent,
     getRowCanExpand,
-    
 }: ReactTableProps<MomData>) {
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [globalFilter, setGlobalFilter] = useState('');
+    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+
     const columns = useMemo<ColumnDef<MomData>[]>(
         () => [
             {
-                header: () => null, 
-                id: 'expander', 
+                header: () => null,
+                id: 'expander',
                 cell: ({ row }) => (
                     <>
                         {row.getCanExpand() ? (
@@ -71,40 +131,33 @@ function ReactTable({
                         ) : null}
                     </>
                 ),
-                subCell: () => null, 
+                subCell: () => null,
             },
             {
                 header: 'MOM Id',
                 accessorKey: 'mom_id',
             },
-            // Update the 'Client Name' column definition
             {
                 header: 'Client Name',
-                accessorKey: 'attendees',
+                accessorKey: 'client_name',
                 cell: (props) => {
-                    const row = props.row.original
-                    const clientNames = Array.isArray(
-                        row.attendees?.client_name,
-                    )
+                    const row = props.row.original;
+                    const clientNames = Array.isArray(row.attendees?.client_name)
                         ? row.attendees.client_name
-                        : [row.attendees.client_name]
+                        : [row.attendees.client_name];
 
-                    return <span>{clientNames.join(', ')}</span>
+                    return <span>{clientNames.join(', ')}</span>;
                 },
             },
             {
                 header: 'Meeting Date',
                 accessorKey: 'meetingdate',
                 cell: (props) => {
-                    const row = props.row.original
-                    const date = new Date(row.meetingdate)
-                    const day = String(date.getUTCDate()).padStart(2, '0')
-                    const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Months are 0-based in JavaScript
-                    const year = date.getUTCFullYear()
-                
-                    const formattedDate= `${day}-${month}-${year}`
+                    const row = props.row.original;
+                    const date = new Date(row.meetingdate);
+                    const formattedDate = formatDate(row.meetingdate);
 
-                    return <div>{formattedDate}</div>
+                    return <div>{formattedDate}</div>;
                 },
             },
             {
@@ -112,102 +165,155 @@ function ReactTable({
                 accessorKey: 'location',
             },
         ],
-        [],
-    )
+        []
+    );
 
-    const location = useLocation()
+    const location = useLocation();
     const { leadData } = useMomContext();
-    const {client}=useMomContext()
-    const projectId = new URLSearchParams(location.search).get('project_id')
+    const { client } = useMomContext();
+    const {roleData}=useRoleContext()
+    const projectId = new URLSearchParams(location.search).get('project_id');
 
-    const [sorting, setSorting] = useState<ColumnSort[]>([])
+    const [sorting, setSorting] = useState<ColumnSort[]>([]);
+    
+
     const table = useReactTable({
         data: leadData || [],
         columns,
-        state: {
-            sorting,
+        filterFns: {
+            fuzzy: fuzzyFilter,
         },
-        onSortingChange: setSorting,
+        state: {
+            columnFilters,
+            globalFilter,
+        },
         getRowCanExpand,
+        onColumnFiltersChange: setColumnFilters,
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: fuzzyFilter,
         getCoreRowModel: getCoreRowModel(),
-        getExpandedRowModel: getExpandedRowModel(),
-    })
+        getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        debugHeaders: true,
+        debugColumns: false,
+    });
 
-    const navigate = useNavigate()
-    const [mom,setmom]=useState(false)
-   
+    const navigate = useNavigate();
+    const { DatePickerRange } = DatePicker;
+    const filteredRows = table.getRowModel().rows.filter((row) => {
+        const [startDate, endDate] = dateRange;
+        const rowDate = new Date(row.original.meetingdate); // Adjust according to your data structure
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+    
+        if (start && end) {
+            return rowDate >= start && rowDate <= end;
+        }
+        return true; 
+    });
 
     return (
         <>
-            <div className="flex justify-end mb-4 gap-3">
+            <div className="flex justify-end sm:flex-row flex-col mb-4 gap-3">
+                <DatePickerRange
+                    placeholder="Select dates range"
+                    value={dateRange}
+                    onChange={(dates) => setDateRange(dates)}
+                    className='flex justify-end lg:!w-48'
+                    
+                />
+
+                <DebouncedInput
+                    value={globalFilter ?? ''}
+                    className="p-2 font-lg shadow border border-block max-sm:w-full"
+                    placeholder="Search..."
+                    onChange={(value) => setGlobalFilter(String(value))}
+                />
+                <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.quotation?.read??[]}
+                    >
                 <Button
                     className="flex justify-center items-center"
-                    size="sm"
+                
                     variant="solid"
                     onClick={() =>
                         navigate(
-                            `/app/crm/project/momform?project_id=${projectId}&client_name=${client?.client_name}`
+                            `/app/crm/project/momform?project_id=${projectId}&client_name=${client?.client_name}`,
                         )
                     }
                 >
                     Add MOM{' '}
                 </Button>
-                <Button variant='solid' size='sm' onClick={()=>navigate(`/app/crm/project/AllMOM?project_id=${projectId}`)}>View All MOM</Button>
+                </AuthorityCheck>
+                <Button
+                    variant="solid"
+                    onClick={() =>
+                        navigate(`/app/crm/project/AllMOM?project_id=${projectId}`)
+                    }
+                >
+                    View All MOM
+                </Button>
             </div>
             {table.getRowModel().rows.length > 0 ? (
                 <>
-    <Table>
-        <THead>
-            {table.getHeaderGroups().map((headerGroup) => (
-                <Tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                        <Th key={header.id} colSpan={header.colSpan}>
-                            {header.isPlaceholder ? null : (
-                                <div
-                                    {...{
-                                        className: header.column.getCanSort()
-                                            ? 'cursor-pointer select-none'
-                                            : '',
-                                        onClick: header.column.getToggleSortingHandler(),
-                                    }}
-                                >
-                                    {flexRender(header.column.columnDef.header, header.getContext())}
-                                </div>
-                            )}
-                        </Th>
-                    ))}
-                </Tr>
-            ))}
-        </THead>
-        <TBody>
-            {table.getRowModel().rows.slice(0, 10).map((row) => (
-                <Fragment key={row.id}>
-                    <Tr>
-                        {row.getVisibleCells().map((cell) => (
-                            <td key={cell.id}>
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </td>
-                        ))}
-                    </Tr>
-                    {row.getIsExpanded() && (
-                        <Tr>
-                            <Td colSpan={row.getVisibleCells().length}>
-                                {renderRowSubComponent({ row })}
-                            </Td>
-                        </Tr>
-                    )}
-                </Fragment>
-            ))}
-        </TBody>
-    </Table>
-      
-</>
-) : (
-    <div style={{ textAlign: 'center' }}>No Mom Data</div>
-)}
+                    <Table>
+                        <THead>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <Tr key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => (
+                                        <Th key={header.id} colSpan={header.colSpan}>
+                                            {header.isPlaceholder ? null : (
+                                                <div
+                                                    {...{
+                                                        className: header.column.getCanSort()
+                                                            ? 'cursor-pointer select-none'
+                                                            : '',
+                                                        onClick: header.column.getToggleSortingHandler(),
+                                                    }}
+                                                >
+                                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                                    {header.id !== 'expander' && (
+                                                        <Sorter sort={header.column.getIsSorted()} />
+                                                    )}
+                                                </div>
+                                            )}
+                                        </Th>
+                                    ))}
+                                </Tr>
+                            ))}
+                        </THead>
+                        <TBody>
+                            {filteredRows.slice(0, 10).map((row) => (
+                                <Fragment key={row.id}>
+                                    <Tr>
+                                        {row.getVisibleCells().map((cell) => (
+                                            <td key={cell.id}>
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </td>
+                                        ))}
+                                    </Tr>
+                                    {row.getIsExpanded() && (
+                                        <Tr>
+                                            <Td colSpan={row.getVisibleCells().length}>
+                                                {renderRowSubComponent({ row })}
+                                            </Td>
+                                        </Tr>
+                                    )}
+                                </Fragment>
+                            ))}
+                        </TBody>
+                    </Table>
+                </>
+            ) : (
+                <div style={{ textAlign: 'center' }}>No Mom Data</div>
+            )}
         </>
-    )
+    );
 }
+
+
+
 
 const renderSubComponent = ({ row }: { row: Row<MomData> }) => {
   const rowData = row.original;

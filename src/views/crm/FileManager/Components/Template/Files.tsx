@@ -450,14 +450,14 @@ const onDialogClose3 = () => {
             {type !== 'company data' && (
               <>
             <li>
-              <Link to={`/app/crm/fileManager/project/templates/${type}`} className="text-blue-600 dark:text-blue-400 hover:underline">{type}</Link>
+              <Link to={`/app/crm/fileManager/project/templates/${type}`} className="text-blue-600 dark:text-blue-400 hover:underline capitalize">{type}</Link>
             </li>
           
           <li>
             <span className="mx-2">/</span>
           </li></>)}
         <li>
-          <Link to={`/app/crm/fileManager/project/templates/${type==="company data"?"miscellaneous":`${type}`}/subfolder?type=${type}&folder=${folderName}`} className="text-blue-600 dark:text-blue-400 hover:underline">{folderName}</Link>
+          <Link to={`/app/crm/fileManager/project/templates/${type==="company data"?"miscellaneous":`${type}`}/subfolder?type=${type}&folder=${folderName}`} className="text-blue-600 dark:text-blue-400 hover:underline capitalize">{folderName}</Link>
         </li>
         <li>
           <span className="mx-2">/</span>

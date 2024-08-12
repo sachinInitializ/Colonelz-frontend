@@ -18,7 +18,7 @@ const Template = () => {
     >  
       <div className='flex gap-4 '>
         <div className=' text-lg' ><FaRegBuilding/></div>
-        <p> Commecial</p>
+        <p> Commercial</p>
       </div>
     </Card>
     <Card onClick={()=>navigate('/app/crm/fileManager/project/templates/residential')}>

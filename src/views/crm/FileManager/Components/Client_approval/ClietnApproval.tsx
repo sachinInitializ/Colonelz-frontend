@@ -2,19 +2,14 @@ import { useEffect, useState } from 'react'
 import { FormItem, FormContainer } from '@/components/ui/Form'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
-import Alert from '@/components/ui/Alert'
-import ActionLink from '@/components/shared/ActionLink'
 import { QuotationApproval, apiForgotPassword } from '@/services/AuthService'
-import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import type { CommonProps } from '@/@types/common'
-import type { AxiosError } from 'axios'
 import Simple from '@/components/layouts/AuthLayout/Simple'
 import { useLocation } from 'react-router-dom'
 import { Notification, toast } from '@/components/ui'
 import Thank from './thank'
-
 interface QuotationApproval extends CommonProps {
     disableSubmit?: boolean
     signInUrl?: string

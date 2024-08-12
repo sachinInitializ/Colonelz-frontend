@@ -3,7 +3,24 @@ import {
     NAV_ITEM_TYPE_ITEM,
 } from '@/constants/navigation.constant'
 import { ADMIN, USER } from '@/constants/roles.constant'
-import type { NavigationTree } from '@/@types/navigation'
+import type { NavigationTree, RoleAccessData } from '@/@types/navigation'
+import { fetchRoleAccessData } from '@/views/crm/Roles/roleData';
+
+
+  async function getRoleAccessData(): Promise<RoleAccessData> {
+    try {
+        const roleAccessData = await fetchRoleAccessData();
+        return roleAccessData;
+    } catch (error) {
+        console.error("Error fetching role access data:", error);
+        throw error;
+    }
+}
+
+const data: RoleAccessData = await getRoleAccessData();
+
+
+
 
 const appsNavigationConfig: NavigationTree[] = [
  
@@ -15,7 +32,7 @@ const appsNavigationConfig: NavigationTree[] = [
                         icon: 'dashboard',
                         type: NAV_ITEM_TYPE_ITEM,
                         authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Executive Assistant"],
-                        subMenu: [],
+                   subMenu: [],     
                     },
                     {
                         key: 'appsCrm.fileManager',
@@ -24,8 +41,8 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: 'nav.appsCrm.fileManager',
                         icon: 'files',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect","Jr. Executive HR & Marketing","Site Supervisor","Executive Assistant"],
-                        subMenu: [],
+                        authority: data?.data?.file?.read?? [],
+subMenu: [],
                     },
                     {
                         key: 'appsSales.productList',
@@ -34,8 +51,8 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: 'nav.appsSales.productList',
                         icon: 'lead',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: ["ADMIN","Senior Architect","Project Architect"],
-                        subMenu: [],
+                        authority: data?.data?.lead?.read?? [],
+                   subMenu: [],     
                     },
                                      
               
@@ -47,8 +64,8 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: '',
                         icon: 'mom',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer","Project Architect"],
-                        subMenu: [],
+                        authority: data?.data?.mom?.read?? [],
+                   subMenu: [],     
                     },
                     {
                         key: 'appsCrm.project',
@@ -57,8 +74,8 @@ const appsNavigationConfig: NavigationTree[] = [
                         translateKey: '',
                         icon: 'projects',
                         type: NAV_ITEM_TYPE_ITEM,
-                        authority: ["ADMIN","Senior Architect","3D Visualizer","Jr. Interior Designer",,"Project Architect","Executive Assistant"],
-                        subMenu: [],
+                        authority: data?.data?.project?.read?? [],
+                   subMenu: [],     
                     },
                     
                     

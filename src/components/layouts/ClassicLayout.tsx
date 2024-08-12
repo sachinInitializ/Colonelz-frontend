@@ -9,6 +9,7 @@ import UserDropdown from '@/components/template/UserDropdown'
 import SideNav from '@/components/template/SideNav'
 import View from '@/views'
 import { UserDetailsProvider } from '@/views/Context/userdetailsContext'
+import { RoleProvider } from '@/views/crm/Roles/RolesContext'
 
 const HeaderActionsStart = () => {
     return (
@@ -45,7 +46,9 @@ const ClassicLayout = () => {
                         headerEnd={<HeaderActionsEnd />}
                     />
                     <div className="h-full flex flex-auto flex-col">
+                        <RoleProvider>
                         <View />
+                        </RoleProvider>
                     </div>
                 </div>
             </div>

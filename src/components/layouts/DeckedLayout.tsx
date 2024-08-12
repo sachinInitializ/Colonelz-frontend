@@ -9,6 +9,7 @@ import MobileNav from '@/components/template/MobileNav'
 import Search from '@/components/template/Search'
 import View from '@/views'
 import { UserDetailsProvider } from '@/views/Context/userdetailsContext'
+import { RoleProvider } from '@/views/crm/Roles/RolesContext'
 
 const HeaderActionsStart = () => {
     return (
@@ -45,7 +46,9 @@ const DeckedLayout = () => {
                         headerEnd={<HeaderActionsEnd />}
                     />
                     <SecondaryHeader contained />
+                    <RoleProvider>
                     <View pageContainerType="contained" />
+                    </RoleProvider>
                 </div>
             </div>
         </div>

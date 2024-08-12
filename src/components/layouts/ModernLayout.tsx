@@ -9,6 +9,7 @@ import Search from '@/components/template/Search'
 import SideNav from '@/components/template/SideNav'
 import View from '@/views'
 import { UserDetailsProvider } from '@/views/Context/userdetailsContext'
+import { RoleProvider } from '@/views/crm/Roles/RolesContext'
 
 const HeaderActionsStart = () => {
     return (
@@ -43,7 +44,9 @@ const ModernLayout = () => {
                         headerEnd={<HeaderActionsEnd />}
                         headerStart={<HeaderActionsStart />}
                     />
+                    <RoleProvider>
                     <View />
+                    </RoleProvider>
                 </div>
             </div>
         </div>

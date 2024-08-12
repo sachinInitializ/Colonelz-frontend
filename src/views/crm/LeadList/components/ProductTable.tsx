@@ -22,6 +22,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Button, Pagination, Select } from '@/components/ui'
 import { HiOutlineEye, HiPlusCircle } from 'react-icons/hi'
 import useThemeClass from '@/utils/hooks/useThemeClass'
+import { useRoleContext } from '../../Roles/RolesContext'
+import { AuthorityCheck } from '@/components/shared'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
     value: string | number
@@ -82,6 +84,13 @@ function DebouncedInput({
         return () => clearTimeout(timeout)
     }, [value])
 
+    const {roleData}=useRoleContext()
+    console.log(roleData.data.lead?.read);
+    
+    
+    
+    
+
     return (
         <div className="flex justify-between md:flex-col lg:flex-row">
             <h3>Leads</h3>
@@ -96,10 +105,14 @@ function DebouncedInput({
                 className="block lg:inline-block md:mb-0 mb-4"
                 to="/app/crm/lead-new"
             >
-                {(role==='ADMIN' || role==='Senior Architect' || role==='Project Architect') && 
+               <AuthorityCheck
+                userAuthority={[`${role}`]}
+               authority={roleData.data.lead?.create??[]}
+               >
                 <Button block variant="solid" size="sm" icon={<HiPlusCircle />}>
                     Add Lead
-                </Button>}
+                </Button>
+                </AuthorityCheck>
             </Link>
             </div>
         </div>

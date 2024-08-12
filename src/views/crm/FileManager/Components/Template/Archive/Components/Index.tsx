@@ -23,11 +23,11 @@ import { DataItem } from '../Store/ArchiveSlice'
 import { apiGetCrmFileManagerArchive, apiGetCrmFileManagerArchiveRestore, apiGetCrmFileManagerDeleteArchiveFiles } from '@/services/CrmService'
 import { FiDelete } from 'react-icons/fi'
 import { MdDeleteOutline } from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
-import { Input, Notification, Skeleton, Tooltip, toast } from '@/components/ui'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { Button, Input, Notification, Skeleton, Tooltip, toast } from '@/components/ui'
 import { LiaTrashRestoreSolid } from "react-icons/lia";
 import { AiOutlineFile, AiOutlineFolder } from 'react-icons/ai'
-import { ConfirmDialog } from '@/components/shared'
+import { ConfirmDialog, StickyFooter } from '@/components/shared'
 import NoData from '@/views/pages/NoData'
 
 interface DebouncedInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'prefix'> {
@@ -363,6 +363,7 @@ const PaginationTable = () => {
     const [filesData,setFilesData] = useState([])
     const [loading,setLoading] = useState(true)
     const userId=localStorage.getItem('userId')
+    const navigate=useNavigate()
     useEffect(() => {
         const fetchData = async () => {
             const response = await apiGetCrmFileManagerArchive(userId)
@@ -408,7 +409,7 @@ const PaginationTable = () => {
     }
 
     return (
-        <div>
+        <div className=''>
             <div className='flex justify-between mb-5'>
             <h3 className='mb-5'>Archive</h3>
             <DebouncedInput
@@ -418,6 +419,7 @@ const PaginationTable = () => {
                 onChange={(value) => setGlobalFilter(String(value))}
             />
             </div>
+            <div className='h-screen'>
 
             {
                 !loading ?filesData.length === 0 ?(<NoData/>) :(
@@ -505,6 +507,8 @@ const PaginationTable = () => {
                     />
                 </div>
             </div>
+            </div>
+           
             <ConfirmDialog
           isOpen={dialogIsOpen2}
           type="danger"
@@ -531,6 +535,16 @@ const PaginationTable = () => {
           onRequestClose={onDialogClose3}>
             <p> Are you sure, restore this file/folder? </p>            
         </ConfirmDialog>
+        <StickyFooter
+        className="-mx-8 px-8 flex items-center justify-between py-4 mt-7"
+        stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+      >
+                <div className="md:flex items-center">
+                    <Button size="sm" className="ltr:mr-3 rtl:ml-3" onClick={()=>navigate('/app/crm/fileManager')}>
+                        Back
+                    </Button>
+                </div>
+            </StickyFooter>
         </div>
     )
 }

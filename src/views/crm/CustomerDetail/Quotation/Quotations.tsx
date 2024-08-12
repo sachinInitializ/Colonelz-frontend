@@ -19,6 +19,8 @@ import { apiGetCrmProjectShareQuotation, apiGetCrmProjectShareQuotationApproval 
 import { use } from 'i18next'
 import { useLocation } from 'react-router-dom'
 import NoData from '@/views/pages/NoData'
+import { useRoleContext } from '../../Roles/RolesContext'
+import { AuthorityCheck } from '@/components/shared'
 
 type FormData = {
   user_name: string;
@@ -90,6 +92,7 @@ const Quotations=(data : FileItemProps )=> {
     const queryParams=new URLSearchParams(location.search)
     const projectId=queryParams.get('project_id')
     const [submit,setSubmit]=useState(false)
+    const {roleData} = useRoleContext()
 
     const openDialog = () => {
         setIsOpen(true)
@@ -193,7 +196,7 @@ const Quotations=(data : FileItemProps )=> {
                                 <div>Rejected</div>
                             ):status==='pending'?
                             (
-                                role === 'designer' ? (
+                                roleData.data.quotation?.update?.includes(role || '') ? (
                                     <div>Pending</div>
                                 ) : (
                                     <div className='flex gap-1'>
@@ -375,7 +378,12 @@ const Quotations=(data : FileItemProps )=> {
     return (
         <div>
         <div className=' flex justify-end mb-4'>
+        <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.quotation?.update??[]}
+                    >
             <Button variant='solid' size='sm' onClick={()=>openDialog()} >Share to Client</Button>
+            </AuthorityCheck>
     </div>
     {table.getRowModel().rows.length > 0 ? (
     <Table>

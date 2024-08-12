@@ -105,7 +105,6 @@ const SegmentItem = forwardRef<HTMLButtonElement, SegmentItemProps>(
                 ref={ref}
                 className={classNames(
                     'segment-item segment-item-default',
-                    active && 'segment-item-active',
                     disabled && 'segment-item-disabled',
                     getSegmentSize(),
                     className

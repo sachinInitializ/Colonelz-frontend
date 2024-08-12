@@ -17,6 +17,8 @@ import FollowDetails from './components/Follow-UpDetails'
 import EditLead from './components/EditLead'
 import LeadActivity from './components/LeadActivity'
 import { Link } from 'react-router-dom'
+import { AuthorityCheck } from '@/components/shared'
+import { useRoleContext } from '../Roles/RolesContext'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -75,29 +77,42 @@ const CustomerDetail = () => {
     }, [myParam]);
     
     const lead = details?.data?.[0];
-    console.log(lead);
+    const {roleData}=useRoleContext()
     
-    const Toggle = <Button variant='solid' size='sm' className='flex justify-center items-center gap-2'><span>Actions</span><span><GoChevronDown/></span></Button>
+    const Toggle =
+   
+     <Button variant='solid' size='sm' className='flex justify-center items-center gap-2'>
+        <span>Actions</span><span><GoChevronDown/></span></Button>
       return (
         <>    
         <div className='flex justify-between'>
         <h3 className='pb-5'>Lead-{lead?.name || <Skeleton/>}</h3>
         <div>
             <Dropdown renderTitle={Toggle} placement='middle-end-top'>
+                    <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.lead?.update??[]}
+                    >
                 <Dropdown.Item eventKey="c" onClick={()=>openDialog()}><div >Edit Lead</div></Dropdown.Item>
                 <Dropdown.Item eventKey="a" onClick={()=>openDialog1()}><div >Add Follow-Up</div></Dropdown.Item>
+                </AuthorityCheck>
+                <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.contract?.create??[]}
+                    >
                 <Dropdown.Item eventKey="b"><Link to={`/app/crm/contract?lead_id=${myParam}`}>Create Contract</Link></Dropdown.Item>
+                </AuthorityCheck>
             </Dropdown>
         </div>
         </div>
 
         <Card className='mb-5'>
-            <Steps current={(lead?.lead_status==='Follow Up' || lead?.lead_status==='No Response' || lead?.lead_status==='Not Contacted')?2:(lead?.lead_status==='Interested' )?3:lead?.lead_status==='contract'?4:lead?.lead_status==='project'?5:1}
+            <Steps current={lead?.lead_status==='Inactive'?1:(lead?.lead_status==='Follow Up' || lead?.lead_status==='No Response' || lead?.lead_status==='Not Contacted')?2:(lead?.lead_status==='Interested' )?3:lead?.lead_status==='contract'?4:lead?.lead_status==='project'?5:1}
              className=' overflow-x-auto'
-             status={lead?lead.lead_status==='No Response'?'error':lead?.lead_status==='Not Contacted'?'error':lead?.lead_status==='Follow Up'?'in-progress':lead.lead_status==='Interested'?'in-progress':lead.lead_status==='Contract'?'in-progress':lead.lead_status==='Project'? 'complete':'in-progress':'in-progress'}
+             status={lead?.lead_status==='Inactive'?'error':lead?lead.lead_status==='No Response'?'error':lead?.lead_status==='Not Contacted'?'error':lead?.lead_status==='Follow Up'?'in-progress':lead.lead_status==='Interested'?'in-progress':lead.lead_status==='Contract'?'in-progress':lead.lead_status==='Project'? 'complete':'in-progress':'in-progress'}
              >
                 <Steps.Item title="Lead Created" />
-                <Steps.Item title="Following Up" />
+                <Steps.Item title={lead?.lead_status==='Inactive'?"Inactive":"Following Up"} />
                 <Steps.Item title={lead?.lead_status==='No Response'?'No Response':lead?.lead_status==='Not Contacted'?'Not Contacted':"Interested"} />
                 <Steps.Item title="Contract" />
                 <Steps.Item title="Project" />
@@ -111,13 +126,22 @@ const CustomerDetail = () => {
                     <TabNav value="Actions" >
                         Follow-Ups
                     </TabNav>
-                    {role!=='Project Architect' &&
+                    <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={roleData?.data?.contract?.read??[]}
+                    >
                     <TabNav value="Contract" >
                         Contract
-                    </TabNav>}
+                    </TabNav>
+                    </AuthorityCheck>
+                    <AuthorityCheck
+                    userAuthority={[`${localStorage.getItem('role')}`]}
+                    authority={[`ADMIN`]}
+                    >
                     <TabNav value="Activity" >
                         Lead Activity
                     </TabNav>
+                    </AuthorityCheck>
                 </TabList>
                 <div className="p-4">
                     <TabContent value="Actions">

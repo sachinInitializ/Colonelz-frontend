@@ -24,7 +24,28 @@ export async function apiGetUserData(UserId:string | null) {
             'Authorization': `Bearer ${token}` 
         }
     });
-
+    const data = await response.json();
+    return data;
+}
+export async function apiGetRoleDetails() {
+    const response = await fetch(`${apiPrefix}admin/get/role`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        }
+    });
+    const data = await response.json();
+    return data;
+}
+export async function apiGetRoleWiseDetails() {
+    const response = await fetch(`${apiPrefix}admin/rolewise/access?role=ADMIN`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+        }
+    });
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -34,6 +55,17 @@ export async function apiGetUserData(UserId:string | null) {
 
 
 
+export async function apiEditRoles(Data: any,id:string |null) {
+    const response = await fetch(`${apiPrefix}admin/update/role?id=${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(Data)
+    });
+
+    return response;}
 export async function addProfilePhoto(Data: any) {
     const response = await fetch(`${apiPrefix}users/profileurl`, {
         method: 'POST',

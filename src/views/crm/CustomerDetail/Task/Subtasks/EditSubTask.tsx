@@ -65,6 +65,7 @@ const priorityOptions = [
     { label: "Pending", value: "Pending" },
     { label: "Completed", value: "Completed" },
     { label: "Cancelled", value: "Cancelled" },
+    { label: "Under Revision", value: "Under Revision" },
   ];
   
   const userOptions = userData?.map((user:any) => ({
@@ -103,6 +104,7 @@ const priorityOptions = [
                         sub_task_priority: task.Data.sub_task_priority, 
                         sub_task_assignee: task.Data.sub_task_assignee,
                         sub_task_reporter: task.Data.sub_task_reporter,
+                        remark: '',
                       }}
                       validationSchema={Yup.object().shape({
                         sub_task_name: Yup.string().required('Subtask Name is required'),
@@ -292,6 +294,17 @@ const priorityOptions = [
                                     }}
                                 </Field>
                             </FormItem>
+                            {values.sub_task_status==='Under Revision' &&
+                            <FormItem label='Remarks'>
+                                <Field name='remark' placeholder='Remarks'>
+                                    {({field}:any)=>{
+                                        return (
+                                            <Input textArea name='remark'
+                                            {...field}/>
+                                        )
+                                    }}
+                                </Field>
+                            </FormItem>}
                             <div className='flex justify-end'>
                                 <Button type='submit' variant='solid' size='sm' loading={loading}>{loading?'Updating':'Update Subtask'}</Button>
                             </div>

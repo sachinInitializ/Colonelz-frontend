@@ -8,6 +8,7 @@ import Search from '@/components/template/Search'
 import StackedSideNav from '@/components/template/StackedSideNav'
 import View from '@/views'
 import { UserDetailsProvider } from '@/views/Context/userdetailsContext'
+import { RoleProvider } from '@/views/crm/Roles/RolesContext'
 
 const HeaderActionsStart = () => {
     return (
@@ -42,7 +43,9 @@ const StackedSideLayout = () => {
                         headerEnd={<HeaderActionsEnd />}
                     />
                     <div className="h-full flex flex-auto flex-col">
+                        <RoleProvider>
                         <View />
+                        </RoleProvider>
                     </div>
                 </div>
             </div>

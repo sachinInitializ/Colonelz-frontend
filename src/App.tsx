@@ -6,7 +6,6 @@ import Theme from '@/components/template/Theme'
 import Layout from '@/components/layouts'
 import appConfig from '@/configs/app.config'
 import './locales'
-import { UserDetailsProvider } from './views/Context/userdetailsContext'
 
 const environment = process.env.NODE_ENV
 
@@ -15,6 +14,7 @@ const environment = process.env.NODE_ENV
 function App() {
     return (
         <Provider store={store}>
+            
             <PersistGate loading={null} persistor={persistor}>
                 <BrowserRouter>
                     <Theme>

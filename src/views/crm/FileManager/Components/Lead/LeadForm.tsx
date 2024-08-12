@@ -39,11 +39,11 @@ const YourFormComponent: React.FC<Data> = (leadData) => {
       ? [selectedOption.value]
       : [];
 
-    const trimmedValue = selectedValues.length > 0 ? selectedValues[0].toLowerCase().trim() : '';
+   
 
     setFormData({
       ...formData,
-      [fieldName]: trimmedValue,
+      [fieldName]: selectedValues,
     });
   };
   
